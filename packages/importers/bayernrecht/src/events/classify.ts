@@ -50,6 +50,8 @@ export interface CitedNorm {
   citation?: string;
   /** Zeichenbereich des Zitats im Text – Grundlage für Auszug und Befehlszuordnung. */
   start: number;
+  /** Anfang jeder Titellesart im Text (für Befehle, die vor dem Titel stehen); ohne Titel leer. */
+  titleStarts?: number[];
   end: number;
   /** Wörtlicher Ausschnitt ab dem Beginn des Zitats. */
   raw: string;
@@ -60,8 +62,13 @@ export interface CitedNorm {
  * der Quelle gelegentlich („(BayMBl Nr. 580)“, BayMBl. 2025 Nr. 113) – er ist deshalb optional.
  */
 const REFERENCE_PAREN = /\(([^()]*(?:BayRS|(?<![\p{L}])(?:GVBl|BayMBl|AllMBl|JMBl|FMBl|KWMBl)(?:\.|\s+(?=\d|S\.|Nr\.)))[^()]*)\)/gu;
-/** Der Ausfertigungsteil unmittelbar vor der Klammer. */
-const ENACTMENT_TAIL = /(?:vom|v\.)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s*$/u;
+/**
+ * Der Ausfertigungsteil unmittelbar vor der Klammer, bei Bekanntmachungen samt Aktenzeichen: „Bekanntmachung des
+ * Bayerischen Staatsministeriums für Ernährung, Landwirtschaft und Forsten vom 31. Januar 2022, Az. Z5-7971.1-1/18
+ * (BayMBl. Nr. 125)“ (BayMBl. 2025 Nr. 89). Ohne das Aktenzeichen blieben Datum und Aktenzeichen im Titel und das
+ * Zitat ohne Ausfertigungsdatum.
+ */
+const ENACTMENT_TAIL = /(?:vom|v\.)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})(?:\s*,\s*Az\.:?\s*[^()„“,;]{1,60}?)?\s*,?\s*$/u;
 /**
  * Fassungsangabe zwischen Titel und Ausfertigungsdatum. Bayerische Zitate lauten regelmäßig
  * „Die Gemeindeordnung (GO) **in der Fassung der Bekanntmachung** vom 22. August 1998 (GVBl. S. 796,
@@ -162,6 +169,7 @@ export function scanCitations(text: string): CitedNorm[] {
       ...(bayRs === undefined ? {} : { bayRsNumber: bayRs }),
       ...(title === undefined ? {} : { title }),
       titleCandidates,
+      titleStarts: candidates.map((candidate) => headStart + candidate.offset),
       ...(scopeReference === undefined ? {} : { scopeReference: normalizeQuote(scopeReference) }),
       ...(abbreviation === undefined ? {} : { abbreviation }),
       ...(enactmentDate === undefined ? {} : { enactmentDate }),
@@ -201,7 +209,7 @@ const TITLE_DEBRIS =
  * Zusammengesetztes Vorschriftenwort – ein einzelnes Wort genügt als Titel, wenn es eines ist
  * („Gemeindeordnung“, „Bekanntmachungsverordnung“). Ein beliebiges einzelnes Substantiv genügt nicht.
  */
-const NORM_NOUN = /(?:gesetz|ordnung|verordnung|satzung|statut|vertrag|abkommen|richtlinie|richtlinien|bekanntmachung|verfassung|erlass|anordnung)(?:es|s|en)?$/iu;
+const NORM_NOUN = /(?:gesetz|ordnung|verordnung|satzung|statut|vertrag|abkommen|vereinbarung|richtlinie|richtlinien|bekanntmachung|verfassung|erlass|anordnung)(?:es|s|en)?$/iu;
 
 /** Sieht der Kandidat wie ein Normtitel aus – und nicht wie ein Satzrest oder ein Zitatbruchstück? */
 export function isPlausibleTitle(candidate: string): boolean {
@@ -265,9 +273,115 @@ const COMMAND_RULES: readonly { pattern: RegExp; eventType: EventType; subtype?:
   { pattern: /\berhält\s+folgende\s+Fassung\b/u, eventType: 'amend' },
   { pattern: /\b(?:wird|werden)\s+(?:folgender?maßen\s+)?geändert\b/u, eventType: 'amend' },
   { pattern: /\b(?:wird|werden)\s+ersetzt\b/u, eventType: 'amend' },
+  // Einzeländerungen im Wortlaut: „In Art. 98 Satz 1 des BayBesG (…) werden die Wörter „…“ durch die Wörter „…“
+  // ersetzt“, „… wird die Angabe „…“ gestrichen“, „Dem Art. 2 des BayEUG (…) wird folgender Satz angefügt“ (belegt:
+  // GVBl. 2024 S. 98 mit über 100 solchen Befehlen). Ohne diese Regel fiel das Ereignis auf die Veröffentlichungsebene
+  // zurück – `new`, weil die Mantelverordnung selbst eine Verordnung ist.
+  { pattern: /\b(?:wird|werden)\s(?:(?!\b(?:wird|werden)\b)[^;:]){0,240}?(?<![\p{L}])(?:ersetzt|gestrichen|eingefügt|angefügt|vorangestellt)(?![\p{L}])/u, eventType: 'amend' },
   { pattern: /\b(?:wird|werden)\s+(?:neu\s+gefasst|neugefasst)\b/u, eventType: 'recast', subtype: 'neubekanntmachung' },
-  { pattern: /\bwird\s+berichtigt\b/u, eventType: 'correction', subtype: 'berichtigung' },
+  { pattern: /\b(?:wird|werden)\s+(?:wie\s+folgt\s+)?berichtigt\b/u, eventType: 'correction', subtype: 'berichtigung' },
 ];
+
+/** Ersetzt zitierten Wortlaut („…“) durch „…“ – Länge und Stellung bleiben für die Befehlssuche unerheblich. */
+export function maskQuoted(value: string): string {
+  return value.replace(/„[^„“”]*[“”]/gu, '„…“');
+}
+
+/**
+ * Befehl **vor** einer Aufzählung im Fließtext: „(2) Mit Ablauf des 31. August 2025 treten außer Kraft: 1. die
+ * Prüfungsordnung … (ErgPOFHR) vom 25. Mai 2001 (…), die zuletzt … geändert worden ist, sowie 2. die
+ * Begabtenprüfungsverordnung (BegPO) vom 12. August 1986 (…)“ (GVBl. 2025 S. 443). Hinter den Zitaten steht dann
+ * kein Befehl; er gilt für jedes Glied der Aufzählung. Anerkannt wird er nur, wenn das Zitat unmittelbar hinter
+ * einer Gliederungsziffer steht und zwischen Befehl und Zitat kein neuer Absatz beginnt.
+ */
+const LIST_TRIGGER =
+  /(?:(?:Mit\s+Ablauf\s+des|Am|Zum|Mit\s+Wirkung\s+vom)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+)?(?:treten|tritt)\s+(?:(mit\s+Ablauf\s+des|am|zum)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+)?(?:folgende\s+[^.:;]{0,80}?\s+)?außer\s+Kraft\s*:|(?:werden|wird)\s+(?:hiermit\s+)?(?:folgende\s+[^.:;]{0,80}?\s+)?aufgehoben\s*:/gu;
+const LIST_ITEM_BEFORE = /(?:^|[\s:;,])(?:\d{1,2}\.|[a-z]\))\s*(?:die|der|das|den|dem)?\s*$/u;
+const LIST_BREAK = /\(\d+[a-z]?\)\s|§\s*\d+[a-z]?\s+(?!Abs\.|Satz\b|Nr\.|Art\.)[A-ZÄÖÜ][a-zäöüß]{3,}|\bDiese[rs]?\s+(?:Verordnung|Gesetz|Bekanntmachung|Satzung)\b/u;
+const LIST_LOOKBEHIND = 1600;
+
+export interface ListCommand extends CommandClassification {
+  /** Letzter Geltungstag aus dem Befehl der Aufzählung, soweit er einen nennt. */
+  terminationDate?: string;
+}
+
+/** Anfänge, vor denen ein Befehl stehen kann: jede Titellesart, sonst der Zitatanfang. */
+const startsOf = (cited: Pick<CitedNorm, 'start' | 'titleStarts'>): number[] => (cited.titleStarts && cited.titleStarts.length > 0 ? cited.titleStarts : [cited.start]);
+
+export function listCommand(text: string, cited: Pick<CitedNorm, 'start' | 'titleStarts'>): ListCommand | undefined {
+  for (const start of startsOf(cited)) {
+    const found = listCommandAt(text, start);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+function listCommandAt(text: string, start: number): ListCommand | undefined {
+  const before = text.slice(Math.max(0, start - LIST_LOOKBEHIND), start);
+  if (!LIST_ITEM_BEFORE.test(before)) return undefined;
+  let trigger: RegExpExecArray | undefined;
+  for (const match of before.matchAll(LIST_TRIGGER)) trigger = match;
+  if (!trigger) return undefined;
+  if (LIST_BREAK.test(before.slice(trigger.index + trigger[0].length))) return undefined;
+  const keyword = normalizeQuote(trigger[0]);
+  if (/aufgehoben/u.test(trigger[0])) return { eventType: 'repeal', keyword };
+  const leading = trigger[1] ? parseLongGermanDate(trigger[1]) : undefined;
+  const inner = trigger[3] ? parseLongGermanDate(trigger[3]) : undefined;
+  const ablauf = /^Mit\s+Ablauf/u.test(trigger[0]) || /^mit\s+Ablauf/u.test(trigger[2] ?? '');
+  const date = leading ?? inner;
+  const terminationDate = date === undefined ? undefined : ablauf ? date : previousDay(date);
+  return { eventType: 'expire', keyword, ...(terminationDate ? { terminationDate } : {}) };
+}
+
+/**
+ * Lange Wortlautbefehle: Zwischen „werden die Wörter „…““ und „… ersetzt“ stehen oft mehr Zeichen, als das
+ * Befehlsfenster fasst (GVBl. 2024 S. 98, Abs. 57: 170 Zeichen Zitat). Gelesen wird dann bis zum Ende des Satzes –
+ * genauer: bis zum Beginn des nächsten Glieds („(58) In …“, „2. …“, „§ 6 Änderung …“), höchstens 600 Zeichen.
+ */
+const LONG_WINDOW = 600;
+const NEXT_UNIT = /[.“”]\s+(?:\(\d+[a-z]?\)\s|\d+\.(?=\s*[A-ZÄÖÜ§])|[a-z]{1,2}\)\s*[A-ZÄÖÜ]|§\s*\d+[a-z]?\s)/u;
+const LONG_AMEND = /^[\s,]*(?:wird|werden)\s(?:(?!\b(?:wird|werden)\b)[^;:]){0,560}?(?<![\p{L}])(?:ersetzt|gestrichen|eingefügt|angefügt|vorangestellt)(?![\p{L}])/u;
+
+/**
+ * Satzklammer: „(4) Mit Ablauf des 31. Juli 2025 tritt die Ladenschlussverordnung (LSchlV) vom 21. Mai 2003 (…)
+ * außer Kraft.“ (GVBl. 2025 S. 246). Das Verb steht vor dem Zitat, „außer Kraft“ dahinter.
+ */
+const BRACKET_BEFORE = /(?:(Mit\s+Ablauf\s+des|Am|Zum|Mit\s+Wirkung\s+vom)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+)?(?:tritt|treten)\s+(?:(?:die|der|das|den)\s+)?$/u;
+export function bracketCommand(text: string, cited: Pick<CitedNorm, 'start' | 'titleStarts'>, window: string): ListCommand | undefined {
+  if (!/^[\s,]*außer\s+Kraft\b/u.test(window)) return undefined;
+  const before = startsOf(cited).map((start) => BRACKET_BEFORE.exec(text.slice(Math.max(0, start - 120), start))).find((match) => match !== null);
+  if (!before) return undefined;
+  const date = before[2] ? parseLongGermanDate(before[2]) : undefined;
+  const terminationDate = date === undefined ? undefined : /Ablauf/u.test(before[1] ?? '') ? date : previousDay(date);
+  return { eventType: 'expire', keyword: normalizeQuote(`${before[0]}… außer Kraft`), ...(terminationDate ? { terminationDate } : {}) };
+}
+
+/**
+ * Steht die Stelle innerhalb neuen Wortlauts („ … “)? Dann ist ein Zitat dort Teil des Änderungstextes, kein Gegenstand
+ * eines Befehls: „Nr. 9 wird wie folgt gefasst: „9. … Mit Ablauf des 31. März 2020 tritt die Bekanntmachung … vom
+ * 12. April 2018 (KWMBl. S. 167) außer Kraft.““ (BayMBl. 2026 Nr. 356) hebt nichts auf.
+ */
+export function insideQuote(text: string, position: number): boolean {
+  const before = text.slice(Math.max(0, position - 3000), position);
+  const opened = (before.match(/„/gu) ?? []).length;
+  const closed = (before.match(/[“”]/gu) ?? []).length;
+  return opened > closed;
+}
+
+/** Befehl zu einem Zitat: hinter dem Zitat, sonst aus dem Befehl einer Aufzählung davor. */
+export function commandFor(text: string, cited: CitedNorm): ListCommand | undefined {
+  if (text === '') return undefined;
+  if (insideQuote(text, cited.end)) return undefined;
+  const window = commandWindow(text, cited);
+  if (window === undefined) return undefined;
+  const found = classifyCommand(window) ?? listCommand(text, cited) ?? bracketCommand(text, cited, window);
+  if (found) return found;
+  const long = commandWindow(text, cited, LONG_WINDOW)!;
+  const boundary = NEXT_UNIT.exec(long);
+  const sentence = boundary ? long.slice(0, boundary.index + 1) : long;
+  const amend = LONG_AMEND.exec(maskQuoted(sentence));
+  return amend ? { eventType: 'amend', keyword: normalizeQuote(amend[0]).slice(0, 120) } : undefined;
+}
 
 /**
  * Klassifiziert den Wortlaut unmittelbar hinter einem Normzitat. `undefined`, wenn kein Befehl dasteht.
@@ -278,9 +392,12 @@ const COMMAND_RULES: readonly { pattern: RegExp; eventType: EventType; subtype?:
  * aufgehoben.“ (BayMBl. 2024 Nr. 7) ist eine Änderung, keine Aufhebung der EuMedBek.
  */
 export function classifyCommand(window: string): CommandClassification | undefined {
+  // Neuer Wortlaut in Anführungszeichen ist kein Befehl: „… die Wörter „… durchgeführt wird“ eingefügt“ (GVBl. 2024
+  // S. 570) enthielte sonst ein „wird“, und „… „(2) Art. 44a tritt … außer Kraft.““ ein Außerkrafttreten.
+  const masked = maskQuoted(window);
   let best: { rule: (typeof COMMAND_RULES)[number]; match: RegExpExecArray } | undefined;
   for (const rule of COMMAND_RULES) {
-    const match = rule.pattern.exec(window);
+    const match = rule.pattern.exec(masked);
     if (match && (best === undefined || match.index < best.match.index)) best = { rule, match };
   }
   if (best === undefined) return undefined;
@@ -305,14 +422,17 @@ const COMMAND_LOOKAHEAD = 460;
  *    erzeugte ein zweites, falsches Änderungsereignis gegen das falsche Ziel. Ein Zitat, auf das
  *    unmittelbar „… worden ist“ folgt, ist deshalb nie Gegenstand eines Befehls.
  */
-export function commandWindow(text: string, citation: CitedNorm): string | undefined {
-  const tail = text.slice(citation.end, citation.end + COMMAND_LOOKAHEAD);
+export function commandWindow(text: string, citation: CitedNorm, length: number = COMMAND_WINDOW): string | undefined {
+  const tail = text.slice(citation.end, citation.end + COMMAND_LOOKAHEAD - COMMAND_WINDOW + length);
   if (/^[\s,]*(?:zuletzt\s+)?(?:geändert|aufgehoben|ersetzt|eingefügt|angefügt|neu\s+gefasst|neugefasst)\s+worden\s+(?:ist|sind)/u.test(tail)) return undefined;
-  const cleaned = tail.replace(
-    /,?\s*(?:die|das|der|welche[rs]?)\s+(?:zuletzt\s+)?durch[\s\S]{0,340}?(?:geändert|neu\s+gefasst|neugefasst)\s+worden\s+(?:ist|sind)/gu,
-    ',',
-  );
-  return cleaned.slice(0, COMMAND_WINDOW);
+  const cleaned = tail
+    // „… (BayRS 630-1-F) veröffentlichten bereinigten Fassung, die zuletzt …“: Der Rest der Fassungsangabe gehört zum Zitat.
+    .replace(/^\s*veröffentlichten\s+bereinigten\s+Fassung/u, '')
+    .replace(
+      /,?\s*(?:die|das|der|welche[rs]?)\s+(?:zuletzt\s+)?durch[\s\S]{0,340}?(?:geändert|neu\s+gefasst|neugefasst)\s+worden\s+(?:ist|sind)/gu,
+      ',',
+    );
+  return cleaned.slice(0, length);
 }
 
 /* --------------------------------------------------------------- Veröffentlichungsebene */

@@ -171,9 +171,12 @@ export function textBody(html: string): ElementNode | undefined {
 
 /* ---------------------------------------------------------------------------- Normalisierung */
 
-/** Leerraum wie im Portaltext; weiche Trennzeichen und breitenlose Zeichen entfallen. */
+/** Leerraum wie im Portaltext; weiche Trennzeichen, breitenlose Zeichen und Steuerzeichen entfallen. */
 export function normalizeText(value: string): string {
   return value
+    // Steuerzeichen sind nie sichtbarer Text (kein Browser stellt sie dar). jmbl-2014-5-66 trägt acht NUL-Bytes nach dem
+    // letzten Absatz – ein Defekt der Seite, kein Normtext. Zeilenumbruch und Tabulator bleiben Leerraum.
+    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/gu, '')
     .replace(/[­​‌‍﻿]/gu, '')
     .replace(/[        ]/gu, ' ')
     .replace(/\s+/gu, ' ')

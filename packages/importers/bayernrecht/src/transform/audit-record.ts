@@ -100,6 +100,9 @@ const BAY_ABBREVIATION_EXACT = new RegExp(String.raw`^(?:${BAY_ABBREVIATION})$`,
  */
 export const PROPER_NAME_UNCERTAIN = new RegExp(`\\p{L}{2}\\.${targetProperName()}(?![\\p{L}])`, 'gu');
 
+/** Steuerzeichen außer Zeilenumbruch und Tabulator (C0 und DEL). */
+const CONTROL_CHARACTER = new RegExp('[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f]', 'u');
+
 /**
  * Entschiedene Eigennamen (Nutzerentscheidung Run 5), deren Überleitung ein Fehler ist: „Bayern-Württembergisches
  * Konkordat“ und „Digitalisierung.Bayern-Württemberg“ – Regressionsschutz für die Schutzmuster
@@ -152,6 +155,11 @@ export function auditRecord(record: NormRecord): ImportFinding[] {
         code: 'doubled-target-name',
         message: `${field.path}: Doppelbildung „${match[0]}“ (Kontext: „${contextOf(field.text, start, start + match[0].length)}“)`,
       });
+    }
+    // Steuerzeichen sind nie Normtext (jmbl-2014-5-66: NUL-Bytes aus der Quellseite). Sie sperren die Übernahme.
+    const control = CONTROL_CHARACTER.exec(field.text);
+    if (control) {
+      findings.push({ severity: 'error', code: 'control-character-in-text', message: `${field.path}: Steuerzeichen U+${control[0].charCodeAt(0).toString(16).padStart(4, '0').toUpperCase()} im Text` });
     }
     // Ein historischer Staat, ein Organ des Königreichs oder ein Herrschername darf nie übergeleitet erscheinen.
     for (const match of field.text.matchAll(PROPER_NAME_TRANSFORMED)) {

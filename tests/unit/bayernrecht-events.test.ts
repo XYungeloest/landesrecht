@@ -23,13 +23,18 @@ import {
   type PublicationInput,
 } from '@landesrecht/importer-bayernrecht/events/build.ts';
 import {
+  bracketCommand,
   classifyCommand,
   classifyPublication,
+  commandFor,
   commandWindow,
   extractEffectiveDate,
   extractTerminationDate,
   extractTitleCandidates,
+  insideQuote,
   isPlausibleTitle,
+  listCommand,
+  maskQuoted,
   scanCitations,
   scanRepealList,
   titleAbbreviation,
@@ -826,5 +831,146 @@ describe('Registerfehler EuMedBek: eine Vorschrift des Portals ist nie „heute 
     expect(expiry.terminationDate).toBe('2024-12-31');
     expect(endEffectiveDay(expiry)).toBe('2025-01-01');
     expect(isBaselineOnlyCandidate(expiry, EVALUATION_DATE)).toBe(true);
+  });
+});
+
+/* --------------------------------------- Run 6: Typisierung der Befehle (`new` statt Änderung) */
+
+/**
+ * GVBl. 2024 S. 98 („Verordnung zur Anpassung des Landesrechts an die geltende Geschäftsverteilung“) ändert über
+ * 100 Vorschriften mit Wortlautbefehlen. Hinter den Zitaten stand kein erkannter Befehl, und das Ereignis fiel auf die
+ * Veröffentlichungsebene zurück: `new`, weil die Mantelverordnung selbst eine Verordnung ist. Die Texte unten sind
+ * wörtliche Ausschnitte der Verkündungen (Quelle und SHA-256 der Detailseite je Fall).
+ */
+describe('Befehlserkennung: Wortlautbefehle, Aufzählungen, Satzklammer, neuer Wortlaut', () => {
+  const documentOf = (organ: 'gvbl' | 'baymbl', volume: number, position: number, title: string, documentKind: string, gliederungsnummern: string[], text: string) => ({
+    organ,
+    volume,
+    position,
+    reference: `${volume} ${organ === 'gvbl' ? 'S.' : 'Nr.'} ${position}`,
+    documentKind,
+    gliederungsnummern,
+    title,
+    text,
+    paragraphs: [text],
+    hasTextLayer: true,
+  });
+  const citedIn = (text: string, needle: string) => scanCitations(text).find((entry) => entry.titleCandidates.some((candidate) => candidate.includes(needle)))!;
+
+  // gvbl/2024-98 (SHA-256 39a30d71…), Abs. 17 und 57.
+  const BESG =
+    '(17) In Art. 98 Satz 1 des Bayerischen Besoldungsgesetzes (BayBesG) vom 5. August 2010 (GVBl. S. 410, 764, BayRS 2032-1-1-F), das zuletzt durch § 3 des Gesetzes vom 7. Juli 2023 (GVBl. S. 313) und durch die §§ 1 und 2 des Gesetzes vom 10. August 2023 (GVBl. S. 495) geändert worden ist, werden die Wörter „und Forsten“ durch die Wörter „ , Forsten und Tourismus“ ersetzt.';
+  const AELFV =
+    '(57) In § 1 Abs. 1 der Ämterverordnung-LM (AELFV) vom 16. Juni 2005 (GVBl. S. 199, BayRS 7801-2-L), die zuletzt durch § 2 der Verordnung vom 23. Juni 2023 (GVBl. S. 474) geändert worden ist, werden die Wörter „Staatsministeriums für Ernährung, Landwirtschaft und Forsten“ durch die Wörter „Staatsministeriums für Ernährung, Landwirtschaft, Forsten und Tourismus“ ersetzt.';
+
+  it('erkennt Wortlautbefehle als Änderung, auch wenn sie länger sind als das Befehlsfenster', () => {
+    expect(commandFor(BESG, citedIn(BESG, 'Besoldungsgesetzes'))).toMatchObject({ eventType: 'amend' });
+    expect(commandFor(AELFV, scanCitations(AELFV).find((entry) => entry.bayRsNumber === '7801-2-L')!)).toMatchObject({ eventType: 'amend' });
+    // gvbl/2024-570 (b73d765a…): Im neuen Wortlaut steht „wird“ – er ist kein Befehl.
+    const kg =
+      'In Art. 16 Abs. 2 Satz 1 des Kostengesetzes (KG) vom 20. Februar 1998 (GVBl. S. 43, BayRS 2013-1-1-F), das zuletzt durch Art. 10 des Gesetzes vom 21. April 2023 (GVBl. S. 128) geändert worden ist, werden nach dem Wort „wäre“ die Wörter „oder sie notwendig für eine Veranstaltung anfallen, die ehrenamtlich für das Gemeinwohl durchgeführt wird“ eingefügt.';
+    expect(commandFor(kg, citedIn(kg, 'Kostengesetzes'))).toMatchObject({ eventType: 'amend' });
+    // gvbl/2024-114 (c13f3169…): „… (BayRS 630-1-F) veröffentlichten bereinigten Fassung, die zuletzt …“.
+    const bayho =
+      'In Art. 65 Abs. 1 Nr. 4 der Bayerischen Haushaltsordnung (BayHO) in der in der Bayerischen Rechtssammlung (BayRS 630-1-F) veröffentlichten bereinigten Fassung, die zuletzt durch Art. 5 des Gesetzes vom 21. April 2023 (GVBl. S. 128) geändert worden ist, wird der Punkt am Ende durch die Wörter „ ; hierbei richtet sich der Nachhaltigkeitsbericht von kleinen und mittelgroßen Unternehmen allein nach dem Gesellschaftsvertrag, soweit nicht gesetzliche Vorschriften unmittelbar anwendbar sind.“ ersetzt.';
+    expect(commandFor(bayho, scanCitations(bayho).find((entry) => entry.bayRsNumber === '630-1-F')!)).toMatchObject({ eventType: 'amend' });
+  });
+
+  it('typisiert die Einzeländerungen einer Mantelverordnung als Änderung, nicht als neue Vorschrift', () => {
+    const text = `${BESG} ${AELFV}`;
+    const events = derivePublicationEvents(
+      input(
+        { volume: 2024, position: 98, title: 'Verordnung zur Anpassung des Landesrechts an die geltende Geschäftsverteilung', publishedAt: '2024-06-14', enactmentDate: '2024-06-04', gliederungsnummern: ['2032-1-1-F', '7801-2-L'] },
+        documentOf('gvbl', 2024, 98, 'Verordnung zur Anpassung des Landesrechts an die geltende Geschäftsverteilung', 'Verordnung', ['2032-1-1-F', '7801-2-L'], text),
+      ),
+      STOCK,
+    );
+    expect(events.map((event) => event.eventType)).toEqual(['amend', 'amend']);
+    expect(events.every((event) => validateLedgerEvent(event).length === 0)).toBe(true);
+  });
+
+  it('liest den Befehl vor einer Aufzählung („treten außer Kraft: 1. …, 2. …“) und seine Frist', () => {
+    // gvbl/2025-443 (b2ff1f46…), § 33 Abs. 2.
+    const text =
+      '(2) Mit Ablauf des 31. August 2025 treten außer Kraft: 1.die Prüfungsordnung für die Ergänzungsprüfung zum Erwerb der Fachhochschulreife (ErgPOFHR) vom 25. Mai 2001 (GVBl. S. 278, 456, BayRS 2236-6-1-5-K), die zuletzt durch § 1 Abs. 53 der Verordnung vom 4. Juni 2024 (GVBl. S. 98) geändert worden ist, sowie 2.die Begabtenprüfungsverordnung (BegPO) vom 12. August 1986 (GVBl. S. 265, BayRS 2235-4-1-K/WK), die zuletzt durch § 1 Abs. 228 der Verordnung vom 26. März 2019 (GVBl. S. 98) geändert worden ist. (3)';
+    expect(commandFor(text, citedIn(text, 'Ergänzungsprüfung'))).toMatchObject({ eventType: 'expire', terminationDate: '2025-08-31' });
+    expect(commandFor(text, citedIn(text, 'Begabtenprüfungsverordnung'))).toMatchObject({ eventType: 'expire', terminationDate: '2025-08-31' });
+    // Das Zitat der Änderungshistorie („… Verordnung vom 4. Juni 2024 (GVBl. S. 98) geändert worden ist“) ist kein Glied.
+    const history = scanCitations(text).find((entry) => entry.citation === 'GVBl. S. 98' && entry.enactmentDate === '2024-06-04');
+    if (history) expect(commandFor(text, history)).toBeUndefined();
+    // Ein neuer Absatz trennt: Was nach „(3)“ steht, gehört nicht mehr zur Aufzählung.
+    const split = `${text} Die Verordnung über Beispiele (BspV) vom 1. Januar 2000 (GVBl. S. 1, BayRS 1-1-1-K) gilt fort.`;
+    expect(listCommand(split, citedIn(split, 'Verordnung über Beispiele'))).toBeUndefined();
+  });
+
+  it('liest die Satzklammer „Mit Ablauf des … tritt die … außer Kraft“', () => {
+    // gvbl/2025-246 (abbc6fe2…), Abs. 4.
+    const text =
+      '(4) Mit Ablauf des 31. Juli 2025 tritt die Ladenschlussverordnung (LSchlV) vom 21. Mai 2003 (GVBl. S. 340, BayRS 8050-20-1-A), die zuletzt durch Verordnung vom 14. September 2011 (GVBl. S. 442) geändert worden ist, außer Kraft.';
+    expect(commandFor(text, citedIn(text, 'Ladenschlussverordnung'))).toMatchObject({ eventType: 'expire', terminationDate: '2025-07-31' });
+    expect(bracketCommand('Am 1. März 2025 tritt die Bekanntmachung über Beispiele vom 1. Januar 2000 (AllMBl. S. 1) außer Kraft.', citedIn('Am 1. März 2025 tritt die Bekanntmachung über Beispiele vom 1. Januar 2000 (AllMBl. S. 1) außer Kraft.', 'Beispiele'), ' außer Kraft.')).toMatchObject({ terminationDate: '2025-02-28' });
+  });
+
+  it('nimmt ein Zitat im neuen Wortlaut nie als Gegenstand eines Befehls', () => {
+    // baymbl/2026-356 (713a7fd2…): Die Neufassung der Schlussbestimmung zitiert die 2020 abgelöste Bekanntmachung.
+    const text =
+      '1.25 Nr. 4 wird wie folgt gefasst: „4. Schlussbestimmungen 1Diese Bekanntmachung tritt am 1. April 2020 in Kraft. 2Mit Ablauf des 31. März 2020 tritt die Bekanntmachung des Staatsministeriums für Unterricht und Kultus zu offenen Ganztagsangeboten an Schulen für Schülerinnen und Schüler ab Jahrgangsstufe 5 vom 12. April 2018 (KWMBl. S. 167) außer Kraft.“';
+    const cited = scanCitations(text).find((entry) => entry.enactmentDate === '2018-04-12')!;
+    expect(insideQuote(text, cited.end)).toBe(true);
+    expect(commandFor(text, cited)).toBeUndefined();
+    expect(maskQuoted('werden die Wörter „… wird aufgehoben“ eingefügt')).toBe('werden die Wörter „…“ eingefügt');
+  });
+
+  it('macht aus einer Berichtigung keine Änderung und aus einer bloßen Bezugnahme kein `new` der zitierten Vorschrift', () => {
+    expect(classifyCommand(' wird wie folgt berichtigt: In Nr. 4.2 wird die Angabe „x“ durch die Angabe „y“ ersetzt.')).toMatchObject({ eventType: 'correction' });
+    // baymbl/2025-209 (7f12b392…): eine neue Bekanntmachung, die die Realschulordnung nur nennt.
+    const text = '1. 1Die nach der Realschulordnung (RSO) vom 18. Juli 2007 (GVBl. S. 458, 585, BayRS 2234-2-K) zu erteilenden Jahres- und Zwischenzeugnisse sind nach den Mustern der Anlage auszustellen.';
+    const events = derivePublicationEvents(
+      input(
+        { organ: 'baymbl', volume: 2025, position: 209, title: 'Vollzug der Schulordnung für die Realschulen in Bayern; hier: Zeugnismuster für die Realschulen', publishedAt: '2025-04-09', enactmentDate: '2025-03-24', gliederungsnummern: ['2234-2-K'] },
+        documentOf('baymbl', 2025, 209, 'Vollzug der Schulordnung für die Realschulen in Bayern; hier: Zeugnismuster für die Realschulen', 'Verwaltungsvorschrift', ['2234-2-K'], text),
+      ),
+      STOCK,
+    );
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({ eventType: 'new' });
+    expect(events[0]!.targetIdentityHints.some((hint) => hint.startsWith('zitat-'))).toBe(false);
+    expect(events[0]!.targetTitle).not.toBe('Realschulordnung');
+  });
+
+  it('ordnet ein Zitat ohne BayRS-Nummer der Gliederungsnummer der Veröffentlichung zu (Datum und Titel aus dem Bestand)', () => {
+    // gvbl/2024-114 Art. 13 Abs. 3: Das HG 2022 wird ohne BayRS-Nummer zitiert; die Veröffentlichung führt 630-2-24-F.
+    const stock = createStockIndex([
+      {
+        area: 'landesrecht',
+        path: 't',
+        items: [
+          { documentId: 'BayHG2022', title: 'Gesetz über die Feststellung des Haushaltsplans des Freistaates Bayern für das Haushaltsjahr 2022 (Haushaltsgesetz 2022 – HG 2022) vom 22. April 2022 (GVBl. S. 102)', bayRsNumber: '630-2-24-F' },
+          { documentId: 'BayHG2024_2025', title: 'Gesetz über die Feststellung des Haushaltsplans des Freistaates Bayern für die Haushaltsjahre 2024 und 2025 (Haushaltsgesetz 2024/2025 – HG 2024/2025) vom 21. Juni 2024 (GVBl. S. 114)', bayRsNumber: '630-2-26-F' },
+        ],
+      },
+    ]);
+    const title = 'Gesetz über die Feststellung des Haushaltsplans des Freistaates Bayern für die Haushaltsjahre 2024 und 2025 (Haushaltsgesetz 2024/2025 – HG 2024/2025)';
+    const text = '(3) In Art. 13 Abs. 3 des Haushaltsgesetzes 2022 (HG 2022) vom 22. April 2022 (GVBl. S. 102) wird die Angabe „31. Dezember 2045“ durch die Angabe „31. Dezember 2023“ ersetzt.';
+    const events = derivePublicationEvents(
+      input({ volume: 2024, position: 114, title, publishedAt: '2024-06-28', enactmentDate: '2024-06-21', gliederungsnummern: ['630-2-26-F', '630-2-24-F'] }, documentOf('gvbl', 2024, 114, title, 'Gesetz', ['630-2-26-F', '630-2-24-F'], text)),
+      stock,
+    );
+    const hg2022 = events.find((event) => event.targetResolution.sourceIdentity === 'BayHG2022')!;
+    expect(hg2022).toMatchObject({ eventType: 'amend' });
+    expect(hg2022.targetIdentityHints).toContain('zitat-ausfertigung:2022-04-22');
+    expect(events.find((event) => event.targetResolution.sourceIdentity === 'BayHG2024_2025')).toMatchObject({ eventType: 'new' });
+  });
+
+  it('trennt Ausfertigungsdatum und Aktenzeichen vom Titel', () => {
+    // baymbl/2025-89 (Teil 1 Nr. 2): Zitat nur mit Erlassstelle, Datum und Aktenzeichen vor der Fundstelle.
+    const fiabg =
+      'Gleichzeitig tritt die Bekanntmachung des Bayerischen Staatsministeriums für Ernährung, Landwirtschaft und Forsten vom 31. Januar 2022, Az. Z5-7971.1-1/18 (BayMBl. Nr. 125), außer Kraft.';
+    const [cited] = scanCitations(fiabg);
+    expect(cited).toMatchObject({ enactmentDate: '2022-01-31', citation: 'BayMBl. Nr. 125' });
+    expect(cited!.titleCandidates.every((candidate) => !/vom|Az\./u.test(candidate))).toBe(true);
+    // baymbl/2024-196 Nr. 12.1: Einzelwort auf „-vereinbarung“ als Titel, Aktenzeichen mit Leerzeichen.
+    const dv = 'Gleichzeitig tritt die Dienstvereinbarung vom 25. Mai 2022, Az. F7 - 2500 - VIIa - 3086/2015 (BayMBl. 2022 Nr. 410), außer Kraft.';
+    expect(scanCitations(dv)[0]).toMatchObject({ title: 'Dienstvereinbarung', enactmentDate: '2022-05-25', citation: 'BayMBl. 2022 Nr. 410' });
   });
 });

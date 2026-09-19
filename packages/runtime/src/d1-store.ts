@@ -395,11 +395,17 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     const orMatch = buildFtsMatch(plan);
     const andMatch = plan.matchMode === 'and-first' ? buildFtsAndMatch(plan) : null;
     const pageLimit = state.offset + state.limit;
-    const identityParams = plan.identityVariants.length > 0 ? plan.identityVariants : [''];
-    const identityExpression = plan.identityVariants.length > 0
+    // Kandidatenordnung nach Bezeichnung: bei Adressanfragen („Nr. 1.1 FüR“) die Bezeichnung ohne Adresse, damit die
+    // Norm, die die Bewertung im Speicher ohnehin voranstellt, nicht an der Kandidatengrenze scheitert – eine
+    // Abkürzung, die normalisiert einem Funktionswort gleicht („FüR“ → „für“), träfe sonst hunderte Einheiten.
+    const poolIdentity = plan.identityVariants.length > 0
+      ? plan.identityVariants
+      : plan.references.length > 0 && plan.subjectRaw !== '' ? [...new Set([plan.subjectRaw, ...plan.subjectVariants])] : [];
+    const identityParams = poolIdentity.length > 0 ? poolIdentity : [''];
+    const identityExpression = poolIdentity.length > 0
       ? `(lower(n.abbr) IN (${identityParams.map(() => '?').join(', ')}) OR lower(n.short_title) IN (${identityParams.map(() => '?').join(', ')}) OR lower(n.title) IN (${identityParams.map(() => '?').join(', ')}))`
       : '0';
-    const identityBinds = plan.identityVariants.length > 0 ? [...identityParams, ...identityParams, ...identityParams] : [];
+    const identityBinds = poolIdentity.length > 0 ? [...identityParams, ...identityParams, ...identityParams] : [];
 
     // Kandidatenseite eines MATCH-Ausdrucks. Der Join über `rowid` auf law_search_units vermeidet, dass FTS5 für die
     // UNINDEXED-Spalten jede Trefferzeile vollständig (mit `body`) aus der Inhaltstabelle lädt.

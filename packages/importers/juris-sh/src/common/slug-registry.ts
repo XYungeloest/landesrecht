@@ -122,13 +122,21 @@ export function seedSlugRegistryFromManifest(registry: SlugRegistry, manifest: I
  * Reserviert Slugs in einem Registry-Objekt (wird verändert). `existingSlugs` sind die vorhandenen
  * Normverzeichnisse der Jurisdiktion; ein Verzeichnis ohne Registry-Eintrag gilt als fremd (Kollision).
  */
-export function createSlugReserver(registry: SlugRegistry, existingSlugs: ReadonlySet<string>): { reserve(sourceIdentity: string, candidate: string): SlugReservation; readonly changed: boolean } {
+export function createSlugReserver(registry: SlugRegistry, existingSlugs: ReadonlySet<string>): { reserve(sourceIdentity: string, candidate: string): SlugReservation; preview(sourceIdentity: string, candidate: string): string; readonly changed: boolean } {
   let changed = false;
   const bySlug = new Map(registry.entries.map((entry) => [entry.slug, entry]));
   const byIdentity = new Map(registry.entries.map((entry) => [entry.sourceIdentity, entry]));
   return {
     get changed() {
       return changed;
+    },
+    /** Welchen Slug `reserve` vergeben würde – ohne zu reservieren (Normen, die nicht übernommen werden, belegen nichts). */
+    preview(sourceIdentity, rawCandidate) {
+      const candidate = jurisdictionSlugCandidate(rawCandidate);
+      const own = byIdentity.get(sourceIdentity);
+      if (own) return own.slug;
+      const taken = bySlug.has(candidate) || existingSlugs.has(candidate);
+      return taken ? `${candidate}-${identityHash(sourceIdentity).slice(0, 8)}` : candidate;
     },
     reserve(sourceIdentity, rawCandidate) {
       const candidate = jurisdictionSlugCandidate(rawCandidate);

@@ -8,6 +8,7 @@
  */
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { deflateSync } from 'node:zlib';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -15,11 +16,15 @@ import { describe, expect, it } from 'vitest';
 import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 import { gazetteUnits } from '@landesrecht/importer-bayernrecht/reconstruction/gazette.ts';
 import { determineEnd, determineEndAcross, locateCitation, parseCitationTail, titleKey } from '@landesrecht/importer-bayernrecht/baseline-only/identity.ts';
-import { baymblFulltextUrl, candidateVolumes, fulltextQuery, locateBase, parseParenthetical, sameReference } from '@landesrecht/importer-bayernrecht/baseline-only/references.ts';
+import { baymblFulltextUrl, candidateVolumes, fulltextQueries, fulltextQuery, locateBase, parseParenthetical, sameReference } from '@landesrecht/importer-bayernrecht/baseline-only/references.ts';
 import { buildBody, canonicalText, checkIntegrity, ConversionError, convertGazetteHtml, decimalSequenceConsistent, pageText, segments, splitHead, textBody } from '@landesrecht/importer-bayernrecht/baseline-only/html.ts';
 import { headDates, publicationTitle, titleCheck } from '@landesrecht/importer-bayernrecht/baseline-only/base.ts';
-import { ownBegin, ownExpiry, scopeDecision, titleParts } from '@landesrecht/importer-bayernrecht/baseline-only/analyze.ts';
-import { citationsOfBase, glnrStem } from '@landesrecht/importer-bayernrecht/baseline-only/chain.ts';
+import { annexDecision, annexHeading, ownBegin, ownExpiry, plainText, scopeDecision, sourceBody, titleParts } from '@landesrecht/importer-bayernrecht/baseline-only/analyze.ts';
+import { applyAmendment, applyToTitle, citationsOfBase, commandWording, expandNumberRanges, repairCommandVerb, forwardStructural, glnrStem, headingScope, inheritLocations, replaySteps } from '@landesrecht/importer-bayernrecht/baseline-only/chain.ts';
+import { checkedPublicationDate, ownPublicationDate, relativeDate, relativeRule, repairOwnCommencement } from '@landesrecht/importer-bayernrecht/baseline-only/relative.ts';
+import { forwardAppendWords, forwardDeleteBlocks, forwardDeleteSentence, forwardDeleteWords, forwardFlatLetters, forwardFlatRecast, forwardHalfSentenceInsert, forwardRemoveNumbering, forwardRenumberSentences, forwardRepealSentences, forwardWordingBecomesNumber, numberList, oneEditApart, quotedBlocks, splitCombined } from '@landesrecht/importer-bayernrecht/baseline-only/structured.ts';
+import { findInAmtsblattListings } from '@landesrecht/importer-bayernrecht/baseline-only/search.ts';
+import type { Platform } from '@landesrecht/importer-bayernrecht/baseline-only/platform.ts';
 import { parseAmtsblattIssue, parsePublicationHead } from '@landesrecht/importer-bayernrecht/baseline-only/platform.ts';
 import { MISSING_LINKS, recipePath, type BaselineOnlyRecipe } from '@landesrecht/importer-bayernrecht/baseline-only/model.ts';
 import { findInPositivliste, parsePositivliste, type Positivliste } from '@landesrecht/importer-bayernrecht/baseline-only/positivliste.ts';
@@ -232,6 +237,41 @@ describe('baseline-only: Verkündungs-HTML → Blockmodell (Amtsblätter 2009–
     expect(head.attachments.map((attachment) => attachment.title)).toEqual(['Anlage 1: Teilnehmer am Schulversuch „Teilzeitausbildung in der Kinderpflege“', 'Anlage 2: Stundentafel für die Teilzeitausbildung in der Kinderpflege']);
   });
 
+  it('übernimmt eine im HTML vollständige Vorschrift mit Vordruck- und Übersichtsanlagen, Kopferlasse und unbestimmte Anlagen bleiben Review', () => {
+    const converted = convertGazetteHtml(html);
+    const { attachments } = parsePublicationHead(html);
+    // Teilnehmerverzeichnis und Stundentafel tragen keinen Regelungsgehalt (docs/LEGAL_SCOPE.md „Text nur als PDF“).
+    expect(annexDecision(converted, attachments)).toEqual({ ok: true });
+    // Eine unbenannte oder inhaltlich regelnde Anlage ist nicht bestimmbar.
+    expect(annexDecision(converted, [...attachments, { title: 'Anlage 3', href: '/x.pdf' }])).toMatchObject({ ok: false });
+    expect(annexDecision(converted, [{ title: 'Anlage: Richtlinien für die Förderung', href: '/x.pdf' }])).toMatchObject({ ok: false });
+    // Kopferlass: kurzer Text, der Regelungsgehalt steht in der Anlage.
+    const cover = { ...converted, blocks: [{ type: 'paragraphText' as const, text: 'Die Richtlinien werden in der Anlage zu dieser Bekanntmachung bekannt gemacht.' }] };
+    expect(annexDecision(cover, [{ title: 'Anlage: Übersicht', href: '/x.pdf' }])).toMatchObject({ ok: false, detail: expect.stringContaining('Bekanntgabeerlass') });
+    const short = { ...converted, blocks: converted.blocks.slice(0, 2) };
+    expect(annexDecision(short, attachments)).toMatchObject({ ok: false, detail: expect.stringContaining('Kopferlass') });
+  });
+
+  it('bezeichnet eine nur nummerierte Anlage aus dem Textlayer ihrer PDF, nie aus einer anderen Anlage und nie ohne Textlayer', () => {
+    const pdf = (encoding: string, text: string): Uint8Array => {
+      const content = deflateSync(Buffer.from(`BT /F1 12 Tf 72 700 Td (${text}) Tj ET`, 'latin1'));
+      const head = [
+        '%PDF-1.3\n',
+        '1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n',
+        '2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj\n',
+        '3 0 obj << /Type /Page /Parent 2 0 R /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R /MediaBox [0 0 595 842] >> endobj\n',
+        `4 0 obj << /Length ${content.length} /Filter /FlateDecode >>\nstream\n`,
+      ].join('');
+      const tail = `\nendstream\nendobj\n5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /${encoding} >> endobj\ntrailer << /Root 1 0 R >>\n%%EOF\n`;
+      return new Uint8Array(Buffer.concat([Buffer.from(head, 'latin1'), content, Buffer.from(tail, 'latin1')]));
+    };
+    const stundentafel = pdf('WinAnsiEncoding', 'Anlage 2 Stundentafel f\xfcr die Teilzeitausbildung in der Kinderpflege');
+    expect(annexHeading(stundentafel, 'Anlage 2')).toBe('Stundentafel für die Teilzeitausbildung in der Kinderpflege');
+    expect(annexHeading(stundentafel, 'Anlage 1')).toBeUndefined();
+    expect(annexHeading(pdf('WinAnsiEncoding', 'Anlage 12 Richtlinien'), 'Anlage 1')).toBeUndefined();
+    expect(annexHeading(pdf('SymbolEncoding', 'Anlage 2 Stundentafel'), 'Anlage 2')).toBeUndefined();
+  });
+
   it('liest die Inhaltsübersicht einer Ausgabe mit Gliederungsnummer, Erlassdatum, Seite und Prüfsumme', () => {
     const issue = parseAmtsblattIssue(fixture('kwmbl-2016-10-ausgabe'));
     expect(issue.publishedAt).toBe('2016-09-13');
@@ -260,13 +300,15 @@ describe('baseline-only: Beginn nur mit Kalenderdatum, Befristung, Umfang', () =
     expect(ownExpiry(blocks).expiry?.date).toBe('2025-12-31');
   });
 
-  it('errechnet kein Datum aus der Verkündung und erfindet keinen Beginn', () => {
-    expect(ownBegin([paragraph('Diese Bekanntmachung tritt am Tag nach ihrer Bekanntmachung in Kraft.')], [], '2021-03-10')).toMatchObject({ code: 'begin-not-calendar-date' });
+  it('rechnet relativ nur nach der Veröffentlichung (Datum beim Aufrufer belegt) und erfindet keinen Beginn', () => {
+    expect(ownBegin([paragraph('Diese Bekanntmachung tritt am Tag nach ihrer Bekanntmachung in Kraft.')], [], '2021-03-10')).toMatchObject({ relative: { rule: 'day-after-publication' } });
+    expect(ownBegin([paragraph('Diese Bekanntmachung tritt am Tag ihrer Veröffentlichung in Kraft.')], [], '2021-03-10')).toMatchObject({ code: 'begin-not-calendar-date' });
     expect(ownBegin([paragraph('Die Regelungen gelten für alle Schulen.')], [], '2021-03-10')).toMatchObject({ code: 'begin-no-commencement-clause' });
     expect(ownBegin([paragraph('Diese Bekanntmachung tritt am 1. März 2021 in Kraft.'), paragraph('Diese Bekanntmachung tritt am 1. April 2021 in Kraft.')], [], '2021-03-10')).toMatchObject({ code: 'begin-unreadable' });
     // Die Aufhebung einer Vorgängerin ist kein Außerkrafttreten der Norm selbst.
     expect(ownExpiry([paragraph('Mit Ablauf des 28. Februar 2021 tritt die Bekanntmachung vom 23. November 2006 (FMBl. S. 228) außer Kraft.')])).toEqual({});
     expect(ownExpiry([paragraph('Die Richtlinie gilt bis zum Ende des Schuljahres 2019/2020.')])).toMatchObject({ code: 'own-expiry-unreadable' });
+    expect(ownExpiry([paragraph('Diese Bekanntmachung tritt am 1. August 2011 in Kraft und am 31. August 2026 außer Kraft.')]).expiry?.date).toBe('2026-08-30');
   });
 
   it('nimmt nur Verwaltungsvorschriften der Staatsverwaltung auf, Prüffälle bleiben Review', () => {
@@ -287,6 +329,9 @@ describe('baseline-only: Beginn nur mit Kalenderdatum, Befristung, Umfang', () =
     expect(titleCheck('Richtlinien für die Standardisierung des Oberbaus von Verkehrsflächen', 'Die Bekanntmachung der Obersten Baubehörde im Bayerischen Staatsministerium des Innern')).toMatchObject({ consistent: true, issuerOnly: true });
     expect(titleCheck('Wahlen zum Rundfunkrat und Medienrat (Rundfunk- und Medienrat-Bekanntmachung – RMRatBek)', 'Die Rundfunk- und Medienrat-Bekanntmachung (RMRatBek)')).toMatchObject({ consistent: true, sameAbbreviation: 'RMRatBek' });
     expect(titleCheck('Gesamtvertrag zur Vergütung von Ansprüchen nach § 52 a UrhG', 'Bekanntmachung des Bayerischen Staatsministeriums für Unterricht und Kultus über den Schulversuch Gelenkklasse').consistent).toBe(false);
+    // BayMBl. 2024 Nr. 447: „… tritt die Bekanntmachung vom 6. März 2013 (AllMBl. S. 181) außer Kraft“ – nur die Dokumentart.
+    expect(titleCheck('Stiftung eines Staatspreises für vorbildliche Waldbewirtschaftung', 'Bekanntmachung')).toMatchObject({ consistent: true, issuerOnly: true });
+    expect(titleCheck('Stiftung eines Staatspreises für vorbildliche Waldbewirtschaftung', 'Bekanntmachung über die Schulgesundheitspflege').consistent).toBe(false);
   });
 });
 
@@ -330,6 +375,67 @@ describe('baseline-only: Glieder der Kette auf einer Verkündungsseite', () => {
     expect(fulltextQuery('2018-10-12', parseParenthetical('AllMBl. S. 962').primary!)).toBe('12. Oktober 2018 AllMBl. S. 962');
     expect(baymblFulltextUrl('25. Februar 2021 BayMBl. Nr. 182', 0)).toBe('https://www.verkuendung-bayern.de/baymbl/?query=25.%20Februar%202021%20BayMBl.%20Nr.%20182&itemsPerPage=50');
     expect(baymblFulltextUrl('1. März 2023 BayMBl. Nr. 5', 50)).toBe('https://www.verkuendung-bayern.de/baymbl/?query=1.%20M%C3%A4rz%202023%20BayMBl.%20Nr.%205&itemsPerPage=50&offset=51');
+  });
+
+  it('sucht AllMBl.-Normen auch in der belegten Schreibweise „AIIMBl.“', () => {
+    // BayMBl. 2021 Nr. 19 und Nr. 649 zitieren die Kinderbetreuungsfinanzierung-Richtlinie als „(AIIMBl. S. 332)“.
+    expect(fulltextQueries('2017-08-08', parseParenthetical('AllMBl. S. 332').primary!)).toEqual(['8. August 2017 AllMBl. S. 332', '8. August 2017 AIIMBl. S. 332']);
+    expect(fulltextQueries('2021-02-25', parseParenthetical('BayMBl. Nr. 182').primary!)).toEqual(['25. Februar 2021 BayMBl. Nr. 182']);
+  });
+});
+
+/* ------------------------------------------------ Neufassung und Einfügung vorwärts (eng) */
+
+describe('baseline-only: Neufassung und Einfügung vorwärts', () => {
+  const unit = (text: string, label?: string) => ({ index: 0, tag: 'p', className: '', text, heading: false, ...(label ? { label } : {}) });
+  const body = (): NormBodyBlock[] => [
+    {
+      type: 'section',
+      label: '4.',
+      title: 'Prüfung',
+      children: [
+        { type: 'item', label: '4.3', text: '¹Die Prüfung ist schriftlich. ²Sie dauert drei Stunden.' },
+        // KWMBl. 2016 S. 183, Nr. 4.4 (Stammfassung), geändert durch KWMBl. 2017 S. 20.
+        { type: 'item', label: '4.4', text: 'Die Begabtenprüfung im Jahr 2017 kann übergangsweise noch nach der Bekanntmachung über die Begabtenprüfung abgelegt werden.' },
+      ],
+    },
+  ];
+
+  it('liest „die Worte“ älterer Befehle wie „die Wörter“, ohne den zitierten Wortlaut anzutasten', () => {
+    // KWMBl. 2015 S. 18: „In Nr. 14 werden die Worte „zum Wintersemester 2014/15“ durch die Worte „zum Wintersemester 2017/18“ ersetzt.“
+    expect(commandWording('In Nr. 14 werden die Worte „zum Wintersemester 2014/15“ durch die Worte „zum Wintersemester 2017/18“ ersetzt.')).toBe('In Nr. 14 werden die Wörter „zum Wintersemester 2014/15“ durch die Wörter „zum Wintersemester 2017/18“ ersetzt.');
+    expect(commandWording('In Nr. 2 werden die Wörter „die Worte des Eides“ gestrichen.')).toBe('In Nr. 2 werden die Wörter „die Worte des Eides“ gestrichen.');
+  });
+
+  it('fasst ein Textglied ohne Untergliederung neu – Wortlaut aus der Verkündung, Rundlauf über die Schritte', () => {
+    const before = body();
+    const step = forwardStructural(before, { text: 'Ziffer 4.4 wird wie folgt gefasst:', quoted: [unit('„Die Begabtenprüfung im Jahr 2017, 2018 und 2019 wird übergangsweise noch nach der Bekanntmachung über die Begabtenprüfung abgelegt.“')] }, [], 'Ziffer 4.4 wird wie folgt gefasst: …');
+    expect(step).toMatchObject({ formula: 'recast', location: 'Nr. 4.4', operation: { kind: 'replace', to: 'Die Begabtenprüfung im Jahr 2017, 2018 und 2019 wird übergangsweise noch nach der Bekanntmachung über die Begabtenprüfung abgelegt.' } });
+    if ('error' in step) throw new Error(step.error);
+    const after = replaySteps(before, [{ id: 's1', scope: step.scope, operation: step.operation }]);
+    expect(after[0]!.children![1]!.text).toContain('2018 und 2019');
+    expect(after[0]!.children![0]).toEqual(before[0]!.children![0]);
+  });
+
+  it('fasst einen bezeichneten Satz neu, nur mit seiner Satznummer', () => {
+    const before = body();
+    const step = forwardStructural(before, { text: 'In Nr. 4.3 wird Satz 2 wie folgt gefasst: „²Sie dauert vier Stunden.“', quoted: [] }, [], '…');
+    expect(step).toMatchObject({ error: expect.any(String) });
+    const direct = forwardStructural(before, { text: 'Nr. 4.3 Satz 2 wird wie folgt gefasst: „²Sie dauert vier Stunden.“', quoted: [] }, [], '…');
+    if ('error' in direct) throw new Error(direct.error);
+    expect(replaySteps(before, [{ id: 's1', scope: direct.scope, operation: direct.operation }])[0]!.children![0]!.text).toBe('¹Die Prüfung ist schriftlich. ²Sie dauert vier Stunden.');
+  });
+
+  it('fügt ein gleichartiges Textglied mit freier Bezeichnung an – und rät bei Umnummerierung nicht', () => {
+    const before = body();
+    const step = forwardStructural(before, { text: 'Der Nr. 4 wird folgende Nr. 4.5 angefügt:', quoted: [unit('„Die Ergebnisse werden bekannt gegeben.“', '„4.5')] }, [], '…');
+    if ('error' in step) throw new Error(step.error);
+    expect(step.operation).toMatchObject({ kind: 'insert-block', parent: [0], index: 2, block: { type: 'item', label: '4.5', text: 'Die Ergebnisse werden bekannt gegeben.' } });
+    expect(replaySteps(before, [{ id: 's1', scope: step.scope, operation: step.operation }])[0]!.children).toHaveLength(3);
+    expect(forwardStructural(before, { text: 'Der Nr. 4 wird folgende Nr. 4.4 angefügt:', quoted: [unit('„x“', '„4.4')] }, [], '…')).toMatchObject({ error: expect.stringContaining('schon vergeben') });
+    // Neufassung eines Glieds mit Untergliederung oder eines Bereichs bleibt offen.
+    expect(forwardStructural(before, { text: 'Nr. 4 wird wie folgt gefasst:', quoted: [unit('„4. Neu“')] }, [], '…')).toMatchObject({ error: expect.any(String) });
+    expect(forwardStructural(before, { text: 'Die Nrn. 4.3 bis 4.4 werden wie folgt gefasst:', quoted: [unit('„x“'), unit('„y“')] }, [], '…')).toMatchObject({ error: expect.any(String) });
   });
 });
 
@@ -408,6 +514,189 @@ describe('baseline-only: Positivliste der VwVWBek (Textlayer, kein OCR)', () => 
 });
 
 /* ------------------------------------------------------------------------- Schreibweg (temporär) */
+
+/* ------------------------------------------------------------------------------------ Lauf 7 */
+
+describe('baseline-only: relatives Inkrafttreten (Datum der Verkündung selbst, gleich dem Register)', () => {
+  it('liest „am Tag nach der Veröffentlichung“ und rechnet nur mit dem Datum, das die Verkündung selbst druckt', () => {
+    const html = fixture('baymbl-2023-295');
+    const converted = convertGazetteHtml(html);
+    const own = ownBegin(converted.blocks, gazetteUnits(html), '2023-06-14');
+    expect(own).toMatchObject({ relative: { rule: 'day-after-publication', evidence: 'Diese Bekanntmachung tritt am Tag nach der Veröffentlichung in Kraft.' } });
+    expect(ownPublicationDate(html, 'BayMBl')).toBe('2023-06-14');
+    expect(relativeDate('day-after-publication', '2023-06-14')).toBe('2023-06-15');
+    expect(relativeDate('first-day-of-following-month', '2023-06-14')).toBe('2023-07-01');
+    expect(checkedPublicationDate({ ownDate: '2023-06-14', registerDate: '2023-06-14', url: 'u', registerSource: 'Gliederungssuche' })).toMatchObject({ ok: true, date: '2023-06-14' });
+    expect(checkedPublicationDate({ ownDate: '2023-06-14', registerDate: '2023-06-15', url: 'u', registerSource: 'Gliederungssuche' })).toMatchObject({ ok: false });
+    expect(checkedPublicationDate({ registerDate: '2023-06-14', url: 'u', registerSource: 'Gliederungssuche' })).toMatchObject({ ok: false });
+  });
+
+  it('nimmt „am Tag der Veröffentlichung“ nicht als relative Regel und liest den Ausgabevermerk der Amtsblätter', () => {
+    expect(relativeRule('Die Dienstvereinbarung tritt am Tag nach ihrer Veröffentlichung in Kraft.')).toBe('day-after-publication');
+    expect(relativeRule('Diese Bekanntmachung tritt am ersten Tag des auf die Verkündung folgenden Monats in Kraft.')).toBe('first-day-of-following-month');
+    expect(relativeRule('Diese Bekanntmachung tritt am Tag der Veröffentlichung in Kraft.')).toBeUndefined();
+    // Seitenkopf der Amtsblätter nennt das Erlassdatum; das Veröffentlichungsdatum steht im Ausgabevermerk.
+    expect(ownPublicationDate(fixture('kwmbl-2016-10-194'), 'KWMBl')).toBe('2016-09-13');
+  });
+
+  it('liest „tritt mit am 22. Juni 2023 in Kraft“ als den einen Tag, den beide Lesarten ergeben', () => {
+    expect(repairOwnCommencement('Die Richtlinie tritt mit am 22. Juni 2023 in Kraft; sie tritt mit Ablauf des 31. Dezember 2025 außer Kraft.')).toMatchObject({ sentence: 'Die Richtlinie tritt am 22. Juni 2023 in Kraft; sie tritt mit Ablauf des 31. Dezember 2025 außer Kraft.', defects: [expect.stringContaining('beide Lesarten')] });
+  });
+});
+
+describe('baseline-only: Umfang nach docs/LEGAL_SCOPE.md (nur wo eindeutig)', () => {
+  it('schließt Veröffentlichungshinweise zu Dokumenten der Rundfunkanstalten aus', () => {
+    const head = { title: 'Telemedienkonzept des Bayerischen Rundfunks „Änderung der Verweildauern“', issuer: 'Bekanntmachung des Bayerischen Staatsministeriums für Wissenschaft und Kunst' };
+    const text = 'Das Telemedienkonzept des Bayerischen Rundfunks „Änderung der Verweildauern“ ist nach rechtsaufsichtlicher Prüfung durch das Staatsministerium gemäß § 32 Abs. 7 Satz 3 MStV auf www.br.de veröffentlicht worden und kann unter https://www.br.de/unternehmen/inhalt abgerufen werden.';
+    expect(scopeDecision(head, text)).toMatchObject({ ok: false, code: 'scope-publication-notice' });
+    expect(MISSING_LINKS['scope-publication-notice']).toBe('out-of-scope');
+    // Ohne den Text bleibt es beim Prüffall.
+    expect(scopeDecision(head)).toMatchObject({ ok: false, code: 'scope-normativity-review' });
+    const radio = 'Die in der ARD zusammengeschlossenen Landesrundfunkanstalten und das Deutschlandradio veröffentlichen gemäß § 29 Abs. 4 des Medienstaatsvertrags (MStV) in den amtlichen Verkündungsblättern der Länder eine Auflistung der von allen Anstalten insgesamt veranstalteten Hörfunkprogramme im Jahr 2021.';
+    expect(scopeDecision({ title: 'Veröffentlichung der Hörfunkprogramme der Landesrundfunkanstalten der ARD und des Deutschlandradios' }, radio)).toMatchObject({ code: 'scope-publication-notice' });
+  });
+
+  it('nimmt Zeugnismuster als Vorschrift mit Musteranlagen auf, Dienstvereinbarungen und andere Muster bleiben Prüffall', () => {
+    const issuer = 'Bekanntmachung des Bayerischen Staatsministeriums für Unterricht und Kultus';
+    const text = '1. ¹Die nach der Schulordnung für die Berufsschulen in Bayern (Berufsschulordnung – BSO) vom 30. August 2008 (GVBl. S. 631, BayRS 2236-2-1-K) in der jeweils geltenden Fassung zu erteilenden Zeugnisse sind nach den in der Anlage beigefügten Mustern im Format DIN A 4 auszustellen, von denen aus drucktechnischen Gründen geringfügig abgewichen werden kann.';
+    expect(scopeDecision({ title: 'Vollzug der Schulordnung über die Berufsschulen in Bayern (Berufsschulordnung – BSO); hier: Zeugnismuster', issuer }, text)).toMatchObject({ ok: true });
+    expect(scopeDecision({ title: 'Vollzug der Schulordnung über die Berufsschulen in Bayern; hier: Zeugnismuster', issuer }, 'Die Muster werden empfohlen.')).toMatchObject({ ok: false, code: 'scope-normativity-review' });
+    expect(scopeDecision({ title: 'Dienstvereinbarung über Telearbeit und Mobile Arbeit', issuer: 'Bekanntmachung des Bayerischen Staatsministeriums der Justiz' }, 'x')).toMatchObject({ code: 'scope-normativity-review' });
+    expect(scopeDecision({ title: 'Satzung der Stiftung Regensburger Centrum für Interventionelle Immunologie (RCI)', issuer: 'Bekanntmachung des Bayerischen Staatsministeriums für Wissenschaft und Kunst' }, 'x')).toMatchObject({ code: 'scope-normativity-review' });
+    // Erklärt der Text die Anlagen zu Mustern, sind alle Anlagen Formulare – auch bei kurzem Text.
+    const converted = { ...convertGazetteHtml(fixture('kwmbl-2016-10-194')), blocks: [{ type: 'paragraphText' as const, text }] };
+    expect(annexDecision(converted, [{ title: 'Anlage 4.2: Qualifikation durch Berufsschule – mehrsprachig', href: '/x.pdf' }])).toEqual({ ok: true, declaredForms: true });
+    expect(plainText(converted.blocks)).toBe(text);
+  });
+});
+
+describe('baseline-only: Ausgangsverkündung ohne Fundstelle (Inhaltsübersichten der Amtsblätter)', () => {
+  const page = (url: string, html: string) => ({ url, finalUrl: url, html, bytes: new TextEncoder().encode(html), sha256: 'x'.repeat(64), byteLength: html.length, contentType: 'text/html', retrievedAt: '2026-09-18T00:00:00Z', fromCache: true });
+  const platform = (pages: Record<string, string>): Platform => ({
+    stats: { networkRequests: 0, cacheHits: 0, notFound: 0, errors: 0, pending: [] } as unknown as Platform['stats'],
+    get: async (url: string) => page(url, pages[url] ?? (url.includes('/amtsblatt/?volume=') ? '<html><body><table></table></body></html>' : '')),
+  });
+  const pages = {
+    'https://www.verkuendung-bayern.de/amtsblatt/?volume=2016&journal=4': fixture('kwmbl-2016-jahrgang'),
+    'https://www.verkuendung-bayern.de/amtsblatt/ausgabe/kwmbl-2016-10/': fixture('kwmbl-2016-10-ausgabe'),
+  };
+
+  it('findet genau eine Veröffentlichung mit Erlassdatum und passendem Titel, nie über die Erlassstelle allein', async () => {
+    const found = await findInAmtsblattListings(platform(pages), { documentDate: '2016-07-27', citedTitle: 'Bekanntmachung des Bayerischen Staatsministeriums für Bildung und Kultus, Wissenschaft und Kunst über den Schulversuch „Teilzeitausbildung in der Kinderpflege“' });
+    expect(found).toMatchObject({ ok: true, match: { reference: { organ: 'KWMBl', explicitVolume: 2016, kind: 'page', position: 194 } } });
+    const issuerOnly = await findInAmtsblattListings(platform(pages), { documentDate: '2016-07-27', citedTitle: 'Bekanntmachung des Bayerischen Staatsministeriums für Bildung und Kultus, Wissenschaft und Kunst' });
+    expect(issuerOnly).toMatchObject({ ok: false });
+    expect(await findInAmtsblattListings(platform(pages), { documentDate: '2008-07-27', citedTitle: 'x' })).toMatchObject({ ok: false });
+  });
+});
+
+describe('baseline-only: gegliederte Neufassung und Einfügung vorwärts (BayMBl. 2023 Nr. 495 zu Nr. 266)', () => {
+  it('fasst einen Bereich neu, fügt gegliederte Glieder ein und nummeriert das bisherige um – Rundlauf und Nachspielen exakt', () => {
+    const base = convertGazetteHtml(fixture('baymbl-2023-266'));
+    const before = sourceBody(base);
+    const identity = { documentId: 'baymbl-2023-266', title: base.head.title, abbreviations: [], documentDate: '2023-05-17', references: ['BayMBl. 2023 Nr. 266', 'BayMBl. Nr. 266'] };
+    const attempt = applyAmendment(before, gazetteUnits(fixture('baymbl-2023-495')), identity, 'a1-');
+    expect(attempt).toMatchObject({ ok: true });
+    expect(attempt.steps.map((step) => step.formula)).toEqual(['insert-words', 'replace-words', 'recast', 'insert-unit', 'insert-unit', 'relabel']);
+    const flat = (blocks: readonly NormBodyBlock[], prefix = ''): string[] => blocks.flatMap((block) => [`${prefix}${`${block.type} ${block.label ?? ''} ${block.title ?? ''}`.trim()}`, ...flat(block.children ?? [], `${prefix}  `)]);
+    const shape = flat(attempt.after!);
+    expect(shape).toContain('  section 1.1 Arbeitsgericht München');
+    expect(shape).toContain('    paragraphText');
+    expect(shape).toContain('    item 1.4.4');
+    expect(shape).toContain('section 2. Einführung der elektronischen Akte in der Sozialgerichtsbarkeit');
+    expect(shape).toContain('  section 2.2 Sozialgericht Nürnberg');
+    expect(shape).toContain('section 3. Inkrafttreten');
+    expect(replaySteps(before, attempt.steps)).toEqual(attempt.after);
+  });
+
+  it('baut gegliederte Glieder nur nach einer Vorlage und nur mit lückenloser Nummerierung', () => {
+    const model = { type: 'section' as const, label: '1.', title: 'Alt', children: [{ type: 'item' as const, label: '1.1', text: 'a' }] };
+    const built = quotedBlocks([{ label: '2.', text: 'Neu' }, { text: 'Vorspann' }, { label: '2.1', text: 'eins' }, { label: 'a)', text: 'Buchstabe' }], ['2'], model);
+    expect(built).toEqual({ blocks: [{ type: 'section', label: '2.', title: 'Neu', children: [{ type: 'paragraphText', text: 'Vorspann' }, { type: 'item', label: '2.1', text: 'eins', children: [{ type: 'item', label: 'a)', text: 'Buchstabe' }] }] }] });
+    expect(quotedBlocks([{ label: '2.', text: 'Neu' }, { label: '2.2', text: 'Lücke' }], ['2'], model)).toMatchObject({ error: expect.stringContaining('lückenlos') });
+    // Ohne Vorlage unter einem Abschnitt wird nichts geraten; unter einem Glied wird ein nummerierter Absatz Glied mit Text.
+    expect(quotedBlocks([{ label: '2.', text: 'Neu' }, { label: '2.1', text: 'x' }], ['2'], { type: 'section', label: '1.', title: 'Alt', children: [] })).toMatchObject({ error: expect.stringContaining('Vorlage') });
+    expect(quotedBlocks([{ label: '2.', text: 'Neu' }, { label: '2.1', text: 'x' }, { label: '2.1.1', text: 'tief' }], ['2'], model)).toMatchObject({ blocks: [{ children: [{ label: '2.1', children: [{ type: 'item', label: '2.1.1', text: 'tief' }] }] }] });
+    expect(numberList('Die Nrn. 1.1 bis 1.3')).toEqual(['1.1', '1.2', '1.3']);
+    expect(numberList('Nrn. 1.4.3 und 1.4.4')).toEqual(['1.4.3', '1.4.4']);
+  });
+});
+
+describe('baseline-only: Streichung, Satzaufhebung, Überschriften, Orte', () => {
+  const body: NormBodyBlock[] = [
+    { type: 'item', label: '6.4', text: 'Antragsfrist', children: [{ type: 'paragraphText', text: 'Anträge sind bis 31. August 2019 zu stellen.' }] },
+    { type: 'item', label: '14.', text: 'Laufzeit', children: [{ type: 'paragraphText', text: 'Der Schulversuch beginnt 2011. Über eine Fortsetzung des Schulversuchs wird bis zum Ende des Sommersemsters 2013 entschieden.' }] },
+    { type: 'item', label: '4.3', text: '¹Nach Nr. 3 ANBest-I, ANBest-P, ANBest-K gilt Folgendes. ²Zweiter Satz. ³Dritter Satz.' },
+  ];
+  it('streicht einen zitierten Satz – bei einem Zitierfehler von einem Zeichen den Satz der Stammfassung, mit Beleg', () => {
+    const result = forwardDeleteSentence(body, 'Der Satz „Über eine Fortsetzung des Schulversuchs wird bis zum Ende des Sommersemesters 2013 entschieden.“ wird gestrichen.', [{ kind: 'nummer', value: '14' }]);
+    expect(result).toMatchObject({ steps: [{ operation: { kind: 'replace-text', after: 'Der Schulversuch beginnt 2011.' }, location: expect.stringContaining('Sommersemsters') }] });
+    expect(oneEditApart('Sommersemesters', 'Sommersemsters')).toBe(true);
+    expect(oneEditApart('Sommersemester', 'Wintersemester')).toBe(false);
+  });
+
+  it('streicht Wörter vorwärts genau einmal, hebt Sätze mit ihrer Nummer auf und liest die Überschriftzeile als Überschrift', () => {
+    expect(forwardDeleteWords(body, 'In Nr. 4.3 Satz 1 wird die Angabe „ , ANBest-K“ gestrichen.', [])).toMatchObject({ steps: [{ operation: { after: '¹Nach Nr. 3 ANBest-I, ANBest-P gilt Folgendes. ²Zweiter Satz. ³Dritter Satz.' } }] });
+    expect(forwardRepealSentences(body, 'Satz 2 wird aufgehoben.', [{ kind: 'nummer', value: '4.3' }])).toMatchObject({ steps: [{ operation: { after: '¹Nach Nr. 3 ANBest-I, ANBest-P, ANBest-K gilt Folgendes. ³Dritter Satz.' } }] });
+    expect(headingScope(body, [{ kind: 'nummer', value: '6.4' }, { kind: 'ueberschrift', value: '' }])).toMatchObject({ fields: [{ path: [0], key: 'text' }] });
+    expect(headingScope(body, [{ kind: 'nummer', value: '4.3' }, { kind: 'ueberschrift', value: '' }])).toBeUndefined();
+    expect(inheritLocations([[{ kind: 'nummer', value: '5.3' }, { kind: 'satz', value: '1' }], [{ kind: 'satz', value: '2' }]])).toEqual([[{ kind: 'nummer', value: '5.3' }, { kind: 'satz', value: '1' }], [{ kind: 'nummer', value: '5.3' }, { kind: 'satz', value: '2' }]]);
+    expect(commandWording('In Nr. 4.1 wird der Klammerzusatz „(FAG)“ durch den Klammerzusatz „(BayFAG)“ ersetzt.')).toBe('In Nr. 4.1 wird die Angabe „(FAG)“ durch die Angabe „(BayFAG)“ ersetzt.');
+    expect(applyToTitle('Richtlinie zur Förderung von Investitionen 2017 bis 2020', { kind: 'replace', from: '2020', to: '2021' }, 't1')).toBe('Richtlinie zur Förderung von Investitionen 2017 bis 2021');
+  });
+
+  it('teilt zusammengesetzte Befehle, streicht die Satznummer zuletzt und grenzt mit dem Halbsatz ein', () => {
+    expect(splitCombined('In Satz 2 wird die Satznummerierung und nach dem Wort „können“ die Wörter „im Übrigen“ gestrichen und nach dem Wort „Baumaßnahme“ das Wort „nur“ eingefügt.')).toEqual([
+      'In Satz 2 werden nach dem Wort „können“ die Wörter „im Übrigen“ gestrichen.',
+      'Nach dem Wort „Baumaßnahme“ das Wort „nur“ eingefügt.',
+      'In Satz 2 wird die Satznummerierung gestrichen.',
+    ]);
+    expect(splitCombined('Die Wörter „vom Staatsministerium genehmigte“ werden gestrichen und nach dem Wort „Wörterbücher“ im ersten Halbsatz werden die Wörter „x“ eingefügt.')).toEqual(['Die Wörter „vom Staatsministerium genehmigte“ werden gestrichen.', 'Nach dem Wort „Wörterbücher“ im ersten Halbsatz werden die Wörter „x“ eingefügt.']);
+    expect(splitCombined('In Satz 1 wird das Wort „und“ durch das Wort „oder“ ersetzt.')).toBeUndefined();
+    const field: NormBodyBlock[] = [{ type: 'item', label: '1.3', text: 'ein- und zweisprachige Wörterbücher; elektronische Wörterbücher dürfen nicht verwendet werden;' }];
+    expect(forwardHalfSentenceInsert(field, 'Nach dem Wort „Wörterbücher“ im ersten Halbsatz werden die Wörter „sowie ein Bedeutungswörterbuch“ eingefügt.', [[{ kind: 'nummer', value: '1.3' }]])).toMatchObject({ steps: [{ operation: { after: 'ein- und zweisprachige Wörterbücher sowie ein Bedeutungswörterbuch; elektronische Wörterbücher dürfen nicht verwendet werden;' } }] });
+    const numbered: NormBodyBlock[] = [{ type: 'item', label: '5.4', text: '²Im Übrigen können Maßnahmen gefördert werden.' }];
+    expect(forwardRemoveNumbering(numbered, 'In Satz 2 wird die Satznummerierung gestrichen.', [{ kind: 'nummer', value: '5.4' }])).toMatchObject({ steps: [{ operation: { after: 'Im Übrigen können Maßnahmen gefördert werden.' } }] });
+    expect(repairCommandVerb('Folgende Nr. 1.34.2 wir angefügt: „wir angefügt“')).toBe('Folgende Nr. 1.34.2 wird angefügt: „wir angefügt“');
+  });
+
+  it('hebt ganze Glieder auf, fügt Wörter an, nummeriert Sätze über Felder um und fasst flache Aufzählungsglieder neu', () => {
+    const list: NormBodyBlock[] = [{ type: 'item', label: '1.', text: 'Hilfsmittel', children: [{ type: 'item', label: '1.1', text: 'a;' }, { type: 'item', label: '1.2', text: 'b;' }, { type: 'item', label: '1.3', text: 'c;' }] }];
+    expect(forwardDeleteBlocks(list, 'Nr. 1.2 wird gestrichen.', [])).toMatchObject({ steps: [{ operation: { kind: 'replace-blocks', parent: [0], index: 1, after: [] } }] });
+    expect(forwardAppendWords(list, 'Die Wörter „genauere Regelungen;“ werden angefügt.', [{ kind: 'nummer', value: '1.3' }])).toMatchObject({ steps: [{ operation: { kind: 'append', text: 'genauere Regelungen;' } }] });
+    const item: NormBodyBlock[] = [{ type: 'item', label: '2.3.1', text: '¹A. ²B. ³N1. ⁴N2. ⁵N3.', children: [{ type: 'paragraphText', text: '³Alt drei. ⁴Alt vier. ⁵Alt fünf.' }, { type: 'paragraphText', text: '⁶Alt sechs.' }] }];
+    const inserted = new Map([['0:text', new Set([3, 4, 5])]]);
+    const renumbered = forwardRenumberSentences(item, { kind: 'renumber-sentences', context: [{ kind: 'nummer', value: '2.3.1' }], pairs: [[3, 6], [4, 7], [5, 8], [6, 9]] }, inserted);
+    expect('steps' in renumbered && replaySteps(item, renumbered.steps as never)).toEqual([{ type: 'item', label: '2.3.1', text: '¹A. ²B. ³N1. ⁴N2. ⁵N3.', children: [{ type: 'paragraphText', text: '⁶Alt drei. ⁷Alt vier. ⁸Alt fünf.' }, { type: 'paragraphText', text: '⁹Alt sechs.' }] }]);
+    const flat: NormBodyBlock[] = [{ type: 'item', label: '3.', text: 'Wahlberechtigt:', children: [
+      { type: 'item', label: 'c)', text: 'Nach Nr. 10:' }, { type: 'item', label: 'aa)', text: 'Schriftsteller:' }, { type: 'paragraphText', text: 'Verband' },
+      { type: 'item', label: 'cc)', text: 'Musik-Organisationen:' }, { type: 'paragraphText', text: 'Die im Musikrat vertretenen' }, { type: 'item', label: 'd)', text: 'Nach Nr. 11:' },
+    ] }];
+    const units = gazetteUnits('<article id="documentbox"><dl><dt>1.</dt><dd>x</dd></dl><p>„cc) Musik-Organisationen: Bayerischer Musikrat e. V.“</p></article>').slice(-1);
+    const recast = forwardFlatRecast(flat, 'Nr. 3 Buchst. c Doppelbuchst. cc wird wie folgt gefasst:', [{ ...units[0]!, label: '„cc)', text: 'Musik-Organisationen: Bayerischer Musikrat e. V.“' }], []);
+    expect(recast).toMatchObject({ steps: [{ operation: { kind: 'replace-blocks', index: 3, before: [{ label: 'cc)' }, { type: 'paragraphText' }], after: [{ type: 'item', label: 'cc)', text: 'Musik-Organisationen: Bayerischer Musikrat e. V.' }] } }] });
+    // BayMBl. 2021 Nr. 740: „Nr. 3 Buchst. f Doppelbuchst. cc wird wie folgt geändert: Dreifachbuchst. ccc wird aufgehoben.
+    // Die Dreifachbuchst. ddd bis eee werden die Dreifachbuchst. ccc bis ddd.“ – nur unter f) cc), nicht unter c) cc).
+    const triple: NormBodyBlock[] = [{ type: 'item', label: '3.', text: 'x', children: [
+      { type: 'item', label: 'c)', text: 'c' }, { type: 'item', label: 'cc)', text: 'c-cc' }, { type: 'item', label: 'ccc)', text: 'c-cc-ccc' },
+      { type: 'item', label: 'f)', text: 'f' }, { type: 'item', label: 'cc)', text: 'f-cc' }, { type: 'item', label: 'aaa)', text: '1' }, { type: 'item', label: 'bbb)', text: '2' }, { type: 'item', label: 'ccc)', text: '3' }, { type: 'item', label: 'ddd)', text: '4' }, { type: 'item', label: 'eee)', text: '5' },
+    ] }];
+    const context = [[{ kind: 'nummer' as const, value: '3' }, { kind: 'buchstabe' as const, value: 'f' }, { kind: 'doppelbuchstabe' as const, value: 'cc' }]];
+    const removed = forwardFlatLetters(triple, 'Dreifachbuchst. ccc wird aufgehoben.', context);
+    expect(removed).toMatchObject({ steps: [{ operation: { kind: 'replace-blocks', index: 7, before: [{ label: 'ccc)', text: '3' }], after: [] } }] });
+    const afterRemoval = replaySteps(triple, (removed as { steps: never[] }).steps);
+    const renamed = forwardFlatLetters(afterRemoval, 'Die Dreifachbuchst. ddd bis eee werden die Dreifachbuchst. ccc bis ddd.', context);
+    expect(replaySteps(afterRemoval, (renamed as { steps: never[] }).steps)[0]!.children!.slice(5).map((block) => `${block.label} ${block.text}`)).toEqual(['aaa) 1', 'bbb) 2', 'ccc) 4', 'ddd) 5']);
+  });
+
+  it('macht aus dem einzigen Absatz eines Glieds dessen erste Unternummer und liest dezimale Bereiche als Aufzählung', () => {
+    const court: NormBodyBlock[] = [{ type: 'item', label: '1.9', text: 'Amtsgericht Landshut', children: [{ type: 'paragraphText', text: 'In Verfahren nach der ZPO ab dem 1. Juni 2021.' }] }];
+    expect(forwardWordingBecomesNumber(court, 'Der Wortlaut wird Nr. 1.9.1.', [{ kind: 'nummer', value: '1.9' }])).toMatchObject({ steps: [{ operation: { kind: 'replace-blocks', after: [{ label: '1.9', children: [{ type: 'item', label: '1.9.1', text: 'In Verfahren nach der ZPO ab dem 1. Juni 2021.' }] }] } }] });
+    expect(forwardWordingBecomesNumber(court, 'Der Wortlaut wird Nr. 1.9.2.', [{ kind: 'nummer', value: '1.9' }])).toMatchObject({ error: expect.stringContaining('erste Unternummer') });
+    expect(expandNumberRanges('In Nrn. 1.17 bis 1.20 wird jeweils das Wort „Nrn. 1 bis 3“ ersetzt.')).toBe('In Nrn. 1.17, 1.18, 1.19 und 1.20 wird jeweils das Wort „Nrn. 1 bis 3“ ersetzt.');
+    expect(expandNumberRanges('Die Nrn. 1.1 bis 2.3 werden aufgehoben.')).toBe('Die Nrn. 1.1 bis 2.3 werden aufgehoben.');
+  });
+});
 
 const REPO = join(import.meta.dirname, '..', '..');
 const PLATFORM = 'https://www.verkuendung-bayern.de';
@@ -535,5 +824,14 @@ describe('baseline-only: Schreibweg in einem temporären Bestand', () => {
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
+  });
+});
+
+describe('Steuerzeichen in Verkündungsseiten', () => {
+  it('sind nie Text: NUL-Bytes nach dem letzten Absatz (jmbl-2014-5-66) verschwinden, Leerraum bleibt', async () => {
+    const { normalizeText } = await import('@landesrecht/importer-bayernrecht/baseline-only/html.ts');
+    const nul = String.fromCharCode(0);
+    expect(normalizeText(nul.repeat(8))).toBe('');
+    expect(normalizeText(`Diese Bekanntmachung${nul} tritt am 1. Juli 2014 in Kraft.${String.fromCharCode(31)}`)).toBe('Diese Bekanntmachung tritt am 1. Juli 2014 in Kraft.');
   });
 });

@@ -151,3 +151,12 @@ describe('D1-Store gegen lokale SQLite-Projektion', () => {
     expect(SEARCH_UNIT_COLUMNS[0]).toBe('norm_id');
   });
 });
+
+describe('SQL-Literale für Wrangler-Dateien', () => {
+  it('lehnt ein NUL-Zeichen ab, statt eine Datei stillschweigend abschneiden zu lassen', async () => {
+    const { sqlLiteral } = await import('@landesrecht/runtime/projection.ts');
+    expect(sqlLiteral("O'Brien")).toBe("'O''Brien'");
+    expect(() => sqlLiteral(`Text${String.fromCharCode(0)}Rest`)).toThrow(/NUL-Zeichen/u);
+    expect(sqlLiteral('Zeile 1\nZeile 2')).toBe("'Zeile 1\nZeile 2'");
+  });
+});

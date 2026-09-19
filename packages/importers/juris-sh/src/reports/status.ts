@@ -20,6 +20,10 @@ import { checkEnumeration, ENUMERABLE_AREAS, readEnumeration, type EnumerableAre
 import { ROBOTS_RECORD_PATH, SOURCE_INVENTORY_JSON_PATH, type RobotsRecord, type SourceInventory } from '../enumerate/run.ts';
 import { isBaselineOnlyCandidate, isPostBaseline, type LedgerEvent } from '../events/ledger.ts';
 import { ADDRESSABILITY_PATH, readAddressability, type AddressabilityReport } from '../probe/addressability.ts';
+import { EXPORTS_PATH, readExportDiscovery, type ExportDiscoveryReport } from '../probe/exports.ts';
+import { INVENTORY_JSON_PATH, type InventoryReport } from '../pipeline/bulk.ts';
+import { CORPUS_STATE_PATH, readCorpusState, type CorpusState } from '../pipeline/corpus.ts';
+import { SAMPLE_PATH, type SampleReport } from '../pipeline/sample.ts';
 
 export const CONTENT_DIR = `content/norms/${TARGET_JURISDICTION}`;
 export const LEDGER_FILE = `${IMPORT_DATA_DIR}/events/ledger.json`;
@@ -29,6 +33,13 @@ export interface AdapterSnapshot {
   inventory?: SourceInventory;
   robots?: RobotsRecord;
   addressability?: AddressabilityReport;
+  /** Öffentliche Ausgabewege (PDF-Ausgabe über die anonyme Sitzung eines Permalinks). */
+  exports?: ExportDiscoveryReport;
+  sample?: SampleReport;
+  corpus?: CorpusState;
+  corpusInventory?: InventoryReport;
+  /** Normverzeichnisse unter content/norms/nsh. */
+  contentSlugs: string[];
   manifest: ImportManifest;
   review: ReviewQueue;
   ledger?: { registerAsOf?: string; events: LedgerEvent[] };
@@ -72,12 +83,22 @@ export async function readSnapshot(root: string): Promise<AdapterSnapshot> {
   const inventory = await readJsonFile<SourceInventory>(join(root, SOURCE_INVENTORY_JSON_PATH));
   const robots = await readJsonFile<RobotsRecord>(join(root, ROBOTS_RECORD_PATH));
   const addressability = await readAddressability(root);
+  const exports = await readExportDiscovery(root);
+  const sample = await readJsonFile<SampleReport>(join(root, SAMPLE_PATH));
+  const corpus = await readCorpusState(root);
+  const corpusInventory = await readJsonFile<InventoryReport>(join(root, INVENTORY_JSON_PATH));
+  const contentSlugs = (await readdir(join(root, CONTENT_DIR), { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isDirectory() && !entry.name.startsWith('.')).map((entry) => entry.name).sort();
   const accessDoc = await readText(join(root, ACCESS_CONSTRAINT_DOC));
   return {
     enumeration,
     ...(inventory ? { inventory } : {}),
     ...(robots ? { robots } : {}),
     ...(addressability ? { addressability } : {}),
+    ...(exports ? { exports } : {}),
+    ...(sample ? { sample } : {}),
+    ...(Object.keys(corpus.documents).length > 0 ? { corpus } : {}),
+    ...(corpusInventory ? { corpusInventory } : {}),
+    contentSlugs,
     manifest: await readManifest(root),
     review: await readReviewQueue(root),
     ...(ledger?.events ? { ledger: { events: ledger.events, ...(ledger.sources?.find((source) => source.id === 'gvobl-systematische-uebersicht')?.asOf ? { registerAsOf: ledger.sources.find((source) => source.id === 'gvobl-systematische-uebersicht')!.asOf! } : {}) } } : {}),
@@ -87,30 +108,53 @@ export async function readSnapshot(root: string): Promise<AdapterSnapshot> {
   };
 }
 
+
 /* ------------------------------------------------------------------------------------------------ */
 /* Stichtagsklassifikation                                                                          */
 
-export const BASELINE_CLASSES = ['unchanged-since-baseline', 'changed-after-baseline', 'enacted-after-baseline', 'undetermined'] as const;
+export const BASELINE_CLASSES = ['unchanged-since-baseline', 'changed-after-baseline', 'repealed-after-baseline', 'enacted-after-baseline', 'repealed-before-baseline', 'undetermined'] as const;
 export type BaselineClass = (typeof BASELINE_CLASSES)[number];
 
 export interface BaselineClassification {
   byArea: Record<EnumerableArea, Record<BaselineClass, number>>;
-  /** Grund für `undetermined`, je Bereich einheitlich (kein Dokument ist inhaltlich lesbar). */
+  /** Gründe für `undetermined` mit Anzahl. */
   undeterminedReason: string;
   historicalVersions: { recovered: number; note: string };
 }
 
 export function classifyBaseline(snapshot: AdapterSnapshot): BaselineClassification {
-  const empty = (): Record<BaselineClass, number> => ({ 'unchanged-since-baseline': 0, 'changed-after-baseline': 0, 'enacted-after-baseline': 0, undetermined: 0 });
+  const empty = (): Record<BaselineClass, number> => Object.fromEntries(BASELINE_CLASSES.map((key) => [key, 0])) as Record<BaselineClass, number>;
   const byArea = { landesrecht: empty(), vwv: empty() } as Record<EnumerableArea, Record<BaselineClass, number>>;
-  for (const area of ENUMERABLE_AREAS) byArea[area].undetermined = snapshot.enumeration[area]?.items.length ?? 0;
+  const inventory = snapshot.corpusInventory;
+  if (!inventory) {
+    for (const area of ENUMERABLE_AREAS) byArea[area].undetermined = snapshot.enumeration[area]?.items.length ?? 0;
+    return {
+      byArea,
+      undeterminedReason: 'Vollkorpus-Inventur fehlt (npm run import:juris-sh:fetch-corpus -- --phase gesamtausgaben, dann npm run import:juris-sh:inventory -- --write).',
+      historicalVersions: { recovered: 0, note: 'Einzelfassungen („genau dieses Dokument“) sind über die öffentliche PDF-Ausgabe abrufbar; ohne Inventur ist keine zusammengesetzt.' },
+    };
+  }
+  const reasons: Record<string, number> = {};
+  let recovered = 0;
+  let historicalReview = 0;
+  for (const entry of inventory.entries) {
+    const key = (BASELINE_CLASSES as readonly string[]).includes(entry.baselineClass ?? '') ? (entry.baselineClass as BaselineClass) : 'undetermined';
+    byArea[entry.area][key] += 1;
+    if (key === 'undetermined') {
+      const reason = entry.outcome === 'not-cached' ? 'nicht im Cache' : entry.outcome === 'failed' ? 'Parser-/Schemafehler' : /Rückwirkung|weggefallene Einheit/u.test(entry.reason ?? '') ? 'Stand-Vermerk: Änderung nach dem Stichtag ohne späteres Einheitsdatum' : /ohne Normtext/u.test(entry.reason ?? '') ? 'Ausgabe ohne Normtext' : /Verzeichniseinträge ohne|kein Verzeichnis/u.test(entry.reason ?? '') ? 'Verzeichnis ohne Gültigkeitsdaten' : 'sonstige';
+      reasons[reason] = (reasons[reason] ?? 0) + 1;
+    }
+    if (entry.historical && entry.historical.problems === 0) {
+      if (entry.outcome === 'import-ready') recovered += 1;
+      else historicalReview += 1;
+    }
+  }
   return {
     byArea,
-    undeterminedReason:
-      'Ohne Dokumentinhalt fehlen Titel, Abkürzung, Gliederungsnummer, Fassungs- und Geltungsdaten. Weder die Zuordnung zum Ereignisregister noch der Vergleich mit dem Stichtag ist möglich; die DOKNR allein trägt keine dieser Angaben.',
+    undeterminedReason: Object.entries(reasons).map(([reason, count]) => `${reason} ${count}`).join(' · ') || 'keine',
     historicalVersions: {
-      recovered: 0,
-      note: 'Historische Fassungen sind im Portal adressierbar (eigene DOKNR je Fassung, auch außer Kraft getretene Normen; siehe Stichprobenabgleich), aber ihr Inhalt ist wie jeder Dokumentinhalt nur über die interne Schnittstelle abrufbar. Eine Stichtagssuche („Fassung am Datum“) bietet die dokumentierte Oberfläche nicht.',
+      recovered,
+      note: `Stichtagsfassungen aus den am Stichtag geltenden Einzelfassungen der juris-Historie (PDF-Ausgabe „genau dieses Dokument“) zusammengesetzt und übernahmefähig: ${recovered}; zusammengesetzt, aber aus anderen Gründen im Review: ${historicalReview}. Der heutige Text ersetzt nie die Stichtagsfassung.`,
     },
   };
 }
@@ -126,11 +170,12 @@ export interface BaselineOnlyAnalysis {
   confirmedByRegister: number;
   /** Ende nach dem Registerstand – nur angekündigt; eine spätere Entfristung ist aus dem Register nicht ausschließbar. */
   announcedOnly: number;
-  /** Abgleich mit dem heutigen juris-Bestand: nicht möglich (Inhalt nicht adressierbar). */
+  /** Einem juris-Dokument zugeordnet (Gliederungsnummer + Datum bzw. eindeutige Gliederungsnummer). */
   matchedAgainstInventory: number;
+  /** Stichtagsfassung übernahmefähig (import-ready). */
   restored: number;
   registerAsOf?: string;
-  entries: Array<{ eventId: string; eventDate: string; eventType: string; gliederungsnummer?: string; title: string; citation: string; classification: 'duplicate' | 'confirmed-by-register' | 'announced-only' }>;
+  entries: Array<{ eventId: string; eventDate: string; eventType: string; gliederungsnummer?: string; title: string; citation: string; classification: 'duplicate' | 'confirmed-by-register' | 'announced-only'; documentIds?: string[]; outcomes?: string[] }>;
 }
 
 function targetKey(event: LedgerEvent): string {
@@ -140,6 +185,7 @@ function targetKey(event: LedgerEvent): string {
 export function analyzeBaselineOnly(snapshot: AdapterSnapshot): BaselineOnlyAnalysis {
   const events = (snapshot.ledger?.events ?? []).filter((event) => isBaselineOnlyCandidate(event));
   const registerAsOf = snapshot.ledger?.registerAsOf;
+  const matches = new Map((snapshot.corpusInventory?.baselineOnly.entries ?? []).map((entry) => [entry.eventId, entry]));
   const seen = new Set<string>();
   const entries: BaselineOnlyAnalysis['entries'] = [];
   for (const event of events) {
@@ -148,15 +194,16 @@ export function analyzeBaselineOnly(snapshot: AdapterSnapshot): BaselineOnlyAnal
     seen.add(key);
     const date = event.eventDate ?? '';
     const classification = duplicate ? 'duplicate' : registerAsOf && date <= registerAsOf ? 'confirmed-by-register' : 'announced-only';
-    entries.push({ eventId: event.id, eventDate: date, eventType: event.eventType, ...(event.targetGliederungsnummer ? { gliederungsnummer: event.targetGliederungsnummer } : {}), title: event.targetTitle, citation: event.citation, classification });
+    const match = matches.get(event.id);
+    entries.push({ eventId: event.id, eventDate: date, eventType: event.eventType, ...(event.targetGliederungsnummer ? { gliederungsnummer: event.targetGliederungsnummer } : {}), title: event.targetTitle, citation: event.citation, classification, ...(match ? { documentIds: match.documentIds, outcomes: match.outcomes } : {}) });
   }
   return {
     candidates: events.length,
     duplicates: entries.filter((entry) => entry.classification === 'duplicate').length,
     confirmedByRegister: entries.filter((entry) => entry.classification === 'confirmed-by-register').length,
     announcedOnly: entries.filter((entry) => entry.classification === 'announced-only').length,
-    matchedAgainstInventory: 0,
-    restored: 0,
+    matchedAgainstInventory: entries.filter((entry) => (entry.documentIds?.length ?? 0) > 0).length,
+    restored: entries.filter((entry) => entry.outcomes?.includes('import-ready')).length,
     ...(registerAsOf ? { registerAsOf } : {}),
     entries,
   };
@@ -168,18 +215,19 @@ export function analyzeBaselineOnly(snapshot: AdapterSnapshot): BaselineOnlyAnal
 export const RECONSTRUCTION_QUEUE_SCHEMA = 'juris-sh-reconstruction-queue/1' as const;
 
 export interface ReconstructionQueueItem {
-  /** Zielnorm laut Register (keine DOKNR: die Zuordnung zum juris-Bestand ist ohne Inhalt nicht möglich). */
+  /** DOKNR, wenn einem juris-Dokument zugeordnet; sonst Blatt + Gliederungsnummer bzw. Titel des Registers. */
   targetKey: string;
   gliederungsnummer?: string;
   title: string;
-  /** Verkündungsblatt der Belege: GVOBl. (Gesetze/Verordnungen) oder Amtsbl. (VwV, aber auch Bekanntmachungen – Scope je Dokument offen). */
+  /** Verkündungsblatt: GVOBl. (Gesetze/Verordnungen) oder Amtsbl. (VwV, aber auch Bekanntmachungen – Scope je Dokument). */
   organ: LedgerEvent['organ'];
-  sourceIdentity: null;
-  reason: 'post-baseline-change-unmatched';
-  /** Änderungs-/Neufassungsereignisse nach dem Stichtag (Belege mit Fundstelle). */
+  sourceIdentity: string | null;
+  reason: 'post-baseline-change-unmatched' | 'units-missing' | 'unit-selection' | 'register-only-not-in-juris';
+  /** Änderungs-/Neufassungsereignisse nach dem Stichtag (Belege mit Fundstelle); bei zugeordneten Dokumenten leer. */
   events: Array<{ id: string; eventType: string; eventDate: string; citation: string }>;
-  /** Weg zur Stichtagsfassung in der Reihenfolge des Auftrags; alle Stufen derzeit offen. */
-  path: Array<{ step: string; status: 'open' | 'blocked'; note: string }>;
+  detail?: string;
+  /** Weg zur Stichtagsfassung in der Reihenfolge des Auftrags. */
+  path: Array<{ step: string; status: 'open' | 'blocked' | 'done'; note: string }>;
 }
 
 export interface ReconstructionQueue {
@@ -187,15 +235,41 @@ export interface ReconstructionQueue {
   jurisdiction: typeof TARGET_JURISDICTION;
   baselineDate: string;
   blocker: string;
-  totals: { items: number; events: number; byOrgan: Record<string, number> };
+  totals: { items: number; events: number; byOrgan: Record<string, number>; byReason?: Record<string, number> };
   items: ReconstructionQueueItem[];
 }
 
 export function buildReconstructionQueue(snapshot: AdapterSnapshot, baselineDate: string): ReconstructionQueue {
+  const items: ReconstructionQueueItem[] = [];
+  const inventory = snapshot.corpusInventory;
+  const knownNumbers = new Set<string>();
+  if (inventory) {
+    for (const entry of inventory.entries) {
+      if (entry.gliederungsnummer) knownNumbers.add(`${entry.area === 'vwv' ? 'amtsblatt' : 'gvobl'}:${entry.gliederungsnummer.replace(/\s+/gu, '').toUpperCase()}`);
+      if (entry.outcome !== 'reconstruction') continue;
+      const reason = entry.blockers.some((blocker) => blocker.kind === 'historical') ? 'unit-selection' : 'units-missing';
+      items.push({
+        targetKey: entry.documentId,
+        ...(entry.gliederungsnummer ? { gliederungsnummer: entry.gliederungsnummer } : {}),
+        title: entry.title ?? entry.documentId,
+        organ: entry.area === 'vwv' ? 'amtsblatt' : 'gvobl',
+        sourceIdentity: entry.documentId,
+        reason,
+        events: [],
+        ...(entry.reason ? { detail: entry.reason } : {}),
+        path: [
+          { step: 'historische juris-Fassung', status: reason === 'units-missing' ? 'open' : 'blocked', note: reason === 'units-missing' ? 'Einzelfassungen über die öffentliche PDF-Ausgabe laden: npm run import:juris-sh:fetch-corpus -- --phase units' : 'Einzelfassungen geladen, Zuordnung am Stichtag nicht eindeutig (siehe detail)' },
+          { step: 'amtliche vollständige Veröffentlichung', status: 'open', note: 'GVOBl./Amtsbl. – nur mit vollständiger Kette Stammfassung + Änderungen bis zum Stichtag' },
+          { step: 'Review', status: 'open', note: 'bis eine Stufe trägt' },
+        ],
+      });
+    }
+  }
+  // Registerereignisse ohne zugeordnetes juris-Dokument (Schlüssel je Blatt: gleiche Gl.Nr. in GVOBl. und Amtsbl. sind verschiedene Vorschriften).
   const byTarget = new Map<string, ReconstructionQueueItem>();
-  // Schlüssel je Blatt: Gleiche Gliederungsnummer in GVOBl. und Amtsbl. bezeichnet verschiedene Vorschriften.
   const changes = (snapshot.ledger?.events ?? []).filter((event) => (event.eventType === 'amend' || event.eventType === 'recast' || event.eventType === 'correction') && isPostBaseline(event) && event.processingStatus === 'recorded' && event.evidenceStrength !== 'insufficient' && event.evidenceStrength !== 'contradictory');
   for (const event of changes) {
+    if (event.targetGliederungsnummer && knownNumbers.has(`${event.organ}:${event.targetGliederungsnummer.replace(/\s+/gu, '').toUpperCase()}`)) continue;
     const key = `${event.organ}:${targetKey(event)}`;
     let item = byTarget.get(key);
     if (!item) {
@@ -208,9 +282,8 @@ export function buildReconstructionQueue(snapshot: AdapterSnapshot, baselineDate
         reason: 'post-baseline-change-unmatched',
         events: [],
         path: [
-          { step: 'historische juris-Fassung', status: 'blocked', note: 'Fassungen haben eigene DOKNR, Inhalt aber nur über die interne Schnittstelle' },
+          { step: 'historische juris-Fassung', status: inventory ? 'blocked' : 'open', note: inventory ? 'keinem enumerierten juris-Dokument zugeordnet (Gliederungsnummer nicht im Bestand)' : 'Zuordnung nach der Vollkorpus-Inventur' },
           { step: 'amtliche vollständige Veröffentlichung', status: 'open', note: 'GVOBl./Amtsbl. (Verkündungsportal SH, robots.txt verbindlich mit Crawl-delay 180 s) – nur mit vollständiger Kette Stammfassung + Änderungen bis zum Stichtag' },
-          { step: 'sichere Rekonstruktion', status: 'open', note: 'Rückrechnung der Änderungsbefehle nach dem Stichtag setzt die heutige Fassung voraus – nicht verfügbar' },
           { step: 'Review', status: 'open', note: 'bis eine Stufe trägt' },
         ],
       };
@@ -218,19 +291,48 @@ export function buildReconstructionQueue(snapshot: AdapterSnapshot, baselineDate
     }
     item.events.push({ id: event.id, eventType: event.eventType, eventDate: event.eventDate ?? '', citation: event.citation });
   }
-  const items = [...byTarget.values()].sort((left, right) => left.targetKey.localeCompare(right.targetKey, 'de'));
-  for (const item of items) item.events.sort((left, right) => left.eventDate.localeCompare(right.eventDate) || left.id.localeCompare(right.id));
+  // Normen, die das amtliche Register (Stand Ende 2024) als geltend führt, die aber in keinem juris-Dokument
+  // stehen (weder Gliederungsnummer noch Titel): Stichtagsfassung nur aus amtlichen Veröffentlichungen.
+  for (const check of inventory?.registerCrosscheck ?? []) {
+    const organ: LedgerEvent['organ'] = check.area === 'vwv' ? 'amtsblatt' : 'gvobl';
+    for (const missing of check.missing) {
+      const key = `${organ}:${missing.gliederungsnummer}`;
+      const existing = [...byTarget.values()].find((item) => item.organ === organ && item.gliederungsnummer?.replace(/\s+/gu, '').toUpperCase() === missing.gliederungsnummer);
+      if (existing || byTarget.has(key)) continue;
+      byTarget.set(key, {
+        targetKey: key,
+        gliederungsnummer: missing.gliederungsnummer,
+        title: missing.title,
+        organ,
+        sourceIdentity: null,
+        reason: 'register-only-not-in-juris',
+        events: [],
+        detail: `im Register ${check.source}${check.asOf ? ` (Stand ${check.asOf})` : ''}, in keinem enumerierten juris-Dokument (Gliederungsnummer und Titel geprüft)`,
+        path: [
+          { step: 'historische juris-Fassung', status: 'blocked', note: 'in juris nicht geführt' },
+          { step: 'amtliche vollständige Veröffentlichung', status: 'open', note: 'Stammfassung und Änderungen aus GVOBl./Amtsbl. bis zum Stichtag' },
+          { step: 'Review', status: 'open', note: 'bis eine Stufe trägt' },
+        ],
+      });
+    }
+  }
+  const registerItems = [...byTarget.values()].sort((left, right) => left.targetKey.localeCompare(right.targetKey, 'de'));
+  for (const item of registerItems) item.events.sort((left, right) => left.eventDate.localeCompare(right.eventDate) || left.id.localeCompare(right.id));
+  const all = [...items.sort((left, right) => left.targetKey.localeCompare(right.targetKey)), ...registerItems];
   return {
     schemaVersion: RECONSTRUCTION_QUEUE_SCHEMA,
     jurisdiction: TARGET_JURISDICTION,
     baselineDate,
-    blocker: 'Dokumentinhalt des juris-Portals nicht über dokumentierte öffentliche Adressformen abrufbar (siehe data/audits/juris-sh/STRUCTURE_REPORT.md); Zuordnung Register → DOKNR und Stichtagsfassung offen.',
+    blocker: inventory
+      ? 'Stichtagsfassung geänderter Normen aus den Einzelfassungen der juris-Historie (öffentliche PDF-Ausgabe); offen sind Normen, deren Einzelfassungen noch nicht geladen oder am Stichtag nicht eindeutig sind, und Registerziele ohne juris-Dokument.'
+      : 'Vollkorpus-Inventur fehlt; Zuordnung Register → DOKNR und Stichtagsfassung offen.',
     totals: {
-      items: items.length,
-      events: items.reduce((sum, item) => sum + item.events.length, 0),
-      byOrgan: items.reduce<Record<string, number>>((counts, item) => ({ ...counts, [item.organ]: (counts[item.organ] ?? 0) + 1 }), {}),
+      items: all.length,
+      events: all.reduce((sum, item) => sum + item.events.length, 0),
+      byOrgan: all.reduce<Record<string, number>>((counts, item) => ({ ...counts, [item.organ]: (counts[item.organ] ?? 0) + 1 }), {}),
+      ...(inventory ? { byReason: all.reduce<Record<string, number>>((counts, item) => ({ ...counts, [item.reason]: (counts[item.reason] ?? 0) + 1 }), {}) } : {}),
     },
-    items,
+    items: all,
   };
 }
 
@@ -259,21 +361,26 @@ export function buildCoverage(snapshot: AdapterSnapshot): CoverageReport {
   const byFamily = snapshot.inventory?.sitemap.byFamily ?? {};
   const excludedByFamily: Record<string, number> = {};
   for (const entry of snapshot.inventory?.scope ?? []) if (entry.scope === 'excluded' && entry.count > 0) excludedByFamily[entry.family] = entry.count;
+  const inventory = snapshot.corpusInventory;
+  const integrity = inventory?.totals.byIntegrity ?? {};
+  const outcomes = inventory?.totals.byOutcome ?? {};
+  const fetched = Object.values(snapshot.corpus?.documents ?? {}).filter((document) => document.status === 'fetched').length;
+  const exportAvailable = snapshot.exports?.conclusion === 'public-export-available';
   return {
     schemaVersion: 'juris-sh-coverage/1',
     jurisdiction: TARGET_JURISDICTION,
     enumerated: { landesrecht: snapshot.enumeration.landesrecht?.items.length ?? 0, vwv: snapshot.enumeration.vwv?.items.length ?? 0, units: (byFamily as Record<string, number>)['landesrecht-unit'] ?? 0 },
     excludedByFamily,
-    rawArchived: manifest.reduce((sum, entry) => sum + entry.rawDocuments.length, 0),
-    parsed: 0,
-    integrity: { exact: 0, normalized: 0, explained: 0, review: 0, mismatch: 0 },
-    transformed: manifest.filter((entry) => entry.transformerVersion).length,
+    rawArchived: fetched,
+    parsed: inventory ? inventory.entries.filter((entry) => entry.outcome !== 'failed' && entry.outcome !== 'not-cached').length : 0,
+    integrity: { exact: integrity.exact ?? 0, normalized: integrity['normalized-equivalent'] ?? 0, explained: integrity['explained-difference'] ?? 0, review: integrity.review ?? 0, mismatch: integrity.mismatch ?? 0 },
+    transformed: inventory ? inventory.entries.filter((entry) => entry.slug !== undefined || entry.outcome === 'review').length : manifest.filter((entry) => entry.transformerVersion).length,
     imported: manifest.filter((entry) => entry.importStatus === 'imported' || entry.importStatus === 'imported-with-warnings').length,
-    review: manifest.filter((entry) => entry.importStatus === 'needs-review').length,
-    notAtBaseline: manifest.filter((entry) => entry.importStatus === 'not-at-baseline').length,
+    review: manifest.length > 0 ? manifest.filter((entry) => entry.importStatus === 'needs-review').length : (outcomes.review ?? 0) + (outcomes.reconstruction ?? 0),
+    notAtBaseline: manifest.length > 0 ? manifest.filter((entry) => entry.importStatus === 'not-at-baseline').length : outcomes['not-at-baseline'] ?? 0,
     manifestEntries: manifest.length,
     contentFiles: snapshot.contentFiles,
-    ...(snapshot.addressability?.conclusion !== 'content-addressable' ? { blocker: 'Dokumentinhalt nicht öffentlich adressierbar – kein Rohbestand, kein Parserlauf, kein Bulk' } : {}),
+    ...(!exportAvailable && snapshot.addressability?.conclusion !== 'content-addressable' ? { blocker: 'Kein öffentlicher Ausgabeweg belegt – kein Rohbestand, kein Parserlauf, kein Bulk' } : {}),
   };
 }
 
@@ -298,8 +405,14 @@ export interface ReadinessResult {
 const pass = (id: string, label: string, detail: string): ReadinessCheck => ({ id, label, status: 'pass', detail });
 const fail = (id: string, label: string, detail: string, blocker = false): ReadinessCheck => ({ id, label, status: 'fail', detail, ...(blocker ? { blocker } : {}) });
 
-export function evaluateReadiness(snapshot: AdapterSnapshot): ReadinessResult {
+/** Mindestabdeckung der Registerabgleiche (Gliederungsnummern des Registers, die der Bestand führt). */
+export const REGISTER_COVERAGE_MINIMUM = 0.95;
+export const ACCEPTED_INTEGRITY_CLASSES: readonly string[] = ['exact', 'normalized-equivalent', 'explained-difference'];
+
+export function evaluateReadiness(snapshot: AdapterSnapshot, options: { forBulkWrite?: boolean } = {}): ReadinessResult {
   const checks: ReadinessCheck[] = [];
+  const inventory = snapshot.corpusInventory;
+  const enumerated = ENUMERABLE_AREAS.reduce((sum, area) => sum + (snapshot.enumeration[area]?.items.length ?? 0), 0);
 
   // 1. Zugriffspolitik: robots.txt belegt, Politik advisory, Nutzerentscheidung dokumentiert.
   {
@@ -317,14 +430,16 @@ export function evaluateReadiness(snapshot: AdapterSnapshot): ReadinessResult {
     checks.push(problems.length > 0 ? fail(id, label, problems.join('; ')) : pass(id, label, `robots.txt ${robots!.fetch.byteLength} Bytes, SHA-256 ${robots!.fetch.sha256.slice(0, 12)}…, abgerufen ${robots!.fetch.retrievedAt}; ${robots!.verdicts.filter((verdict) => verdict.verdict === 'disallowed').length}/${robots!.verdicts.length} Pfade „disallowed“ – Befund, keine Sperre (Entscheidung ${robots!.decision.date})`));
   }
 
-  // 2. Keine technische Sperre beobachtet.
+  // 2. Keine technische Sperre beobachtet (Probe, Ausgabeprobe, Vollkorpus).
   {
     const id = 'keine-technische-sperre';
     const label = 'Keine technische Zugriffssperre (403/429/Challenge)';
     const report = snapshot.addressability;
+    const exportBlocked = (snapshot.exports?.probes ?? []).filter((probe) => probe.outcome === 'blocked').length;
+    const corpusBlocked = Object.values(snapshot.corpus?.documents ?? {}).filter((document) => /\[(?:blocked|forbidden|rate-limited)\]/u.test(document.error ?? '')).length;
     if (!report) checks.push(fail(id, label, `${ADDRESSABILITY_PATH} fehlt (npm run import:juris-sh:sample -- --write)`));
-    else if (report.conclusion === 'blocked' || report.summary.blocked > 0 || report.summary.challenge > 0) checks.push(fail(id, label, `Sperrsignale: ${report.summary.blocked} gesperrt, ${report.summary.challenge} Challenge`, true));
-    else checks.push(pass(id, label, `${report.summary.total} Proben ohne Sperrsignal`));
+    else if (report.conclusion === 'blocked' || report.summary.blocked > 0 || report.summary.challenge > 0 || exportBlocked > 0 || corpusBlocked > 0) checks.push(fail(id, label, `Sperrsignale: Probe ${report.summary.blocked} gesperrt, ${report.summary.challenge} Challenge; Ausgabeprobe ${exportBlocked}; Vollkorpus ${corpusBlocked}`, true));
+    else checks.push(pass(id, label, `${report.summary.total} Adressproben, ${snapshot.exports?.probes.length ?? 0} Ausgabeproben, ${Object.keys(snapshot.corpus?.documents ?? {}).length} Vollkorpus-Dokumente ohne Sperrsignal`));
   }
 
   // 3. Enumeration beider Bereiche.
@@ -348,45 +463,115 @@ export function evaluateReadiness(snapshot: AdapterSnapshot): ReadinessResult {
     checks.push(open.length > 0 ? fail(id, label, `nicht bestätigt: ${open.join(', ')} (npm run import:juris-sh:enumerate -- --refresh --write)`) : pass(id, label, ENUMERABLE_AREAS.map((area) => `${area}: ${snapshot.enumeration[area]!.fixpoint.confirmations} Bestätigung(en), Fingerabdruck ${snapshot.enumeration[area]!.fingerprint.slice(0, 12)}…`).join(' · ')));
   }
 
-  // 5. Zweite unabhängige Quelle.
+  // 5. Öffentlicher Ausgabeweg für den Normtext – Voraussetzung für alles Weitere.
+  {
+    const id = 'oeffentlicher-ausgabeweg';
+    const label = 'Normtext über einen öffentlichen Ausgabeweg abrufbar (ohne interne Schnittstelle)';
+    const exports = snapshot.exports;
+    if (snapshot.addressability?.conclusion === 'content-addressable') checks.push(pass(id, label, snapshot.addressability.reasoning.join('; ')));
+    else if (exports?.conclusion === 'public-export-available') checks.push(pass(id, label, `PDF-Ausgabe (GET /jportal/recherche3doc/…pdf) mit der anonymen Sitzung eines öffentlichen Permalink-Aufrufs; kein Login, kein CSRF, /jportal/wsrest/ nicht aufgerufen. ${exports.reasoning.join('; ')}`));
+    else checks.push(fail(id, label, exports ? exports.reasoning.join('; ') : `${EXPORTS_PATH} fehlt (npm run import:juris-sh:sample -- --write)`, true));
+  }
+
+  // 6. Stichprobe des Vollwegs mit vollständiger Textintegrität.
+  {
+    const id = 'stichprobe-vollweg';
+    const label = 'Stichprobe Vollweg (Parser, Stichtag, Überleitung, Validierung) mit Textintegrität';
+    const sample = snapshot.sample;
+    if (!sample) checks.push(fail(id, label, `${SAMPLE_PATH} fehlt (npm run import:juris-sh:sample -- --write)`));
+    else {
+      const failed = sample.norms.filter((norm) => norm.outcome === 'failed').length;
+      const badIntegrity = sample.norms.filter((norm) => norm.integrity && !ACCEPTED_INTEGRITY_CLASSES.includes(norm.integrity.class)).length;
+      const detail = `${sample.norms.length} Normen: ${Object.entries(sample.totals).map(([key, value]) => `${key} ${value}`).join(' · ')}; Integrität ${Object.entries(sample.integrity).map(([key, value]) => `${key} ${value}`).join(' · ')}`;
+      checks.push(failed > 0 || badIntegrity > 0 ? fail(id, label, `${detail}; fehlgeschlagen ${failed}, Integrität nicht belegt ${badIntegrity}`) : pass(id, label, detail));
+    }
+  }
+
+  // 7. Vollkorpus im Cache (PDF-Gesamtausgaben aller enumerierten Dokumente).
+  {
+    const id = 'vollkorpus-abruf';
+    const label = 'Vollkorpus über die öffentliche PDF-Ausgabe im Cache';
+    const documents = snapshot.corpus?.documents ?? {};
+    const fetched = Object.values(documents).filter((document) => document.status === 'fetched').length;
+    const failed = Object.entries(documents).filter(([, document]) => document.status === 'failed');
+    const missing = enumerated - fetched - failed.length;
+    if (fetched === 0) checks.push(fail(id, label, `${CORPUS_STATE_PATH} fehlt oder leer (npm run import:juris-sh:fetch-corpus -- --phase gesamtausgaben)`));
+    else if (missing > 0) checks.push(fail(id, label, `${fetched}/${enumerated} geholt, ${failed.length} fehlgeschlagen, ${missing} offen (Fortsetzen: npm run import:juris-sh:fetch-corpus -- --phase gesamtausgaben)`));
+    else checks.push(pass(id, label, `${fetched}/${enumerated} PDF-Gesamtausgaben geholt${failed.length > 0 ? `; ${failed.length} ohne PDF (Portalfehler je Dokument, bleiben draußen): ${failed.slice(0, 5).map(([key, document]) => `${key} ${document.error?.slice(0, 60) ?? ''}`).join('; ')}` : ''}`));
+  }
+
+  // 8. Vollkorpus-Inventur: jedes Dokument verarbeitet, Integrität jeder übernahmefähigen Norm belegt.
+  {
+    const id = 'vollkorpus-inventur';
+    const label = 'Vollkorpus-Inventur (Strukturinventur mit Textintegrität je Dokument)';
+    if (!inventory) checks.push(fail(id, label, `${INVENTORY_JSON_PATH} fehlt (npm run import:juris-sh:inventory -- --write)`));
+    else {
+      const notCached = inventory.totals.byOutcome['not-cached'] ?? 0;
+      const readyWithoutIntegrity = inventory.entries.filter((entry) => entry.outcome === 'import-ready' && !ACCEPTED_INTEGRITY_CLASSES.includes(entry.integrity ?? '')).length;
+      const detail = `${inventory.totals.processed}/${inventory.totals.enumerated} Dokumente: ${Object.entries(inventory.totals.byOutcome).map(([key, value]) => `${key} ${value}`).join(' · ')}; Integrität ${Object.entries(inventory.totals.byIntegrity).map(([key, value]) => `${key} ${value}`).join(' · ')}`;
+      const fetchedAll = Object.values(snapshot.corpus?.documents ?? {}).filter((document) => document.status === 'fetched').length;
+      if (inventory.totals.processed !== inventory.totals.enumerated || inventory.totals.enumerated !== enumerated) checks.push(fail(id, label, `${detail}; Inventur unvollständig oder zu einer anderen Enumeration`));
+      else if (notCached > inventory.totals.enumerated - fetchedAll) checks.push(fail(id, label, `${detail}; ${notCached} nicht im Cache – Inventur nach dem Abruf wiederholen`));
+      else if (readyWithoutIntegrity > 0) checks.push(fail(id, label, `${detail}; ${readyWithoutIntegrity} übernahmefähig ohne belegte Integrität`, true));
+      else checks.push(pass(id, label, detail));
+    }
+  }
+
+  // 9. Stichtagsklassifikation je Dokument.
+  {
+    const id = 'stichtagsklassifikation';
+    const label = 'Stichtagsklassifikation aller Normen (Ausgabe, Einzelfassungen, Register nach A/B/C)';
+    const baseline = classifyBaseline(snapshot);
+    const undetermined = ENUMERABLE_AREAS.reduce((sum, area) => sum + baseline.byArea[area].undetermined, 0);
+    if (!inventory) checks.push(fail(id, label, `${undetermined} undetermined: ${baseline.undeterminedReason}`));
+    else checks.push(pass(id, label, `${ENUMERABLE_AREAS.map((area) => `${area}: ${BASELINE_CLASSES.map((key) => `${key} ${baseline.byArea[area][key]}`).join(', ')}`).join(' · ')}; undetermined → Review (${baseline.undeterminedReason}); Regeln ${Object.entries(inventory.totals.evidenceRules).map(([key, value]) => `${key} ${value}`).join(' · ')}`));
+  }
+
+  // 10. Zweite Quelle: amtliche Register gegen den Bestand.
   {
     const id = 'zweite-quelle';
-    const label = 'Abgleich mit einer zweiten, vollständigen Quelle';
-    const crosscheck = snapshot.inventory?.crosscheck;
-    if (!crosscheck) checks.push(fail(id, label, 'kein Abgleich vorhanden'));
-    else checks.push(fail(id, label, `nur Stichprobe: ${crosscheck.inSitemap}/${crosscheck.samples} Kennungen der Discovery-Stichprobe in der Sitemap (${crosscheck.notInSitemap} nicht, ${crosscheck.unresolved} unaufgelöst); die vollständigen Register (FFN-Übersichten) sind wie jeder Dokumentinhalt nicht öffentlich adressierbar`));
+    const label = `Abgleich mit amtlichen Registern (Gliederungsnummern, Abdeckung ≥ ${REGISTER_COVERAGE_MINIMUM * 100} %)`;
+    if (!inventory) checks.push(fail(id, label, 'Vollkorpus-Inventur fehlt'));
+    else {
+      const detail = inventory.registerCrosscheck.map((check) => `${check.source} (Stand ${check.asOf ?? '?'}): ${check.found}/${check.registerNumbers} = ${(check.coverage * 100).toFixed(1)} %`).join(' · ');
+      const low = inventory.registerCrosscheck.filter((check) => check.registerNumbers > 0 && check.coverage < REGISTER_COVERAGE_MINIMUM);
+      checks.push(low.length > 0 ? fail(id, label, `${detail}; unter der Mindestabdeckung: ${low.map((check) => check.source).join(', ')}`) : pass(id, label, `${detail}; fehlende Nummern in CORPUS_INVENTORY.md`));
+    }
   }
 
-  // 6. Inhalt über dokumentierte Adressformen abrufbar – Voraussetzung für alles Weitere.
+  // 11. Scope je Dokument.
   {
-    const id = 'inhalt-adressierbar';
-    const label = 'Normtext über dokumentierte öffentliche Adressformen abrufbar';
-    const report = snapshot.addressability;
-    if (!report) checks.push(fail(id, label, 'keine Probe vorhanden', true));
-    else if (report.conclusion === 'content-addressable') checks.push(pass(id, label, report.reasoning.join('; ')));
-    else checks.push(fail(id, label, report.reasoning.join('; '), true));
+    const id = 'scope-dokumentebene';
+    const label = 'Scope je Dokument (Normtyp aus der Ausgabe; Ortsrecht, Rechtsprechung, Verkündungsblätter ausgeschlossen)';
+    if (!inventory) checks.push(fail(id, label, 'nur auf Kennungsfamilien-Ebene entschieden; je Dokument erst mit der Inventur'));
+    else {
+      const parsed = inventory.entries.filter((entry) => entry.outcome !== 'failed' && entry.outcome !== 'not-cached');
+      const untyped = parsed.filter((entry) => !entry.type).length;
+      checks.push(untyped > 0 ? fail(id, label, `${untyped} Dokumente ohne Normtyp`) : pass(id, label, `Normtyp je Dokument: ${Object.entries(inventory.totals.byType).map(([key, value]) => `${key} ${value}`).join(' · ')}`));
+    }
   }
 
-  // 7.–9. Folgeprüfungen: ohne Inhalt nicht erfüllbar.
-  const contentMissing = snapshot.addressability?.conclusion !== 'content-addressable';
-  checks.push(fail('vollkorpus-strukturinventur', 'Strukturinventur des Vollkorpus mit Textintegrität', contentMissing ? 'nicht durchführbar: 0 Dokumente mit abrufbarem Normtext' : 'Strukturinventur fehlt'));
-  const baseline = classifyBaseline(snapshot);
-  const undetermined = ENUMERABLE_AREAS.reduce((sum, area) => sum + baseline.byArea[area].undetermined, 0);
-  checks.push(fail('stichtagsklassifikation', 'Stichtagsklassifikation aller Normen', `${undetermined} undetermined: ${baseline.undeterminedReason}`));
-  checks.push(fail('scope-dokumentebene', 'Scope je Dokument (Normtyp, normativ/informativ, landesweit)', 'nur auf Kennungsfamilien-Ebene entschieden (Ortsrecht, Rechtsprechung, Verkündungsblätter ausgeschlossen); je Dokument ohne Inhalt nicht entscheidbar'));
-  const baselineOnly = analyzeBaselineOnly(snapshot);
-  checks.push(fail('baseline-only', 'baseline-only-Kandidaten mit dem Bestand abgeglichen', `${baselineOnly.candidates} Kandidaten (Dubletten ${baselineOnly.duplicates}, durch Register bestätigt ${baselineOnly.confirmedByRegister}, nur angekündigt ${baselineOnly.announcedOnly}); Abgleich mit dem heutigen Bestand nicht möglich`));
-
-  // 10. Kein Bestand ohne Gates.
+  // 12. baseline-only-Kandidaten gegen den Bestand.
   {
-    const id = 'kein-ungeprueft-bestand';
-    const label = 'Kein Bestand ohne grüne Gates geschrieben';
-    const problems: string[] = [];
-    if (snapshot.contentFiles > 0) problems.push(`${snapshot.contentFiles} Dateien unter ${CONTENT_DIR}`);
-    if (snapshot.manifest.entries.some((entry) => entry.importStatus === 'imported' || entry.importStatus === 'imported-with-warnings')) problems.push('übernommene Manifesteinträge');
-    checks.push(problems.length > 0 ? fail(id, label, problems.join('; ')) : pass(id, label, `${CONTENT_DIR} leer, Manifest ${snapshot.manifest.entries.length} Einträge, Review ${snapshot.review.items.length} Fälle`));
+    const id = 'baseline-only';
+    const label = 'baseline-only-Kandidaten mit dem Bestand abgeglichen';
+    const analysis = analyzeBaselineOnly(snapshot);
+    if (!inventory) checks.push(fail(id, label, `${analysis.candidates} Kandidaten; Abgleich erst mit der Vollkorpus-Inventur`));
+    else checks.push(pass(id, label, `${analysis.candidates} Kandidaten: ${analysis.matchedAgainstInventory} einem juris-Dokument zugeordnet (${Object.entries(inventory.baselineOnly.byOutcome).map(([key, value]) => `${key} ${value}`).join(' · ')}), übernahmefähig ${analysis.restored}; nicht zugeordnete in der Rekonstruktionsqueue`));
   }
 
+  // 13. Bestand und Manifest decken sich (keine Norm ohne übernommenen Manifesteintrag und umgekehrt).
+  {
+    const id = 'bestand-konsistent';
+    const label = 'Bestand content/norms/nsh deckt sich mit den übernommenen Manifesteinträgen';
+    const imported = new Set(snapshot.manifest.entries.filter((entry) => entry.importStatus === 'imported' || entry.importStatus === 'imported-with-warnings').map((entry) => entry.targetSlug));
+    const content = new Set(snapshot.contentSlugs);
+    const orphan = [...content].filter((slug) => !imported.has(slug));
+    const missing = [...imported].filter((slug) => !content.has(slug));
+    checks.push(orphan.length > 0 || missing.length > 0 ? fail(id, label, `ohne Manifest: ${orphan.slice(0, 5).join(', ') || '–'} (${orphan.length}); ohne Verzeichnis: ${missing.slice(0, 5).join(', ') || '–'} (${missing.length})`, true) : pass(id, label, `${content.size} Normen, ${snapshot.manifest.entries.length} Manifesteinträge, ${snapshot.review.items.length} Review-Fälle`));
+  }
+
+  void options;
   const blockers = checks.filter((check) => check.status === 'fail' && check.blocker).map((check) => `${check.id}: ${check.detail}`);
   return { schemaVersion: 'juris-sh-readiness/1', ready: checks.every((check) => check.status === 'pass'), checks, blockers };
 }

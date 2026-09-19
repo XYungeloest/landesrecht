@@ -60,7 +60,17 @@ entscheidet.
 | `unchanged-since-baseline` | Ausfertigung ≤ Stichtag **und** Textgeltung ≤ Stichtag | `active-at-baseline` | nichts – der heutige Text **ist** der Stichtagstext |
 | `changed-after-baseline` | Ausfertigung ≤ Stichtag, Textgeltung > Stichtag | `active-at-baseline` | Stichtagsfassung beschaffen |
 | `enacted-after-baseline` | Ausfertigung > Stichtag | `not-at-baseline` | nicht aufnehmen |
+| `enacted-after-baseline` (`published-after-baseline`) | Ausfertigung ≤ Stichtag, aber eigene Fundstelle erst nach dem Stichtag verkündet; Rechtsnorm oder Textgeltung > Stichtag | `not-at-baseline` | nicht aufnehmen |
+| `identity-or-validity-uncertain` (`published-after-baseline-validity-open`) | Verwaltungsvorschrift erst nach dem Stichtag veröffentlicht, Textgeltung laut Quelle aber davor (rückwirkend oder ab Erlass) | `undetermined` | Review |
 | `identity-or-validity-uncertain` | Datum fehlt oder widersprüchlich | `undetermined` | Review |
+
+**Verkündung nach dem Stichtag (Run 6).** Das Verkündungsdatum der eigenen Fundstelle – aus dem Kopf oder, bei
+Verwaltungsvorschriften, aus der ersten Klammer hinter dem Ausfertigungsdatum im Zitiervorschlag – wird gegen die
+datierten Verkündungen des Ereignisregisters geprüft (ohne Jahrgang nur das Ausfertigungsjahr, bei Ausfertigung im
+Dezember auch das Folgejahr). Eine Rechtsnorm gilt nicht vor ihrer Verkündung; eine Vorschrift, deren Text erst nach
+dem Stichtag in Kraft tritt, galt am Stichtag ohnehin nicht. Anlass: BayMBl. 2023 Nr. 629 und 633, ausgefertigt am
+30.11./1.12.2023, veröffentlicht am 20.12.2023. Bei einer Verwaltungsvorschrift mit Textgeltung vor dem Stichtag
+entscheidet ihre Bekanntgabe an die Behörden, die die Quelle nicht belegt – dort wird nicht geraten (Review).
 
 Die erste Klasse ist der eigentliche Gewinn: Gilt der gezeigte Text seit vor dem Stichtag und ist er
 bis heute der geführte, dann galt er auch am Stichtag. Das ist ein Beleg aus der Quelle, keine

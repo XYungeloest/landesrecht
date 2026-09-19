@@ -30,7 +30,8 @@ import { parseLongGermanDate } from '../events/resolve.ts';
 import { clauseAmendments, referenceKey } from './structure.ts';
 
 export interface PublicationKey {
-  organ: 'gvbl' | 'baymbl';
+  /** Lauf 8: auch die Amtsblätter 2009–2018 (`allmbl`, `kwmbl`, `fmbl`, `jmbl`). */
+  organ: 'gvbl' | 'baymbl' | 'allmbl' | 'kwmbl' | 'fmbl' | 'jmbl';
   volume: number;
   position: number;
 }
@@ -51,8 +52,9 @@ export function publicationKeyFromCitation(citation: string): PublicationKey | u
 export function candidateKeys(reference: string, date: string | undefined): PublicationKey[] {
   const key = referenceKey(reference);
   if (!key) return [];
-  const [organ, year, page] = key.split('|');
-  if (organ !== 'gvbl' && organ !== 'baymbl') return [];
+  const [rawOrgan, year, page] = key.split('|');
+  const organ = rawOrgan === 'aiimbl' ? 'allmbl' : rawOrgan;
+  if (organ !== 'gvbl' && organ !== 'baymbl' && organ !== 'allmbl' && organ !== 'kwmbl' && organ !== 'fmbl' && organ !== 'jmbl') return [];
   if (year) return [{ organ, volume: Number(year), position: Number(page) }];
   if (!date) return [];
   const volume = Number(date.slice(0, 4));

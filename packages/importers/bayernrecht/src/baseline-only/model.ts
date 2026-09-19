@@ -57,6 +57,7 @@ export const MISSING_LINKS = {
   'base-identity-mismatch': 'contradictory',
   'base-not-fetched': 'pending',
   'scope-not-state-regulation': 'out-of-scope',
+  'scope-publication-notice': 'out-of-scope',
   'scope-normativity-review': 'undetermined',
   'text-structure-unsupported': 'undetermined',
   'text-image-in-body': 'missing-base',
@@ -95,8 +96,11 @@ export interface MissingLinkRecord {
 
 /** Eine amtliche Quelle des Rezepts. */
 export interface RecipeSource {
-  /** `registry`: amtliches Verzeichnis als Beleg der Geltung (Positivliste der VwVWBek, PDF). */
-  role: 'base' | 'amendment' | 'repeal' | 'chain-publication' | 'listing' | 'registry';
+  /**
+   * `registry`: amtliches Verzeichnis als Beleg der Geltung (Positivliste der VwVWBek, PDF). `annex`: Anlage der
+   * Stammverkündung, die nur als Datei vorliegt (Vordruck, Übersicht) – archiviert und referenziert, kein Normtext.
+   */
+  role: 'base' | 'amendment' | 'repeal' | 'chain-publication' | 'listing' | 'registry' | 'annex';
   url: string;
   sha256: string;
   retrievedAt: string;
@@ -133,6 +137,8 @@ export interface RecipeAmendment {
   section?: string;
   intro: string;
   steps: RecipeStep[];
+  /** Änderungen der Überschrift der Norm selbst (`chain.ts#applyToTitle`). */
+  titleChanges?: Array<{ id: string; command: string; formula: FormulaId; before: string; after: string }>;
   /** Fingerabdruck des Quellkörpers nach dieser Änderung (kanonisches JSON, SHA-256). */
   afterFingerprint: string;
 }
@@ -146,6 +152,8 @@ export interface BaselineOnlyRecipe {
   converterVersion: string;
   norm: {
     title: string;
+    /** Überschrift der Stammfassung, wenn eine angewandte Änderung sie geändert hat (`title` ist die am Stichtag). */
+    originalTitle?: string;
     shortTitle?: string;
     abbr?: string;
     type: NormType;
@@ -192,7 +200,15 @@ export interface BaselineOnlyRecipe {
     citing: Array<{ url: string; citation: string; relations: string[] }>;
     evidence: string[];
   };
-  identity: { citedTitle: string; parenthetical?: string; priorClause?: string; registerTitle: string; registerDate?: string };
+  identity: {
+    citedTitle: string;
+    parenthetical?: string;
+    priorClause?: string;
+    registerTitle: string;
+    registerDate?: string;
+    /** Zitat ohne Fundstelle: wie die Ausgangsverkündung gefunden wurde (Inhaltsübersichten, `search.ts`). */
+    foundBy?: string;
+  };
   evidence: ValidityEvidence[];
   expected: {
     /** Fingerabdruck des Quellkörpers am Stichtag (vor der Überleitung – nie des übergeleiteten Texts). */

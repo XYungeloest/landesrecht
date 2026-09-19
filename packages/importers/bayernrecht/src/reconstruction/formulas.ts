@@ -30,7 +30,7 @@
  *   eindeutig wiederzufinden; nicht unterstützt.
  * - `unrecognized`: Formel nicht erkannt – im Zweifel ausgeschlossen.
  */
-import { formatPath, parseLocation, type LocationPath } from './location.ts';
+import { formatPath, joinLocation, parseLocation, type LocationPath } from './location.ts';
 import type { StructuralOperation } from './structural.ts';
 
 export const FORMULAS = [
@@ -46,7 +46,9 @@ export const FORMULAS = [
   'relabel',
   'renumber-sentence',
   'number-sentences',
+  'unnumber-sentences',
   'number-paragraph',
+  'unnumber-paragraph',
   'insert-title',
   'delete-words',
   'recast',
@@ -67,6 +69,8 @@ export const SUPPORTED_FORMULAS: ReadonlySet<FormulaId> = new Set([
   'replace-final-words', 'delete-final-words', 'insert-sentence', 'insert-block', 'relabel', 'renumber-sentence', 'number-sentences', 'insert-title',
   // Run 5: Satzzeichen statt Wort, nur wenn das Satzzeichen im Bereich genau einmal steht; „Der Wortlaut wird Abs. 1.“
   'replace-by-punctuation', 'number-paragraph',
+  // Lauf 7: „In Satz 1 wird die Satznummerierung „¹“ gestrichen.“; Lauf 8: „… die Absatzbezeichnung „(1)“ gestrichen.“
+  'unnumber-sentences', 'unnumber-paragraph',
 ]);
 
 /** Formeln, die die vorherige Fassung grundsätzlich nicht bestimmen. */
@@ -91,6 +95,14 @@ export interface ParsedOperation {
   each: boolean;
 }
 
+/** Streichung ohne Anker: Wortlaut bekannt, Stelle nicht – nur aus dem Stand der Verkündungen wiederherstellbar (`restore.ts`). */
+export interface ParsedDeletion {
+  formula: 'delete-words';
+  words: string[];
+  locations: LocationPath[];
+  each: boolean;
+}
+
 export interface ParsedCommand {
   /** Formeln aller Klauseln des Befehls (für die Statistik). */
   formulas: FormulaId[];
@@ -98,7 +110,14 @@ export interface ParsedCommand {
   operations?: ParsedOperation[];
   /** Grund, falls nicht unterstützt. */
   reason?: string;
+  /**
+   * Nur gesetzt, wenn der Befehl bis auf Streichungen ohne Anker vollständig lesbar ist: alle Klauseln in
+   * Befehlsreihenfolge. Die Streichungen sind aus der Stammverkündung wiederherstellbar (Lauf 7).
+   */
+  restorable?: Array<ParsedOperation | ParsedDeletion>;
 }
+
+export const isParsedDeletion = (item: ParsedOperation | ParsedDeletion): item is ParsedDeletion => 'words' in item;
 
 /* ------------------------------------------------------------------------------- Zitate */
 
@@ -146,8 +165,10 @@ export function maskQuotes(text: string): MaskedText | undefined {
 
 /* ------------------------------------------------------------------------------ Formeln */
 
-const OBJ = String.raw`(?:die\s+Angaben?|das\s+Wort|die\s+Wörter|die\s+Zahlen?|das\s+Zeichen|die\s+Zeichen)`;
-const ANCHOR_OBJ = String.raw`(?:der\s+Angabe|dem\s+Wort|den\s+Wörtern|der\s+Zahl|den\s+Angaben)`;
+// „die Worte“ / „den Worten“: ältere Befehle (GVBl. 2014 S. 286, 2015 S. 243) – dieselbe Formel wie „die Wörter“.
+// „der Klammerzusatz „(A)““ (BayMBl. 2019 Nr. 423) ist eine Angabe.
+const OBJ = String.raw`(?:die\s+Angaben?|das\s+Wort|die\s+Wörter|die\s+Worte|die\s+Zahlen?|das\s+Zeichen|die\s+Zeichen|der\s+Klammerzusatz|den\s+Klammerzusatz)`;
+const ANCHOR_OBJ = String.raw`(?:der\s+Angabe|dem\s+Wort|den\s+Wörtern|den\s+Worten|der\s+Zahl|den\s+Angaben|dem\s+Klammerzusatz)`;
 const Q = String.raw`⟦(\d+)⟧`;
 const VERB = String.raw`(?:(?:wird|werden)\s+)?`;
 const EACH = String.raw`(?:jeweils\s+)?`;
@@ -166,7 +187,8 @@ const NON_INVERTIBLE_LEAF: ReadonlyArray<[RegExp, FormulaId, string]> = [
   [/\bdurch\s+(?:(?:den|die|das)\s+)?folgenden?\b[\s\S]*ersetzt\s*:\s*$/u, 'recast', 'Ersetzung durch neuen Wortlaut ohne Alttext'],
   // „Die bisherige Anlage wird durch die folgende Anlage ersetzt.“ (BayMBl. 2024 Nr. 655)
   [/\bdurch\s+(?:die\s+)?folgende\s+(?:Anlage|Anhang)\b[^„]*ersetzt\s*[.:]?\s*$/u, 'annex-recast', 'Anlage durch eine folgende Anlage ersetzt; der Alttext steht nicht im Befehl'],
-  [/(?:wird|werden)\s+aufgehoben\s*\.?$/u, 'repeal-unit', 'Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl'],
+  // Auch mit dem Glied zwischen Verb und Partizip: „In Spiegelstrich 5 wird Satz 3 aufgehoben.“ (BayMBl. 2021 Nr. 548)
+  [/(?:wird|werden)\s+(?:[^„“”⟦:]{1,60}\s)?aufgehoben\s*\.?$/u, 'repeal-unit', 'Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl'],
 ];
 
 /** Der Befehl ohne Zitate beginnt mit einer Ortsangabe „In …“ / „Im …“ vor dem Verb. */
@@ -181,6 +203,8 @@ interface ClauseResult {
   operations?: Operation[];
   each: boolean;
   reason?: string;
+  /** Streichung ohne Anker: die gestrichenen Wortlaute in Reihenfolge. */
+  words?: string[];
 }
 
 function quote(quotes: readonly string[], index: string): string {
@@ -209,7 +233,7 @@ function parseClause(clause: string, quotes: readonly string[]): ClauseResult {
     return { formula: 'replace-words', operations, each };
   }
 
-  const final = new RegExp(String.raw`^(der\s+Punkt|das\s+Komma|das\s+Semikolon|der\s+Doppelpunkt)\s+am\s+Ende\s+${VERB}durch\s+(?:(ein\s+Komma|einen\s+Punkt|ein\s+Semikolon|einen\s+Doppelpunkt)|(?:${OBJ}\s+)?${Q})\s+ersetzt$`, 'u').exec(text);
+  const final = new RegExp(String.raw`^(der\s+Punkt|das\s+Komma|das\s+Semikolon|der\s+Doppelpunkt)\s+am\s+(?:Ende(?:\s+des\s+Satzes)?|Satzende)\s+${VERB}durch\s+(?:(ein\s+Komma|einen\s+Punkt|ein\s+Semikolon|einen\s+Doppelpunkt)|(?:${OBJ}\s+)?${Q})\s+ersetzt$`, 'u').exec(text);
   if (final) {
     const from = PUNCT_NAME[final[1]!.replace(/\s+/gu, ' ')]!;
     const to = final[2] ? PUNCT_NAME[final[2].replace(/\s+/gu, ' ')]! : quote(quotes, final[3]!);
@@ -272,10 +296,12 @@ function parseClause(clause: string, quotes: readonly string[]): ClauseResult {
   }
 
   if (new RegExp(String.raw`^${OBJ}\s+${Q}(?:(?:\s*,\s*|\s+und\s+|\s+sowie\s+)${OBJ}\s+${Q})*\s+${VERB}${EACH}gestrichen$`, 'u').test(text)) {
-    return { formula: 'delete-words', each, reason: 'Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht' };
+    const words = [...text.matchAll(/⟦(\d+)⟧/gu)].map((match) => quote(quotes, match[1]!));
+    return { formula: 'delete-words', each, reason: 'Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht', words };
   }
 
-  const append = new RegExp(String.raw`^${OBJ}\s+${Q}\s+angefügt$`, 'u').exec(text);
+  // „werden am Ende die Wörter „…“ angefügt“, „die Wörter „…“ werden angefügt“ (Objekt vor dem Verb).
+  const append = new RegExp(String.raw`^(?:am\s+Ende\s+)?${OBJ}\s+${Q}\s+${VERB}(?:am\s+Ende\s+)?angefügt$`, 'u').exec(text);
   if (append) {
     return { formula: 'append-words', operations: [{ kind: 'append', text: quote(quotes, append[1]!) }], each };
   }
@@ -297,8 +323,16 @@ export function containerLocation(text: string): string | undefined {
  * Zerlegt einen Befehl (ein Listenglied oder den Ein-Satz-Befehl des Einleitungssatzes) in Operationen.
  * `context` sind die Ortsangaben der übergeordneten Befehle, von außen nach innen.
  */
+/** „Folgende Nr. 1.34.2 wir angefügt:“ (BayMBl. 2023 Nr. 327): „wir“ ist nie Subjekt eines Befehls – nur vor einem Befehlsverb. */
+export function repairCommandVerb(text: string): string {
+  // „gelöscht“ (BayMBl. 2024 Nr. 283: „… wird die Angabe „…“ gelöscht.“) ist „gestrichen“.
+  return text
+    .replace(/(„[^„“”]*[“”])|\bwir\s+(angefügt|eingefügt|ersetzt|gestrichen|aufgehoben|gefasst|vorangestellt)\b/gu, (match, quoted: string | undefined, verb: string | undefined) => quoted ?? `wird ${verb!}`)
+    .replace(/\sgelöscht(\s*\.?\s*)$/u, ' gestrichen$1');
+}
+
 export function parseCommand(text: string, context: readonly LocationPath[]): ParsedCommand {
-  const trimmed = text.trim();
+  const trimmed = repairCommandVerb(text.trim());
   if (containerLocation(trimmed) !== undefined) return { formulas: ['container'], reason: 'Gliederungsbefehl ohne eigene Änderung' };
   for (const [pattern, formula, reason] of NON_INVERTIBLE_LEAF) {
     if (pattern.test(trimmed)) return { formulas: [formula], reason };
@@ -338,6 +372,13 @@ export function parseCommand(text: string, context: readonly LocationPath[]): Pa
     location = split.location;
     body = split.rest;
   }
+  // Zweite Ortsangabe hinter dem Verb: „In der Präambel wird in Satz 1 die Angabe ⟦0⟧ gestrichen.“ (BayMBl. 2024 Nr. 69),
+  // „In der Präambel werden in Satz 2 nach dem Wort ⟦0⟧ …“ – der Ort ist „Präambel Satz 1“; nur wenn beide zusammen lesbar sind.
+  const inner = /^((?:wird|werden)\s+(?:jeweils\s+)?)(?:in|im)\s+([^⟦]+?)\s+(?=(?:die|das|der|den|dem|nach|vor|jeweils)\s)/u.exec(body);
+  if (inner && location !== '' && parseLocation(`${location} ${inner[2]!}`)) {
+    location = `${location} ${inner[2]!}`;
+    body = `${inner[1]!}${body.slice(inner[0].length)}`;
+  }
   // Objekt zuerst: „Die Angabe ⟦0⟧ wird durch die Angabe ⟦1⟧ ersetzt.“ / „Nach der Angabe ⟦0⟧ wird …“
   body = body.replace(/^(Die|Das|Der|Nach|Vor)\b/u, (word) => word.toLowerCase());
 
@@ -358,26 +399,44 @@ export function parseCommand(text: string, context: readonly LocationPath[]): Pa
 
   const formulas: FormulaId[] = [];
   const operations: ParsedOperation[] = [];
+  const sequence: Array<ParsedOperation | ParsedDeletion> = [];
   let reason: string | undefined;
+  // Grund einer anderen Klausel als einer Streichung ohne Anker: Dann ist der Befehl auch mit Wiederherstellung nicht lesbar.
+  let otherReason: string | undefined;
   for (const clause of clauses) {
     const parsed = parseClause(clause, masked.quotes);
     formulas.push(parsed.formula);
+    // Pfade: eigene Ortsangabe relativ zum Kontext; mehrere eigene Pfade nur mit „jeweils“.
+    const paths = ownPaths.map((own) => joinLocation(context, own));
+    // Jeder Ort mit eigener Präposition („In der Überschrift und in § 2 Abs. 5 werden …“, GVBl. 2024 S. 98) zählt
+    // die Orte einzeln auf wie „jeweils“; in jedem muss der Wortlaut dann genau einmal stehen.
+    const enumerated = /\s(?:und|sowie)\s+(?:in|im)\s/u.test(` ${location} `);
     if (!parsed.operations) {
       reason ??= parsed.reason;
+      if (parsed.formula === 'delete-words' && parsed.words && parsed.words.length > 0 && (paths.length === 1 || parsed.each || enumerated)) {
+        sequence.push({ formula: 'delete-words', words: parsed.words, locations: paths, each: parsed.each || enumerated });
+      } else otherReason ??= parsed.reason ?? 'nicht unterstützt';
       continue;
     }
-    // Pfade: eigene Ortsangabe relativ zum Kontext; mehrere eigene Pfade nur mit „jeweils“.
-    const paths = ownPaths.map((own) => [...context.flat(), ...own]);
-    if (paths.length > 1 && !parsed.each) {
+    if (paths.length > 1 && !parsed.each && !enumerated) {
       reason ??= `Mehrere Orte (${ownPaths.map(formatPath).join('; ')}) ohne „jeweils“`;
+      otherReason ??= reason;
       continue;
     }
     if (parsed.each && paths.length < 2) {
       reason ??= '„jeweils“ an nur einem Ort: der Befehl behauptet mehrere Vorkommen, deren Herkunft im heutigen Text nicht zu unterscheiden ist';
+      otherReason ??= reason;
       continue;
     }
-    for (const operation of parsed.operations) operations.push({ formula: parsed.formula, operation, locations: paths, each: parsed.each });
+    for (const operation of parsed.operations) {
+      const item = { formula: parsed.formula, operation, locations: paths, each: parsed.each };
+      operations.push(item);
+      sequence.push(item);
+    }
   }
-  if (reason !== undefined || operations.length === 0) return { formulas, reason: reason ?? 'Keine anwendbare Operation' };
+  if (reason !== undefined || operations.length === 0) {
+    const restorable = otherReason === undefined && sequence.some(isParsedDeletion) ? { restorable: sequence } : {};
+    return { formulas, reason: reason ?? 'Keine anwendbare Operation', ...restorable };
+  }
   return { formulas, operations };
 }

@@ -14,8 +14,9 @@ import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
 import type { Operation } from './formulas.ts';
 import { blockAt, sentenceRange, type FieldRef } from './location.ts';
-import { bodyFingerprint, forwardOrder, isRecipeV2, recipeAmendments, recipeProblems, stableStringify, type AnyReconstructionRecipe, type RecipeStep, type ScopeRecord } from './recipe.ts';
+import { bodyFingerprint, forwardOrder, isRecipeV2, recipeAmendments, recipeChangesTitle, recipeProblems, recipeRestores, stableStringify, type AnyReconstructionRecipe, type RecipeStep, type ScopeRecord } from './recipe.ts';
 import { StructuralError, structuralBackward, structuralForward, STRUCTURAL_KINDS, type StructuralOperation } from './structural.ts';
+import { applyTitleToBody, projectTitle, sameTitle, titleBody, TitleError, titleState, type LawTitleFields, type RecipeTitle } from './title.ts';
 
 export type { AnyReconstructionRecipe, ReconstructionRecipe, ReconstructionRecipeV2 } from './recipe.ts';
 export { recipeAmendments, recipeSources } from './recipe.ts';
@@ -156,7 +157,7 @@ function deleted(text: string, side: 'after' | 'before', step: string): string {
 }
 
 /** Operationen mit Feld (Satz, Schluss des Feldes) arbeiten auf dem einzigen Textfeld des Bereichs. */
-const FIELD_KINDS: ReadonlySet<string> = new Set(['insert-sentence', 'renumber-sentence', 'number-sentences', 'delete-final', 'replace-final-words']);
+const FIELD_KINDS: ReadonlySet<string> = new Set(['insert-sentence', 'renumber-sentence', 'number-sentences', 'unnumber-sentences', 'delete-final', 'replace-final-words']);
 
 function structural(body: NormBodyBlock[], scope: ScopeRecord, operation: StructuralOperation, step: string, direction: 'forward' | 'backward'): { ref: FieldRef; position: number } {
   const field = FIELD_KINDS.has(operation.kind) ? singleField(scope, step, 'text') : undefined;
@@ -305,75 +306,201 @@ export function applyBackward(body: NormBodyBlock[], scope: ScopeRecord, operati
   }
 }
 
-/** Alle Schritte rückwärts, in umgekehrter Reihenfolge. Ergebnis ist eine Kopie. */
-export function reverseSteps(currentBody: readonly NormBodyBlock[], steps: readonly Pick<RecipeStep, 'id' | 'scope' | 'operation'>[]): NormBodyBlock[] {
-  const body = structuredClone(currentBody) as NormBodyBlock[];
-  for (const step of [...steps].reverse()) applyBackward(body, step.scope, step.operation, step.id);
-  return body;
+/* ------------------------------------------------------------------ Körper und Überschrift */
+
+/** Arbeitszustand einer Rückrechnung: der Körper und – wenn Titelschritte vorkommen – die Überschrift der Norm. */
+export interface LawState {
+  body: NormBodyBlock[];
+  title?: RecipeTitle;
 }
 
-/** Alle Schritte vorwärts, in Befehlsreihenfolge. Ergebnis ist eine Kopie. */
-export function forwardSteps(baselineBody: readonly NormBodyBlock[], steps: readonly Pick<RecipeStep, 'id' | 'scope' | 'operation'>[]): NormBodyBlock[] {
-  const body = structuredClone(baselineBody) as NormBodyBlock[];
-  for (const step of steps) applyForward(body, step.scope, step.operation, step.id);
-  return body;
+type StepLike = Pick<RecipeStep, 'id' | 'scope' | 'operation'> & { target?: RecipeStep['target'] };
+
+function titleStep(state: LawState, step: StepLike, label: string, direction: 'forward' | 'backward'): { ref: FieldRef; position: number; before: string; after: string } {
+  if (!state.title) throw new ReconstructionError('title-state-missing', `${label}: Schritt an der Überschrift der Norm, aber kein Titelzustand – applyReverseRecipeToLaw verwenden`);
+  const synthetic = titleBody(state.title);
+  const before = String(synthetic[0]!.text);
+  const at = direction === 'forward' ? applyForward(synthetic, step.scope, step.operation, label) : applyBackward(synthetic, step.scope, step.operation, label);
+  const after = String(synthetic[0]!.text);
+  try {
+    const next = projectTitle(state.title, after);
+    const body = applyTitleToBody(state.body, state.title, next);
+    if (body !== state.body) state.body.splice(0, state.body.length, ...body);
+    state.title = next;
+  } catch (error) {
+    if (error instanceof TitleError) throw new ReconstructionError(error.code, `${label}: ${error.message}`);
+    throw error;
+  }
+  return { ref: at.ref, position: at.position, before, after };
+}
+
+/** Ein Schritt rückwärts auf Körper oder Überschrift (Zustand wird verändert). */
+export function stepBackward(state: LawState, step: StepLike, label = step.id): { ref: FieldRef; position: number } {
+  if (step.target === 'title') return titleStep(state, step, label, 'backward');
+  return applyBackward(state.body, step.scope, step.operation, label);
+}
+
+/** Ein Schritt vorwärts auf Körper oder Überschrift (Zustand wird verändert); bei Titelschritten mit Vorher/Nachher der Überschrift. */
+export function stepForward(state: LawState, step: StepLike, label = step.id): { ref: FieldRef; position: number; title?: { before: string; after: string } } {
+  if (step.target === 'title') {
+    const result = titleStep(state, step, label, 'forward');
+    return { ref: result.ref, position: result.position, title: { before: result.before, after: result.after } };
+  }
+  return applyForward(state.body, step.scope, step.operation, label);
+}
+
+const cloneState = (state: LawState): LawState => ({ body: structuredClone(state.body) as NormBodyBlock[], ...(state.title ? { title: { ...state.title } } : {}) });
+
+/** Alle Schritte rückwärts auf Körper und Überschrift, in umgekehrter Reihenfolge. Ergebnis ist eine Kopie. */
+export function reverseLawSteps(current: LawState, steps: readonly StepLike[]): LawState {
+  const state = cloneState(current);
+  for (const step of [...steps].reverse()) stepBackward(state, step);
+  return state;
+}
+
+/** Alle Schritte vorwärts auf Körper und Überschrift. Ergebnis ist eine Kopie. */
+export function forwardLawSteps(baseline: LawState, steps: readonly StepLike[]): LawState {
+  const state = cloneState(baseline);
+  for (const step of steps) stepForward(state, step);
+  return state;
+}
+
+/** Alle Schritte rückwärts, in umgekehrter Reihenfolge. Ergebnis ist eine Kopie. Titelschritte verlangen `reverseLawSteps`. */
+export function reverseSteps(currentBody: readonly NormBodyBlock[], steps: readonly StepLike[]): NormBodyBlock[] {
+  return reverseLawSteps({ body: currentBody as NormBodyBlock[] }, steps).body;
+}
+
+/** Alle Schritte vorwärts, in Befehlsreihenfolge. Ergebnis ist eine Kopie. Titelschritte verlangen `forwardLawSteps`. */
+export function forwardSteps(baselineBody: readonly NormBodyBlock[], steps: readonly StepLike[]): NormBodyBlock[] {
+  return forwardLawSteps({ body: baselineBody as NormBodyBlock[] }, steps).body;
+}
+
+const TITLE_RECIPE = 'Das Rezept ändert auch die Überschrift der Norm: applyReverseRecipeToLaw/verifyRoundTripLaw verwenden';
+
+/**
+ * Optionen der Anwendung. `restorationChecked`: Der Aufrufer hat die Verkündungen der Wiederherstellung
+ * (`recipe.restoration.sources`, Stammverkündung und Änderungen vor dem Stichtag) mit ihrer SHA-256 unverändert im
+ * Cache geprüft und archiviert sie mit der Norm. Ohne diese Zusicherung lehnen alle Funktionen ein Rezept mit
+ * wiederhergestelltem Alttext ab – ein Aufrufer, der die Wiederherstellung nicht kennt, übernimmt sie nicht still.
+ */
+export interface RecipeApplyOptions {
+  restorationChecked?: boolean;
+}
+
+const RESTORATION_RECIPE = 'Das Rezept stellt Alttext aus den Verkündungen wieder her (restoration): deren Quellen mit SHA-256 prüfen, archivieren und { restorationChecked: true } übergeben';
+
+function refuseRestoration(recipe: AnyReconstructionRecipe, options: RecipeApplyOptions | undefined): string | undefined {
+  return recipeRestores(recipe) && !options?.restorationChecked ? `${recipe.documentId}: ${RESTORATION_RECIPE}` : undefined;
+}
+
+/** Rückwärts über alle Änderungen des Rezepts, mit allen Fingerabdruck- und Titelprüfungen. */
+function reverseRecipeState(current: LawState, recipe: AnyReconstructionRecipe): LawState {
+  const problems = recipeProblems(recipe);
+  if (problems.length > 0) throw new ReconstructionError('recipe-invalid', `${recipe.documentId}: Rezept ungültig – ${problems.join('; ')}`);
+  const fingerprint = bodyFingerprint(current.body);
+  if (fingerprint !== recipe.expected.currentFingerprint) {
+    throw new ReconstructionError('current-mismatch', `${recipe.documentId}: heutiger Körper (${fingerprint.slice(0, 16)}) ist nicht der geprüfte (${recipe.expected.currentFingerprint.slice(0, 16)}); das Rezept gilt nicht`);
+  }
+  if (recipe.title && (!current.title || !sameTitle(current.title, recipe.title.current))) {
+    throw new ReconstructionError('current-title-mismatch', `${recipe.documentId}: heutige Überschrift ist nicht die geprüfte („${recipe.title.current.title.slice(0, 80)}“)`);
+  }
+  let state = cloneState(current);
+  if (isRecipeV2(recipe)) {
+    for (const amendment of recipe.amendments) {
+      if (bodyFingerprint(state.body) !== amendment.expected.afterFingerprint) throw new ReconstructionError('result-mismatch', `${recipe.documentId}: Stand nach ${amendment.citation} ist nicht der geprüfte`);
+      state = reverseLawSteps(state, amendment.steps);
+      if (bodyFingerprint(state.body) !== amendment.expected.beforeFingerprint) throw new ReconstructionError('result-mismatch', `${recipe.documentId}: Stand vor ${amendment.citation} weicht vom geprüften ab`);
+    }
+  } else {
+    state = reverseLawSteps(state, recipe.steps);
+  }
+  const result = bodyFingerprint(state.body);
+  if (result !== recipe.expected.baselineFingerprint) {
+    throw new ReconstructionError('result-mismatch', `${recipe.documentId}: Ergebnis (${result.slice(0, 16)}) weicht vom geprüften Stichtagskörper (${recipe.expected.baselineFingerprint.slice(0, 16)}) ab`);
+  }
+  if (recipe.title && (!state.title || !sameTitle(state.title, recipe.title.baseline))) {
+    throw new ReconstructionError('result-title-mismatch', `${recipe.documentId}: rückgerechnete Überschrift weicht von der geprüften ab`);
+  }
+  return state;
 }
 
 /**
  * Rechnet den heutigen Körper auf den Stichtag zurück – v1 (eine Änderung) und v2 (mehrere, jüngste zuerst).
  * Wirft, wenn der Körper nicht der ist, für den das Rezept geprüft wurde, wenn eine Operation ihr Ziel nicht
  * eindeutig findet, oder wenn das Ergebnis (auch ein Zwischenstand einer v2-Kette) vom geprüften abweicht.
+ * Ein Rezept, das auch die Überschrift der Norm ändert, lehnt diese Funktion ab (`applyReverseRecipeToLaw`).
  */
-export function applyReverseRecipe(currentBody: readonly NormBodyBlock[], recipe: AnyReconstructionRecipe): NormBodyBlock[] {
-  const problems = recipeProblems(recipe);
-  if (problems.length > 0) throw new ReconstructionError('recipe-invalid', `${recipe.documentId}: Rezept ungültig – ${problems.join('; ')}`);
-  const current = bodyFingerprint(currentBody);
-  if (current !== recipe.expected.currentFingerprint) {
-    throw new ReconstructionError('current-mismatch', `${recipe.documentId}: heutiger Körper (${current.slice(0, 16)}) ist nicht der geprüfte (${recipe.expected.currentFingerprint.slice(0, 16)}); das Rezept gilt nicht`);
-  }
-  let body = structuredClone(currentBody) as NormBodyBlock[];
-  if (isRecipeV2(recipe)) {
-    for (const amendment of recipe.amendments) {
-      if (bodyFingerprint(body) !== amendment.expected.afterFingerprint) throw new ReconstructionError('result-mismatch', `${recipe.documentId}: Stand nach ${amendment.citation} ist nicht der geprüfte`);
-      body = reverseSteps(body, amendment.steps);
-      if (bodyFingerprint(body) !== amendment.expected.beforeFingerprint) throw new ReconstructionError('result-mismatch', `${recipe.documentId}: Stand vor ${amendment.citation} weicht vom geprüften ab`);
-    }
-  } else {
-    body = reverseSteps(body, recipe.steps);
-  }
-  const result = bodyFingerprint(body);
-  if (result !== recipe.expected.baselineFingerprint) {
-    throw new ReconstructionError('result-mismatch', `${recipe.documentId}: Ergebnis (${result.slice(0, 16)}) weicht vom geprüften Stichtagskörper (${recipe.expected.baselineFingerprint.slice(0, 16)}) ab`);
-  }
-  return body;
+export function applyReverseRecipe(currentBody: readonly NormBodyBlock[], recipe: AnyReconstructionRecipe, options?: RecipeApplyOptions): NormBodyBlock[] {
+  if (recipeChangesTitle(recipe)) throw new ReconstructionError('title-recipe', `${recipe.documentId}: ${TITLE_RECIPE}`);
+  const refused = refuseRestoration(recipe, options);
+  if (refused) throw new ReconstructionError('restoration-recipe', refused);
+  return reverseRecipeState({ body: currentBody as NormBodyBlock[] }, recipe).body;
 }
 
 /**
- * Beweis durch Rundlauf: rückwärts, dann vorwärts (Forward-Replay: Stichtagskörper plus alle Änderungen, älteste
- * zuerst) – das Ergebnis muss **exakt** der heutige Körper sein (kanonisches JSON, ohne jede Normalisierung).
+ * Wie `applyReverseRecipe`, aber für die ganze Norm: Körper **und** Überschrift (`title`, `shortTitle`, `abbr`, die
+ * Abkürzungszeile im Kopfblock). Für Rezepte ohne Titelschritt ist das Ergebnis im Körper identisch mit
+ * `applyReverseRecipe`, die übrigen Felder bleiben. Reine Funktion; gibt eine Kopie von `law` zurück.
  */
-export function verifyRoundTrip(currentBody: readonly NormBodyBlock[], recipe: AnyReconstructionRecipe): { ok: boolean; detail: string } {
-  let baseline: NormBodyBlock[];
+export function applyReverseRecipeToLaw<T extends LawTitleFields>(law: T, recipe: AnyReconstructionRecipe, options?: RecipeApplyOptions): T {
+  const refused = refuseRestoration(recipe, options);
+  if (refused) throw new ReconstructionError('restoration-recipe', refused);
+  const current: LawState = { body: law.body, ...(recipe.title ? { title: titleState(law) } : {}) };
+  const state = reverseRecipeState(current, recipe);
+  const result = { ...law, body: state.body } as T;
+  if (recipe.title && state.title) {
+    result.title = state.title.title;
+    if (state.title.shortTitle === undefined) delete result.shortTitle;
+    else result.shortTitle = state.title.shortTitle;
+    if (state.title.abbr === undefined) delete result.abbr;
+    else result.abbr = state.title.abbr;
+  }
+  return result;
+}
+
+function roundTripState(current: LawState, recipe: AnyReconstructionRecipe): { ok: boolean; detail: string } {
+  let baseline: LawState;
   try {
-    baseline = applyReverseRecipe(currentBody, recipe);
+    baseline = reverseRecipeState(current, recipe);
   } catch (error) {
     return { ok: false, detail: `Rückwärts: ${(error as Error).message}` };
   }
-  let forward: NormBodyBlock[];
+  let forward: LawState;
   try {
-    forward = forwardSteps(baseline, forwardOrder(recipe));
+    forward = forwardLawSteps(baseline, forwardOrder(recipe));
   } catch (error) {
     return { ok: false, detail: `Vorwärts: ${(error as Error).message}` };
   }
-  const expected = stableStringify(currentBody);
-  const actual = stableStringify(forward);
+  const expected = stableStringify(current.body);
+  const actual = stableStringify(forward.body);
   if (actual !== expected) {
     let at = 0;
     while (at < expected.length && expected[at] === actual[at]) at += 1;
     return { ok: false, detail: `Rundlauf weicht ab bei Zeichen ${at}: erwartet „${expected.slice(Math.max(0, at - 30), at + 30)}“, erhalten „${actual.slice(Math.max(0, at - 30), at + 30)}“` };
   }
-  if (bodyFingerprint(baseline) === recipe.expected.currentFingerprint) return { ok: false, detail: 'Rückrechnung ändert nichts – kein Nachweis einer Änderung' };
+  if (current.title && (!forward.title || !sameTitle(forward.title, current.title))) return { ok: false, detail: `Rundlauf der Überschrift weicht ab: erwartet „${current.title.title}“, erhalten „${forward.title?.title ?? '–'}“` };
+  const titleChanged = Boolean(recipe.title && baseline.title && current.title && !sameTitle(baseline.title, current.title));
+  if (bodyFingerprint(baseline.body) === recipe.expected.currentFingerprint && !titleChanged) return { ok: false, detail: 'Rückrechnung ändert nichts – kein Nachweis einer Änderung' };
   const amendments = recipeAmendments(recipe);
   const steps = amendments.reduce((sum, amendment) => sum + amendment.steps.length, 0);
-  return { ok: true, detail: `Rundlauf exakt: ${amendments.length} Änderung(en), ${steps} Schritt(e), ${recipe.expected.baselineFingerprint.slice(0, 16)} → ${recipe.expected.currentFingerprint.slice(0, 16)}` };
+  return { ok: true, detail: `Rundlauf exakt: ${amendments.length} Änderung(en), ${steps} Schritt(e), ${recipe.expected.baselineFingerprint.slice(0, 16)} → ${recipe.expected.currentFingerprint.slice(0, 16)}${recipe.title ? `; Überschrift „${recipe.title.baseline.title.slice(0, 60)}“ → „${recipe.title.current.title.slice(0, 60)}“` : ''}` };
+}
+
+/**
+ * Beweis durch Rundlauf: rückwärts, dann vorwärts (Forward-Replay: Stichtagskörper plus alle Änderungen, älteste
+ * zuerst) – das Ergebnis muss **exakt** der heutige Körper sein (kanonisches JSON, ohne jede Normalisierung).
+ * Rezepte mit Titelschritten lehnt diese Funktion ab (`verifyRoundTripLaw`).
+ */
+export function verifyRoundTrip(currentBody: readonly NormBodyBlock[], recipe: AnyReconstructionRecipe, options?: RecipeApplyOptions): { ok: boolean; detail: string } {
+  if (recipeChangesTitle(recipe)) return { ok: false, detail: `${recipe.documentId}: ${TITLE_RECIPE}` };
+  const refused = refuseRestoration(recipe, options);
+  if (refused) return { ok: false, detail: refused };
+  return roundTripState({ body: currentBody as NormBodyBlock[] }, recipe);
+}
+
+/** Rundlauf über die ganze Norm: Körper und – bei Titelschritten – Überschrift (`title`, `shortTitle`, `abbr`). */
+export function verifyRoundTripLaw(law: LawTitleFields, recipe: AnyReconstructionRecipe, options?: RecipeApplyOptions): { ok: boolean; detail: string } {
+  const refused = refuseRestoration(recipe, options);
+  if (refused) return { ok: false, detail: refused };
+  return roundTripState({ body: law.body, ...(recipe.title ? { title: titleState(law) } : {}) }, recipe);
 }

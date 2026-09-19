@@ -1,9 +1,11 @@
 # Deployment
 
-Stand: Der Worker `landesrecht` läuft unter workers.dev, zuletzt deployt 2026-09-18 als Version
-`cf8c773d-2280-456b-ad84-564d405f66d2` (West: D1 `landesrecht-west` mit 1 482 Normen; BayWü: D1
-`landesrecht-baywue` mit 1 582 Normen, inkrementell eingespielt; R2 `landesrecht-quellen` privat mit den
-Rohquellen beider Länder). Alle Remote-Schritte (Deploy, Remote-D1, R2-Upload) bleiben
+Stand: Der Worker `landesrecht` läuft unter workers.dev, zuletzt deployt 2026-09-19 als Version
+`786d0f86-1c3f-453a-92b1-faa74bee788c` (West: D1 `landesrecht-west` mit 1 482 Normen; BayWü: D1
+`landesrecht-baywue` mit 1 694 Normen, inkrementell eingespielt und am Ziel nachgeprüft; R2 `landesrecht-quellen`
+privat mit den Rohquellen beider Länder). NSH: D1 `landesrecht-nsh` ohne Schema und ohne Bestand; der lokale
+Bestand (1 910 Normen) ist projiziert (`data/runtime/d1-batches/landesrecht-nsh`, 52 Dateien) und wartet auf die
+Entscheidung zum TDM-Vorbehalt (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`). Alle Remote-Schritte (Deploy, Remote-D1, R2-Upload) bleiben
 manuelle, einzeln freigegebene Schritte; Wrangler-Anmeldung nur per OAuth (`npx wrangler login`).
 
 ## GitLab-CI (`.gitlab-ci.yml`)
@@ -71,6 +73,13 @@ npm run d1:apply:batches -- --database landesrecht-west --execute --confirm-remo
   (`packages/runtime/src/sql-batches.ts`); je Norm Löschen und Neuaufbau in derselben Datei, damit ein
   abgebrochener Lauf mit `--resume` fortgesetzt werden kann. Protokolle je Ziel getrennt: `apply-state.json`
   (remote) und `apply-state.local.json` (lokal) – ein lokal eingespielter Plan gilt remote nicht als eingespielt.
+- Nachprüfung am Ziel (seit 2026-09-18): Nach der letzten Datei liest `d1-apply-batches` `projection_fingerprint` und
+  `projection_state` aus der Zieldatenbank; übernommen wird der Projektionszustand nur, wenn der Zielfingerabdruck des
+  Plans dort steht und die Projektion nicht mehr `incremental-in-progress` ist. Anlass: Eine BayWü-Datei mit einem
+  NUL-Zeichen im SQL-Text (aus einer Quellseite) wurde remote nach dem Zeichen abgeschnitten, Wrangler meldete dennoch
+  Erfolg. Seitdem lehnt `sqlLiteral` NUL-Zeichen ab (`packages/runtime/src/projection.ts`), und die BayWü-Normprüfung
+  sperrt Steuerzeichen im Text. Wiederherstellung eines teilweise eingespielten Stands: vollständige Projektion
+  (`d1:plan` ohne `--incremental`) für genau diese Datenbank.
 - Inkrementell: `npm run d1:plan -- --jurisdiction west --incremental --since <git-ref>` oder
   `--state data/runtime/projection-state-west.remote.json` projiziert nur neue, geänderte und entfernte Normen
   (Fingerabdruck je Norm, `packages/runtime/src/incremental.ts`). Jede inkrementelle Datei beginnt mit einer

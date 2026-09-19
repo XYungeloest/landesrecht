@@ -81,5 +81,18 @@ for (const file of pending) {
   renameSync(`${stateFile}.tmp`, stateFile);
   console.log(`  eingespielt ${file.name} (${applyState.applied.length}/${plan.files.length})`);
 }
+// Nachprüfung am Ziel statt Vertrauen in den Exit-Code: Wrangler meldete 2026-09-18 Erfolg, obwohl die Datei nach einem
+// NUL-Zeichen abgeschnitten war. Übernommen wird der Zustand nur, wenn die Datenbank den Zielfingerabdruck trägt und die
+// Projektion nicht mehr „in Arbeit“ ist.
+if (pending.length > 0 && plan.targetFingerprint) {
+  const output = execFileSync('npx', ['wrangler', 'd1', 'execute', database, local ? '--local' : '--remote', '--config', 'wrangler.jsonc', '--json', '--command', "SELECT key, value FROM law_runtime_meta WHERE key IN ('projection_fingerprint', 'projection_state')"], { cwd: join(root, 'apps', 'web'), stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, WRANGLER_SEND_METRICS: 'false' } }).toString();
+  const rows = (JSON.parse(output.slice(output.indexOf('['))) as Array<{ results?: Array<{ key: string; value: string }> }>)[0]?.results ?? [];
+  const meta = new Map(rows.map((row) => [row.key, row.value]));
+  if (meta.get('projection_fingerprint') !== plan.targetFingerprint || String(meta.get('projection_state') ?? '').startsWith('incremental-in-progress')) {
+    console.error(`${database}: Nachprüfung gescheitert – Fingerabdruck ${meta.get('projection_fingerprint') ?? '(fehlt)'} statt ${plan.targetFingerprint}, Zustand ${meta.get('projection_state') ?? '(fehlt)'}. Der Projektionszustand wird nicht übernommen.`);
+    process.exit(1);
+  }
+  console.log(`  Nachprüfung: Fingerabdruck ${plan.targetFingerprint} am Ziel bestätigt`);
+}
 if (!local) copyFileSync(join(directory, 'state.json'), join(root, 'data', 'runtime', `projection-state-${plan.jurisdiction}.remote.json`));
 console.log(`${database}: vollständig eingespielt${local ? ' (lokal)' : '; Remote-Projektionszustand übernommen'}.`);

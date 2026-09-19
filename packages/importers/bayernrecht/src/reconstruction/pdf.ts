@@ -423,7 +423,8 @@ export interface PdfCommencement {
   reason?: string;
 }
 
-const COMMENCEMENT_SENTENCE = /(?:Dieses|Diese|Die|Das)\s+(?:Gesetz|Verordnung|Bekanntmachung)\s+tritt\s+am\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+in\s+Kraft\s*\./gu;
+// Auch „Dieses Statut …“ (GVBl. 2007 S. 640) und „mit Wirkung vom …“ (GVBl. 2007 S. 707); immer ein Kalenderdatum.
+const COMMENCEMENT_SENTENCE = /(?:Dieses|Diese|Dieser|Die|Das)\s+(?:Gesetz|Verordnung|Bekanntmachung|Statut|Satzung|Verwaltungsvorschrift|Staatsvertrag|Abkommen)\s+tritt\s+(?:am|mit\s+Wirkung\s+vom)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+in\s+Kraft\s*\./gu;
 
 /**
  * Inkrafttreten einer Verkündung aus dem Textlayer ihrer PDF-Ausgabe – nur unter den im Modulkopf genannten

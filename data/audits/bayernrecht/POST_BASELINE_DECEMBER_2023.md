@@ -24,9 +24,9 @@ Unverändertheit der elektronischen Kopie, nicht ihre Amtlichkeit.
 ## 2 Verkündungen
 
 Veröffentlichungen mit Verkündung zwischen 2023-12-02 und 2023-12-31: **91**
-(GVBl. 14, BayMBl. 77), daraus **100** Ereignisse.
+(GVBl. 14, BayMBl. 77), daraus **102** Ereignisse.
 
-Davon richten sich **40** gegen eine vorbestehende Vorschrift (Änderung, Aufhebung, Neufassung, Ablauf).
+Davon richten sich **42** gegen eine vorbestehende Vorschrift (Änderung, Aufhebung, Neufassung, Ablauf).
 **Jede dieser Vorschriften galt am 2023-12-01** – der Änderungsbefehl setzt ihre Geltung voraus und nennt sie
 in der Fassung, die am Stichtag galt.
 
@@ -38,7 +38,7 @@ fälschlich in den Stichtagsbestand auf. Maßgeblich ist das Verkündungsdatum.
 | --- | --- | --- | --- | --- | --- | --- |
 | 2023-12-06 | BayMBl. | 2023-11-17 | **ja** | `amend` | Änderung der Bekanntmachung über den Pilotversuch „Digitale Schule der Zukunft“ | BayMBl. 2023 Nr. 583 |
 | 2023-12-06 | BayMBl. | 2023-11-21 | **ja** | `amend` | Änderung der Redaktionsrichtlinien | BayMBl. 2023 Nr. 584 |
-| 2023-12-06 | BayMBl. | 2023-11-21 | **ja** | `new` | Erlass über die Stellvertretung der Mitglieder der Bayerischen Staatsregierung (Stellvertretererlass | BayMBl. 2023 Nr. 585 |
+| 2023-12-06 | BayMBl. | 2023-11-21 | **ja** | `expire` `new` | Erlass über die Stellvertretung der Mitglieder der Bayerischen Staatsregierung (Stellvertretererlass | BayMBl. 2023 Nr. 585 |
 | 2023-12-06 | BayMBl. | 2023-11-20 | **ja** | `notice` | Vorbereitungsdienst für das Lehramt an beruflichen Schulen September 2024 nach der Verordnung über d | BayMBl. 2023 Nr. 586 |
 | 2023-12-06 | BayMBl. |  | nein | `notice` | Ausschreibungen von Stellen der Sachgebietsleitung und ggf. einer Referentenstelle an den Regierunge | BayMBl. 2023 Nr. 587 |
 | 2023-12-06 | BayMBl. | 2023-11-21 | **ja** | `notice` | Stellenausschreibungen im deutschen Auslandsschulwesen | BayMBl. 2023 Nr. 588 |
@@ -54,7 +54,7 @@ fälschlich in den Stichtagsbestand auf. Maßgeblich ist das Verkündungsdatum.
 | 2023-12-06 | BayMBl. | 2023-11-17 | **ja** | `new` | Richtlinie zur Förderung von Maßnahmen zur Verbesserung der Verarbeitung und Vermarktung landwirtsch | BayMBl. 2023 Nr. 598 |
 | 2023-12-06 | BayMBl. | 2023-12-06 | nein | `amend` | Änderung der Bekanntmachung über die Naturwälder in Bayern gemäß Art. 12a Abs. 2 des Bayerischen Wal | BayMBl. 2023 Nr. 599 |
 | 2023-12-06 | BayMBl. | 2023-11-24 | **ja** | `amend` | Änderung der Auslandsreisekostenbekanntmachung | BayMBl. 2023 Nr. 600 |
-| 2023-12-06 | BayMBl. | 2023-11-22 | **ja** | `new` | Bayerisches Energieforschungsprogramm | BayMBl. 2023 Nr. 601 |
+| 2023-12-06 | BayMBl. | 2023-11-22 | **ja** | `expire` `new` | Bayerisches Energieforschungsprogramm | BayMBl. 2023 Nr. 601 |
 | 2023-12-06 | BayMBl. | 2023-11-22 | **ja** | `notice` | Stellenausschreibung in der Verwaltungsgerichtsbarkeit | BayMBl. 2023 Nr. 602 |
 | 2023-12-06 | BayMBl. | 2023-11-30 | **ja** | `amend` | Änderung des 49. Jahreskrankenhausbauprogramms 2023 des Freistaates Bayern | BayMBl. 2023 Nr. 603 |
 | 2023-12-13 | BayMBl. | 2023-11-20 | **ja** | `new` | Richtlinie zur Förderung ambulanter Krebsberatungsstellen in Bayern | BayMBl. 2023 Nr. 604 |
@@ -138,8 +138,10 @@ heißt: Sie steht heute nicht mehr im Portal und muss gesondert beschafft werden
 | --- | --- | --- | --- | --- | --- |
 | 2023-12-06 | BayMBl. 2023 Nr. 583 | Bekanntmachung über den Pilotversuch „Digitale Schule der Zukunft“ | 2230-1-3-K | `absent-from-portal` | exact-title |
 | 2023-12-06 | BayMBl. 2023 Nr. 584 | Redaktionsrichtlinien | 103-S | `resolved` | fundstelle |
+| 2023-12-06 | BayMBl. 2023 Nr. 585 | Bayerischen Ministerpräsidenten | – | `absent-from-portal` | exact-title, ausfertigungsdatum, fundstelle |
 | 2023-12-06 | BayMBl. 2023 Nr. 599 | Bekanntmachung über die Naturwälder in Bayern gemäß Art. 12a Abs. 2 des Bayerischen Waldge | 7904-L | `resolved` | fundstelle |
 | 2023-12-06 | BayMBl. 2023 Nr. 600 | Auslandsreisekostenbekanntmachung | 2032-4-F | `resolved` | fundstelle |
+| 2023-12-06 | BayMBl. 2023 Nr. 601 | Bayerischen Staatsministeriums für Wirtschaft, Landesentwicklung und Energie | – | `absent-from-portal` | exact-title, ausfertigungsdatum, fundstelle |
 | 2023-12-13 | BayMBl. 2023 Nr. 609 | Wasserrahmenrichtlinie | – | `resolved` | abbreviation, exact-title |
 | 2023-12-13 | BayMBl. 2023 Nr. 611 | Bekanntmachung über Gastschulbeiträge und Kostenersatz für Schüler mit gewöhnlichem Aufent | 2230-7-K | `resolved` | fundstelle |
 | 2023-12-13 | BayMBl. 2023 Nr. 618 | Bekanntmachung über die Förderung von Selbsthilfegruppen für Inklusion und Teilhabe von Me | 8113-1-A | `resolved` | fundstelle |

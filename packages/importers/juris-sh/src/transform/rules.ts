@@ -172,7 +172,9 @@ export const PROTECTED_PATTERNS: readonly ProtectedPattern[] = [
   {
     id: 'gazette-dotted',
     category: 'source-citation',
-    pattern: new RegExp(String.raw`\b(?:GVOBl|GVBl|Amtsbl|ABl|NBl|MBl|SchlHA)\.\s*(?:[A-ZÄÖÜ]{2,8}\s+)?${DOTTED_ABBREVIATION}(?:\s*(?:\d{4}\s*)?S\.\s*\d+[a-z]?)?`, 'gu'),
+    // „GVOBI.“ (großes I statt kleinem l) ist eine Schreibvariante im Quelltext der juris-Ausgabe.
+    // Nachrichtenblätter der Ressorts tragen das Ressortkürzel mit oder ohne Punkt („NBl. MSB. Schl.-H.“, „NBl. MBWK Schl.-H.“).
+    pattern: new RegExp(String.raw`\b(?:GVOB[lI]|GVBl|Amtsbl|ABl|NBl|MBl|SchlHA)\.\s*(?:[A-ZÄÖÜ]{2,8}\.?\s+)?${DOTTED_ABBREVIATION}(?:\s*(?:\d{4}\s*)?S\.\s*\d+[a-z]?)?`, 'gu'),
     reason: 'Amtliche Fundstelle des Herkunftslandes (Verkündungs-, Amts- oder Nachrichtenblatt) bleibt unverändert',
   },
   {

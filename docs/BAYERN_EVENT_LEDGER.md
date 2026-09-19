@@ -320,19 +320,52 @@ wo sich der Ereignistyp ändert (er ist Teil des Inhaltsanteils) oder ein frühe
 Veröffentlichung wegfällt (laufende Nummer) – betroffen ist unter den Kandidaten nur die Aufhebung der
 Rückforderungsrichtlinie (`baymbl-2025-590-n00590-03-…` → `…-02-…`).
 
+### 3.8 Korrektur „Befehlstypisierung“ (Lauf 6, 2026-09-18)
+
+Die Rückrechnung (Agent R) fand Rezeptschritte an Ereignissen vom Typ `new`, obwohl die Verkündung die Norm nur
+ändert (GVBl. 2024 S. 98 neunmal, S. 605, S. 619, S. 114). Ursache: Hinter dem Zitat wurde kein Befehl erkannt,
+und das Ereignis fiel auf die Veröffentlichungsebene zurück – `new`, weil eine Mantelverordnung selbst eine
+Verordnung ist. Allgemein behoben in `classify.ts`, Regressionstests in `tests/unit/bayernrecht-events.test.ts`
+(Abschnitt „Befehlserkennung: Wortlautbefehle, Aufzählungen, Satzklammer, neuer Wortlaut“, wörtliche Ausschnitte):
+
+| Lücke | Beleg | Korrektur |
+| --- | --- | --- |
+| Wortlautbefehle | „In Art. 98 Satz 1 des BayBesG (…) werden die Wörter „…“ durch die Wörter „…“ ersetzt“ | Regel: `wird/werden … ersetzt/gestrichen/eingefügt/angefügt/vorangestellt` → `amend` |
+| Befehl länger als das Fenster | GVBl. 2024 S. 98 Abs. 57 (AELFV): das Schlussverb steht hinter 180 Zeichen | bis zum Beginn des nächsten Glieds lesen (höchstens 600 Zeichen) |
+| „wird“ im neuen Wortlaut | GVBl. 2024 S. 570: „… die ehrenamtlich … durchgeführt wird“ eingefügt | zitierter Wortlaut („…“) ist nie Befehl (`maskQuoted`) |
+| bereinigte Fassung | „… (BayRS 630-1-F) veröffentlichten bereinigten Fassung, die zuletzt …“ | Rest der Fassungsangabe gehört zum Zitat |
+| Befehl vor einer Aufzählung | GVBl. 2025 S. 443: „Mit Ablauf des 31. August 2025 treten außer Kraft: 1. die ErgPOFHR …, sowie 2. die BegPO …“ | `listCommand`: Glied direkt hinter der Gliederungsziffer, kein neuer Absatz dazwischen, Frist aus dem Befehl |
+| Satzklammer | GVBl. 2025 S. 246: „Mit Ablauf des 31. Juli 2025 tritt die Ladenschlussverordnung (…) … außer Kraft.“ | `bracketCommand`: Verb vor, „außer Kraft“ hinter dem Zitat |
+| Zitat im neuen Wortlaut | BayMBl. 2026 Nr. 356: „Nr. 4 wird wie folgt gefasst: „… tritt die Bekanntmachung … vom 12. April 2018 (KWMBl. S. 167) außer Kraft.““ | `insideQuote`: nie Gegenstand eines Befehls |
+| Berichtigung als Änderung | „wird wie folgt berichtigt: … ersetzt“ | Berichtigungsregel mit „wie folgt“; in einer Berichtigung sind Wortlautbefehle Berichtigungen |
+| Aktenzeichen hinter dem Datum | BayMBl. 2025 Nr. 89: „… Forsten vom 31. Januar 2022, Az. Z5-7971.1-1/18 (BayMBl. Nr. 125), außer Kraft“ – Titel „Forsten vom 31. Januar 2022, Az. …“, kein Ausfertigungsdatum | Ausfertigungsteil samt Aktenzeichen; ein Einzelwort auf „-vereinbarung“ ist ein Titel („Dienstvereinbarung“, BayMBl. 2024 Nr. 196) |
+| Zitat ohne BayRS-Nummer | GVBl. 2024 S. 114 Art. 13 Abs. 3: „In Art. 13 Abs. 3 des Haushaltsgesetzes 2022 (HG 2022) vom 22. April 2022 (GVBl. S. 102) wird die Angabe … ersetzt“ – die Veröffentlichung führt 630-2-24-F, das Zitat nennt keine BayRS-Nummer; das Ereignis fiel auf `new` zurück | Zitat gehört zur Gliederungsnummer, wenn der Bestand unter ihr genau eine Vorschrift führt, das Zitat deren Ausfertigungsdatum trägt, jedes Titelwort in ihrem Titel steht und alle passenden Zitate dieselbe Fundstelle nennen |
+| `new` gegen eine zitierte Norm | BayMBl. 2025 Nr. 209: „Die nach der Realschulordnung (RSO) vom 18. Juli 2007 … zu erteilenden Zeugnisse …“ | ohne Befehl ist das Zitat Bezugnahme; das `new`-Ereignis gilt der Veröffentlichung selbst |
+
+Auswirkung (offline, derselbe Cache): 3 045 → 3 072 Ereignisse. Kennungen ändern sich, weil Ereignistyp, Zieltitel und die
+laufende Nummer Teil der Kennung sind – die Zuordnung alt → neu (gegen Commit 27b680a5f) steht in
+`data/imports/bayernrecht/events/id-changes-run6.json`: 149 geänderte Kennungen (126 `new` → `amend`, davon 99 in
+GVBl. 2024 S. 98 (88), S. 114 (4, darunter das HG 2022), S. 605 (3) und S. 619 (4); 7 `amend` → `expire`; 5 `new` →
+`expire`; 11 mit berichtigtem Zieltitel bei gleichem Typ – 6 Berichtigungen, 3 Zitate mit Aktenzeichen, je 1 `new`
+und `notice`), 5 entfallene Ereignisse (3 Aufhebungen und 2 Außerkrafttreten, die im neuen Wortlaut oder in
+Unterbefehlen einer Änderung standen – Grund je Kennung in der Datei) und 32 neue Außerkrafttreten aus Satzklammern
+und Aufzählungen. Die Kennungen der 25 bis Lauf 5 übernommenen
+baseline-only-Normen sind unverändert. baseline-only-Kandidaten 414 → 438: 24 bisher übersehene Enden von
+Vorgängervorschriften („Mit Ablauf des … tritt die Bekanntmachung … außer Kraft“).
+
 ---
 
 ## 4 Kennzahlen (Lauf 2026-09-18)
 
-3 045 Ereignisse aus 2 121 Veröffentlichungen – GVBl. 906, BayMBl. 2 139 (nach der Korrektur in 3.7).
+3 072 Ereignisse aus 2 121 Veröffentlichungen – GVBl. 905, BayMBl. 2 167 (nach den Korrekturen in 3.7 und 3.8).
 
 | Ereignistyp | 2023 | 2024 | 2025 | 2026 | gesamt |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `new` | 22 | 233 | 129 | 100 | 484 |
-| `amend` | 36 | 459 | 409 | 293 | 1 197 |
-| `repeal` | 0 | 273 | 28 | 141 | 442 |
+| `new` | 22 | 129 | 122 | 80 | 353 |
+| `amend` | 36 | 563 | 406 | 311 | 1 316 |
+| `repeal` | 0 | 273 | 26 | 140 | 439 |
 | `recast` | 0 | 1 | 1 | 0 | 2 |
-| `expire` | 6 | 20 | 17 | 10 | 53 |
+| `expire` | 8 | 33 | 36 | 18 | 95 |
 | `commencement` | 0 | 0 | 1 | 2 | 3 |
 | `correction` | 2 | 8 | 14 | 6 | 30 |
 | `treaty` | 0 | 7 | 8 | 2 | 17 |
@@ -341,22 +374,21 @@ Rückforderungsrichtlinie (`baymbl-2025-590-n00590-03-…` → `…-02-…`).
 
 `replace` und `extend` traten nicht auf. Die bayerischen Quellen drücken die Ablösung einer Vorschrift
 durch eine neue nicht als eigenen Typ aus, sondern als Aufhebung oder Außerkrafttreten durch den
-Nachfolger – dafür steht der Subtyp `ausserkrafttreten-durch-nachfolger` mit 84 Ereignissen. Eine
+Nachfolger – dafür steht der Subtyp `ausserkrafttreten-durch-nachfolger` mit 112 Ereignissen. Eine
 Verlängerung der Geltungsdauer kam im Zeitraum nicht vor. Beide Typen bleiben im Schema, damit ein
 späterer Lauf sie führen kann, ohne das Schema zu ändern.
 
-Häufigste Subtypen: `aenderungsverordnung` 278, `mantelaenderung` 200,
-`ausserkrafttreten-durch-nachfolger` 84, `aenderungsgesetz` 63, `berichtigung` 30, `staatsvertrag` 17,
-`teilaufhebung` 7, `neubekanntmachung` 3, `inkrafttretensbekanntmachung` 3, `teilausserkrafttreten` 2.
+Häufigste Subtypen: `aenderungsverordnung` 278, `mantelaenderung` 199,
+`ausserkrafttreten-durch-nachfolger` 112, `aenderungsgesetz` 63, `berichtigung` 30, `staatsvertrag` 17,
+`teilaufhebung` 6, `teilausserkrafttreten` 3, `neubekanntmachung` 3, `inkrafttretensbekanntmachung` 3.
 
-Evidenz: `strong` 1 706, `supporting` 1 333, `insufficient` 6, `contradictory` 0.
-Zielauflösung: `resolved` 1 313, `absent-from-portal` 528, `not-applicable` 1 111, `unidentified` 42,
-`ambiguous` 40, `missing-predecessor` 11. Strukturell stark aufgelöst: **1 709**.
+Evidenz: `strong` 1 737, `supporting` 1 329, `insufficient` 6, `contradictory` 0.
+Zielauflösung: `resolved` 1 315, `absent-from-portal` 555, `not-applicable` 1 109, `unidentified` 42,
+`ambiguous` 40, `missing-predecessor` 11. Strukturell stark aufgelöst: **1 740**.
 
-**Baseline-only-Kandidaten: 414** (vor der Korrektur 426). Davon 386 mit strukturell starker Zuordnung
-(überwiegend vollständiger Titel plus Ausfertigungsdatum, oft zusätzlich die Fundstelle). Künftige Enden: 9.
-Es sind ganz überwiegend Verwaltungsvorschriften aus den Aufhebungslisten des BayMBl.; ihre Wiederherstellung
-aus den Verkündungen beschreibt `docs/BAYWUE_BASELINE_ONLY.md`.
+**Baseline-only-Kandidaten: 438** (Lauf 5: 414, davor 426). Davon 410 mit strukturell starker Zuordnung.
+Künftige Enden: 9. Es sind ganz überwiegend Verwaltungsvorschriften aus den Aufhebungslisten und
+Schlussvorschriften des BayMBl.; ihre Wiederherstellung aus den Verkündungen beschreibt `docs/BAYWUE_BASELINE_ONLY.md`.
 
 Lesart der Kennzahlen:
 
@@ -392,7 +424,7 @@ Lesart der Kennzahlen:
 
 ## 6 Was daraus für einen späteren Import folgt
 
-1. **Der Stichtagsbestand ist nicht der heutige Bestand.** Die 414 baseline-only-Kandidaten fehlen in
+1. **Der Stichtagsbestand ist nicht der heutige Bestand.** Die 438 baseline-only-Kandidaten fehlen in
    jedem Portalabzug von heute. Für jeden braucht ein Import eine eigene Beschaffung und einen
    dokumentierten `baselineRecoveryMethod`. Die Mehrzahl sind Verwaltungsvorschriften.
 2. **Nach Verkündungsdatum filtern, nie nach Ausfertigungsdatum.** Die Dezember-Auswertung zeigt den

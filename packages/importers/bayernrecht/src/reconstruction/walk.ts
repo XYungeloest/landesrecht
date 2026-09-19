@@ -36,7 +36,7 @@
 import { NON_INVERTIBLE_EVENT_TYPES, type ReconstructionState } from '../baseline/reconstruction.ts';
 import { parseLongGermanDate } from '../events/resolve.ts';
 import { candidateKeys, historyEntries, lastAmendmentClause, registerNote, type PublicationKey } from './chain.ts';
-import { commencementFor, sectionRef } from './commencement.ts';
+import { datedCommencement, sectionRef } from './commencement.ts';
 import { pdfCommencement } from './pdf.ts';
 import { candidateRefs, lookupPage, publicationCitation, publicationKey, type GazettePage, type PublicationRef } from './pages.ts';
 import { amendingCitations, blockFromCandidate, citationMatches, commandBlocks, isBlockFailure, isStrongMatch, normCitations, referenceKey, weakIntroCandidates, type CommandBlock, type NormCitation, type NormIdentity } from './structure.ts';
@@ -156,6 +156,21 @@ export interface WalkResult {
   evidence: string[];
   /** Hinweise ohne Einfluss auf das Ergebnis (etwa ein nicht prüfbarer Vorvorgänger). */
   notes: string[];
+  /**
+   * Nur mit `deep` (Lauf 7): die Änderungen vor dem Stichtag bis zur Stammfassung – die letzte(n) Änderung(en) der
+   * Stichtagsfassung und ihre Vorgänger, jüngste zuerst, je mit Befehlsblock. Scheitert der Gang dorthin, steht der Grund
+   * in `priorFailure`; die Kette selbst (Schritte, Belege) bleibt davon unberührt.
+   */
+  prior?: WalkStep[];
+  priorFailure?: WalkFailure;
+  /**
+   * Nur mit `provisional` (Lauf 8): Befunde über Veröffentlichungen **nach** dem Stichtag, die die Kette nicht enthält
+   * (Registerereignis, andere Verkündung mit Änderungsbefehl, Eintrag im Änderungsverlauf oder Fortführungsnachweis). Sie
+   * halten die Kette nicht an, gelten aber nur, wenn die Wortlautprobe gegen die Stammverkündung sie ausräumt: Hätte eine
+   * solche Veröffentlichung den Text geändert, trüge der zurückgerechnete Stichtagskörper ihre Änderung und wiche von der
+   * Stammverkündung ab.
+   */
+  provisional?: WalkFailure[];
 }
 
 export interface WalkInput {
@@ -175,9 +190,11 @@ export interface WalkInput {
   postBaselinePublications: ReadonlySet<string>;
   /** Je Detailseite nach dem Stichtag die Normzitate mit Änderungsbefehl. */
   amendingByPage: ReadonlyMap<string, NormCitation[]>;
+  /** Lauf 7: auch die Änderungen vor dem Stichtag bis zur Stammfassung gehen (`prior`). */
+  deep?: boolean;
+  /** Lauf 8: Befunde über Veröffentlichungen nach dem Stichtag außerhalb der Kette vorläufig hinnehmen (`provisional`). */
+  provisional?: boolean;
 }
-
-const CALENDAR = /\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4}/u;
 
 const refOfUrl = (url: string): PublicationRef | undefined => {
   const match = /\/(gvbl|baymbl)\/(\d{4})-(\d+)\/$/u.exec(url);
@@ -301,17 +318,33 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
     if (blocks.length === 0) {
       // Die Seite ist durch den amtlichen Verweis als Änderung dieser Norm bestimmt: Genau ein Einleitungssatz, der die
       // Norm über Ausfertigungsdatum oder BayRS-Nummer bezeichnet und keinem Merkmal widerspricht, ist ihrer.
-      const weak = weakIntroCandidates(page.units, input.identity);
+      // Nennt der Verweis einen Abschnitt („Art. 3 des Staatsvertrages …“), zählen nur Kandidaten in diesem Abschnitt
+      // (GVBl. 2025 S. 350: ARD- und ZDF-Staatsvertrag tragen dasselbe Datum, in Art. 2 und Art. 3).
+      const weakAll = weakIntroCandidates(page.units, input.identity);
+      const weakBlocks = weakAll.map((candidate) => ({ candidate, block: blockFromCandidate(page.units, candidate) }));
+      const weak = ref.sections.length > 0
+        ? weakBlocks.filter((entry) => {
+          const section = isBlockFailure(entry.block) ? undefined : sectionRef(entry.block.section, entry.block.intro.label?.replace(/^[„‚]/u, ''));
+          return section !== undefined && ref.sections.includes(section);
+        })
+        : weakBlocks;
       if (weak.length === 1) {
-        const block = blockFromCandidate(page.units, weak[0]!);
+        const block = weak[0]!.block;
         if (!isBlockFailure(block)) {
           blocks = [block];
-          result.evidence.push(`${page.citation}: Einleitungssatz nur über ${weak[0]!.matched.join('+')} bezeichnet (Titel oder Fundstelle abweichend); die Seite ist durch „${ref.text.slice(0, 120)}“ als Änderung dieser Norm bestimmt, und kein anderer Einleitungssatz trägt ein Merkmal der Norm`);
+          result.evidence.push(`${page.citation}: Einleitungssatz nur über ${weak[0]!.candidate.matched.join('+')} bezeichnet (Titel oder Fundstelle abweichend); die Seite ist durch „${ref.text.slice(0, 120)}“ als Änderung dieser Norm bestimmt, und kein anderer Einleitungssatz ${ref.sections.length > 0 ? `im genannten Abschnitt (${ref.sections.join(', ')}) ` : ''}trägt ein Merkmal der Norm`);
         } else blockFailures.push(block);
       }
     }
     const withSection = blocks.map((block) => ({ block, section: sectionRef(block.section, block.intro.label?.replace(/^[„‚]/u, '')) }));
-    const chosen = ref.sections.length > 0 ? withSection.filter((entry) => entry.section !== undefined && ref.sections.includes(entry.section)) : withSection;
+    let chosen = ref.sections.length > 0 ? withSection.filter((entry) => entry.section !== undefined && ref.sections.includes(entry.section)) : withSection;
+    // Anpassungsverordnungen: Der Block der Norm ist ein Glied der Liste in „§ 1“ („100. Die Verordnung … wird wie folgt
+    // geändert:“, GVBl. 2014 S. 286); die Seite führt den Paragraphen nicht als Abschnitt des Blocks. Genau ein stark
+    // zugeordneter Block ohne eigenen Abschnitt auf der genannten Seite ist dann der genannte.
+    if (chosen.length === 0 && ref.sections.length === 1 && withSection.length === 1 && withSection[0]!.block.section === undefined && strongBlocks.length === 1) {
+      chosen = withSection.map((entry) => ({ ...entry, section: ref.sections[0]! }));
+      result.evidence.push(`${page.citation}: der Block der Norm (${withSection[0]!.section ?? 'Glied der Liste'}) steht ohne eigenen Abschnitt – als „${ref.sections[0]}“ des Verweises genommen, einziger Block der Norm auf der Seite`);
+    }
     const found: Candidate[] = chosen.map((entry) => ({ ref: page.ref, page, block: entry.block, ...(entry.section ? { section: entry.section } : {}), namedAs: ref.text, ...(enactmentDate ? { enactmentDate } : {}) }));
     // Ein genannter Abschnitt ohne lesbaren Befehlsblock kann nur noch Beleg für den Beginn sein (sein Inkrafttreten
     // folgt aus Abschnitt und Schlussvorschrift); zurückgenommen wird er nie.
@@ -322,7 +355,7 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
     return found;
   };
 
-  const commencementOf = async (candidate: Candidate): Promise<Pick<WalkStep, 'effectiveDates' | 'effectiveDateEvidence' | 'calendarDates' | 'eventDate' | 'eventDateSource' | 'ledgerEvent'> & { ok: boolean; reason?: string }> => {
+  const commencementOf = async (candidate: Candidate): Promise<Pick<WalkStep, 'effectiveDates' | 'effectiveDateEvidence' | 'calendarDates' | 'eventDate' | 'eventDateSource' | 'ledgerEvent'> & { ok: boolean; reason?: string; publicationDated?: boolean }> => {
     const key = publicationKey(candidate.ref);
     const own = ledgerKeys.get(key);
     const any = own ?? input.ledgerByPublication.get(key);
@@ -336,11 +369,9 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
     const units = candidate.page.units;
     const mantel = new Set(amendingCitations(units).map((entry) => entry.unit.index)).size > 1;
     const section = candidate.section ?? sectionRef(candidate.block?.section, candidate.block?.intro.label?.replace(/^[„‚]/u, ''));
-    const commencement = commencementFor(units, eventDate ?? '0000-00-00', section, mantel);
-    if (!commencement.ok) return { ...base, ok: false, reason: commencement.reason, effectiveDates: [], effectiveDateEvidence: [], calendarDates: false };
-    const relative = commencement.applicable.some((statement) => /[Vv]erkünd|[Bb]ekanntmachung/u.test(statement.text.replace(/(?:Diese|Die|Das)\s+Bekanntmachung\s+tritt/u, '')) || !CALENDAR.test(statement.text));
-    if (relative && !eventDate) return { ...base, ok: false, reason: 'Inkrafttreten bezieht sich auf die Verkündung, deren Datum nicht belegt ist', effectiveDates: [], effectiveDateEvidence: [], calendarDates: false };
-    return { ...base, ok: true, effectiveDates: commencement.dates, effectiveDateEvidence: commencement.applicable.map((statement) => statement.text), calendarDates: !relative };
+    const dated = datedCommencement(units, section, mantel, { ...(candidate.page.publishedAt ? { publishedAt: candidate.page.publishedAt } : {}), ...(any?.eventDate ? { registerDate: any.eventDate } : {}), url: candidate.page.url });
+    if (!dated.ok) return { ...base, ok: false, reason: dated.reason, effectiveDates: [], effectiveDateEvidence: [], calendarDates: false };
+    return { ...base, ...(dated.eventDate ? { eventDate: dated.eventDate } : {}), ok: true, effectiveDates: dated.dates, effectiveDateEvidence: dated.evidence, calendarDates: dated.calendar, publicationDated: dated.publicationDated };
   };
 
   // 1 – Anfang: Vollzitat des Portals, sonst das jüngste Ereignis des Registers.
@@ -414,6 +445,9 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
       pending = pending.filter((candidate) => candidate !== newest);
       if (step.priorClause) {
         const refs = amendmentRefs(step.priorClause);
+        // Staatsverträge nennen ihre vorangehende Änderung ohne Fundstelle („zuletzt geändert durch den Fünften
+        // Medienänderungsstaatsvertrag vom 27. Februar bis 6. März 2024“) – deren Verkündung ist so nicht bestimmt.
+        if (refs.length === 0 && step.block?.citation.parenthetical === '' && !/\(/u.test(step.priorClause)) return fail('missing-base', 'prior-treaty-without-reference', `Die vorangehende Änderung „${step.priorClause.slice(0, 140)}“ ist ohne Fundstelle zitiert (Staatsvertrag); ihre Verkündung ist so nicht bestimmt`);
         if (refs.length === 0) return fail('contradictory', 'chain-prior-unreadable', `Vorangehende Änderung im Befehl von ${citation} nicht lesbar („${step.priorClause.slice(0, 120)}“)`);
         for (const ref of refs) {
           const resolved = await resolve(ref, newest.page, newest.enactmentDate);
@@ -432,7 +466,7 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
       const label = `${publicationCitation(candidate.ref)}${candidate.section ? ` (${candidate.section})` : ''}`;
       if (!proof.ok) return fail('partial-chain', 'prior-amendment-in-force-unproven', `Inkrafttreten der vorangehenden Änderung ${label} nicht lesbar: ${proof.reason}`);
       if (proof.effectiveDates.some((date) => date > input.baselineDate)) return fail('partial-chain', 'chain-commencement-order', `Die vorangehende Änderung ${label} tritt erst am ${proof.effectiveDates.join(', ')} in Kraft – nach dem Stichtag, aber vor einer jüngeren Änderung, die schon vorher galt`);
-      if (!proof.calendarDates) return fail('partial-chain', 'prior-amendment-in-force-unproven', `Inkrafttreten der vorangehenden Änderung ${label} ohne Kalenderdatum („${proof.effectiveDateEvidence.join(' ').slice(0, 160)}“); „am Tag nach der Verkündung“ belegt den Beginn der Stichtagsfassung nicht`);
+      if (!proof.calendarDates && !proof.publicationDated) return fail('partial-chain', 'prior-amendment-in-force-unproven', `Inkrafttreten der vorangehenden Änderung ${label} ohne Kalenderdatum („${proof.effectiveDateEvidence.join(' ').slice(0, 160)}“) und ohne Verkündungsdatum aus der Verkündung selbst`);
       result.witnesses.push({
         ...step,
         key: stepKey(candidate.ref, candidate.section, candidate.block?.intro.index),
@@ -455,21 +489,85 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
 
   if (result.steps.length === 0) return fail('contradictory', 'chain-no-post-baseline-amendment', `Die letzte Änderung (${result.witnesses.map((witness) => witness.citation).join(', ') || '–'}) trat vor dem Stichtag in Kraft; eine spätere, die den heutigen Text trägt, nennt die Kette nicht`);
 
+  // 2b – Parallele Änderungen: Das Register führt eine weitere Änderung nach dem Stichtag, die die Kette der Verweise nicht
+  // nennt, weil sie auf **dieselbe** vorangehende Änderung aufsetzt wie ein Glied der Kette (GVBl. 2024 S. 98 und S. 155
+  // nennen beide GVBl. 2024 S. 34 als letzte Änderung der GesV). Sie wird als Schritt aufgenommen, wenn ihre Seite die
+  // Norm stark und eindeutig zitiert, ihr Einleitungssatz eine Änderung der Kette (Schritt oder letzte Änderung vor dem
+  // Stichtag) als vorangehende nennt und ihr Inkrafttreten ganz zwischen Stichtag und Auswertungsstichtag liegt. Die
+  // Schritte werden nach Inkrafttreten geordnet; der Rundlauf prüft, dass die Reihenfolge trägt.
+  const chainRefs = [...result.steps, ...result.witnesses].map((step) => step.ref);
+  const chainOrder = result.steps.map((step) => step.key);
+  let siblings = 0;
+  for (const event of input.ledgerEvents) {
+    const ref = refOfUrl(event.sourceUrl);
+    if (!ref || event.eventType !== 'amend' || !event.enactmentDate) continue;
+    if ([...result.steps, ...result.future].some((step) => sameRef(step.ref, ref))) continue;
+    const lookup = await lookupPage(input.root, [ref], event.enactmentDate);
+    if (lookup.status !== 'found' || lookup.page.kind !== 'html') continue;
+    const page = lookup.page;
+    const { blocks } = commandBlocks(page.units, input.identity);
+    if (blocks.length !== 1) continue;
+    const block = blocks[0]!;
+    const priorRefs = block.priorAmendmentClause ? amendmentRefs(block.priorAmendmentClause).filter((entry) => !entry.self) : [];
+    if (priorRefs.length === 0 || !priorRefs.every((entry) => candidateRefs(entry.reference, entry.enactmentDate).some((candidate) => chainRefs.some((chained) => sameRef(chained, candidate))))) continue;
+    const section = sectionRef(block.section, block.intro.label?.replace(/^[„‚]/u, ''));
+    const candidate: Candidate = { ref: page.ref, page, block, ...(section ? { section } : {}), namedAs: event.citation, enactmentDate: event.enactmentDate };
+    const proof = await commencementOf(candidate);
+    if (!proof.ok || proof.effectiveDates.some((date) => date <= input.baselineDate || date > input.evaluationDate)) continue;
+    result.steps.push({
+      key: stepKey(page.ref, section, block.intro.index),
+      ref: page.ref,
+      page,
+      citation: publicationCitation(page.ref),
+      ...(section ? { section } : {}),
+      block,
+      namedAs: event.citation,
+      enactmentDate: event.enactmentDate,
+      ...(proof.eventDate ? { eventDate: proof.eventDate } : {}),
+      eventDateSource: proof.eventDateSource,
+      ...(proof.ledgerEvent ? { ledgerEvent: proof.ledgerEvent } : {}),
+      effectiveDates: proof.effectiveDates,
+      effectiveDateEvidence: proof.effectiveDateEvidence,
+      calendarDates: proof.calendarDates,
+      ...(block.priorAmendmentClause ? { priorClause: block.priorAmendmentClause } : {}),
+    });
+    result.evidence.push(`Parallele Änderung ${publicationCitation(page.ref)}${section ? ` (${section})` : ''}: nicht in der Kette der Verweise, aber ihr Einleitungssatz nennt dieselbe vorangehende Änderung (${priorRefs.map((entry) => entry.text.slice(0, 80)).join('; ')}); Inkrafttreten ${proof.effectiveDates.join(', ')}; eingeordnet nach Inkrafttreten`);
+    siblings += 1;
+  }
+  if (siblings > 0) {
+    // Jüngste zuerst: nach spätestem Inkrafttreten, bei Gleichstand nach Verkündung. Die Glieder der Kette behalten ihre
+    // Reihenfolge – sonst ist die Einordnung nicht eindeutig.
+    result.steps.sort((left, right) => {
+      const a = [...left.effectiveDates].sort().at(-1)!;
+      const b = [...right.effectiveDates].sort().at(-1)!;
+      if (a !== b) return a < b ? 1 : -1;
+      return (left.eventDate ?? '') < (right.eventDate ?? '') ? 1 : (left.eventDate ?? '') > (right.eventDate ?? '') ? -1 : 0;
+    });
+    const order = result.steps.map((step) => step.key).filter((key) => chainOrder.includes(key));
+    if (order.join('|') !== chainOrder.join('|')) return fail('partial-chain', 'chain-parallel-order', 'Eine parallele Änderung lässt sich nicht eindeutig in die Kette einordnen (Reihenfolge nach Inkrafttreten weicht von der Kette ab)');
+  }
+
   // 3 – Gegenproben.
   const reversedRefs = [...result.steps, ...result.future].map((step) => step.ref);
   const unexplained = input.ledgerEvents.filter((event) => {
     const ref = refOfUrl(event.sourceUrl);
     return !ref || !reversedRefs.some((reversed) => sameRef(reversed, ref));
   });
+  // Lauf 8: nur vorläufig, wenn jede dieser Veröffentlichungen nach dem Stichtag liegt und die Stammverkündung vorliegt.
+  const provisional = (state: ReconstructionState, reason: string, detail: string, allAfterBaseline: boolean): boolean => {
+    if (!input.provisional || !allAfterBaseline) return false;
+    (result.provisional ??= []).push({ state, reason, detail });
+    result.evidence.push(`Vorläufig (nur mit Wortlautprobe gegen die Stammverkündung): ${detail}`);
+    return true;
+  };
   if (unexplained.length > 0) {
     const nonInvertible = unexplained.filter((event) => NON_INVERTIBLE_EVENT_TYPES.includes(event.eventType));
-    return fail(
-      nonInvertible.length > 0 ? 'non-invertible-amendment' : 'partial-chain',
-      'chain-ledger-unexplained',
-      `Das Register führt ${unexplained.map((event) => `${event.citation} (${event.eventType})`).join(', ')} für die Norm; die Kette der amtlichen Verweise enthält ${unexplained.length === 1 ? 'diese Veröffentlichung' : 'diese Veröffentlichungen'} nicht`,
-    );
+    const state = nonInvertible.length > 0 ? 'non-invertible-amendment' : 'partial-chain';
+    const detail = `Das Register führt ${unexplained.map((event) => `${event.citation} (${event.eventType})`).join(', ')} für die Norm; die Kette der amtlichen Verweise enthält ${unexplained.length === 1 ? 'diese Veröffentlichung' : 'diese Veröffentlichungen'} nicht`;
+    if (!provisional(state, 'chain-ledger-unexplained', detail, unexplained.every((event) => event.eventDate !== undefined && event.eventDate > input.baselineDate))) return fail(state, 'chain-ledger-unexplained', detail);
+  } else {
+    result.evidence.push(`Register: jedes stark zugeordnete Ereignis nach dem Stichtag (${input.ledgerEvents.length}) ist ein Schritt der Kette`);
   }
-  result.evidence.push(`Register: jedes stark zugeordnete Ereignis nach dem Stichtag (${input.ledgerEvents.length}) ist ein Schritt der Kette`);
 
   const others: string[] = [];
   for (const [url, citations] of input.amendingByPage) {
@@ -477,8 +575,10 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
     if (!ref || reversedRefs.some((reversed) => sameRef(reversed, ref))) continue;
     if (citations.some((citation) => isStrongMatch(citationMatches(citation, input.identity)))) others.push(url);
   }
-  if (others.length > 0) return fail('partial-chain', 'chain-other-publication', `Weitere Verkündung(en) nach dem Stichtag zitieren die Norm mit einem Änderungsbefehl: ${others.sort().join(', ')}`);
-  result.evidence.push('Keine andere Verkündung nach dem Stichtag zitiert die Norm mit einem Änderungsbefehl');
+  if (others.length > 0) {
+    const detail = `Weitere Verkündung(en) nach dem Stichtag zitieren die Norm mit einem Änderungsbefehl: ${others.sort().join(', ')}`;
+    if (!provisional('partial-chain', 'chain-other-publication', detail, true)) return fail('partial-chain', 'chain-other-publication', detail);
+  } else result.evidence.push('Keine andere Verkündung nach dem Stichtag zitiert die Norm mit einem Änderungsbefehl');
 
   const witnessRefs = result.witnesses.map((witness) => witness.ref);
   const classify = (keys: readonly PublicationKey[], date: string | undefined): 'reversed' | 'witness' | 'post' | 'pre' | 'unknown' => {
@@ -494,13 +594,16 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
     const unknown = history.find((entry) => entry.kind === 'unknown');
     if (unknown) return fail('partial-chain', 'chain-history-undated', `Änderungsverlauf mit nicht datierbarem Eintrag („${unknown.entry.text.slice(0, 100)}“)`);
     const post = history.filter((entry) => entry.kind === 'post');
-    if (post.length > 0) return fail('partial-chain', 'chain-history-steps', `Änderungsverlauf führt nach dem Stichtag Änderungen, die die Kette nicht zurücknimmt: ${post.map((entry) => entry.entry.text.slice(0, 80)).join('; ')}`);
+    if (post.length > 0) {
+      const detail = `Änderungsverlauf führt nach dem Stichtag Änderungen, die die Kette nicht zurücknimmt: ${post.map((entry) => entry.entry.text.slice(0, 80)).join('; ')}`;
+      if (!provisional('partial-chain', 'chain-history-steps', detail, true)) return fail('partial-chain', 'chain-history-steps', detail);
+    }
     const missing = result.steps.map((step) => step.ref).filter((reversed) => !history.some((entry) => entry.kind === 'reversed' && candidateKeys(entry.entry.reference ?? '', entry.entry.date).some((key) => sameKey(key, reversed))));
     if (missing.length > 0) return fail('contradictory', 'chain-history-mismatch', `Änderungsverlauf führt ${missing.map(publicationCitation).join(', ')} nicht`);
     const earlier = history.filter((entry) => entry.kind === 'pre' || entry.kind === 'witness');
     if (result.stammfassung && earlier.length > 0) return fail('contradictory', 'chain-stamm-history-mismatch', `Die älteste zurückgenommene Änderung nennt keine vorangehende, der Änderungsverlauf aber ${earlier.length}`);
     if (!result.stammfassung && earlier.at(-1)?.kind !== 'witness') return fail('contradictory', 'chain-prior-history-mismatch', `Die letzte Änderung vor der Kette (${result.witnesses.map((witness) => witness.citation).join(', ')}) ist nicht der letzte Eintrag vor dem Stichtag im Änderungsverlauf („${earlier.at(-1)?.entry.text ?? '–'}“)`);
-    result.evidence.push(`Änderungsverlauf: nach dem Stichtag genau die zurückgenommenen Änderungen${result.stammfassung ? ', davor keine' : `, davor zuletzt ${result.witnesses.map((witness) => witness.citation).join(', ')}`}`);
+    if (post.length === 0) result.evidence.push(`Änderungsverlauf: nach dem Stichtag genau die zurückgenommenen Änderungen${result.stammfassung ? ', davor keine' : `, davor zuletzt ${result.witnesses.map((witness) => witness.citation).join(', ')}`}`);
   }
 
   const notes = (input.registerNotes ?? []).map((note) => ({ note, ...registerNote(note) }));
@@ -509,12 +612,15 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
     if (undated) return fail('partial-chain', 'chain-register-undated', `Fortführungsnachweis mit nicht lesbarer Notiz („${undated.note.slice(0, 100)}“)`);
     const classified = notes.map((entry) => ({ ...entry, kind: classify(entry.keys, entry.date) }));
     const post = classified.filter((entry) => entry.kind === 'post');
-    if (post.length > 0) return fail('partial-chain', 'chain-register-steps', `Fortführungsnachweis führt nach dem Stichtag Änderungen, die die Kette nicht zurücknimmt: ${post.map((entry) => entry.note).join('; ')}`);
+    if (post.length > 0) {
+      const detail = `Fortführungsnachweis führt nach dem Stichtag Änderungen, die die Kette nicht zurücknimmt: ${post.map((entry) => entry.note).join('; ')}`;
+      if (!provisional('partial-chain', 'chain-register-steps', detail, true)) return fail('partial-chain', 'chain-register-steps', detail);
+    }
     const missing = result.steps.map((step) => step.ref).filter((reversed) => !classified.some((entry) => entry.kind === 'reversed' && entry.keys.some((key) => sameKey(key, reversed))));
     if (missing.length > 0) return fail('contradictory', 'chain-register-mismatch', `Fortführungsnachweis führt ${missing.map(publicationCitation).join(', ')} nicht`);
     const earlier = classified.filter((entry) => entry.kind === 'pre' || entry.kind === 'witness');
     if (result.stammfassung && earlier.length > 0) return fail('contradictory', 'chain-stamm-register-mismatch', `Die älteste zurückgenommene Änderung nennt keine vorangehende, der Fortführungsnachweis aber ${earlier.length}`);
-    result.evidence.push(`Fortführungsnachweis: nach dem Stichtag genau die zurückgenommenen Änderungen${result.stammfassung ? ', davor keine' : ''}`);
+    if (post.length === 0) result.evidence.push(`Fortführungsnachweis: nach dem Stichtag genau die zurückgenommenen Änderungen${result.stammfassung ? ', davor keine' : ''}`);
   }
 
   if (clause === undefined && history.length === 0 && notes.length === 0) return fail('partial-chain', 'chain-unverifiable', 'Weder Vollzitat mit letzter Änderung noch Änderungsverlauf noch Fortführungsnachweis: die Vollständigkeit der Kette ist nicht belegbar');
@@ -528,7 +634,22 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
     const newerEarliest = [...newer.effectiveDates].sort()[0]!;
     if (olderLatest > newerEarliest) return fail('partial-chain', 'chain-commencement-order', `${older.citation}${older.section ? ` (${older.section})` : ''} tritt am ${olderLatest} in Kraft, die jüngere ${newer.citation}${newer.section ? ` (${newer.section})` : ''} schon am ${newerEarliest}; die Reihenfolge der Fassungen ist nicht die der Verkündungen`);
   }
-  const newestLatest = [...result.steps[0]!.effectiveDates].sort().at(-1)!;
+  let newestLatest = [...result.steps[0]!.effectiveDates].sort().at(-1)!;
+  // Lauf 8: Das Paket gilt seit einem früheren Tag, als die jüngsten Änderungen in Kraft treten – das Portal hat sie noch
+  // nicht eingearbeitet, wenn die nächstältere Änderung genau an diesem Tag in Kraft trat. Dann gehören die jüngeren nicht
+  // zum heutigen Text; das gilt nur mit Wortlautprobe gegen die Stammverkündung (hätte das Portal sie doch eingearbeitet,
+  // trüge der Stichtagskörper ihre Änderungen und wiche ab).
+  if (input.provisional && input.inForceFrom && newestLatest > input.inForceFrom) {
+    const lagging: WalkStep[] = [];
+    while (result.steps.length > 1 && [...result.steps[0]!.effectiveDates].sort()[0]! > input.inForceFrom) lagging.push(result.steps.shift()!);
+    const remaining = [...result.steps[0]!.effectiveDates].sort().at(-1)!;
+    if (lagging.length > 0 && remaining === input.inForceFrom) {
+      const detail = `Der heutige Text gilt laut Paket seit ${input.inForceFrom}; ${lagging.map((step) => `${step.citation}${step.section ? ` (${step.section})` : ''} (in Kraft ${step.effectiveDates.join(', ')})`).join(', ')} ist darin noch nicht eingearbeitet – die nächstältere Änderung ${result.steps[0]!.citation} trat genau an diesem Tag in Kraft`;
+      provisional('contradictory', 'portal-in-force-lag', detail, true);
+      result.future.push(...lagging);
+      newestLatest = remaining;
+    } else result.steps.unshift(...lagging);
+  }
   if (input.inForceFrom !== newestLatest) return fail('contradictory', 'portal-in-force-mismatch', `Der heutige Text gilt laut Paket seit ${input.inForceFrom ?? '–'}, die jüngste Änderung ${result.steps[0]!.citation} tritt am ${result.steps[0]!.effectiveDates.join(', ')} in Kraft`);
   result.evidence.push(`Inkrafttreten in Kettenreihenfolge, alle nach dem Stichtag: ${chronological.map((step) => `${step.citation}${step.section ? ` ${step.section}` : ''} → ${step.effectiveDates.join('/')}`).join('; ')}; das jüngste = inkraft des Pakets (${input.inForceFrom})`);
 
@@ -572,6 +693,71 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
         result.evidence.push(`Vorgänger der Stichtagsfassung ${publicationCitation(candidate.ref)} in Kraft ${proof.effectiveDates.join(', ')} – vor dem Stichtag`);
       }
     }
+  }
+
+  // 6 – Lauf 7, nur auf Wunsch: die Änderungen vor dem Stichtag bis zur Stammfassung (`prior`), je mit Befehlsblock.
+  if (input.deep && result.witnesses.length > 0) {
+    const deepFail = (reason: string, detail: string): WalkResult => {
+      result.priorFailure = { state: 'missing-base', reason, detail };
+      delete result.prior;
+      return result;
+    };
+    const prior: WalkStep[] = [];
+    const known = new Set(result.witnesses.map((witness) => witness.key));
+    const asStep = (candidate: Candidate): WalkStep => ({
+      key: stepKey(candidate.ref, candidate.section, candidate.block?.intro.index),
+      ref: candidate.ref,
+      page: candidate.page,
+      citation: publicationCitation(candidate.ref),
+      ...(candidate.section ? { section: candidate.section } : {}),
+      ...(candidate.block ? { block: candidate.block } : {}),
+      namedAs: candidate.namedAs,
+      ...(candidate.enactmentDate ? { enactmentDate: candidate.enactmentDate } : {}),
+      ...(candidate.page.publishedAt ? { eventDate: candidate.page.publishedAt } : {}),
+      eventDateSource: candidate.page.publishedAt ? 'page' : 'none',
+      effectiveDates: [],
+      effectiveDateEvidence: [],
+      calendarDates: false,
+      ...(candidate.block?.priorAmendmentClause ? { priorClause: candidate.block.priorAmendmentClause } : {}),
+    });
+    let frontier: WalkStep[] = [...result.witnesses];
+    for (let guard = 0; guard < 60 && frontier.length > 0; guard += 1) {
+      const found: Candidate[] = [];
+      for (const step of frontier) {
+        if (step.page.kind === 'pdf' || !step.block) return deepFail('prior-block-missing', `${step.citation}${step.section ? ` (${step.section})` : ''}: vor dem Stichtag, aber ohne lesbaren Befehlsblock${step.page.kind === 'pdf' ? ' (nur PDF)' : ''}`);
+        if (!step.priorClause) continue;
+        const refs = amendmentRefs(step.priorClause);
+        if (refs.length === 0) return deepFail('prior-clause-unreadable', `Vorangehende Änderung im Befehl von ${step.citation} nicht lesbar („${step.priorClause.slice(0, 120)}“)`);
+        for (const ref of refs) {
+          const failures = result.failures.length;
+          const resolved = await resolve(ref, step.page, step.enactmentDate);
+          if (resolved === 'stop') {
+            const failure = result.failures.splice(failures)[0];
+            return deepFail(failure?.reason ?? 'prior-unresolved', failure?.detail ?? ref.text);
+          }
+          found.push(...resolved);
+        }
+      }
+      const fresh = [...new Map(found.map((candidate) => [stepKey(candidate.ref, candidate.section, candidate.block?.intro.index), candidate])).values()].filter((candidate) => !known.has(stepKey(candidate.ref, candidate.section, candidate.block?.intro.index)));
+      for (const candidate of fresh) {
+        if (!candidate.block) return deepFail('prior-block-missing', candidate.blockMissing ?? `${publicationCitation(candidate.ref)}: kein lesbarer Befehlsblock`);
+        known.add(stepKey(candidate.ref, candidate.section, candidate.block.intro.index));
+      }
+      frontier = fresh.sort(compareCandidates).reverse().map(asStep);
+      prior.push(...frontier);
+    }
+    // Jüngste zuerst über die ganze Folge (Letzte Änderung(en) der Stichtagsfassung eingeschlossen).
+    const all = [...result.witnesses.map((witness) => ({ step: witness, candidate: { ref: witness.ref, page: witness.page, namedAs: witness.namedAs, ...(witness.section ? { section: witness.section } : {}), ...(witness.block ? { block: witness.block } : {}), ...(witness.enactmentDate ? { enactmentDate: witness.enactmentDate } : {}) } as Candidate })), ...prior.map((step) => ({ step, candidate: { ref: step.ref, page: step.page, namedAs: step.namedAs, ...(step.section ? { section: step.section } : {}), ...(step.block ? { block: step.block } : {}), ...(step.enactmentDate ? { enactmentDate: step.enactmentDate } : {}) } as Candidate }))];
+    all.sort((left, right) => compareCandidates(right.candidate, left.candidate));
+    result.prior = all.map((entry) => entry.step);
+    // Vollständigkeit: Jede Änderung vor dem Stichtag aus Änderungsverlauf und Fortführungsnachweis ist ein Glied.
+    const deepRefs = result.prior.map((step) => step.ref);
+    const listed = [
+      ...historyEntries(input.changeHistory).map((entry) => ({ text: entry.text, date: entry.date, keys: entry.reference ? candidateKeys(entry.reference, entry.date) : [] })),
+      ...(input.registerNotes ?? []).map((note) => ({ text: note, ...registerNote(note) })),
+    ].filter((entry) => entry.date !== undefined && entry.date <= input.baselineDate && !result.steps.some((step) => entry.keys.some((key) => sameKey(key, step.ref))));
+    const missing = listed.filter((entry) => !entry.keys.some((key) => deepRefs.some((ref) => sameKey(key, ref))));
+    if (missing.length > 0) return deepFail('prior-list-mismatch', `Änderungsverlauf/Fortführungsnachweis führen vor dem Stichtag ${missing.map((entry) => `„${entry.text.slice(0, 80)}“`).join(', ')}; die Kette der Verweise bis zur Stammfassung enthält ${missing.length === 1 ? 'sie' : 'sie'} nicht`);
   }
   return result;
 }

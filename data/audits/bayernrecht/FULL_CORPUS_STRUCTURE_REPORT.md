@@ -14,8 +14,8 @@ Datengrundlage: `data/imports/bayernrecht/inventory.json` (ein Eintrag je Dokume
 
 | Ausgang | Dokumente | Anteil | Bedeutung |
 | --- | --- | --- | --- |
-| `parsed-with-warnings` | 1868 | 79,8 % | durchgelaufen, mit Hinweisen |
-| `parsed` | 474 | 20,2 % | ohne Befund durch den ganzen Weg |
+| `parsed-with-warnings` | 1863 | 79,5 % | durchgelaufen, mit Hinweisen |
+| `parsed` | 479 | 20,5 % | ohne Befund durch den ganzen Weg |
 
 ## Erfolg je DTD
 
@@ -23,8 +23,8 @@ Die beiden Dokumentmodelle teilen den Fließtextvorrat, sonst wenig – sie verh
 
 | DTD | geprüft | `parsed` | `parsed-with-warnings` |
 | --- | --- | --- | --- |
-| `byrecht-norm` | 1001 | 215 | 786 |
-| `byrecht-vv` | 1341 | 259 | 1082 |
+| `byrecht-norm` | 1001 | 219 | 782 |
+| `byrecht-vv` | 1341 | 260 | 1081 |
 
 ## Erfolg je Normtyp
 
@@ -35,9 +35,9 @@ Die beiden Dokumentmodelle teilen den Fließtextvorrat, sonst wenig – sie verh
 | `satzung` | 5 | 1 | 4 |
 | `staatsvertrag` | 95 | 6 | 89 |
 | `verfassung` | 1 | 0 | 1 |
-| `verordnung` | 502 | 137 | 365 |
+| `verordnung` | 502 | 141 | 361 |
 | `verwaltungsabkommen` | 21 | 1 | 20 |
-| `verwaltungsvorschrift` | 1470 | 268 | 1202 |
+| `verwaltungsvorschrift` | 1470 | 269 | 1201 |
 
 ## Einzelne Kennzahlen
 
@@ -57,7 +57,7 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 1485 | `sentence-numbers` | parse | info |
 | 1143 | `vv-section-address-unresolved` | parse | info |
 | 811 | `tables` | parse | info |
-| 770 | `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` | transform | warning |
+| 761 | `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` | transform | warning |
 | 739 | `footnotes` | parse | info |
 | 482 | `vv-depth-beyond-model` | parse | info |
 | 324 | `undecidable-source-state-abbreviation:BayHO` | transform | warning |
@@ -91,9 +91,9 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 49 | `figures-transferred` | parse | info |
 | 49 | `organ-formula-conflict:Widersprüchliche Erlassformeln (Bayerisches Staatsministerium für Unterricht und Kultus / Bayerisches Staatsministerium)…` | transform | warning |
 | 41 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-wirtschaft); als Quellorgan erhalten, kein Sim…` | transform | info |
-| 39 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalten, kein Simulat…` | transform | info |
+| 40 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-arbeit-soziales); als Quellorgan erhalten, kei…` | transform | info |
+| 40 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalten, kein Simulat…` | transform | info |
 | 38 | `norm-type-assumed:@doktyp="vertrag"` | parse | info |
-| 37 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-arbeit-soziales); als Quellorgan erhalten, kei…` | transform | info |
 | 37 | `undecidable-source-state-abbreviation:BayWG` | transform | warning |
 | 35 | `undecidable-source-state-abbreviation:BayDSG` | transform | warning |
 | 34 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <einzelnorm P_#> → <absatz.text> ; ersatzweise als „…“ geführt` | parse | warning |
@@ -354,6 +354,11 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 | 1 | `empty-provision:Art. #c hat keinen Textinhalt` | parse | warning |
 | 1 | `empty-provision:Art. #i hat keinen Textinhalt` | parse | warning |
 | 1 | `empty-provision:§ #g hat keinen Textinhalt` | parse | warning |
+| 1 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-finanzen+historisches-staatsministerium-arbeit…` | transform | info |
+| 1 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-finanzen+historisches-staatsministerium-innere…` | transform | info |
+| 1 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-gesundheit+historisches-staatsministerium-inne…` | transform | info |
+| 1 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-inneres+historisches-staatsministerium-wirtsch…` | transform | info |
+| 1 | `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-justiz+historisches-staatsministerium-wissensc…` | transform | info |
 | 1 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <einleitungssatz.text> → Listenpunkt ; ersatzweise als „…“ geführt` | parse | warning |
 | 1 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <einzelnorm P_#> → <absatz.nr> ; ersatzweise als „…“ geführt` | parse | warning |
 | 1 | `footnote-marker-missing:Fußnote ohne Aufrufzeichen (<fn.text/>) in <einzelnorm P_#> → <absatz.text> → Listenpunkt → Listenpunkt ; ersatzweise al…` | parse | warning |
@@ -555,7 +560,7 @@ demselben Element an derselben Stelle stehen in derselben Zeile.
 
 ### Die Klassen im Einzelnen
 
-Zuerst alle 0 Klassen mit Gewicht `error` (sie halten den Bulk-Lauf auf), danach die 40 größten der übrigen. Alle 499 Klassen stehen in der Tabelle oben und vollständig in `data/imports/bayernrecht/inventory.json`.
+Zuerst alle 0 Klassen mit Gewicht `error` (sie halten den Bulk-Lauf auf), danach die 40 größten der übrigen. Alle 504 Klassen stehen in der Tabelle oben und vollständig in `data/imports/bayernrecht/inventory.json`.
 
 #### `protected-source-state-reference:# Nennung(en) des Quelllandes stehen in geschützten Bereichen (…) und bleiben bewusst erhalten` · 1555 Dokumente
 
@@ -601,7 +606,7 @@ Stufe parse · Gewicht info
 - `BayAGSG`: 1 Tabellen nach dem Blockmodell übernommen
 - … und 806 weitere Dokumente mit derselben Signatur
 
-#### `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` · 770 Dokumente
+#### `enacting-body-mapping-required:Erlassorgan der Quelle „…“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` · 761 Dokumente
 
 Stufe transform · Gewicht warning
 
@@ -609,8 +614,8 @@ Stufe transform · Gewicht warning
 - `BAY_2230_1_1_2_UK`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht und Kultus“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
 - `BAY_2237_4_UK`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht und Kultus“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
 - `Bay224BRAOBefUeV`: Erlassorgan der Quelle „Bayerisches Staatsministerium der Justiz“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
-- `BayABOB`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst soweit erforderlich“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (m…
-- … und 765 weitere Dokumente mit derselben Signatur
+- `BayAGZweigstV`: Erlassorgan der Quelle „Bayerisches Staatsministerium der Justiz“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)
+- … und 756 weitere Dokumente mit derselben Signatur
 
 #### `footnotes` · 739 Dokumente
 
@@ -975,25 +980,25 @@ Stufe transform · Gewicht info
 - `BayBoersV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Wirtschaft, Verkehr und Technologie“ ist historisch (historisches-staatsministerium-wirtschaft); als Quellorgan erhalten, …
 - … und 36 weitere Dokumente mit derselben Signatur
 
-#### `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalten, kein Simulat…` · 39 Dokumente
+#### `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-arbeit-soziales); als Quellorgan erhalten, kei…` · 40 Dokumente
 
 Stufe transform · Gewicht info
 
+- `BayASozVerwV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Arbeit und Soziales, Familie und Integration“ ist historisch (historisches-staatsministerium-arbeit-soziales); als Quellor…
+- `BayAVKiBiG`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Arbeit und Sozialordnung, Familie und Frauen“ ist historisch (historisches-staatsministerium-arbeit-soziales); als Quellor…
+- `BayAVSozKiPaedG`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Arbeit und Soziales, Familie und Integration“ ist historisch (historisches-staatsministerium-arbeit-soziales); als Quellor…
+- `BayAbhGertArbV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Arbeit und Sozialordnung“ ist historisch (historisches-staatsministerium-arbeit-soziales); als Quellorgan erhalten, kein S…
+- `BayAuswVAM`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Arbeit und Sozialordnung, Familie und Frauen“ ist historisch (historisches-staatsministerium-arbeit-soziales); als Quellor…
+- … und 35 weitere Dokumente mit derselben Signatur
+
+#### `enacting-body-historical:Erlassorgan der Quelle „…“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalten, kein Simulat…` · 40 Dokumente
+
+Stufe transform · Gewicht info
+
+- `BayABOB`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst soweit erforderlich“ ist historisch (historisches-staatsministerium-kultus); al…
 - `BayAVSchFG`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalte…
 - `BayBergSkiV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Bildung und Kultus, Wissenschaft und Kunst“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalte…
 - `BayBildGrundV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalte…
 - `BayFHSchkiTraeV`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalte…
-- `BayFOBOSO`: Erlassorgan der Quelle „Bayerisches Staatsministerium für Bildung und Kultus, Wissenschaft und Kunst“ ist historisch (historisches-staatsministerium-kultus); als Quellorgan erhalte…
-- … und 34 weitere Dokumente mit derselben Signatur
-
-#### `norm-type-assumed:@doktyp="vertrag"` · 38 Dokumente
-
-Stufe parse · Gewicht info
-
-- `ARDStV`: ARDStV: @doktyp="vertrag" umfasst Verträge und sonstige Rechtsquellen; der Titel „ARD-Staatsvertrag“ nennt keine Vertragsart – geführt als „staatsvertrag“
-- `AkadGrAuslHsStV`: AkadGrAuslHsStV: @doktyp="vertrag" umfasst Verträge und sonstige Rechtsquellen; der Titel „Abkommen zwischen den Ländern in der Bundesrepublik Deutschland über die Genehmigung zur …
-- `BAY_110_1990_478`: BAY_110_1990_478: @doktyp="vertrag" umfasst Verträge und sonstige Rechtsquellen; der Titel „Vertrag zwischen der Bundesrepublik Deutschland und der Europäischen Wirtschaftsgemeinsc…
-- `BayELKV`: BayELKV: @doktyp="vertrag" umfasst Verträge und sonstige Rechtsquellen; der Titel „Vertrag zwischen dem Bayerischen Staate und der Evangelisch-Lutherischen Kirche in Bayern rechts …
-- `BayIsraelKultVertrag`: BayIsraelKultVertrag: @doktyp="vertrag" umfasst Verträge und sonstige Rechtsquellen; der Titel „Vertrag zwischen dem Freistaat Bayern und dem Landesverband der Israelitischen Kultu…
-- … und 33 weitere Dokumente mit derselben Signatur
+- … und 35 weitere Dokumente mit derselben Signatur
 

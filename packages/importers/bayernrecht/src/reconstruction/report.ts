@@ -35,6 +35,8 @@ const FORMULA_LABELS: Readonly<Record<FormulaId, string>> = {
   relabel: '„Der bisherige Abs. 3 wird Abs. 4.“ / „Die bisherigen Nrn. 5 bis 7 werden die Nrn. 6 bis 8.“ (neu)',
   'renumber-sentence': '„Der bisherige Satz 2 wird Satz 3.“ (neu)',
   'number-sentences': '„Der Wortlaut wird Satz 1.“ (neu)',
+  'unnumber-sentences': '„In Satz 1 wird die Satznummerierung „¹“ gestrichen.“ (Lauf 7)',
+  'unnumber-paragraph': '„In Abs. 1 wird die Absatzbezeichnung „(1)“ gestrichen.“ (Lauf 8)',
   'number-paragraph': '„Der Wortlaut wird Abs. 1.“ (Run 5)',
   'insert-title': '„In § 5 wird folgende Überschrift eingefügt: „…““ (neu)',
   'delete-words': '„… wird die Angabe „X“ gestrichen“ (ohne Anker)',
@@ -80,8 +82,28 @@ export function renderReconstructionReport(run: ReconstructionRun): string {
   push(`| sicher zurückgerechnet | ${queue.before.recipeReady} | **${t.recipeReady}** |`);
   push(`| davon einstufig (Rezept v1) | ${queue.before.recipeReady} | ${t.recipeReadySingle} |`);
   push(`| davon mehrstufig (Rezept v2) | 0 | ${t.recipeReadyMulti} |`);
+  push(`| davon mit Alttext aus der Stammverkündung (\`restoration\`, \`forward-from-publication\`) | 0 | ${recipes.filter((recipe) => recipe.restoration).length} |`);
   push(`| \`reconstruction-required\` | ${queue.before.reconstructionRequired} | ${t.changedAfterBaseline - t.recipeReady} |`);
   push('', `„vorher“: ${queue.before.source}. Jede zurückgerechnete Norm hat in \`baseline.json\` Methode \`reverse-amendment\`, Status \`active-at-baseline\`, keine Blocker.`, '');
+
+  if (t.byRestorationBase) {
+    push('## Stammverkündung der offenen Normen (Lauf 7)', '');
+    push('Alttext für Neufassung, Aufhebung und Streichung ohne Anker kommt aus der Stammverkündung, wenn sie digital und amtlich als HTML vorliegt und die Kette bis zu ihr reicht (`docs/BAYWUE_RECONSTRUCTION.md`, Abschnitt 19). Je offene Norm (`restorationBase` in der Schlange):', '');
+    const labels: Record<string, string> = {
+      available: 'verfügbar – die Norm scheitert an anderem (Grund in der Schlange)',
+      'available-chain-incomplete': 'verfügbar, aber die Kette bis zur Stammfassung ist nicht lückenlos',
+      'base-pdf-only': 'nur PDF-Ausgabe des GVBl. (ohne HTML-Detailseite)',
+      'base-paper-only': 'nur auf Papier',
+      'base-none': 'keine Stammverkündung (Neubekanntmachung, Fundstelle fehlt oder nicht lesbar)',
+      'base-not-cached': 'nicht im Cache (nur abgerufen, wenn die Kette steht)',
+      'base-unconvertible': 'HTML nicht sicher umsetzbar (`baseline-only/html.ts`)',
+      'base-mismatch': 'Seite gehört nicht zur Norm',
+      'not-reached': 'nicht erreicht (Paket fehlt oder unlesbar)',
+    };
+    push('| Stammverkündung | offene Normen |', '| --- | ---: |');
+    for (const [state, count] of Object.entries(t.byRestorationBase)) push(`| ${labels[state] ?? state} (\`${state}\`) | ${count} |`);
+    push('');
+  }
 
   push('## Gruppen', '');
   push('Jede Norm hat **genau eine** Gruppe (Vorrang und Regeln: `src/reconstruction/groups.ts`), dazu beliebig viele Gründe (`reasons` in der Schlange). Die Gruppen 1–3 sind die Fälle, deren Befehle grundsätzlich exakt umkehrbar sind; die übrigen sind nach der schwersten zutreffenden Lage eingeordnet.', '');
@@ -190,6 +212,6 @@ export function reconstructionSummary(run: ReconstructionRun): string[] {
     '  Zustände:',
     ...Object.entries(t.byState).map(([state, count]) => `  ${pad(count)}  ${state}`),
     `  Unbestimmte Geltungsfälle: ${run.undetermined.length} geprüft, ${run.undetermined.filter((result) => result.changed).length} neu entschieden`,
-    `  Quellen: ${run.sources.totals.sources} im Register (${run.sources.totals.pdf} PDF); Audit: ${run.audit.totals.forwardCheckPassed}/${run.audit.totals.recipes} Forward-Checks bestanden`,
+    `  Quellen: ${run.sources.totals.sources} im Register (${run.sources.totals.pdf} PDF); Audit: ${run.audit.totals.forwardCheckPassed}/${run.audit.totals.recipes} Forward-Checks bestanden${run.audit.totals.restored ? `, ${run.audit.totals.restorationCheckPassed}/${run.audit.totals.restored} Wiederherstellungen aus der Stammverkündung nachgerechnet` : ''}`,
   ];
 }

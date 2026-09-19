@@ -27,6 +27,8 @@ export type StepKind =
   | 'nummer'
   | 'buchstabe'
   | 'doppelbuchstabe'
+  /** „Dreifachbuchst. ccc“ (BayMBl.: Buchst. – Doppelbuchst. – Dreifachbuchst.). */
+  | 'dreifachbuchstabe'
   | 'spiegelstrich'
   | 'satzteil-vor'
   | 'satzteil-nach'
@@ -58,6 +60,7 @@ const RANK: Record<StepKind, number> = {
   nummer: 6,
   buchstabe: 7,
   doppelbuchstabe: 8,
+  dreifachbuchstabe: 8.5,
   spiegelstrich: 9,
   halbsatz: 10,
   'satzteil-vor': 10,
@@ -89,6 +92,9 @@ function tokenize(input: string): Token[] | undefined {
   let rest = input
     .replace(/[  ]/gu, ' ')
     .replace(/^(?:In|Im|in|im|Dem|Der|Den|Die|Das)\s+/u, '')
+    // „In der neuen Nr. 8 …“, „Im neuen Satz 4 …“ (BayMBl. 2026 Nr. 268): die Bezeichnung nach einer Umnummerierung
+    // desselben Änderungsbefehls – in der Reihenfolge der Befehle ist das die dann geltende Bezeichnung.
+    .replace(/^(?:(?:der|die|das|dem|den)\s+)?neue[nrms]?\s+(?=(?:§|Art\.|Abs\.|Absatz|Satz|Sätze|Nr\.|Nrn\.|Nummer|Buchst\.|Buchstabe|Spiegelstrich|Anlage|Abschnitt|Teil)(?![\p{L}]))/u, '')
     .replace(/\s+/gu, ' ')
     .trim();
   const tokens: Token[] = [];
@@ -100,16 +106,18 @@ function tokenize(input: string): Token[] | undefined {
     [/^(?:Sätzen|Sätze|Satzes|Satz)(?![\p{L}])\s*/u, 'satz'],
     [/^(?:Halbsatzes|Halbsatz)(?![\p{L}])\s*/u, 'halbsatz'],
     [/^(?:Nrn\.|Nr\.|Nummern|Nummer)(?![\p{L}])\s*/u, 'nummer'],
+    [/^(?:Dreifachbuchst\.|Dreifachbuchstaben|Dreifachbuchstabe)(?![\p{L}])\s*/u, 'dreifachbuchstabe'],
     [/^(?:Doppelbuchst\.|Doppelbuchstaben|Doppelbuchstabe)(?![\p{L}])\s*/u, 'doppelbuchstabe'],
     [/^(?:Buchst\.|Buchstaben|Buchstabe)(?![\p{L}])\s*/u, 'buchstabe'],
-    [/^(?:Spiegelstrichen|Spiegelstrichs|Spiegelstrich)(?![\p{L}])\s*/u, 'spiegelstrich'],
+    // „Spiegelsprich“: Satzfehler der Quelle (BayMBl. 2025 Nr. 278), nur eine Lesart.
+    [/^(?:Spiegelstrichen|Spiegelstrichs|Spiegelstrich|Spiegelsprich)(?![\p{L}])\s*/u, 'spiegelstrich'],
     [/^(?:Unterabschnitts|Unterabschnitt)(?![\p{L}])\s*/u, 'unterabschnitt'],
     [/^(?:Abschnitts|Abschnitt)(?![\p{L}])\s*/u, 'abschnitt'],
-    [/^(?:Teiles|Teils|Teil)(?![\p{L}])\s*/u, 'teil'],
+    [/^(?:Teilen|Teiles|Teile|Teils|Teil)(?![\p{L}])\s*/u, 'teil'],
     [/^(?:Anlagen|Anlage)(?![\p{L}])\s*/u, 'anlage'],
   ];
   // „Satz 1 der Vorbemerkung“: Der Satz steht vor seinem Bezugsglied.
-  const vorspannFirst = /^(?:Satz|Sätze)\s+(\d+)\s+(?:der|in\s+der)\s+(?:Vorbemerkung|Einleitung|Präambel)$/u.exec(rest);
+  const vorspannFirst = /^(?:Satz|Sätze)\s+(\d+)\s+(?:der|des|in\s+der|im)\s+(?:Vorbemerkung|Einleitungsformel|Einleitung|Präambel|Prologs?)$/u.exec(rest);
   if (vorspannFirst) return [{ kind: 'vorspann', value: '' }, { kind: 'satz', value: vorspannFirst[1]! }];
   while (rest !== '') {
     let match: RegExpExecArray | null;
@@ -123,7 +131,8 @@ function tokenize(input: string): Token[] | undefined {
       if (rest === '') return tokens;
       continue;
     }
-    if ((match = /^(?:der\s+|die\s+)?(?:Vorbemerkung|Einleitung|Präambel)(?![\p{L}])\s*/u.exec(rest))) {
+    // „Einleitungsformel“ (Richtlinien), „Prolog“: ebenfalls der unbezeichnete Text vor dem ersten Glied.
+    if ((match = /^(?:der\s+|die\s+|dem\s+|den\s+)?(?:Vorbemerkung|Einleitungsformel|Einleitung|Präambel|Prologs?)(?![\p{L}])\s*/u.exec(rest))) {
       tokens.push({ kind: 'vorspann', value: '' });
       rest = rest.slice(match[0].length);
       continue;
@@ -215,8 +224,42 @@ function satzteilRank(target: string): number {
  * Zerlegt eine Ortsangabe in einen oder mehrere Pfade. `[]` = ganze Norm (keine Ortsangabe);
  * `undefined` = nicht lesbar – dann gibt es keine Rückrechnung.
  */
+/**
+ * Bereiche als Aufzählung: „Nrn. 1.17 bis 1.20“ → „Nrn. 1.17, 1.18, 1.19 und 1.20“ (gleiches dezimales Präfix, BayMBl.
+ * 2022 Nr. 395), „Buchst. c bis e“, „Doppelbuchst. aa bis cc“ – höchstens 60 Glieder; sonst unverändert.
+ */
+export function expandLocationRanges(location: string): string {
+  return location.replace(/(\d+(?:\.\d+)*|[a-z]{1,3})\s+bis\s+(\d+(?:\.\d+)*|[a-z]{1,3})(?![\p{L}\d.])/gu, (whole, from: string, to: string) => {
+    const numeric = /^(.*?)(\d+)$/u;
+    const left = numeric.exec(from);
+    const right = numeric.exec(to);
+    const values: string[] = [];
+    if (left && right && left[1] === right[1] && Number(left[2]) < Number(right[2]) && Number(right[2]) - Number(left[2]) < 60) {
+      for (let value = Number(left[2]); value <= Number(right[2]); value += 1) values.push(`${left[1]}${value}`);
+    } else if (/^([a-z])\1{0,2}$/u.test(from) && /^([a-z])\1{0,2}$/u.test(to) && from.length === to.length && from < to) {
+      for (let code = from.charCodeAt(0); code <= to.charCodeAt(0); code += 1) values.push(String.fromCharCode(code).repeat(from.length));
+    } else return whole;
+    return `${values.slice(0, -1).join(', ')} und ${values.at(-1)}`;
+  });
+}
+
+/**
+ * Pfad aus Kontext und eigener Ortsangabe; ein wiederholtes Glied fällt weg („Nr. 7 wird wie folgt geändert:“ – „In Nr. 7
+ * Satz 1 …“ → Nr. 7 Satz 1, nicht Nr. 7 Nr. 7).
+ */
+export function joinLocation(context: readonly LocationPath[], own: LocationPath): LocationPath {
+  const base = context.flat();
+  // Nur ein am Ende des Kontexts wiederholtes Glied (gleiche Art und Bezeichnung) wird zusammengeführt.
+  const last = base.at(-1);
+  const first = own[0];
+  if (last && first && last.kind === first.kind && last.value === first.value && first.kind !== 'satz') return [...base, ...own.slice(1)];
+  return [...base, ...own];
+}
+
 export function parseLocation(input: string): LocationPath[] | undefined {
-  const text = input.trim();
+  // „Nr. 4.5 in der Überschrift“ (BayMBl. 2024 Nr. 644) ist „Überschrift der Nr. 4.5“, kein zweiter Ort.
+  const heading = /^(.+?)\s+in\s+der\s+Überschrift$/u.exec(input.trim());
+  const text = expandLocationRanges(heading && !/\s(?:und|sowie)\s/u.test(heading[1]!) ? `Überschrift ${/^(?:Nr|Buchst|Abs)\./u.test(heading[1]!) ? 'der' : 'des'} ${heading[1]!}` : input.trim());
   if (text === '') return [[]];
   const tokens = tokenize(text);
   if (!tokens) return undefined;
@@ -254,6 +297,13 @@ export function parseLocation(input: string): LocationPath[] | undefined {
       continue;
     }
     const kind = token.kind as StepKind;
+    if (pendingJoin && (paths.at(-1) ?? []).at(-1)?.kind === kind && kind === 'satz') {
+      // „Nr. 5.3 Satz 1 und Satz 2“ (BayMBl. 2019 Nr. 423): Der zweite Satz gehört zum selben Glied wie der erste.
+      current = [...(paths.at(-1) ?? []).slice(0, -1)];
+      pendingJoin = false;
+      current.push({ kind, value: token.value });
+      continue;
+    }
     if (pendingJoin) {
       const base = paths.at(-1) ?? [];
       const kept: LocationPath = [];
@@ -294,6 +344,7 @@ export const formatPath = (path: LocationPath): string =>
             case 'nummer': return `Nr. ${step.value}`;
             case 'buchstabe': return `Buchst. ${step.value}`;
             case 'doppelbuchstabe': return `Doppelbuchst. ${step.value}`;
+            case 'dreifachbuchstabe': return `Dreifachbuchst. ${step.value}`;
             case 'spiegelstrich': return `Spiegelstrich ${step.value}`;
             case 'teil': return `Teil ${step.value}`;
             case 'abschnitt': return `Abschnitt ${step.value}`;
@@ -373,6 +424,7 @@ function labelMatches(step: LocationStep, block: NormBodyBlock): boolean {
     case 'buchstabe':
       return label === `${value})` || label === `${value}.`;
     case 'doppelbuchstabe':
+    case 'dreifachbuchstabe':
       return label === `${value})`;
     case 'teil':
       return label === `Teil ${value}` || label === `Teil ${arabic}`;
@@ -616,6 +668,10 @@ export function resolvePath(body: readonly NormBodyBlock[], path: LocationPath):
             widened.push(label);
             continue;
           }
+          if (absatzOneUnlabelled(step, located, body)) {
+            widened.push(`${label} (unbezeichneter Wortlaut vor dem ersten bezeichneten Absatz)`);
+            continue;
+          }
           const row = step.kind === 'nummer' || step.kind === 'buchstabe' ? tableRowNumber(step, located, body) : 'missing';
           if (row === 'ambiguous') return { ok: false, reason: `${label} mehrfach vorhanden (Tabellenzeilen)` };
           if (row !== 'missing') {
@@ -668,6 +724,17 @@ export type BlockResult = { ok: true; path: number[]; resolved: string[]; widene
  * werden. Satz-, Halbsatz- und Satzteilangaben sind hier nicht zulässig. Ein leerer Pfad ist die Norm selbst
  * (`path: []`).
  */
+/**
+ * „Abs. 1“, dessen Bezeichnung derselbe Befehlsblock gestrichen hat, während die übrigen Absätze (nach Rücknahme ihrer
+ * Aufhebung) wieder stehen (GVBl. 2024 S. 619: „aa) Die Absatzbezeichnung „(1)“ wird gestrichen. … c) Abs. 2 wird
+ * aufgehoben.“): der unbezeichnete Wortlaut vor dem ersten bezeichneten Absatz. Der Bereich bleibt die Vorschrift; die
+ * Probe des Befehls verlangt Eindeutigkeit im Wortlaut.
+ */
+function absatzOneUnlabelled(step: LocationStep, located: Located, body: readonly NormBodyBlock[]): boolean {
+  const siblings = childrenOf(located, body);
+  return step.kind === 'absatz' && step.value === '1' && located.block !== undefined && siblings.length > 0 && siblings[0]!.type !== 'subparagraph' && !siblings.some((entry) => normalizeLabel(entry.label) === '(1)');
+}
+
 export function locateBlock(body: readonly NormBodyBlock[], path: LocationPath): BlockResult {
   let located: Located = ROOT;
   const resolved: string[] = [];
@@ -685,6 +752,13 @@ export function locateBlock(body: readonly NormBodyBlock[], path: LocationPath):
     if (hit === 'missing') {
       if (step.kind === 'absatz' && !descendants(located, body).some((entry) => /^\(\d+[a-z]?\)$/u.test(normalizeLabel(entry.block.label)))) {
         widened.push(label);
+        continue;
+      }
+      // „Abs. 1“, dessen Bezeichnung derselbe Befehlsblock gestrichen hat, während die übrigen Absätze (nach Rücknahme
+      // ihrer Aufhebung) wieder stehen: der unbezeichnete Wortlaut vor dem ersten bezeichneten Absatz (Bereich: die
+      // Vorschrift; die Probe des Befehls verlangt Eindeutigkeit im Wortlaut).
+      if (absatzOneUnlabelled(step, located, body)) {
+        widened.push(`${label} (unbezeichneter Wortlaut vor dem ersten bezeichneten Absatz)`);
         continue;
       }
       return { ok: false, reason: `${label} nicht gefunden` };
@@ -720,6 +794,7 @@ export function relabel(existing: string | undefined, step: LocationStep, value:
       return label.startsWith('Nr. ') ? `Nr. ${value}` : label.endsWith('.') ? `${value}.` : value;
     case 'buchstabe':
     case 'doppelbuchstabe':
+    case 'dreifachbuchstabe':
       return label.endsWith(')') ? `${value})` : `${value}.`;
     case 'teil':
     case 'abschnitt':

@@ -11,6 +11,8 @@ import { gazetteUnits, type GazetteUnit } from './gazette.ts';
 import { publicationKey } from './pages.ts';
 import { readCached } from './source.ts';
 import { amendingCitations, type NormCitation } from './structure.ts';
+import type { Platform } from '../baseline-only/platform.ts';
+import type { FormConventions } from './restore.ts';
 import type { WalkLedgerEvent } from './walk.ts';
 
 /** Ereignis des Registers, soweit die Rückrechnung es braucht. */
@@ -37,6 +39,10 @@ export interface RunContext {
   /** Je Detailseite nach dem Stichtag die Normzitate mit Änderungsbefehl. */
   amendingByPage: Map<string, NormCitation[]>;
   units: Map<string, GazetteUnit[]>;
+  /** Verkündungsplattform aus dem Cache (Stammverkündungen, Lauf 7); angelegt beim ersten Gebrauch. */
+  platform?: Platform;
+  /** Darstellungskonventionen des Portals je Amtsblatt (Lauf 7, `portalConventions`). */
+  conventions?: FormConventions;
 }
 
 const DETAIL_URL = /^https:\/\/www\.verkuendung-bayern\.de\/(gvbl|baymbl)\/(\d{4})-(\d+)\/$/u;

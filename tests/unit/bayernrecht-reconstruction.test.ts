@@ -177,7 +177,8 @@ describe('Änderungsformeln aus echten Befehlen', () => {
     const paths = parseLocation('In Art. 3a Abs. 4 Satz 1 Halbsatz 2, Art. 15 Abs. 1 und Art. 16 Satzteil vor Nr. 1 und Nr. 1 Satz 2 Satzteil vor Buchst. a');
     expect(paths!.map(formatPath)).toEqual(['Art. 3a Abs. 4 Satz 1 Halbsatz 2', 'Art. 15 Abs. 1', 'Art. 16 Satzteil vor Nr. 1', 'Art. 16 Nr. 1 Satz 2 Satzteil vor Buchst. a']);
     expect(parseLocation('In § 1 Abs. 1, 3 Satz 8, § 3 Abs. 3 Satz 1 und § 5 Satz 2')!.map(formatPath)).toEqual(['§ 1 Abs. 1', '§ 1 Abs. 3 Satz 8', '§ 3 Abs. 3 Satz 1', '§ 5 Satz 2']);
-    expect(parseLocation('In Abs. 1 Satz 1 Nr. 1 und 2, Satz 2 Nr. 1 bis 3')).toBeUndefined();
+    // Lauf 7: Bereiche werden aufgezählt („Nr. 1 bis 3“ → Nr. 1, 2, 3).
+    expect(parseLocation('In Abs. 1 Satz 1 Nr. 1 und 2, Satz 2 Nr. 1 bis 3')!.map(formatPath)).toEqual(['Abs. 1 Satz 1 Nr. 1', 'Abs. 1 Satz 1 Nr. 2', 'Abs. 1 Satz 2 Nr. 1', 'Abs. 1 Satz 2 Nr. 2', 'Abs. 1 Satz 2 Nr. 3']);
   });
 });
 

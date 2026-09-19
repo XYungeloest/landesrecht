@@ -137,12 +137,12 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | `docs/RECHT_NRW_BULK_READINESS.md` | Bereitschaft: Policies (undatierte LRMB-Datensätze, PDF), GO/No-Go-Checkliste, Befehle und Reihenfolge des Bulk-Laufs |
 | `docs/WEST_REFERENCE_BASELINE.md` | Eingefrorener West-Referenzstand: Kennzahlen, Auditstände, Human Approval, Freeze-Regeln |
 | `docs/NEW_JURISDICTION_IMPORT_CHECKLIST.md` | Wiederverwendbare Checkliste für den Import einer weiteren Jurisdiktion |
-| `docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md` | Zugriffspolitik juris SH (robots.txt advisory), warum trotzdem kein Normtext abrufbar ist, Alternativen |
+| `docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md` | Zugriffspolitik juris SH (robots.txt advisory), öffentlicher PDF-Ausgabeweg ohne interne Schnittstelle, TDM-Vorbehalt |
 | `docs/SCHLESWIG_HOLSTEIN_SOURCE_DISCOVERY.md` | juris SH: Dokumentmodell, Identität, Fassungen, Enumerationspfade (Befund, nicht Bauplan) |
 | `docs/SCHLESWIG_HOLSTEIN_PUBLICATION_DISCOVERY.md` | GVOBl./Amtsbl. Schl.-H.: Adressschemata, Formatwechsel 2024/2025, PDF-Befunde |
 | `docs/SCHLESWIG_HOLSTEIN_TRANSFORMATION.md` | Überleitung Schleswig-Holstein → Niedersachsen-Holstein: Regelwerk, Schutzmuster, fail-closed-Prüfung |
 | `docs/SCHLESWIG_HOLSTEIN_EVENT_LEDGER.md` | Ereignisregister nach dem Stichtag aus den amtlichen Registern und Verkündungsblättern |
-| `docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md` | Bereitschaft des NSH-Ausgangsimports: NOT READY, sperrender Punkt, GO/No-Go |
+| `docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md` | Bereitschaft des NSH-Ausgangsimports: READY (lokal), offene Entscheidungen (TDM-Vorbehalt, Landeskürzel), GO/No-Go |
 | `docs/BAYERN_SOURCE_DISCOVERY.md` | BAYERN.RECHT: XML-Export (zwei DTDs), Enumeration, fehlende Fassungshistorie, Lizenz, Verkündungsorgane |
 | `docs/BAYERN_PARSER.md` | BayWü-Parser: Abdeckung beider DTDs, Annahmen, Abbruchbedingungen, Befundcodes |
 | `docs/BAYERN_TRANSFORMATION.md` | Überleitung Bayern → Bayern-Württemberg: konstruierte Idempotenz, Adjektiv- und Abkürzungsentscheidung |
@@ -158,9 +158,9 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | Land | Quelle | Stand |
 | --- | --- | --- |
 | West | RECHT.NRW | **Referenzbestand eingefroren** – 1 482 Normen zum Stichtag, Human Approval abgeschlossen (`docs/WEST_REFERENCE_BASELINE.md`) |
-| NSH | juris Schleswig-Holstein | **kein Normbestand – Normtext nicht abrufbar.** Überleitung, Zustandsschicht, Ereignisregister und Enumeration stehen; die dokumentierten Portaladressen liefern keinen Inhalt (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`) |
+| NSH | juris Schleswig-Holstein | **Teilbestand lokal (nicht deployt).** Normtext über die öffentliche PDF-Ausgabe (anonyme Sitzung eines Permalinks, keine interne Schnittstelle); 1 910 Normen zum Stichtag übernommen (245 davon als Stichtagsfassung aus den historischen Einzelfassungen), 1 561 im Review (Tabellen, Abbildungen, VwV-Anlagen, Landeskürzel in Abkürzungen). TDM-Vorbehalt des Portals dokumentiert, Bewertung offen (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`) |
 | Ost | OstRecht | lesend; OstRecht bleibt externe Source of Truth |
-| BayWü | BAYERN.RECHT | **Deployed (Teilbestand, in der Oberfläche gekennzeichnet).** 1 639 Normen zum Stichtag: 1 570 unverändert, 44 bewiesen rückgerechnet (7 davon über mehrere Änderungen), 25 heute fehlende aus amtlichen Verkündungen wiederhergestellt; normative Abbildungen als eigene Assets. R2 und Remote-D1 befüllt. 475 geänderte und die übrigen heute fehlenden Normen warten auf einen sicheren Beleg ihrer Stichtagsfassung; sie werden nicht durch den heutigen Text ersetzt (`docs/BAYWUE_BASELINE_STATUS.md`) |
+| BayWü | BAYERN.RECHT | **Deployed (Teilbestand, in der Oberfläche gekennzeichnet).** 1 694 Normen zum Stichtag: 1 568 unverändert, 63 bewiesen rückgerechnet (11 davon über mehrere Änderungen, 15 mit Alttext aus der Stammverkündung), 61 heute fehlende aus amtlichen Verkündungen wiederhergestellt, 2 VwV in Review; normative Abbildungen als eigene Assets. R2 und Remote-D1 befüllt. 449 geänderte und die übrigen heute fehlenden Normen warten auf einen sicheren Beleg ihrer Stichtagsfassung; sie werden nicht durch den heutigen Text ersetzt (`docs/BAYWUE_BASELINE_STATUS.md`) |
 
-Der NSH-Befund ist kein offener Arbeitsrest, sondern ein Ergebnis: Ohne freigegebene Quelle entsteht
-kein Normtext, und die Sperre wird nicht umgangen.
+Der NSH-Bestand entsteht ausschließlich über öffentliche Ausgabewege des Portals; die interne
+Sitzungs-/CSRF-Schnittstelle wird nicht benutzt.

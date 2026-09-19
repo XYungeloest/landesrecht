@@ -65,8 +65,8 @@ import { auditRecord } from '../transform/audit-record.ts';
 import type { CompiledInstitutionRegistry } from '../transform/institution-registry.ts';
 import { TRANSFORMER_VERSION } from '../transform/rules.ts';
 import { transformToBayWue } from '../transform/transform.ts';
-import { applyReverseRecipe, verifyRoundTrip } from '../reconstruction/apply.ts';
-import { recipeAmendments, recipeProblems, type AnyReconstructionRecipe, type RecipeAmendment, type ReconstructionRecipe } from '../reconstruction/recipe.ts';
+import { applyReverseRecipeToLaw, verifyRoundTripLaw } from '../reconstruction/apply.ts';
+import { recipeAmendments, recipeProblems, recipeRestores, type AnyReconstructionRecipe, type RecipeAmendment, type RecipeRestoration, type ReconstructionRecipe } from '../reconstruction/recipe.ts';
 import { applySourceCorrections, type AppliedSourceCorrection, type SourceCorrection } from '../common/source-corrections.ts';
 import { loadMergedAnnexes } from './annex.ts';
 import { figureRawDocuments, type FigurePackage } from './figures.ts';
@@ -330,15 +330,36 @@ export function amendmentSourceReference(recipe: AnyReconstructionRecipe, amendm
   };
 }
 
-/** Rohquellen einer bewiesenen Rückrechnung: je zurückgenommene Änderung und je Beleg des Beginns, je SHA-256 einmal. */
-function reconstructionRawDocuments(reconstruction: { recipe: AnyReconstructionRecipe; gazettes: CachedPackage[]; priorGazettes: CachedPackage[] }): ManifestRawDocument[] {
+/** Rohquellen einer bewiesenen Rückrechnung: je zurückgenommene Änderung, je Beleg des Beginns und je Verkündung des wiederhergestellten Alttexts, je SHA-256 einmal. */
+function reconstructionRawDocuments(reconstruction: { recipe: AnyReconstructionRecipe; gazettes: CachedPackage[]; priorGazettes: CachedPackage[]; restorationGazettes: CachedPackage[] }): ManifestRawDocument[] {
   const amendments = recipeAmendments(reconstruction.recipe);
+  const restorationSources = reconstruction.recipe.restoration?.sources ?? [];
   const documents: ManifestRawDocument[] = [
     ...reconstruction.gazettes.map((gazette, index) => ({ role: 'gazette' as const, url: amendments[index]!.url, finalUrl: gazette.url, sha256: gazette.sha256, contentType: gazette.contentType, retrievedAt: gazette.retrievedAt, byteLength: gazette.byteLength })),
     ...reconstruction.priorGazettes.map((prior) => ({ role: 'gazette' as const, url: prior.url, finalUrl: prior.url, sha256: prior.sha256, contentType: prior.contentType, retrievedAt: prior.retrievedAt, byteLength: prior.byteLength })),
+    ...reconstruction.restorationGazettes.map((publication, index) => ({ role: 'gazette' as const, url: restorationSources[index]!.url, finalUrl: publication.url, sha256: publication.sha256, contentType: publication.contentType, retrievedAt: publication.retrievedAt, byteLength: publication.byteLength })),
   ];
   const seen = new Set<string>();
   return documents.filter((document) => (seen.has(document.sha256) ? false : (seen.add(document.sha256), true)));
+}
+
+/** Eine Verkündung, aus der die Rückrechnung Alttext wiederherstellt (Stammverkündung oder Änderung vor dem Stichtag). */
+export function restorationSourceReference(source: RecipeRestoration['sources'][number], restoration: RecipeRestoration, retrievedAt: string): SourceReference {
+  const base = source.role === 'base-publication';
+  return {
+    kind: 'official-gazette',
+    system: 'bayernrecht',
+    label: base ? `Stammverkündung (Alttext der Rückrechnung): ${source.citation}` : `Änderung vor dem Stichtag (Alttext der Rückrechnung): ${source.citation}`,
+    availability: 'external',
+    url: source.url,
+    retrievedAt: retrievalDate(retrievedAt),
+    sha256: source.sha256,
+    mediaType: 'text/html',
+    sourceRole: 'amendment-evidence',
+    note: base
+      ? `Der Alttext von ${restoration.restoredSteps} Schritt${restoration.restoredSteps === 1 ? '' : 'en'} stammt aus dieser Verkündung; der zurückgerechnete Stichtagskörper stimmt im Wortlaut mit ihr überein (${restoration.agreement.characters} Zeichen, Normalisierung ${restoration.agreement.normalization})`
+      : `Vor dem Stichtag vorwärts angewandt, um die Stichtagsfassung aus der Stammverkündung zu belegen${source.effectiveDate ? ` (Wirkung ab ${source.effectiveDate})` : ''}`,
+  };
 }
 
 /** Die Verkündung der vorangehenden Änderung als Beleg des Beginns der Stichtagsfassung. */
@@ -485,7 +506,7 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
   let sourceLaw = law;
   // Mehrstufig (v2): alle Änderungen nach dem Stichtag, jüngste zuerst; jede mit eigenem Beleg im Cache. Die
   // Stichtagsfassung gilt bis zum Vortag der ältesten zurückgenommenen Änderung.
-  let reconstruction: { recipe: AnyReconstructionRecipe; begin: BaselineTextInForce; gazettes: CachedPackage[]; priorGazettes: CachedPackage[] } | undefined;
+  let reconstruction: { recipe: AnyReconstructionRecipe; begin: BaselineTextInForce; gazettes: CachedPackage[]; priorGazettes: CachedPackage[]; restorationGazettes: CachedPackage[] } | undefined;
   if (gate.admit && gate.reconstruction && blocking.length === 0) {
     const recipe = gate.reconstruction;
     const begin = recipe.baselineTextInForce;
@@ -525,28 +546,45 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
         }
         priorGazettes.push(prior);
       }
-      if (priorProblem) {
-        block('reconstruction-evidence-missing', priorProblem, ['Ohne den archivierbaren Beleg wird keine Rückrechnung übernommen.']);
+      // Alttext aus den Verkündungen (Stammverkündung, Änderungen vor dem Stichtag): nur mit jeder dieser Quellen
+      // unverändert im Cache – sie werden mit der Norm archiviert. Erst dann gilt `restorationChecked`.
+      const restorationGazettes: CachedPackage[] = [];
+      let restorationProblem: string | undefined;
+      if (recipeRestores(recipe) && !recipe.restoration) {
+        restorationProblem = 'Das Rezept stellt Alttext wieder her, führt aber keine Verkündungen der Wiederherstellung';
+      }
+      for (const source of restorationProblem ? [] : (recipe.restoration?.sources ?? [])) {
+        const publication = await readCachedPackage(options.cacheDir, source.url);
+        if (!publication || isCachedPackageProblem(publication) || publication.sha256 !== source.sha256) {
+          restorationProblem = `Verkündung des wiederhergestellten Alttexts ${source.url} liegt nicht unverändert im Cache`;
+          break;
+        }
+        restorationGazettes.push(publication);
+      }
+      if (priorProblem ?? restorationProblem) {
+        block('reconstruction-evidence-missing', (priorProblem ?? restorationProblem)!, ['Ohne den archivierbaren Beleg wird keine Rückrechnung übernommen.']);
       } else if (gazetteProblem) {
         block('reconstruction-evidence-missing', `Der Änderungsbeleg ${gazetteProblem.url} liegt nicht unverändert im Cache`, [
           gazetteProblem.detail,
           'Ohne den archivierbaren Beleg wird keine Rückrechnung übernommen.',
         ]);
       } else {
-        const proof = verifyRoundTrip(law.body, recipe);
+        // Körper und – bei Titelschritten – Titel, Kurztitel und Abkürzung werden zurückgerechnet und vorwärts bewiesen.
+        const applyOptions = { restorationChecked: restorationGazettes.length > 0 };
+        const proof = verifyRoundTripLaw(law, recipe, applyOptions);
         if (!proof.ok) {
           block('reconstruction-roundtrip-failed', 'Der Rundlauf der Rückrechnung ist nicht bestanden', [proof.detail]);
         } else {
-          reconstruction = { recipe, begin, gazettes, priorGazettes };
+          reconstruction = { recipe, begin, gazettes, priorGazettes, restorationGazettes };
           sourceLaw = {
-            ...law,
-            body: applyReverseRecipe(law.body, recipe),
+            ...applyReverseRecipeToLaw(law, recipe, applyOptions),
             sourceValidFrom: begin.date,
             sourceValidTo: previousDay(oldest.effectiveDate),
             sourceReferences: [
               ...law.sourceReferences,
               ...amendments.map((amendment, index) => amendmentSourceReference(recipe, amendment, gazettes[index]!.retrievedAt)),
               ...(begin.sources ?? []).map((source, index) => beginSourceReference(source, priorGazettes[index]!.retrievedAt, begin.date)),
+              ...(recipe.restoration?.sources ?? []).map((source, index) => restorationSourceReference(source, recipe.restoration!, restorationGazettes[index]!.retrievedAt)),
             ],
           };
         }
@@ -630,7 +668,7 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
           sourceArea: candidate.sourceArea,
           institutions: options.institutions,
           sourceStatus: reconstruction
-            ? { validity: 'reconstructed', text: 'reconstructed', note: `Stichtagsfassung aus dem heutigen Text durch Rücknahme von ${reversedAmendmentsText(reconstruction.recipe)} zurückgerechnet; Rundlauf bestanden` }
+            ? { validity: 'reconstructed', text: 'reconstructed', note: `Stichtagsfassung aus dem heutigen Text durch Rücknahme von ${reversedAmendmentsText(reconstruction.recipe)} zurückgerechnet${reconstruction.recipe.restoration ? `; Alttext aus der Stammverkündung wiederhergestellt, Wortlautvergleich bestanden` : ''}; Rundlauf bestanden` }
             : { validity: 'exact', text: 'direct' },
           provenanceNote: recovery.note,
         },

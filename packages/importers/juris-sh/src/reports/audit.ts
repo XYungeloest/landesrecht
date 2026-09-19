@@ -68,8 +68,32 @@ export async function runAudit(root: string, snapshot: AdapterSnapshot, cacheDir
     checks.push({ id: 'probe-belege', ok: false, detail: 'content-addressability.json fehlt' });
   }
 
-  const imported = snapshot.manifest.entries.filter((entry) => entry.importStatus === 'imported' || entry.importStatus === 'imported-with-warnings').length;
-  checks.push({ id: 'bestand', ok: imported === snapshot.contentFiles || (imported === 0 && snapshot.contentFiles === 0), detail: `${imported} übernommene Manifesteinträge, ${snapshot.contentFiles} Dateien unter ${CONTENT_DIR}` });
+  const importedEntries = snapshot.manifest.entries.filter((entry) => entry.importStatus === 'imported' || entry.importStatus === 'imported-with-warnings');
+  const importedSlugs = new Set(importedEntries.map((entry) => entry.targetSlug));
+  const contentSlugs = new Set(snapshot.contentSlugs);
+  const orphan = [...contentSlugs].filter((slug) => !importedSlugs.has(slug));
+  const missing = [...importedSlugs].filter((slug) => !contentSlugs.has(slug));
+  const expectedFiles = importedEntries.length * 3;
+  checks.push({
+    id: 'bestand',
+    ok: orphan.length === 0 && missing.length === 0 && snapshot.contentFiles === expectedFiles,
+    detail: `${importedEntries.length} übernommene Manifesteinträge, ${contentSlugs.size} Normverzeichnisse, ${snapshot.contentFiles} Dateien unter ${CONTENT_DIR} (erwartet ${expectedFiles})${orphan.length ? `; ohne Manifest: ${orphan.slice(0, 5).join(', ')}` : ''}${missing.length ? `; ohne Verzeichnis: ${missing.slice(0, 5).join(', ')}` : ''}`,
+  });
+
+  // Rohquellen der übernommenen Normen: SHA-256 im Cache nachrechnen (Gesamtausgabe bzw. Einzelfassungen).
+  {
+    let verified = 0;
+    const problems: string[] = [];
+    for (const entry of importedEntries) {
+      for (const raw of entry.rawDocuments) {
+        const sha = await cachedSha(cacheDir, raw.url);
+        if (sha === undefined) problems.push(`${entry.sourceIdentity}: ${raw.url.slice(0, 80)} nicht im Cache`);
+        else if (sha !== raw.sha256) problems.push(`${entry.sourceIdentity}: Cache weicht vom Manifest ab`);
+        else verified += 1;
+      }
+    }
+    checks.push({ id: 'rohquellen', ok: problems.length === 0, detail: problems.length === 0 ? `${verified} Rohquellen (PDF) übernommener Normen im Cache nachgerechnet` : `${problems.length} Abweichungen: ${problems.slice(0, 5).join('; ')}` });
+  }
 
   const categories = new Map<string, number>();
   for (const item of snapshot.review.items) categories.set(item.category, (categories.get(item.category) ?? 0) + 1);

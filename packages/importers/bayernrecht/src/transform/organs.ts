@@ -170,6 +170,25 @@ export function extractSourceOrgans(input: { blocks: readonly NormBodyBlock[]; h
 }
 
 // Das Landesadjektiv steht vor jedem der drei Verfassungsorgane („Bayerischer Ministerpräsident“ wie „Bayerischer Landtag“).
+const normalizeOrgan = (value: string): string => value.replace(/\s+/gu, ' ').trim();
+
+/**
+ * Organe einer Erlassformel: Zusatzklauseln, die nicht zum Namen gehören („… soweit erforderlich“, „– soweit die
+ * Änderung … betroffen ist“, „nach Beschluss des …“, Fußnotenzeichen „*“), werden abgetrennt; eine gemeinsame Formel
+ * („X und das Y“, „X sowie das Y“, „X und des Y“) wird in ihre Organe zerlegt, jedes im Nominativ.
+ */
+export function organParts(origin: string): string[] {
+  const withoutQualifier = normalizeOrgan(origin)
+    .replace(/\s*\*+$/u, '')
+    .replace(/\s+[–-]\s+soweit\b.*$/u, '')
+    .replace(/\s+soweit\b.*$/u, '')
+    .replace(/\s+nach\s+Beschluss\b.*$/u, '');
+  return withoutQualifier
+    .split(new RegExp(String.raw`\s(?:und|sowie)\s+(?:das|des|dem)\s+(?=${ADJECTIVE}\s)`, 'u'))
+    .map((part) => nominativeOrganName(part))
+    .filter((part) => part !== '');
+}
+
 const CONSTITUTIONAL_ORGAN = new RegExp(String.raw`^(?:${ADJECTIVE}\s+)?(?:Landtag|Staatsregierung|Ministerpräsident(?:in)?)(?:\s+${OF_STATE}${STATE})?$`, 'u');
 
 /** Überleitung des Erlassorgans in die Simulationsjurisdiktion – Verfassungsorgane oder zentrale Zuordnung. */
@@ -188,6 +207,15 @@ export function mapEnactingBody(origin: string | undefined, options: { instituti
   }
   if (resolved?.entry && resolved.status === 'historical-source-only') {
     return { decision: 'source-only', reason: `Institutionen-Zuordnung ${resolved.entry.id} (historical-source-only): ${resolved.entry.reason}`, segments: [], mappingEntry: resolved.entry.id };
+  }
+  // Gemeinsame Erlassformel oder Zusatzklausel: Historisch nur, wenn **jedes** genannte Organ belegt historisch ist.
+  const parts = organParts(origin);
+  if (options.institutions && (parts.length > 1 || parts[0] !== normalizeOrgan(origin))) {
+    const entries = parts.map((part) => options.institutions!.resolve(part));
+    if (entries.length > 0 && entries.every((entry) => entry.entry && entry.status === 'historical-source-only')) {
+      const ids = [...new Set(entries.map((entry) => entry.entry!.id))];
+      return { decision: 'source-only', reason: `Alle genannten Organe sind historisch (${ids.join(', ')}): ${entries[0]!.entry!.reason}`, segments: [], mappingEntry: ids.join('+') };
+    }
   }
   const mapping: EnactingBodyMapping = {
     decision: 'manual-review',

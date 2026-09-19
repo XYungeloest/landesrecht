@@ -29,6 +29,7 @@ import type { EvidenceStrength } from '../common/evidence.ts';
 import {
   classifyCommand,
   classifyPublication,
+  commandFor,
   commandWindow,
   extractEffectiveDate,
   extractTerminationDate,
@@ -241,14 +242,43 @@ export function derivePublicationEvents(input: PublicationInput, stock: StockInd
   const terminationFor = (cited: CitedNorm | undefined): string | undefined => {
     if (cited === undefined) return publicationTermination;
     const window = text === '' ? undefined : commandWindow(text, cited);
-    return window === undefined ? undefined : extractTerminationDate(window);
+    if (window === undefined) return undefined;
+    // Befehl vor einer Aufzählung („Mit Ablauf des … treten außer Kraft: 1. …“): dessen Datum gilt für jedes Glied.
+    return extractTerminationDate(window) ?? (classifyCommand(window) === undefined ? commandFor(text, cited)?.terminationDate : undefined);
   };
+
+  /**
+   * In einer Berichtigung („Druckfehlerberichtigung: In § 8 … wird vor dem Wort … eingefügt“) sind die
+   * Wortlautbefehle Berichtigungen, keine Änderungen – der Titel der Veröffentlichung entscheidet.
+   */
+  const correctionAware = <T extends { eventType: EventType; subtype?: EventSubtype; keyword: string }>(command: T | undefined): T | undefined =>
+    command && classification.eventType === 'correction' && command.eventType === 'amend' ? { ...command, eventType: 'correction', subtype: 'berichtigung' } : command;
 
   const byBayRs = new Map<string, CitedNorm>();
   for (const cited of citations) {
     const key = canonicalBayRs(cited.bayRsNumber);
     if (key !== undefined && !byBayRs.has(key)) byBayRs.set(key, cited);
   }
+  /**
+   * Zitat ohne BayRS-Nummer zu einer Gliederungsnummer der Veröffentlichung: „In Art. 13 Abs. 3 des Haushaltsgesetzes
+   * 2022 (HG 2022) vom 22. April 2022 (GVBl. S. 102) wird die Angabe … ersetzt“ (GVBl. 2024 S. 114, Gliederungsnummer
+   * 630-2-24-F). Es gehört zur Nummer, wenn der Bestand unter ihr genau eine Vorschrift führt, das Zitat deren
+   * Ausfertigungsdatum trägt und jedes Titelwort des Zitats in ihrem Titel steht – und alle so passenden Zitate
+   * dieselbe Fundstelle nennen. Ohne diesen Schritt fiele das Ereignis auf die Veröffentlichung zurück (`new`).
+   */
+  const citedByStock = (key: string): CitedNorm | undefined => {
+    const entries = stock.byBayRs.get(key) ?? [];
+    if (entries.length !== 1 || entries[0]!.enactmentDate === undefined) return undefined;
+    const entry = entries[0]!;
+    const stockTitle = entry.title.toLowerCase();
+    const matches = citations.filter((cited) => {
+      if (cited.bayRsNumber !== undefined || cited.enactmentDate !== entry.enactmentDate || cited.title === undefined) return false;
+      const words = cited.title.toLowerCase().split(/[^\p{L}\p{Nd}]+/u).filter((word) => word.length >= 4);
+      return words.length > 0 && words.every((word) => stockTitle.includes(word) || stockTitle.includes(word.replace(/(?:es|en|s|n)$/u, '')));
+    });
+    if (matches.length === 0 || new Set(matches.map((cited) => cited.citation ?? '')).size !== 1) return undefined;
+    return matches.find((cited) => commandFor(text, cited) !== undefined) ?? matches[0];
+  };
   // Aufhebungsliste: Der Befehl steht vor den Zielen, und die Gliederungsnummern der Veröffentlichung
   // bezeichnen nur die Sachgebiete. Dann sind die Listenglieder die Ziele, nicht die Nummern.
   const repealList = TERMINATING_EVENT_TYPES.includes(classification.eventType) && document !== undefined ? scanRepealList(document.paragraphs) : [];
@@ -380,9 +410,13 @@ export function derivePublicationEvents(input: PublicationInput, stock: StockInd
   if (gliederungsnummern.length > 0) {
     for (const gliederungsnummer of gliederungsnummern) {
       const key = canonicalBayRs(gliederungsnummer);
-      const cited = key === undefined ? undefined : byBayRs.get(key);
-      const command = cited && text !== '' ? classifyCommand(commandWindow(text, cited) ?? '') : undefined;
+      const quoted = key === undefined ? undefined : byBayRs.get(key) ?? citedByStock(key);
+      const command = correctionAware(quoted ? commandFor(text, quoted) : undefined);
       const eventType = command?.eventType ?? classification.eventType;
+      // Eine neue Vorschrift ist nie eine schon zitierte: Ohne Befehl zum Zitat ist das Zitat nur eine Bezugnahme
+      // („Die nach der Realschulordnung (RSO) vom 18. Juli 2007 … zu erteilenden Zeugnisse …“, BayMBl. 2025 Nr. 209),
+      // und das Ereignis `new` gilt der Veröffentlichung selbst.
+      const cited = eventType === 'new' && command === undefined ? undefined : quoted;
       const terminating = TERMINATING_EVENT_TYPES.includes(eventType);
       const scoped = cited?.scopeReference !== undefined;
       const resolution = resolveTarget(stock, candidateFor(cited, gliederungsnummer, NORM_DIRECTED.includes(eventType), terminating && !scoped));
@@ -401,8 +435,8 @@ export function derivePublicationEvents(input: PublicationInput, stock: StockInd
       });
     }
   } else {
-    const cited = citations.find((candidate) => text !== '' && classifyCommand(commandWindow(text, candidate) ?? '') !== undefined);
-    const command = cited && text !== '' ? classifyCommand(commandWindow(text, cited) ?? '') : undefined;
+    const cited = citations.find((candidate) => commandFor(text, candidate) !== undefined);
+    const command = correctionAware(cited ? commandFor(text, cited) : undefined);
     const eventType = command?.eventType ?? classification.eventType;
     const terminating = TERMINATING_EVENT_TYPES.includes(eventType);
     const scoped = cited?.scopeReference !== undefined;
@@ -427,7 +461,7 @@ export function derivePublicationEvents(input: PublicationInput, stock: StockInd
   // „neue Vorschrift löst die alte ab“ – und die alte steht heute nicht mehr im Portal.
   const covered = new Set(gliederungsnummern.map((value) => canonicalBayRs(value)).filter((value): value is string => value !== undefined));
   for (const cited of citations) {
-    const command = text === '' ? undefined : classifyCommand(commandWindow(text, cited) ?? '');
+    const command = commandFor(text, cited);
     if (!command || !TERMINATING_EVENT_TYPES.includes(command.eventType)) continue;
     const key = canonicalBayRs(cited.bayRsNumber);
     if (key !== undefined && covered.has(key)) continue;

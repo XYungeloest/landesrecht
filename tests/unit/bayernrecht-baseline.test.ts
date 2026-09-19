@@ -45,6 +45,26 @@ describe('Stichtagsklassifikation', () => {
     expect(decision.blockers).toEqual([]);
   });
 
+  it('führt eine vor dem Stichtag ausgefertigte, aber erst danach verkündete Norm nie als am Stichtag geltend', () => {
+    // BayMBl. 2023 Nr. 633 und Nr. 629: ausgefertigt am 30.11./1.12.2023, veröffentlicht am 20.12.2023, Text ab 2024.
+    for (const [documentId, documentDate, inForceFrom, citation] of [
+      ['BayVV_2230_1_1_1_0_K_14216', '2023-11-30', '2024-01-01', 'BayMBl. 2023 Nr. 633'],
+      ['BayVV_2330_B_14207', '2023-12-01', '2024-06-30', 'BayMBl. 2023 Nr. 629'],
+    ] as const) {
+      const decision = classifyBaseline({ documentId, documentDate, inForceFrom, administrative: true, publication: { date: '2023-12-20', citation } });
+      expect(decision).toMatchObject({ class: 'enacted-after-baseline', status: 'not-at-baseline', reason: 'published-after-baseline' });
+      expect(decision.evidence).toContainEqual(expect.objectContaining({ kind: 'publication-date', value: `2023-12-20 (${citation})` }));
+    }
+    // Rechtsnorm: Die Verkündung ist konstitutiv – auch bei Textgeltung „vor“ dem Stichtag.
+    expect(classifyBaseline({ documentId: 'G', documentDate: '2023-11-20', inForceFrom: '2023-11-01', publication: { date: '2023-12-15', citation: 'GVBl. 2023 S. 700' } }).status).toBe('not-at-baseline');
+    // Verwaltungsvorschrift mit Textgeltung vor dem Stichtag, aber erst danach veröffentlicht: nicht geraten, Review.
+    const vwv = classifyBaseline({ documentId: 'V', documentDate: '2023-11-21', inForceFrom: '2023-11-08', administrative: true, publication: { date: '2023-12-06', citation: 'BayMBl. 2023 Nr. 585' } });
+    expect(vwv).toMatchObject({ status: 'undetermined', reason: 'published-after-baseline-validity-open' });
+    expect(vwv.status).not.toBe('active-at-baseline');
+    // Ohne belegte Verkündung nach dem Stichtag bleibt es bei der bisherigen Einordnung.
+    expect(classifyBaseline({ documentId: 'A', documentDate: '2023-11-21', inForceFrom: '2023-11-08', administrative: true }).status).toBe('active-at-baseline');
+  });
+
   it('lässt den Jahrgang der Fundstelle entscheiden, wo er den Stichtag nicht umschließt', () => {
     // Die VwV-DTD führt kein Ausfertigungsdatum. Ein Jahrgang ist keines – aber eine Vorschrift im
     // AllMBl. 2000 ist zweifelsfrei vor dem 2023-12-01 erlassen.
@@ -234,5 +254,20 @@ describe('Rekonstruktionsschlange', () => {
       classifyReconstruction({ documentId: 'kurz', events: [amend('2024-01-01')], hasPreBaselineFullText: true }),
     ]);
     expect(queue.map((entry) => entry.documentId)).toEqual(['kurz', 'lang', 'neufassung']);
+  });
+});
+
+describe('Eigene Fundstelle im Verkündungsverzeichnis', () => {
+  const dates = new Map([
+    ['baymbl|2023|629', { date: '2023-12-20', citation: 'BayMBl. 2023 Nr. 629' }],
+    ['baymbl|2024|58', { date: '2024-01-31', citation: 'BayMBl. 2024 Nr. 58' }],
+  ]);
+  it('liest die eigene Fundstelle aus dem Zitiervorschlag einer Verwaltungsvorschrift', async () => {
+    const { ownPublication } = await import('@landesrecht/importer-bayernrecht/baseline/run.ts');
+    expect(ownPublication({}, '2023-12-01', dates, 'Zitiervorschlag: Bayerische Förderrichtlinie Holz (BayFHolz) vom 1. Dezember 2023 (BayMBl. Nr. 629), die durch Bekanntmachung vom 11. Juni 2024 (BayMBl. Nr. 289) geändert worden ist')).toEqual({ date: '2023-12-20', citation: 'BayMBl. 2023 Nr. 629' });
+  });
+  it('rät kein Folgejahr: „vom 20. Januar 2023 (BayMBl. Nr. 58)“ ist nicht BayMBl. 2024 Nr. 58', async () => {
+    const { ownPublication } = await import('@landesrecht/importer-bayernrecht/baseline/run.ts');
+    expect(ownPublication({}, '2023-01-20', dates, 'Bekanntmachung vom 20. Januar 2023 (BayMBl. Nr. 58)')).toBeUndefined();
   });
 });

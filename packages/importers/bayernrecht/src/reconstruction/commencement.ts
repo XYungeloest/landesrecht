@@ -13,6 +13,7 @@
  */
 import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
+import { relativeDate, relativeRule } from '../baseline-only/relative.ts';
 import { parseLongGermanDate } from '../events/resolve.ts';
 import type { GazetteUnit } from './gazette.ts';
 
@@ -150,8 +151,19 @@ export function commencementStatements(units: readonly GazetteUnit[], eventDate:
       // BayMBl. 2025 Nr. 233) verdeckt es nicht.
       if (/\bMBL1Listenebene\b/u.test(unit.className) && /^\d+\.$/u.test((unit.label ?? '').trim())) balance = 0;
       const full = `${unit.label ?? ''} ${unit.text}`.trim();
+      // Eine Einheit, die nur „§ 2“ oder „Art. 3“ trägt, beginnt einen neuen Abschnitt (Amtsblätter setzen die
+      // Paragraphenzeile als Absatz, nicht als Überschrift: FMBl. 2018 S. 221): Kein Zitat reicht über sie hinweg.
+      if (/^(?:§|Art\.)\s*\d+[a-z]?$/u.test(full)) {
+        balance = 0;
+        continue;
+      }
       const inside = balance > 0 || /^[„‚]/u.test(full);
-      balance = Math.max(0, balance + (full.match(/[„‚]/gu)?.length ?? 0) - (full.match(/[“”‘]/gu)?.length ?? 0));
+      // Ein Zitat über mehrere Absätze öffnet jeden Absatz neu und schließt nur am Ende („1.1.4 … – „1.1.5 … “, AllMBl.
+      // 2018 S. 419): Das öffnende Zeichen am Anfang eines Absatzes innerhalb eines Zitats vertieft es nicht.
+      const opening = (full.match(/[„‚]/gu)?.length ?? 0) - (balance > 0 && /^[„‚]/u.test(full) ? 1 : 0);
+      // Ein gerades Anführungszeichen am Ende eines Zitats schließt es (Satzfehler „…Nordwert N (North).\"“, FMBl. 2018 S. 221).
+      const straight = balance + opening > 0 && /\S"[.;,]?$/u.test(full) ? 1 : 0;
+      balance = Math.max(0, balance + opening - (full.match(/[“”‘]/gu)?.length ?? 0) - straight);
       if (!inside) candidates.push(unit);
     }
   }
@@ -244,6 +256,50 @@ export function sectionRef(section: string | undefined, introLabel: string | und
   return undefined;
 }
 
+const CALENDAR_PHRASE = /\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4}/u;
+
+export interface DatedCommencement {
+  ok: boolean;
+  reason?: string;
+  dates: string[];
+  /** Wortlaut der angewandten Inkrafttretensregeln, bei relativem Inkrafttreten dazu der Beleg des Verkündungsdatums. */
+  evidence: string[];
+  /** Alle angewandten Regeln nennen ein Kalenderdatum. */
+  calendar: boolean;
+  /** Relatives Inkrafttreten, berechnet aus dem Verkündungsdatum, das die Verkündung selbst nennt. */
+  publicationDated: boolean;
+  /** Das zugrunde gelegte Verkündungsdatum (bei relativem Inkrafttreten das der Verkündung selbst). */
+  eventDate?: string;
+}
+
+/**
+ * Inkrafttreten der Änderung für die Zielnorm mit Kalenderdatum – oder relativ zur Verkündung („am Tag nach der
+ * Verkündung“, „am ersten Tag des auf die Verkündung folgenden Monats“). Relativ nur mit dem Verkündungsdatum, das die
+ * **Verkündung selbst** nennt (`publishedAt`: GVBl. „Ausgabe 2024/11 vom 14.06.2024“, BayMBl. „Veröffentlichung BayMBl.
+ * 2025 Nr. 486 vom 26.11.2025“); nennt das Register ein anderes Datum, widersprechen sich die Belege. Das Verkündungsdatum
+ * wird nie ungeprüft zum Inkrafttreten: Es zählt nur, wenn die Inkrafttretensvorschrift ausdrücklich darauf verweist.
+ */
+export function datedCommencement(units: readonly GazetteUnit[], section: string | undefined, mantel: boolean, input: { publishedAt?: string; registerDate?: string; url: string }): DatedCommencement {
+  const eventDate = input.registerDate ?? input.publishedAt;
+  const commencement = commencementFor(units, eventDate ?? '0000-00-00', section, mantel);
+  if (!commencement.ok) return { ok: false, reason: commencement.reason, dates: [], evidence: [], calendar: false, publicationDated: false };
+  const relative = commencement.applicable.some((statement) => /[Vv]erkünd|[Bb]ekanntmachung/u.test(statement.text.replace(/(?:Diese|Die|Das)\s+Bekanntmachung\s+tritt/u, '')) || !CALENDAR_PHRASE.test(statement.text));
+  if (!relative) return { ok: true, dates: commencement.dates, evidence: commencement.applicable.map((statement) => statement.text), calendar: true, publicationDated: false, ...(eventDate ? { eventDate } : {}) };
+  const published = input.publishedAt;
+  if (!published) return { ok: false, reason: 'Inkrafttreten bezieht sich auf die Verkündung, deren Datum die Verkündung selbst nicht nennt', dates: [], evidence: [], calendar: false, publicationDated: false };
+  if (input.registerDate && input.registerDate !== published) return { ok: false, reason: `Verkündungsdatum widersprüchlich: Verkündung ${published}, Register ${input.registerDate}`, dates: [], evidence: [], calendar: false, publicationDated: false };
+  const dated = published === eventDate ? commencement : commencementFor(units, published, section, mantel);
+  if (!dated.ok) return { ok: false, reason: dated.reason, dates: [], evidence: [], calendar: false, publicationDated: false };
+  return {
+    ok: true,
+    dates: dated.dates,
+    evidence: [...dated.applicable.map((statement) => statement.text), `Verkündungsdatum ${published} laut Verkündung selbst (${input.url})`],
+    calendar: false,
+    publicationDated: true,
+    eventDate: published,
+  };
+}
+
 /**
  * Inkrafttretensdaten der Änderung für die Zielnorm. `mantel` sagt, ob die Verkündung mehrere Normen
  * ändert – nur dann können Abweichungen einen fremden Abschnitt betreffen.
@@ -286,6 +342,19 @@ export interface OwnCommencement {
 const COMMENCEMENT_TITLE = /(?:In-?Kraft-?Treten|Inkrafttreten)/iu;
 
 /**
+ * Quellfehler in einer Inkrafttretensregel, die nur eine Lesart zulassen: „mir Wirkung vom 1. August 2022“
+ * (BayVV_2235_1_1_5_K_13224, BayMBl. 2022 Nr. 485) ist „mit Wirkung vom“. Die Korrektur steht als Beleg im Rezept.
+ */
+export function repairCommencementSentence(sentence: string): { sentence: string; defects: string[] } {
+  const defects: string[] = [];
+  const repaired = sentence.replace(/\bmir(\s+Wirkung\s+(?:vom|zum)\s+\d{1,2}\.)/gu, (match, rest: string) => {
+    defects.push(`Quellfehler in der Inkrafttretensregel: „${match.replace(/\s+\d{1,2}\.$/u, '')}“ als „mit${rest.replace(/\s+\d{1,2}\.$/u, '')}“ gelesen (einzige Lesart)`);
+    return `mit${rest}`;
+  });
+  return { sentence: repaired, defects };
+}
+
+/**
  * Beginn der Geltung einer **Stammfassung**, belegt durch die Inkrafttretensvorschrift der Norm selbst –
  * gelesen im **rückgerechneten** Stichtagskörper, also in genau dem Text, dessen Geltung belegt werden
  * soll. Ausfertigung ist nicht Textgeltung; ein Datum wird nie aus dem Ausfertigungsdatum abgeleitet.
@@ -295,7 +364,17 @@ const COMMENCEMENT_TITLE = /(?:In-?Kraft-?Treten|Inkrafttreten)/iu;
  * nicht im Cache. Genau eine Vorschrift mit der Überschrift „Inkrafttreten“ muss es geben; jede weitere
  * Inkrafttretensregel darin (abweichende Teile) muss ebenfalls datiert sein.
  */
-export function ownCommencement(body: readonly NormBodyBlock[], baselineDate: string): OwnCommencement {
+/** Anfang einer Grundregel zum Inkrafttreten („¹Diese Bekanntmachung tritt am … in Kraft“). */
+/** Selbstbezeichnung einer Norm in ihrer Grundregel („Diese Geschäftsordnung tritt …“). */
+const OWN_NOUN = String.raw`(?:Gesetz|Verordnung|Bekanntmachung|Satzung|Statut|Richtlinie|Richtlinien|Verwaltungsvorschrift|Verwaltungsvorschriften|Geschäftsordnung|Dienstordnung|Dienstanweisung|Anordnung|Ordnung|Vereinbarung|Dienstvereinbarung)`;
+const GENERAL_RULE_START = new RegExp(String.raw`^[¹]?(?:Diese|Dieses|Die|Das)\s+${OWN_NOUN}\s+(?:tritt|treten)\s[\s\S]{0,120}?\bin\s+Kraft\b`, 'u');
+
+/**
+ * `relative`: Verkündungsdatum der Stammverkündung, wie sie es **selbst** druckt (Lauf 7, `publication.ts`) – nur damit
+ * wird eine relative Grundregel („Diese Bekanntmachung tritt am Tag nach ihrer Veröffentlichung in Kraft.“) gelesen
+ * (`baseline-only/relative.ts`, dieselbe Regel wie `datedCommencement`).
+ */
+export function ownCommencement(body: readonly NormBodyBlock[], baselineDate: string, relative?: { publishedAt: string; url: string }): OwnCommencement {
   const titled: NormBodyBlock[] = [];
   const visit = (blocks: readonly NormBodyBlock[]): void => {
     for (const block of blocks) {
@@ -304,6 +383,16 @@ export function ownCommencement(body: readonly NormBodyBlock[], baselineDate: st
     }
   };
   visit(body);
+  if (titled.length === 0) {
+    // Verwaltungsvorschriften ohne Überschrift „Inkrafttreten“ (BayMBl. 2022 Nr. 190: „5. ¹Diese Bekanntmachung tritt am
+    // 6. April 2022 in Kraft. …“): Die Grundregel benennt sich selbst. Genau ein Glied der obersten Ebene, dessen Text
+    // mit ihr beginnt, ist die Vorschrift.
+    const own = body.filter((block) => {
+      const texts = [block.text, ...(block.children ?? []).filter((child) => child.type === 'paragraphText').map((child) => child.text)].filter((text): text is string => typeof text === 'string');
+      return texts.length > 0 && GENERAL_RULE_START.test(texts[0]!);
+    });
+    if (own.length === 1) titled.push(own[0]!);
+  }
   if (titled.length !== 1) return { ok: false, evidence: [], reason: titled.length === 0 ? 'Keine Vorschrift „Inkrafttreten“ im Normtext' : `${titled.length} Vorschriften „Inkrafttreten“ im Normtext` };
   const block = titled[0]!;
   const texts: string[] = [];
@@ -325,7 +414,7 @@ export function ownCommencement(body: readonly NormBodyBlock[], baselineDate: st
   const indefinite = /(?:gelten|gilt)\s+bis\b(?:(?!\.\s+[A-ZÄÖÜ¹²³⁴⁵⁶⁷⁸⁹]).)*/u.exec(allText);
   if (indefinite) return { ok: false, evidence: [], reason: `Die Norm begrenzt ihre eigene Geltung („${indefinite[0].slice(0, 140)}“); ob sie am Stichtag galt, ist eine Frage der Stichtagsklassifikation, nicht der Rückrechnung` };
   const expiryEvidence: string[] = [];
-  for (const expiry of allText.matchAll(/(?:Dieses|Diese)\s+(?:Gesetz|Verordnung|Bekanntmachung|Satzung|Richtlinie|Richtlinien|Verwaltungsvorschrift)\s+tritt\s+(?:(?!außer\s+Kraft)[\s\S]){0,120}?außer\s+Kraft/gu)) {
+  for (const expiry of allText.matchAll(new RegExp(String.raw`(?:Dieses|Diese)\s+${OWN_NOUN}\s+tritt\s+(?:(?!außer\s+Kraft)[\s\S]){0,120}?außer\s+Kraft`, 'gu'))) {
     const date = /(?:mit\s+Ablauf\s+des|am)\s+(\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s+außer\s+Kraft$/u.exec(expiry[0]);
     const iso = date ? parseLongGermanDate(date[1]!) : undefined;
     if (!iso) return { ok: false, evidence: [], reason: `Außerkrafttreten der Norm ohne lesbares Datum („${expiry[0].slice(0, 140)}“)` };
@@ -336,23 +425,33 @@ export function ownCommencement(body: readonly NormBodyBlock[], baselineDate: st
   const evidence: string[] = [];
   let general = 0;
   const DATE_PHRASE = /(?:rückwirkend\s+)?(?:am|zum|mit\s+Wirkung\s+vom|mit\s+Wirkung\s+zum)\s+\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4}/gu;
-  for (const sentence of sentences) {
+  for (const original of sentences) {
+    const { sentence, defects } = repairCommencementSentence(original);
+    evidence.push(...defects);
     // Aufzählung: „Abweichend von Abs. 1 treten in Kraft: Art. 9 Nr. 5 mit Wirkung vom 25. März 2020 und Art. 8a … am 1. Mai 2021.“
     const list = /(?:tritt|treten)\s+in\s+Kraft\s*:([\s\S]*)$/u.exec(sentence);
     if (list) {
       const phrases = [...list[1]!.matchAll(DATE_PHRASE)].map((match) => match[0]);
       if (phrases.length === 0 || /Tag\s+nach|Verkündung|Bekanntmachung\s+(?:dieses|dieser)/u.test(list[1]!)) return { ok: false, evidence, reason: `Inkrafttreten der Stammfassung ohne Kalenderdatum: „${sentence.slice(0, 160)}“` };
       for (const phrase of phrases) dates.push(commencementDate(phrase, baselineDate)!);
-      evidence.push(`Inkrafttretensvorschrift im Stichtagstext, ${[block.label, block.title].filter(Boolean).join(' ')}: „${sentence}“`);
+      evidence.push(`Inkrafttretensvorschrift im Stichtagstext, ${[block.label, block.title].filter(Boolean).join(' ')}: „${original}“`);
       continue;
     }
     const statement = /(?:tritt|treten)\s+([\s\S]+?)\s+in\s+Kraft/u.exec(sentence);
     const phrase = statement ? /((?:rückwirkend\s+)?(?:am|zum|mit\s+Wirkung\s+vom|mit\s+Wirkung\s+zum)\s+\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4})\s*$/u.exec(statement[1]!) : null;
     const date = phrase ? commencementDate(phrase[1]!, baselineDate) : undefined;
-    if (!date) return { ok: false, evidence, reason: `Inkrafttreten der Stammfassung ohne Kalenderdatum: „${sentence.slice(0, 160)}“` };
-    if (/^(?:Dieses|Diese|Die|Das)\s+(?:Gesetz|Verordnung|Bekanntmachung|Satzung|Statut|Richtlinie|Richtlinien|Verwaltungsvorschrift|Verwaltungsvorschriften)\s+(?:tritt|treten)/u.test(sentence)) general += 1;
+    if (!date) {
+      const rule = relative ? relativeRule(sentence) : undefined;
+      if (!rule || !relative) return { ok: false, evidence, reason: `Inkrafttreten der Stammfassung ohne Kalenderdatum: „${sentence.slice(0, 160)}“` };
+      const computed = relativeDate(rule, relative.publishedAt);
+      general += 1;
+      dates.push(computed);
+      evidence.push(`Inkrafttretensvorschrift im Stichtagstext, ${[block.label, block.title].filter(Boolean).join(' ')}: „${original}“`, `Verkündungsdatum ${relative.publishedAt} laut Stammverkündung selbst (${relative.url}); ${rule === 'day-after-publication' ? 'Tag danach' : 'erster Tag des Folgemonats'}: ${computed}`);
+      continue;
+    }
+    if (new RegExp(String.raw`^(?:Dieses|Diese|Die|Das)\s+${OWN_NOUN}\s+(?:tritt|treten)`, 'u').test(sentence)) general += 1;
     dates.push(date);
-    evidence.push(`Inkrafttretensvorschrift im Stichtagstext, ${[block.label, block.title].filter(Boolean).join(' ')}: „${sentence}“`);
+    evidence.push(`Inkrafttretensvorschrift im Stichtagstext, ${[block.label, block.title].filter(Boolean).join(' ')}: „${original}“`);
   }
   if (general !== 1) return { ok: false, evidence, reason: `${general} Grundregeln zum Inkrafttreten der Stammfassung` };
   const latest = [...dates].sort().at(-1)!;

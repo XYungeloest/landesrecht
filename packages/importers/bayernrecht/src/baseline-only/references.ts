@@ -176,6 +176,16 @@ export function fulltextQuery(documentDate: string, reference: Pick<GazetteRefer
   return `${Number(day)}. ${LONG_MONTHS[Number(month) - 1]} ${year} ${reference.organ}. ${reference.kind === 'number' ? 'Nr.' : 'S.'} ${reference.position}`;
 }
 
+/**
+ * Suchanfragen der Gegenprobe. Das AllMBl. wird in Zitaten auch „AIIMBl.“ gesetzt (BayMBl. 2021 Nr. 19 und Nr. 649 zu
+ * AllMBl. 2017 S. 332); die Volltextsuche findet nur die erfragte Schreibweise – für das AllMBl. deshalb beide.
+ */
+export function fulltextQueries(documentDate: string, reference: Pick<GazetteReference, 'organ' | 'kind' | 'position'>): string[] {
+  const queries = [fulltextQuery(documentDate, reference)];
+  if (reference.organ === 'AllMBl') queries.push(fulltextQuery(documentDate, { ...reference, organ: 'AIIMBl' }));
+  return queries;
+}
+
 /** Stabile Kennung einer Verkündung: `baymbl-2021-182`, `gvbl-2019-594`, `kwmbl-2016-10-194`. */
 export function publicationIdentity(input: { organ: GazetteName; volume: number; position: number; issue?: string; suffix?: string }): string {
   const organ = input.organ.toLowerCase();

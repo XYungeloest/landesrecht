@@ -161,6 +161,7 @@ describe('Kürzel „Schl.-H.“ und „SH“', () => {
       'Amtsblatt für Schleswig-Holstein 2019 S. 7',
       'SchlHA Schl.-H. S. 3',
       'ABl. SH 2020 S. 9',
+      'Grundschulen vom 10. Mai 2017 (NBl. MSB. Schl.-H. S. 152), zuletzt geändert',
       'Archiv landesverordnung-schleswig-holstein.pdf',
       'Prüfsumme ' + 'a'.repeat(64),
     ]) expect(apply(protectedText)).toBe(protectedText);

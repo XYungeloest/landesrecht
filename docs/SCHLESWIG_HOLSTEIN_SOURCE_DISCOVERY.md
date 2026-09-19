@@ -24,6 +24,22 @@ Stand: 2026-09-17 · Auftrag: Vorbereitung eines Importers (kein Importer-Code i
 > - **Nutzungsbedingungen:** Impressum und Datenschutzhinweis ohne Aussage zum automatisierten Abruf; jede
 >   Oberflächenseite trägt `<meta name='tdm-reservation' content='1'>`.
 >
+> **Run 6 (2026-09-18): öffentlicher Ausgabeweg gefunden** (`PUBLIC_EXPORT_DISCOVERY.md`, `SAMPLE_REPORT.md`,
+> `docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md` Abschnitte 6–7):
+>
+> - **PDF-Ausgabe** (Menüpunkt „PDF speichern“): `GET /jportal/recherche3doc/<Name>.pdf?json={format: pdf,
+>   docPart: X, docId, portalId: bssh}` liefert die aktuelle Gesamtausgabe, ohne `docPart` genau die angefragte
+>   Einzelfassung („Fassung vom“, „Gültig ab/bis“). Voraussetzung ist nur eine **anonyme Sitzung**, die der
+>   öffentliche Permalink-Aufruf `/perma?d=…` selbst setzt – kein Login, kein CSRF, keine interne Schnittstelle.
+> - **Identität:** `/perma?d=<DOKNR>` = genau dieses Dokument (fassungsfest), `/perma?a=<juris-Abk.>` = gültige
+>   Fassung/Gesamtausgabe (gleitend). Aliase mit Fassungssegment (`…V57P108`) lösen auf Einheiten-DOKNR auf.
+> - **Stichprobe** 38 Normen (Verfassung, Gesetze, Verordnungen, VwV, Zustimmungsgesetz zu einem Länderabkommen,
+>   größtes Rahmendokument, Normen mit Tabellen/Karten, historisch geänderte und aufgehobene): Textintegrität
+>   exact 38/38; Stichtagsfassung geänderter Normen aus den Einzelfassungen der juris-Historie.
+> - **TDM-Vorbehalt** (gesondert von robots.txt, Erreichbarkeit und Sitzung): HTTP-Kopf `tdm-reservation: 1` auf
+>   jeder Antwort, Meta-Tag in der Oberfläche, kein `/.well-known/tdmrep.json`. Dokumentiert, nicht bewertet – die
+>   rechtliche Einordnung (auch der Frage der Weiterveröffentlichung, Abschnitt 9.4) bleibt beim Menschen.
+>
 > Die folgenden Abschnitte geben den Stand vom 2026-09-17 (ohne Portalabruf) wieder.
 
 Das konsolidierte Landesrecht Schleswig-Holsteins liegt im **Bürgerservice Schleswig-Holstein**

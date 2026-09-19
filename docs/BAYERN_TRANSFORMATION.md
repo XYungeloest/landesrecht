@@ -244,8 +244,10 @@ Diese Regel ist hart und wird getestet.
   ihrem Namen nicht mehr bestanden, sind belegt historisch: Die Geschäftsverteilungsverordnung (StRGVV § 2,
   Fassung seit 2023-11-08) nennt abschließend die Staatskanzlei und zwölf Staatsministerien. 27 solche
   Bezeichnungen sind in `institution-mapping.json` `historical-source-only` (Befund `enacting-body-historical`,
-  Information); die am Stichtag bestehenden Ressorts und Mehrfachformeln bleiben Prüffall
-  (`enacting-body-mapping-required`, `data/audits/bayernrecht/INSTITUTIONS.md`).
+  Information); die am Stichtag bestehenden Ressorts bleiben Prüffall (`enacting-body-mapping-required`,
+  `data/audits/bayernrecht/INSTITUTIONS.md`). Gemeinsame Erlassformeln („X und das Y“, „X sowie das Y“) und
+  Zusatzklauseln („… soweit erforderlich“, „nach Beschluss des …“, „*“) werden in ihre Organe zerlegt
+  (`organParts`); historisch ist die Formel nur, wenn **jedes** genannte Organ belegt historisch ist (Transformer 1.3.1).
 
 **Titel einer in Bezug genommenen Norm** sind dagegen Normtext und werden übergeleitet, die
 Fundstelle daneben nicht: „des Bayerischen Beamtengesetzes (BayBG) … (GVBl S. 702, BayRS

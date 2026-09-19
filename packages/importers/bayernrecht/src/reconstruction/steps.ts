@@ -14,12 +14,14 @@
 import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
 import type { ReconstructionState } from '../baseline/reconstruction.ts';
-import { applyBackward, applyForward, ReconstructionError } from './apply.ts';
-import { containerLocation, NON_INVERTIBLE_FORMULAS, parseCommand, SUPPORTED_FORMULAS, type FormulaId, type Operation, type ParsedOperation } from './formulas.ts';
+import { applyBackward, ReconstructionError, stepBackward, stepForward, type LawState } from './apply.ts';
+import { containerLocation, isParsedDeletion, NON_INVERTIBLE_FORMULAS, parseCommand, SUPPORTED_FORMULAS, type FormulaId, type Operation, type ParsedOperation } from './formulas.ts';
 import { blockAt, formatPath, parseLocation, resolvePath, type LocationPath } from './location.ts';
 import { stableStringify, type RecipeStep, type ScopeRecord } from './recipe.ts';
+import { commandUnitPath, deletionRequest, realizeRestore, RestoreError, restoreRequest, restoreUnit, unitFor, type PublicationBase, type RestoreRequest } from './restore.ts';
 import { parseStructural, realize, StructuralError, structuralEvidence, type StructuralOperation, type StructuralParse, type StructuralTemplate } from './structural.ts';
 import type { CommandBlock, CommandNode } from './structure.ts';
+import { sameTitle, TITLE_FIELD, TitleError, titleText, type RecipeTitle } from './title.ts';
 
 export interface StepFailure {
   state: ReconstructionState;
@@ -43,6 +45,8 @@ interface Leaf {
 const UNDETERMINED: LocationPath = [{ kind: 'teil', value: '<unbestimmt>' }];
 
 /** Blätter des Befehlsbaums mit dem Ort ihrer übergeordneten Befehle. */
+const flatContext = (context: readonly LocationPath[]): LocationPath => context.flat();
+
 export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: string[] } {
   const leaves: Leaf[] = [];
   const failures: string[] = [];
@@ -93,6 +97,12 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
           walk(node.children, [...context, [template.pairs[0]![1]]], nodeLabels, statisticsOnly);
           continue;
         }
+        // „Satz 3 wird Satz 2 und wie folgt geändert:“ (BayMBl. 2025 Nr. 315): Unterbefehle am Satz unter neuer Nummer.
+        if (structural?.formula === 'renumber-sentence' && template?.kind === 'renumber-sentences' && template.pairs.length === 1 && /wie\s+folgt\s+geändert\s*:\s*$/u.test(node.text)) {
+          leaves.push(leaf);
+          walk(node.children, [...context, [...(template.context.length > flatContext(context).length ? template.context.slice(flatContext(context).length) : []), { kind: 'satz', value: String(template.pairs[0]![1]) }]], nodeLabels, statisticsOnly);
+          continue;
+        }
         leaves.push({ ...leaf, hasChildren: true });
         walk(node.children, [...context, UNDETERMINED], nodeLabels, true);
         continue;
@@ -139,10 +149,69 @@ function relabelRuns(parsed: ReadonlyArray<{ leaf: Leaf; parsed: Parsed }>): num
   return groups;
 }
 
-/** Ein Befehl als Folge von Vorlagen (strukturell) oder Operationen mit Orten (Wortlaut). */
-type Parsed = { formulas: FormulaId[]; items?: Array<{ formula: FormulaId; template?: StructuralTemplate; parsed?: ParsedOperation }>; reason?: string };
+/**
+ * Ein Befehl als Folge von Vorlagen (strukturell), Operationen mit Orten (Wortlaut) oder – mit dem Stand der
+ * Verkündungen am Stichtag – Wiederherstellungen (`restore`: Alttext aus der Stammverkündung, `restore.ts`).
+ */
+type Parsed = { formulas: FormulaId[]; items?: Array<{ formula: FormulaId; template?: StructuralTemplate; parsed?: ParsedOperation; restore?: RestoreRequest }>; reason?: string };
 
-function parseLeaf(leaf: Leaf): Parsed {
+/** Nicht umkehrbarer Befehl → Wiederherstellung aus den Verkündungen, soweit er dafür lesbar ist. */
+function restorableLeaf(leaf: Leaf, command: Parsed & { restorable?: ReturnType<typeof parseCommand>['restorable'] }): Parsed | undefined {
+  if (command.restorable) {
+    return { formulas: command.formulas, items: command.restorable.map((item) => (isParsedDeletion(item) ? { formula: item.formula, restore: deletionRequest(item) } : { formula: item.formula, parsed: item })) };
+  }
+  // „Der bisherige Art. 9 wird Art. 10 und wie folgt gefasst:“, „Der bisherige Satz 5 wird Satz 6 und wie folgt gefasst:“:
+  // erst die Umnummerierung, dann die Neufassung unter der neuen Bezeichnung (Alttext aus der Verkündung).
+  // Auch mehrere Glieder oder Sätze („Die bisherigen Sätze 4 und 5 werden die Sätze 5 und 6 und wie folgt gefasst:“,
+  // BayMBl. 2026 Nr. 188; „Die Abs. 4 und 5 werden die Abs. 3 und 4 und wie folgt gefasst:“, GVBl. 2024 S. 662).
+  const UNIT = String.raw`(?:Nrn?\.|Abs\.|Absätze|Buchst\.|§§?|Art\.|Sätze|Satz|Spiegelstrich|Doppelbuchst\.)`;
+  const VALUES = String.raw`[\d.a-z]+(?:\s*(?:,|und|bis)\s*[\d.a-z]+)*`;
+  const combined = new RegExp(String.raw`^((?:(?:Der|Die|Das)\s+)?(?:bisherigen?\s+)?${UNIT}\s*${VALUES}\s+(?:wird|werden)\s+(?:zu\s+)?(?:(?:die|der|den|dem)\s+)?(${UNIT}\s*${VALUES}))\s+und\s+(?:wird\s+|werden\s+)?(?:wie\s+folgt\s+(?:neu\s+)?gefasst|erhält\s+folgende\s+(?:neue\s+)?Fassung|erhalten\s+folgende\s+(?:neue\s+)?Fassung)\s*:?$`, 'u').exec(leaf.node.text.trim());
+  if (combined && leaf.node.quoted.length > 0) {
+    const head = parseStructural(`${combined[1]!}.`, leaf.context, []);
+    const template = head?.templates?.[0];
+    const request = restoreRequest(`${combined[2]!} ${/\s(?:und|bis)\s|,/u.test(combined[2]!) ? 'werden' : 'wird'} wie folgt gefasst:`, leaf.context, leaf.node.quoted, 'recast');
+    if (head && template && (template.kind === 'relabel' || template.kind === 'renumber-sentences') && !('error' in request)) {
+      return { formulas: [head.formula as FormulaId, 'recast'], items: [{ formula: head.formula as FormulaId, template }, { formula: 'recast', restore: request }] };
+    }
+  }
+  let formula = command.formulas.length === 1 ? command.formulas[0]! : undefined;
+  // „Der bisherige Satz 8 wird gestrichen.“ ist keine Umnummerierung, sondern eine Aufhebung.
+  if (formula === 'renumber' && leaf.node.quoted.length === 0 && /^(?:Der|Die)\s+bisherigen?\s+(?:Satz|Sätze|Nr\.|Nrn\.|Abs\.|Buchst\.|Spiegelstrich)\s[^„“]*\s(?:wird|werden)\s+(?:gestrichen|aufgehoben)\s*\.?$/u.test(leaf.node.text.trim())) formula = 'repeal-unit';
+  if (formula !== 'recast' && formula !== 'repeal-unit') return undefined;
+  const request = restoreRequest(leaf.node.text, leaf.context, leaf.node.quoted, formula);
+  if ('error' in request) return { formulas: command.formulas, reason: `${command.reason ?? ''} – aus der Verkündung nicht wiederherstellbar: ${request.error}` };
+  return { formulas: command.formulas, items: [{ formula, restore: request }] };
+}
+
+function parseLeaf(leaf: Leaf, restore?: PublicationBase): Parsed {
+  const parsed = parseLeafPlain(leaf);
+  if (parsed.items || !restore) return parsed;
+  // Umnummerierung mit weiterem Befehl ohne Alttext („Nr. 4.4.4 wird Nr. 4.4.3 und in Satz 2 werden die Wörter „…“
+  // gestrichen.“, BayMBl. 2024 Nr. 644): erst die Umnummerierung, dann die Wiederherstellung am Glied unter neuer Bezeichnung.
+  const followUp = leaf.structural?.followUp;
+  if (followUp && leaf.structural?.templates) {
+    const command = parseCommand(followUp.text, [followUp.context]);
+    const formula = leaf.structural.formula as FormulaId;
+    const head = leaf.structural.templates.map((template) => ({ formula, template }));
+    if (command.restorable) {
+      return {
+        formulas: [formula, ...command.formulas],
+        items: [...head, ...command.restorable.map((item) => (isParsedDeletion(item) ? { formula: item.formula, restore: deletionRequest(item) } : { formula: item.formula, parsed: item }))],
+      };
+    }
+    // „Die bisherige Nr. 8 wird Nr. 9 und Satz 2 wird aufgehoben.“ (BayMBl. 2023 Nr. 439): Aufhebung am umnummerierten Glied.
+    if (command.formulas.length === 1 && (command.formulas[0] === 'repeal-unit' || command.formulas[0] === 'recast')) {
+      const request = restoreRequest(followUp.text, [followUp.context], [], command.formulas[0]);
+      if (!('error' in request)) return { formulas: [formula, ...command.formulas], items: [...head, { formula: command.formulas[0], restore: request }] };
+    }
+  }
+  if (leaf.structural) return parsed;
+  const command = parseCommand(leaf.node.text, leaf.context);
+  return restorableLeaf(leaf, { ...parsed, ...(command.restorable ? { restorable: command.restorable } : {}) }) ?? parsed;
+}
+
+function parseLeafPlain(leaf: Leaf): Parsed {
   if (leaf.structural) {
     const formula = leaf.structural.formula as FormulaId;
     if (!leaf.structural.templates) return { formulas: [formula], reason: leaf.structural.reason ?? 'nicht lesbar' };
@@ -164,6 +233,8 @@ export interface AmendmentReversal {
   steps: RecipeStep[];
   /** Körper vor der Änderung (rückgerechnet). */
   before?: NormBodyBlock[];
+  /** Überschrift der Norm vor der Änderung (nur mit Titelzustand). */
+  titleBefore?: RecipeTitle;
   formulas: FormulaId[];
   failures: StepFailure[];
 }
@@ -180,61 +251,154 @@ function failureFor(formula: FormulaId, detail: string): StepFailure {
   return { state: 'unsupported-formula', reason: formula, detail };
 }
 
-const codeState = (code: string): ReconstructionState => (code === 'target-ambiguous' || code === 'end-not-determined' || code === 'location-unresolved' || code === 'sentence-ambiguous' || code === 'renumber-ambiguous' || code === 'anchor-mismatch' ? 'ambiguous-target' : code === 'image-in-inserted-unit' ? 'asset-missing' : 'round-trip-failed');
+const codeState = (code: string): ReconstructionState => (code === 'target-ambiguous' || code === 'end-not-determined' || code === 'location-unresolved' || code === 'sentence-ambiguous' || code === 'renumber-ambiguous' || code === 'anchor-mismatch' || code === 'title-projection' ? 'ambiguous-target' : code === 'image-in-inserted-unit' ? 'asset-missing' : 'round-trip-failed');
+
+/** Toleriert gelesene Satzfehler der Verkündung am Befehl – im Rezeptschritt vermerkt. */
+const defectOf = (leaf: Leaf, note?: string): { sourceDefect?: string } => {
+  const defects = [...(leaf.node.defects ?? []), ...(note ? [note] : [])];
+  return defects.length > 0 ? { sourceDefect: defects.join('; ') } : {};
+};
+
+/** Ort „Überschrift“ ohne übergeordnetes Glied: die Überschrift der Norm selbst. */
+const isNormTitle = (path: LocationPath): boolean => path.length === 1 && path[0]!.kind === 'ueberschrift';
 
 /**
  * Nimmt eine Änderung zurück: `after` ist der Körper mit der Änderung (bei der jüngsten der heutige). `idPrefix`
  * unterscheidet die Schritte mehrerer Änderungen (`a1-s01`). Scheitert ausdrücklich, statt zu raten.
  */
-export function reverseAmendment(after: readonly NormBodyBlock[], block: CommandBlock, idPrefix = ''): AmendmentReversal {
+export interface RestoreOptions {
+  /** Stand der Verkündungen (Stammverkündung) für Alttext. */
+  base: PublicationBase;
+  /**
+   * Rückfall: Ein Befehl, den die Rücknahme nicht lesen oder umkehren kann, ersetzt das ganze Glied, das er ändert, durch
+   * das der Stammverkündung (`restoreUnit`); weitere Befehle an diesem Glied gehen darin auf. Nur wo die Probe im
+   * Wortlaut das Ergebnis trägt (Rücknahme der Änderungen nach dem Stichtag), nie bei der Probe selbst.
+   */
+  fallback?: boolean;
+  /** Befehle (Index in `commandLeaves`), deren Rücknahme im ersten Versuch scheiterte: Sie gehen in den Rückfall. */
+  forced?: ReadonlySet<number>;
+}
+
+export function reverseAmendment(after: readonly NormBodyBlock[], block: CommandBlock, idPrefix = '', titleAfter?: RecipeTitle, restoreInput?: PublicationBase | RestoreOptions): AmendmentReversal {
   const result: AmendmentReversal = { steps: [], formulas: [], failures: [] };
+  const options: RestoreOptions | undefined = restoreInput === undefined ? undefined : 'base' in restoreInput && 'fallback' in restoreInput ? restoreInput : 'body' in restoreInput ? { base: restoreInput } : restoreInput;
+  const restore = options?.base;
   const { leaves, failures: structureFailures } = commandLeaves(block);
   for (const message of structureFailures) result.failures.push({ state: 'command-unreadable', reason: 'location-unreadable', detail: message });
-  const parsed = leaves.map((leaf) => ({ leaf, parsed: parseLeaf(leaf) }));
-  for (const { leaf, parsed: command } of parsed) {
+  let parsed = leaves.map((leaf, index) => ({ leaf, index, parsed: parseLeaf(leaf, restore) }));
+  const failing: Array<{ leaf: Leaf; failure: StepFailure }> = [];
+  for (const { leaf, index, parsed: command } of parsed) {
     result.formulas.push(...command.formulas);
     if (leaf.statisticsOnly) continue;
+    if (options?.forced?.has(index)) {
+      failing.push({ leaf, failure: { state: 'non-invertible-amendment', reason: 'restore-forced', detail: `${leaf.labels.join(' ')} „${leaf.node.text.slice(0, 140)}“: Rücknahme gescheitert, Rückfall auf das ganze Glied` } });
+      continue;
+    }
     const label = leaf.labels.length > 0 ? `${leaf.labels.join(' ')} ` : '';
     if (leaf.hasChildren) {
-      result.failures.push({ state: 'unsupported-formula', reason: 'unrecognized', detail: `${label}„${leaf.node.text.slice(0, 140)}“: Befehl mit eigener Änderung und Untergliederung` });
+      failing.push({ leaf, failure: { state: 'unsupported-formula', reason: 'unrecognized', detail: `${label}„${leaf.node.text.slice(0, 140)}“: Befehl mit eigener Änderung und Untergliederung` } });
       continue;
     }
     if (!command.items) {
       const worst = command.formulas.find((formula) => NON_INVERTIBLE_FORMULAS.has(formula)) ?? command.formulas.find((formula) => !SUPPORTED_FORMULAS.has(formula)) ?? command.formulas[0]!;
-      result.failures.push(failureFor(worst, `${label}„${leaf.node.text.slice(0, 140)}“: ${command.reason ?? ''}`));
+      failing.push({ leaf, failure: failureFor(worst, `${label}„${leaf.node.text.slice(0, 140)}“: ${command.reason ?? ''}`) });
     }
+  }
+  // Rückfall (nur mit Stammverkündung und nur wo zulässig): ganze Glieder aus der Verkündung für die nicht lesbaren Befehle.
+  const units: Array<{ steps: LocationPath; blockPath: number[] }> = [];
+  if (failing.length > 0 && restore && options?.fallback && structureFailures.length === 0) {
+    for (const { leaf } of failing) {
+      const unit = unitFor(after, commandUnitPath(leaf.node.text, leaf.context));
+      if (!unit) {
+        units.length = 0;
+        break;
+      }
+      units.push(unit);
+    }
+  }
+  const within = (path: readonly number[], outer: readonly number[]): boolean => outer.length <= path.length && outer.every((value, index) => path[index] === value);
+  const fallbackUnits = units.filter((unit, index) => !units.some((other, at) => at !== index && within(unit.blockPath, other.blockPath) && (other.blockPath.length < unit.blockPath.length || at < index)));
+  if (fallbackUnits.length > 0) {
+    // Befehle innerhalb eines ersetzten Glieds gehen in ihm auf.
+    parsed = parsed.filter(({ leaf }) => {
+      const unit = unitFor(after, commandUnitPath(leaf.node.text, leaf.context));
+      return !unit || !fallbackUnits.some((outer) => within(unit.blockPath, outer.blockPath));
+    });
+    for (const { leaf, failure } of failing) {
+      const unit = unitFor(after, commandUnitPath(leaf.node.text, leaf.context));
+      if (!unit || !fallbackUnits.some((outer) => within(unit.blockPath, outer.blockPath))) result.failures.push(failure);
+    }
+  } else {
+    for (const { failure } of failing) result.failures.push(failure);
   }
   // Numbering-Befehle („Der Wortlaut wird Satz 1“) je Ort: dann nummeriert kein angefügter Satz implizit.
   const explicit = new Set(parsed.flatMap(({ parsed: command }) => (command.items ?? []).filter((item) => item.template?.kind === 'number-sentences').map((item) => formatPath((item.template as { context: LocationPath }).context))));
   if (result.failures.length > 0) return result;
 
-  // Rückwärts: letzter Befehl zuerst, je im aktuellen Zustand aufgelöst.
-  const working = structuredClone(after) as NormBodyBlock[];
+  // Rückwärts: letzter Befehl zuerst, je im aktuellen Zustand aufgelöst. Die Überschrift der Norm (`titleAfter`) wird
+  // mitgeführt, wenn ein Befehl sie ändert.
+  const state: LawState = { body: structuredClone(after) as NormBodyBlock[], ...(titleAfter ? { title: { ...titleAfter } } : {}) };
+  const working = state.body;
   const collected: RecipeStep[][] = [];
+  // Rückfall zuerst (vorwärts zuletzt): die ersetzten Glieder im Stand nach der Änderung.
+  const fallbackSteps: RecipeStep[] = [];
+  try {
+    for (const unit of fallbackUnits) {
+      const entry = restoreUnit(working, restore!, unit, 'Rückfall');
+      const commands = leaves.filter((leaf) => {
+        const own = unitFor(after, commandUnitPath(leaf.node.text, leaf.context));
+        return own !== undefined && within(own.blockPath, unit.blockPath);
+      });
+      const step: RecipeStep = { id: '', command: commands.map((leaf) => leaf.command).join(' | '), commandPath: commands[0]?.labels ?? [], formula: 'recast', location: entry.location, scope: entry.scope, operation: entry.operation as Operation, evidence: entry.evidence, restoredFrom: restore!.citation };
+      stepBackward(state, step, entry.location);
+      fallbackSteps.push(step);
+    }
+  } catch (error) {
+    if (error instanceof RestoreError || error instanceof ReconstructionError || error instanceof StructuralError) {
+      result.failures.push({ state: 'non-invertible-amendment', reason: error instanceof RestoreError ? error.code : `restore-${error.code}`, detail: error.message });
+      return result;
+    }
+    throw error;
+  }
   type Item = NonNullable<Parsed['items']>[number];
   const realizeItem = (leaf: Leaf, item: Item): RecipeStep[] => {
     const realizedSteps: RecipeStep[] = [];
+    if (item.restore) {
+      // Alttext aus dem Stand der Verkündungen am Stichtag (Lauf 7).
+      for (const entry of realizeRestore(working, restore!, item.restore, leaf.labels.join(' '))) {
+        realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: item.formula, location: entry.location, scope: entry.scope, operation: entry.operation as Operation, evidence: entry.evidence, restoredFrom: restore!.citation, ...defectOf(leaf) });
+      }
+      return realizedSteps;
+    }
     if (item.template) {
       const realized = realize(working, item.template, `${leaf.labels.join(' ')}`, explicit.has(formatPath((item.template as { context: LocationPath }).context)));
       for (const entry of realized) {
         const scope: ScopeRecord = { fields: entry.field ? [entry.field] : [], resolved: entry.resolved, widened: entry.widened };
-        realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: item.formula, location: entry.location, scope, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation) });
+        realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: item.formula, location: entry.location, scope, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation), ...defectOf(leaf, entry.note) });
       }
       return realizedSteps;
     }
     const operation = item.parsed!;
     const scopes: ScopeRecord[] = [];
+    const targets: Array<'title' | undefined> = [];
     for (const path of operation.locations) {
+      if (isNormTitle(path)) {
+        if (!state.title) throw new ReconstructionError('location-unresolved', `${leaf.labels.join(' ')} ${formatPath(path)}: Überschrift der Norm selbst, ohne Titelzustand`);
+        scopes.push({ fields: [TITLE_FIELD], resolved: ['Überschrift der Norm (Titelzeile und Abkürzungszeile)'], widened: [] });
+        targets.push('title');
+        continue;
+      }
       const resolved = resolvePath(working, path);
       if (!resolved.ok) throw new ReconstructionError('location-unresolved', `${leaf.labels.join(' ')} ${formatPath(path)}: ${resolved.reason}`);
       scopes.push(resolved.scope);
+      targets.push(undefined);
     }
     if (scopes.length > 1) {
       // Dasselbe Feld darf mehrfach vorkommen, wenn die Orte verschiedene Sätze darin sind („In Satz 2 und 3 wird jeweils …“).
       const seen = new Map<string, Set<string>>();
-      for (const scope of scopes) {
+      for (const [position, scope] of scopes.entries()) {
         for (const field of scope.fields) {
-          const key = `${field.path.join('.')}:${field.key}`;
+          const key = `${targets[position] ?? 'body'}:${field.path.join('.')}:${field.key}`;
           const sentence = scope.sentence === undefined ? '*' : String(scope.sentence);
           const taken = seen.get(key) ?? new Set<string>();
           if (taken.has(sentence) || (taken.size > 0 && (sentence === '*' || taken.has('*')))) throw new ReconstructionError('overlapping-locations', `${leaf.labels.join(' ')}: die Orte von „jeweils“ überschneiden sich`);
@@ -244,16 +408,18 @@ export function reverseAmendment(after: readonly NormBodyBlock[], block: Command
       }
     }
     operation.locations.forEach((path, index) => {
-      realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: operation.formula, location: formatPath(path), scope: scopes[index]!, operation: operation.operation, evidence: { baseline: '', current: '' } });
+      realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: operation.formula, location: targets[index] === 'title' ? 'Überschrift der Norm' : formatPath(path), scope: scopes[index]!, operation: operation.operation, evidence: { baseline: '', current: '' }, ...(targets[index] ? { target: targets[index]! } : {}), ...defectOf(leaf) });
     });
     return realizedSteps;
   };
   // Rückwärts in umgekehrter Reihenfolge der konkreten Schritte.
   const undo = (leaf: Leaf, realizedSteps: readonly RecipeStep[]): void => {
-    for (const step of [...realizedSteps].reverse()) applyBackward(working, step.scope, step.operation, `${leaf.labels.join(' ')} ${step.location}`);
+    for (const step of [...realizedSteps].reverse()) stepBackward(state, step, `${leaf.labels.join(' ')} ${step.location}`);
   };
+  let currentGroup: number[] = [];
   try {
     for (const group of [...relabelRuns(parsed)].reverse()) {
+      currentGroup = group.map((position) => parsed[position]!.index);
       if (group.length === 1) {
         const { leaf, parsed: command } = parsed[group[0]!]!;
         const leafSteps: RecipeStep[] = [];
@@ -289,27 +455,42 @@ export function reverseAmendment(after: readonly NormBodyBlock[], block: Command
       for (const entry of realized) {
         const owner = owners[entry.pair!]!;
         const { leaf, parsed: command } = parsed[owner]!;
-        relabels.get(owner)!.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: command.items![0]!.formula, location: entry.location, scope: { fields: [], resolved: entry.resolved, widened: entry.widened }, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation) });
+        relabels.get(owner)!.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: command.items![0]!.formula, location: entry.location, scope: { fields: [], resolved: entry.resolved, widened: entry.widened }, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation), ...defectOf(leaf) });
       }
       for (const entry of [...realized].reverse()) applyBackward(working, { fields: [], resolved: entry.resolved, widened: entry.widened }, entry.operation as Operation, `${first.leaf.labels.join(' ')} ${entry.location}`);
       for (const index of [...group].reverse()) collected.unshift([...relabels.get(index)!, ...rest.get(index)!]);
     }
   } catch (error) {
-    const code = error instanceof ReconstructionError || error instanceof StructuralError ? error.code : 'error';
+    // Rückfall: Die Befehle, deren Rücknahme scheiterte, gehen in das ganze Glied aus der Stammverkündung ein.
+    const known = error instanceof RestoreError || error instanceof ReconstructionError || error instanceof StructuralError;
+    if (known && restore && options?.fallback && currentGroup.length > 0 && !currentGroup.every((index) => options.forced?.has(index)) && (options.forced?.size ?? 0) < 12) {
+      const retry = reverseAmendment(after, block, idPrefix, titleAfter, { ...options, forced: new Set([...(options.forced ?? []), ...currentGroup]) });
+      if (retry.failures.length === 0) return retry;
+    }
+    if (error instanceof RestoreError) {
+      result.failures.push({ state: 'non-invertible-amendment', reason: error.code, detail: error.message });
+      return result;
+    }
+    const code = error instanceof ReconstructionError || error instanceof StructuralError || error instanceof TitleError ? error.code : 'error';
     result.failures.push({ state: codeState(code), reason: `reverse-${code}`, detail: (error as Error).message });
     return result;
   }
-  const steps = collected.flat();
+  const steps = [...collected.flat(), ...fallbackSteps];
   steps.forEach((step, index) => {
     step.id = `${idPrefix}s${String(index + 1).padStart(2, '0')}`;
   });
 
   // Vorwärts, Schritt für Schritt, mit Vorher-/Nachher-Beleg; das Ergebnis muss exakt der Körper nach der Änderung sein.
-  const walker = structuredClone(working) as NormBodyBlock[];
+  const forward: LawState = { body: structuredClone(working) as NormBodyBlock[], ...(state.title ? { title: { ...state.title } } : {}) };
+  const walker = forward.body;
   try {
     for (const step of steps) {
       const beforeBody = structuredClone(walker) as NormBodyBlock[];
-      const at = applyForward(walker, step.scope, step.operation, step.id);
+      const at = stepForward(forward, step, step.id);
+      if (at.title) {
+        step.evidence = { baseline: at.title.before, current: at.title.after };
+        continue;
+      }
       if (step.evidence.baseline === '' && step.evidence.current === '') {
         const before = String(blockAt(beforeBody, at.ref.path)?.[at.ref.key] ?? '');
         const afterText = String(blockAt(walker, at.ref.path)?.[at.ref.key] ?? '');
@@ -321,16 +502,17 @@ export function reverseAmendment(after: readonly NormBodyBlock[], block: Command
     result.failures.push({ state: code === 'target-ambiguous' ? 'ambiguous-target' : 'round-trip-failed', reason: `forward-${code}`, detail: (error as Error).message });
     return result;
   }
-  if (stableStringify(walker) !== stableStringify(after)) {
-    result.failures.push({ state: 'round-trip-failed', reason: 'round-trip', detail: 'Vorwärts angewandt ergibt der rückgerechnete Körper nicht den Körper nach der Änderung' });
+  if (stableStringify(forward.body) !== stableStringify(after) || (titleAfter && (!forward.title || !sameTitle(forward.title, titleAfter)))) {
+    result.failures.push({ state: 'round-trip-failed', reason: 'round-trip', detail: 'Vorwärts angewandt ergibt der rückgerechnete Körper (oder die Überschrift) nicht den Stand nach der Änderung' });
     return result;
   }
-  if (stableStringify(working) === stableStringify(after)) {
+  if (stableStringify(state.body) === stableStringify(after) && (!titleAfter || !state.title || titleText(state.title) === titleText(titleAfter))) {
     result.failures.push({ state: 'round-trip-failed', reason: 'no-change', detail: 'Rücknahme ändert nichts' });
     return result;
   }
   result.steps = steps;
-  result.before = working;
+  result.before = state.body;
+  if (state.title) result.titleBefore = state.title;
   return result;
 }
 

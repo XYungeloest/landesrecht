@@ -40,7 +40,7 @@ import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts
 import { SOURCE_STATE, TARGET_JURISDICTION } from '../common/constants.ts';
 
 /** Version der Transformationsregeln; der Bulk-Runner erkennt daran veraltete Übernahmen. */
-export const TRANSFORMER_VERSION = 'bayernrecht-transformer/1.3.0';
+export const TRANSFORMER_VERSION = 'bayernrecht-transformer/1.3.1';
 
 export interface TransformationRule {
   id: string;

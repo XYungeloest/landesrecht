@@ -19,7 +19,9 @@ import { writeJsonAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.t
 
 import { IMPORT_DATA_DIR } from '../common/constants.ts';
 import { createBayernRechtFetcher, RUN_STOPPING_FETCH_ERRORS } from '../common/fetcher.ts';
+import { RECONSTRUCTION_QUEUE_PATH } from '../common/paths.ts';
 import { loadRunContext, type RunContext } from './context.ts';
+import { cachePlatform, loadPublicationBase } from './publication.ts';
 import { packageUrl, parseCurrentNorm, readCached } from './source.ts';
 import { walkChain, type WalkInput } from './walk.ts';
 import type { CurrentNorm } from './source.ts';
@@ -79,11 +81,34 @@ export async function collectNeeds(ctx: RunContext, only?: readonly string[]): P
     } catch {
       continue;
     }
-    const walk = await walkChain(walkInputFor(ctx, decision.documentId, norm));
+    // Lauf 7: Liegt die Stammverkündung vor, geht die Kette bis zu ihr zurück (`deep`) – ihre Seiten sind dann Bedarf.
+    const open = !recipeReady.has(decision.documentId);
+    const base = open ? await loadPublicationBase(cachePlatform(ctx.root), norm) : undefined;
+    const walk = await walkChain({ ...walkInputFor(ctx, decision.documentId, norm), deep: base?.ok === true, provisional: base?.ok === true });
     for (const url of walk.needs) needs.set(url, new Set([...(needs.get(url) ?? []), decision.documentId]));
+    // Stammverkündung (Alttext für nicht umkehrbare Befehle) – seit Lauf 8 auch, wenn die Kette noch scheitert (ihre
+    // Prüfung bis zur Stammfassung braucht sie); über die Adresse, die die Auflösung als nächste braucht (Amtsblätter:
+    // Jahrgang → Ausgabe → Dokument).
+    if (base && !base.ok && base.code === 'base-not-cached' && base.urls && base.urls.length > 0) {
+      needs.set(base.urls.at(-1)!, new Set([...(needs.get(base.urls.at(-1)!) ?? []), decision.documentId]));
+    }
   }
   return needs;
 }
+
+/** Normen mit Rezept (letzte geschriebene Schlange): für sie wird keine Stammverkündung gebraucht. */
+let recipeReady = new Set<string>();
+
+async function readRecipeReady(root: string): Promise<Set<string>> {
+  try {
+    const queue = JSON.parse(await readFile(join(root, RECONSTRUCTION_QUEUE_PATH), 'utf8')) as { entries?: Array<{ documentId: string; state: string }> };
+    return new Set((queue.entries ?? []).filter((entry) => entry.state === 'recipe-ready').map((entry) => entry.documentId));
+  } catch {
+    return new Set();
+  }
+}
+
+
 
 async function readCheckpoint(root: string): Promise<FetchCheckpoint> {
   try {
@@ -133,6 +158,7 @@ export async function acquireSources(root: string, options: AcquireOptions): Pro
     checkpoint.attempts = [...checkpoint.attempts.filter((entry) => entry.url !== attempt.url), attempt].sort((left, right) => (left.url < right.url ? -1 : 1));
     await writeJsonAtomic(join(root, FETCH_CHECKPOINT_PATH), checkpoint);
   };
+  recipeReady = await readRecipeReady(root);
   for (let round = 1; round <= maxRounds; round += 1) {
     const ctx = await loadRunContext(root);
     const needs = await collectNeeds(ctx, options.only);

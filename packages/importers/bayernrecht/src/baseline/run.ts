@@ -18,6 +18,7 @@ import type { NormHead } from '../parse/norm.ts';
 import type { VvHead } from '../parse/vv.ts';
 import { readScopeOverrides } from '../scope/run.ts';
 import { isMergedAnnex, type ScopeEntry } from '../scope/decisions.ts';
+import { referenceKey, referencesIn } from '../reconstruction/structure.ts';
 import { citationDates } from './citation-dates.ts';
 import { classifyBaseline, type BaselineClass, type BaselineDecision, type BaselineStatus, type RecoveryMethod } from './classify.ts';
 
@@ -61,6 +62,54 @@ interface LedgerEvent {
  * eine Rekonstruktion auf eine Vermutung zu stützen – und ein falsch zugeordnetes Ereignis ändert
  * die Stichtagsklasse einer unbeteiligten Norm.
  */
+/**
+ * Verkündungsdatum je Fundstelle (`organ|jahr|stelle`) aus dem Ereignisregister: Jede dort erfasste Verkündung trägt ihr
+ * amtliches Verkündungsdatum. Das Register beginnt am Tag nach dem Stichtag – eine Fundstelle darin ist also nach dem
+ * Stichtag verkündet.
+ */
+export async function readPublicationDates(root: string): Promise<Map<string, { date: string; citation: string }>> {
+  const dates = new Map<string, { date: string; citation: string }>();
+  let raw: string;
+  try {
+    raw = await readFile(join(root, EVENT_LEDGER_PATH), 'utf8');
+  } catch {
+    return dates;
+  }
+  for (const event of (JSON.parse(raw) as { events?: LedgerEvent[] }).events ?? []) {
+    const key = event.citation ? referenceKey(event.citation) : undefined;
+    if (!key || !event.eventDate) continue;
+    const known = dates.get(key);
+    if (!known || event.eventDate < known.date) dates.set(key, { date: event.eventDate, citation: event.citation ?? key });
+  }
+  return dates;
+}
+
+/**
+ * Eigene Fundstelle: aus dem Kopf (`BayMBl. 2023 Nr. 633`, Norm-DTD) oder – die VwV-DTD führt sie nicht – aus der ersten
+ * Klammer hinter dem Ausfertigungsdatum im Zitiervorschlag („… vom 1. Dezember 2023 (BayMBl. Nr. 629), die durch …“).
+ * Ohne Jahrgang zählt das Jahr der Ausfertigung (bei Ausfertigung im Dezember auch das folgende); getroffen wird nur eine im
+ * Verzeichnis datierte Fundstelle.
+ */
+export function ownPublication(gazette: { organ?: string; year?: string; page?: string; pageKind?: string } | undefined, documentDate: string | undefined, dates: ReadonlyMap<string, { date: string; citation: string }>, citation?: string): { date: string; citation: string } | undefined {
+  const candidates: Array<{ organ: string; year?: string; position: string }> = [];
+  if (gazette?.organ && gazette.page) candidates.push({ organ: gazette.organ.replace(/\.$/u, ''), ...(gazette.year ? { year: gazette.year } : {}), position: `${gazette.pageKind === 'nummer' ? 'Nr.' : 'S.'} ${gazette.page}` });
+  const own = citation ? /\bvom\s+\d{1,2}\.\s*\p{L}+\s+\d{4}[^(]{0,80}\(([^)]*)\)/u.exec(citation) : undefined;
+  const first = own ? referencesIn(own[1]!)[0] : undefined;
+  const parts = first ? /^(\p{L}+)\.?\s*(?:[IV]{1,3}\s+)?(\d{4})?\s*((?:S\.|Nr\.)\s*\d+)/u.exec(first) : undefined;
+  if (parts) candidates.push({ organ: parts[1]!, ...(parts[2] ? { year: parts[2] } : {}), position: parts[3]! });
+  for (const candidate of candidates) {
+    // Ohne Jahrgang: das Jahr der Ausfertigung; das Folgejahr nur bei Ausfertigung im Dezember (Verkündung im Januar).
+    // Sonst träfe „vom 20. Januar 2023 (BayMBl. Nr. 58)“ die Nr. 58 des Folgejahres – das Verzeichnis beginnt erst am Stichtag.
+    const years = candidate.year ? [candidate.year] : documentDate ? [documentDate.slice(0, 4), ...(documentDate.slice(5, 7) === '12' ? [String(Number(documentDate.slice(0, 4)) + 1)] : [])] : [];
+    for (const year of years) {
+      const key = referenceKey(`${candidate.organ}. ${year} ${candidate.position}`);
+      const hit = key ? dates.get(key) : undefined;
+      if (hit) return hit;
+    }
+  }
+  return undefined;
+}
+
 export async function readPostBaselineEvents(root: string): Promise<Map<string, LedgerEvent[]>> {
   const byDocument = new Map<string, LedgerEvent[]>();
   let raw: string;
@@ -124,6 +173,7 @@ export async function buildBaseline(root: string, options: BuildBaselineOptions)
   };
   const overrides = await readScopeOverrides(root);
   const eventsByDocument = await readPostBaselineEvents(root);
+  const publicationDates = await readPublicationDates(root);
   // Auch eine zusammengeführte Anlage wird klassifiziert: Ihr Text wird Teil der Stammnorm und muss am Stichtag gelten.
   const candidates = scope.entries.filter((entry) => entry.decision === 'include' || isMergedAnnex(entry));
   const decisions: BaselineDecision[] = [];
@@ -153,8 +203,11 @@ export async function buildBaseline(root: string, options: BuildBaselineOptions)
       const documentDate = dates.documentDate ?? fromCitation.issueDate;
       const source = dates.documentDate ? 'xml' : fromCitation.issueDate ? 'citation' : 'none';
       issueDateSource[source] = (issueDateSource[source] ?? 0) + 1;
+      const publication = ownPublication((doc.head as { gazette?: { organ?: string; year?: string; page?: string; pageKind?: string } }).gazette, documentDate, publicationDates, doc.law.citation);
       const decision = classifyBaseline({
         documentId: entry.documentId,
+        ...(publication ? { publication } : {}),
+        ...(doc.dialect === 'byrecht-vv' ? { administrative: true } : {}),
         ...(documentDate ? { documentDate } : {}),
         ...(dates.inForceFrom ? { inForceFrom: dates.inForceFrom } : {}),
         ...(dates.versionDate ? { versionDate: dates.versionDate } : {}),

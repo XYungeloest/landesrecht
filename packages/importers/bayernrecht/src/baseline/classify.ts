@@ -52,7 +52,7 @@ export const RECOVERY_METHODS = [
 export type RecoveryMethod = (typeof RECOVERY_METHODS)[number];
 
 export interface BaselineEvidence {
-  kind: 'issue-date' | 'issue-year' | 'text-in-force' | 'version-date' | 'register-absent' | 'post-baseline-event' | 'change-note';
+  kind: 'issue-date' | 'issue-year' | 'text-in-force' | 'version-date' | 'register-absent' | 'post-baseline-event' | 'change-note' | 'publication-date';
   value: string;
   source: string;
 }
@@ -91,6 +91,13 @@ export interface BaselineInput {
   changeNotes?: string[];
   /** Belegte Ereignisse nach dem Stichtag aus dem Ereignisregister. */
   postBaselineEvents?: Array<{ type: string; date: string; citation?: string }>;
+  /**
+   * Verkündung der Norm selbst (ihre eigene Fundstelle), soweit das amtliche Verkündungsverzeichnis sie datiert.
+   * Eine erst nach dem Stichtag verkündete Norm galt am Stichtag nicht – auch wenn sie davor ausgefertigt wurde.
+   */
+  publication?: { date: string; citation: string };
+  /** Verwaltungsvorschrift (VwV-DTD): Ihre Veröffentlichung ist nicht notwendig konstitutiv – anders als die Verkündung einer Rechtsnorm. */
+  administrative?: boolean;
   baselineDate?: string;
 }
 
@@ -116,6 +123,7 @@ export function classifyBaseline(input: BaselineInput): BaselineDecision {
     facts.push(evidence('post-baseline-event', `${event.type} ${event.date}${event.citation ? ` (${event.citation})` : ''}`, 'event-ledger'));
   }
 
+  if (input.publication) facts.push(evidence('publication-date', `${input.publication.date} (${input.publication.citation})`, 'event-ledger:eigene Fundstelle'));
   const base = { documentId: input.documentId, evidence: facts };
 
   // 1 – Ohne Ausfertigungsdatum ist die Existenz am Stichtag nicht belegt. Die Textgeltung allein
@@ -151,6 +159,34 @@ export function classifyBaseline(input: BaselineInput): BaselineDecision {
       method: 'undetermined',
       reason: 'issued-after-baseline',
       blockers: [],
+    };
+  }
+
+  // 2b – Vor dem Stichtag ausgefertigt, aber erst danach veröffentlicht (BayMBl. 2023 Nr. 629, 633: ausgefertigt am
+  //      30.11./1.12., veröffentlicht am 20.12.2023). Eine Rechtsnorm gilt nicht vor ihrer Verkündung; eine Vorschrift, deren
+  //      Text erst nach dem Stichtag in Kraft tritt, galt am Stichtag ohnehin nicht. In beiden Fällen gab es am Stichtag keine
+  //      Fassung dieser Quellidentität – die Stichtagsnorm ist gegebenenfalls ein Vorgänger mit eigener Quellidentität.
+  if (input.publication && input.publication.date > baseline) {
+    if (!input.administrative || !input.inForceFrom || input.inForceFrom > baseline) {
+      return {
+        ...base,
+        class: 'enacted-after-baseline',
+        status: 'not-at-baseline',
+        method: 'undetermined',
+        reason: 'published-after-baseline',
+        blockers: [],
+      };
+    }
+    // Verwaltungsvorschrift mit Textgeltung vor dem Stichtag (rückwirkend oder ab Erlass), aber erst danach
+    // veröffentlicht: Ob sie am Stichtag schon wirkte, entscheidet ihre Bekanntgabe an die Behörden – das belegt die
+    // Quelle nicht. Nicht geraten: Review.
+    return {
+      ...base,
+      class: 'identity-or-validity-uncertain',
+      status: 'undetermined',
+      method: 'undetermined',
+      reason: 'published-after-baseline-validity-open',
+      blockers: [`Veröffentlicht erst am ${input.publication.date} (${input.publication.citation}), Textgeltung laut Quelle ab ${input.inForceFrom}; ob die Verwaltungsvorschrift am ${baseline} schon wirkte, ist nicht belegt`],
     };
   }
 

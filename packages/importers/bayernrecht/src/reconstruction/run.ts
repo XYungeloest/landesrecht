@@ -35,7 +35,7 @@ import { AUDIT_DIR, IMPORT_DATA_DIR, PARSER_VERSION } from '../common/constants.
 import { RECONSTRUCTION_QUEUE_PATH } from '../common/paths.ts';
 import { decodeEntities } from '../events/listings.ts';
 import { FETCH_CHECKPOINT_PATH, walkInputFor, type FetchCheckpoint } from './acquire.ts';
-import { verifyRoundTrip } from './apply.ts';
+import { verifyRoundTripLaw } from './apply.ts';
 import { buildAudit, RECONSTRUCTION_AUDIT_PATH, type ReconstructionAudit } from './audit.ts';
 import { lastAmendmentClause } from './chain.ts';
 import { commencementFor, ownCommencement, sectionRef } from './commencement.ts';
@@ -57,10 +57,16 @@ import {
   type RecipeAmendmentV2,
   type RecipeSource,
   type ReconstructionRecipe,
+  type RecipeRestoration,
+  type RecipeTitle,
+  type RecipeTitleChange,
 } from './recipe.ts';
 import { buildSourceRegister, RECONSTRUCTION_SOURCES_PATH, type SourceRegister } from './register.ts';
+import { cachePlatform, loadPublicationBase, proveRestoration, type PriorAmendment } from './publication.ts';
+import { formConventions, TYPOGRAPHY_NORMALIZATION, wordingAgreement, type FormConventions, type PublicationBase } from './restore.ts';
 import { packageUrl, parseCurrentNorm, readCached, type CurrentNorm } from './source.ts';
 import { commandLeaves, reverseAmendment } from './steps.ts';
+import { titleState } from './title.ts';
 import { clauseAmendments, commandBlocks, type CommandBlock } from './structure.ts';
 import { recheckUndetermined, applyUndeterminedDecisions, type UndeterminedResult } from './undetermined.ts';
 import { walkChain, type WalkResult, type WalkStep } from './walk.ts';
@@ -99,6 +105,11 @@ export interface QueueEntry {
   checks?: Partial<Record<CheckName, boolean>>;
   /** Fehlende Quellen, die ein gezielter Abruf beschaffen könnte. */
   needs?: string[];
+  /**
+   * Lauf 7, nur offene Normen: Stammverkündung für Alttext – `available`, `available-chain-incomplete` (Kette bis zur Stammfassung
+   * nicht lückenlos) oder der Grund, warum sie fehlt (`base-pdf-only`, `base-paper-only`, `base-none`, …), mit Beleg.
+   */
+  restorationBase?: { state: string; detail?: string };
   recipe?: { path: string; schema: string; amendments: number; steps: number; currentFingerprint: string; baselineFingerprint: string };
 }
 
@@ -115,6 +126,8 @@ export interface QueueTotals {
   checks: Record<string, { passed: number; failed: number; notReached: number }>;
   roundTripVerifiedWithoutStart: number;
   formulas: Record<string, { clauses: number; norms: number; supported: boolean; invertible: boolean }>;
+  /** Lauf 7: offene Normen je Verfügbarkeit der Stammverkündung. */
+  byRestorationBase?: Record<string, number>;
 }
 
 export interface ReconstructionQueue {
@@ -258,6 +271,10 @@ interface NormOutcome {
   stammfassungAfterBaseline?: string;
   recipe?: AnyReconstructionRecipe;
   walk?: WalkResult;
+  /** Warum keine Stammverkündung für die Wiederherstellung bereitstand (nur Hinweis). */
+  restoreNote?: string;
+  /** Lauf 7: Stammverkündung verfügbar (`available`), Kette bis zu ihr unvollständig, oder der Grund, warum nicht (`base-…`). */
+  restorationBase?: string;
 }
 
 const stepLabel = (step: Pick<WalkStep, 'citation' | 'section'>): string => `${step.citation}${step.section ? ` (${step.section})` : ''}`;
@@ -315,8 +332,14 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
     }
   }
 
+  // Lauf 7: Stammverkündung (digital, amtlich) für Alttext, den die Befehle nicht tragen. Liegt sie vor, geht die Kette
+  // auch über den Stichtag hinaus bis zur Stammfassung (`deep`, für die Probe der Wiederherstellung).
+  const loadedBase = await loadPublicationBase((ctx.platform ??= cachePlatform(ctx.root)), norm);
+  if (!loadedBase.ok) outcome.restoreNote = `Stammverkündung nicht verfügbar (${loadedBase.code}): ${loadedBase.detail}`;
+  outcome.restorationBase = loadedBase.ok ? 'available' : loadedBase.code;
+
   // 2 – Kette.
-  const walk = await walkChain(walkInputFor(ctx, documentId, norm));
+  const walk = await walkChain({ ...walkInputFor(ctx, documentId, norm), deep: loadedBase.ok, provisional: loadedBase.ok });
   outcome.walk = walk;
   outcome.needs = [...new Set(walk.needs)].sort();
   outcome.chain = walk.steps.map(stepLabel);
@@ -336,12 +359,36 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
   outcome.effectiveDate = [...walk.steps[0]!.effectiveDates].sort().at(-1)!;
   if (walk.steps.at(-1)!.priorClause) outcome.priorAmendment = walk.steps.at(-1)!.priorClause!;
 
+  // Lauf 7: Die Stammverkündung trägt den Alttext für Befehle, die die Rücknahme allein nicht umkehren kann (Neufassung,
+  // Aufhebung, Streichung ohne Anker) – wenn die Stammfassung die Fassung am Stichtag ist oder die Kette bis zu ihr
+  // zurückreicht (dann wird die Wiederherstellung durch Rücknahme auch aller Änderungen vor dem Stichtag geprüft).
+  let restoreBase: PublicationBase | undefined;
+  const oldestStep = walk.steps.at(-1)!;
+  const stammfassungAtBaseline = walk.witnesses.length === 0 && !oldestStep.priorClause;
+  if (loadedBase.ok && !oldestStep.block?.citation.versionForm && !oldestStep.block?.citation.consolidatedForm && (stammfassungAtBaseline || walk.prior)) restoreBase = { ...loadedBase.base, portal: norm.body, ...(ctx.conventions ? { conventions: ctx.conventions } : {}) };
+  else if (loadedBase.ok && walk.priorFailure) {
+    outcome.restoreNote = `Kette bis zur Stammfassung: ${walk.priorFailure.detail}`;
+    outcome.restorationBase = 'available-chain-incomplete';
+  }
+
+  // Lauf 8: Befunde über Veröffentlichungen nach dem Stichtag außerhalb der Kette gelten nur mit Wortlautprobe gegen die
+  // Stammverkündung; ohne sie bleibt es beim Befund.
+  const provisional = walk.provisional ?? [];
+  if (provisional.length > 0 && !restoreBase) {
+    checks.chain = false;
+    const first = provisional[0]!;
+    return fail(first.state, first.reason, `${first.detail} – ausräumbar nur durch die Wortlautprobe gegen die Stammverkündung, die hier nicht möglich ist (${outcome.restoreNote ?? 'die Stammfassung ist nicht die Fassung am Stichtag und die Kette reicht nicht bis zu ihr'})`);
+  }
+
   // 3 – Rücknahme, jüngste Änderung zuerst.
   let body: NormBodyBlock[] = structuredClone(norm.body);
+  // Überschrift der Norm (Titelzeile und Abkürzungszeile), falls ein Befehl sie ändert.
+  const currentTitle = titleState(norm.document.law);
+  let title: RecipeTitle = currentTitle;
   const reversed: Array<{ step: WalkStep; steps: ReturnType<typeof reverseAmendment>['steps']; before: NormBodyBlock[]; after: NormBodyBlock[] }> = [];
   const multi = walk.steps.length > 1;
   for (const [index, step] of walk.steps.entries()) {
-    const reversal = reverseAmendment(body, step.block!, multi ? `a${index + 1}-` : '');
+    const reversal = reverseAmendment(body, step.block!, multi ? `a${index + 1}-` : '', title, restoreBase ? { base: restoreBase, fallback: true } : undefined);
     outcome.formulas.push(...reversal.formulas);
     if (reversal.failures.length > 0) {
       const structural = reversal.failures.some((failure) => failure.state === 'command-unreadable');
@@ -353,11 +400,68 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
     }
     reversed.push({ step, steps: reversal.steps, before: reversal.before!, after: body });
     body = reversal.before!;
+    if (reversal.titleBefore) title = reversal.titleBefore;
   }
+  const titleChange = reversed.some((entry) => entry.steps.some((recipeStep) => recipeStep.target === 'title')) ? { current: currentTitle, baseline: title } : undefined;
   checks.block = true;
   checks.formulas = true;
   checks.roundTrip = true;
   const baselineBody = body;
+
+  // Wiederhergestellter Alttext: Der Stand der Verkündungen muss den zurückgerechneten Körper im ganzen Wortlaut tragen –
+  // bei der Stammfassung am Stichtag direkt; sonst nach Rücknahme auch aller Änderungen vor dem Stichtag bis zur
+  // Stammfassung (wiederum mit Alttext aus der Stammverkündung, wo nötig).
+  const restoredSteps = reversed.flatMap((entry) => entry.steps).filter((recipeStep) => recipeStep.restoredFrom !== undefined).length;
+  let restoration: RecipeRestoration | undefined;
+  if ((restoredSteps > 0 || provisional.length > 0) && restoreBase) {
+    const prior: PriorAmendment[] = (stammfassungAtBaseline ? [] : walk.prior ?? []).map((step) => ({
+      label: stepLabel(step),
+      ...(step.block ? { block: step.block } : {}),
+      url: step.page.url,
+      sha256: step.page.sha256,
+      ...(step.page.retrievedAt ? { retrievedAt: step.page.retrievedAt } : {}),
+      ...(step.eventDate ? { publishedAt: step.eventDate } : {}),
+      authority: SOURCE_AUTHORITY[step.ref.organ].publicationAuthority,
+      representation: SOURCE_AUTHORITY[step.ref.organ].digitalRepresentation,
+      ...(step.section ? { section: step.section } : {}),
+    }));
+    const proof = proveRestoration(baselineBody, title, prior, restoreBase);
+    if (!proof.ok && restoredSteps === 0) {
+      // Nur die vorläufigen Befunde waren zu prüfen: Sie bleiben der Grund, die Probe ist der Beleg, warum.
+      checks.chain = false;
+      const first = provisional[0]!;
+      return fail(first.state, first.reason, `${first.detail}; die Wortlautprobe gegen die Stammverkündung räumt das nicht aus: ${proof.detail}`);
+    }
+    if (!proof.ok) {
+      checks.roundTrip = false;
+      return fail('non-invertible-amendment', proof.reason, `Alttext aus der Stammverkündung: ${proof.detail}`);
+    }
+    restoration = {
+      method: 'forward-from-publication',
+      sources: [
+        ...restoreBase.sources.map((source) => ({ ...source })),
+        ...proof.prior.map((entry) => ({
+          role: 'prior-amendment' as const,
+          citation: entry.citation,
+          url: entry.url,
+          sha256: entry.sha256,
+          ...(entry.retrievedAt ? { retrievedAt: entry.retrievedAt } : {}),
+          ...(entry.publishedAt ? { publishedAt: entry.publishedAt } : {}),
+          authority: entry.authority,
+          representation: entry.representation,
+          ...(entry.section ? { section: entry.section } : {}),
+          introIndex: entry.introIndex,
+        })),
+      ],
+      converter: restoreBase.converter,
+      pageTextSha256: restoreBase.pageTextSha256,
+      publicationFingerprint: bodyFingerprint(restoreBase.body),
+      ...(proof.prior.length > 0 ? { stammfassungFingerprint: proof.stammfassungFingerprint, priorSteps: proof.prior.reduce((sum, entry) => sum + entry.steps, 0) } : {}),
+      agreement: { normalization: TYPOGRAPHY_NORMALIZATION, characters: proof.agreement.characters, detail: proof.agreement.detail },
+      restoredSteps,
+      ...(provisional.length > 0 ? { chainChecks: provisional.map((entry) => ({ reason: entry.reason, detail: entry.detail })) } : {}),
+    };
+  }
 
   // 4 – Beginn der Stichtagsfassung.
   let start: ReconstructionRecipe['baselineTextInForce'] | undefined;
@@ -378,27 +482,40 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
       outcome.roundTripVerified = true;
       return fail('partial-chain', 'baseline-text-in-force-unproven', `Der Befehl zitiert die Norm ${oldest.block.citation.versionForm ? '„in der Fassung der Bekanntmachung“' : 'in der bereinigten Fassung der BayRS'}; die Inkrafttretensvorschrift des Stammgesetzes belegt nicht den Beginn dieser Fassung`, true);
     }
-    const own = ownCommencement(baselineBody, ctx.baselineDate);
+    const stamm = loadedBase.ok && loadedBase.base.publishedAt ? { publishedAt: loadedBase.base.publishedAt, url: loadedBase.base.sources[0]!.url } : undefined;
+    const own = ownCommencement(baselineBody, ctx.baselineDate, stamm);
     if (!own.ok) {
       checks.baselineStart = false;
       outcome.roundTripVerified = true;
       if (own.reason && /nach dem Stichtag/u.test(own.reason)) outcome.stammfassungAfterBaseline = `Rückgerechnete Stammfassung: ${own.reason}`;
       return fail('partial-chain', 'baseline-text-in-force-unproven', `Beginn der Stichtagsfassung (Stammfassung) nicht belegt: ${own.reason ?? ''}`, true);
     }
-    start = { date: own.date!, evidence: ['Stammfassung: Der Einleitungssatz der ältesten zurückgenommenen Änderung nennt keine vorangehende, Änderungsverlauf und Fortführungsnachweis führen vor dem Stichtag keine', ...own.evidence] };
+    const relativeUsed = stamm !== undefined && own.evidence.some((line) => line.startsWith('Verkündungsdatum ') && line.includes('laut Stammverkündung selbst'));
+    const stammSource = loadedBase.ok ? loadedBase.base.sources[0]! : undefined;
+    start = {
+      date: own.date!,
+      ...(relativeUsed && stammSource ? { sources: [{ url: stammSource.url, sha256: stammSource.sha256, citation: stammSource.citation, ...(stammSource.retrievedAt ? { retrievedAt: stammSource.retrievedAt } : {}) }] } : {}),
+      evidence: [
+        'Stammfassung: Der Einleitungssatz der ältesten zurückgenommenen Änderung nennt keine vorangehende, Änderungsverlauf und Fortführungsnachweis führen vor dem Stichtag keine',
+        ...own.evidence,
+        ...(restoration ? [`Alttext nicht umkehrbarer Befehle aus der Stammverkündung ${restoration.sources[0]!.citation} (${restoration.sources[0]!.url}, SHA-256 ${restoration.sources[0]!.sha256.slice(0, 16)}…); ${restoration.agreement.detail}`] : []),
+      ],
+    };
   }
   checks.baselineStart = true;
 
   // 5 – Rezept, Forward-Replay, Serialisierung.
-  const recipe = buildRecipe(ctx, documentId, norm, packageSource, walk, reversed, start, baselineBody);
+  const recipe = buildRecipe(ctx, documentId, norm, packageSource, walk, reversed, start, baselineBody, titleChange, restoration);
   if ('problem' in recipe) return fail('contradictory', 'recipe-invalid', recipe.problem);
-  const roundTrip = verifyRoundTrip(norm.body, recipe.recipe);
+  const law = norm.document.law;
+  // Die Quellen der Wiederherstellung hat dieser Lauf eben aus dem Cache gelesen (SHA-256 im Rezept).
+  const roundTrip = verifyRoundTripLaw(law, recipe.recipe, { restorationChecked: true });
   if (!roundTrip.ok) {
     checks.roundTrip = false;
     return fail('round-trip-failed', 'round-trip', roundTrip.detail);
   }
   const reread = JSON.parse(JSON.stringify(recipe.recipe)) as AnyReconstructionRecipe;
-  const again = verifyRoundTrip(norm.body, reread);
+  const again = verifyRoundTripLaw(law, reread, { restorationChecked: true });
   if (!again.ok) return fail('round-trip-failed', 'round-trip-serialized', again.detail);
   outcome.recipe = recipe.recipe;
   return outcome;
@@ -438,6 +555,8 @@ function buildRecipe(
   reversed: Array<{ step: WalkStep; steps: ReturnType<typeof reverseAmendment>['steps']; before: NormBodyBlock[]; after: NormBodyBlock[] }>,
   start: ReconstructionRecipe['baselineTextInForce'],
   baselineBody: NormBodyBlock[],
+  titleChange?: RecipeTitleChange,
+  restoration?: RecipeRestoration,
 ): { recipe: AnyReconstructionRecipe } | { problem: string } {
   for (const entry of reversed) if (!entry.step.eventDate) return { problem: `${stepLabel(entry.step)}: Verkündungsdatum nicht belegt` };
   const source = {
@@ -462,6 +581,8 @@ function buildRecipe(
       baselineTextInForce: start,
       chain: [...walk.evidence, ...walk.notes.map((note) => `Hinweis: ${note}`)],
       steps: only.steps,
+      ...(titleChange ? { title: titleChange } : {}),
+      ...(restoration ? { restoration } : {}),
       whitespace: WHITESPACE_NORMALIZATION,
       expected,
     };
@@ -486,6 +607,8 @@ function buildRecipe(
       baselineTextInForce: start,
       chain: [...walk.evidence, ...walk.notes.map((note) => `Hinweis: ${note}`)],
       sources,
+      ...(titleChange ? { title: titleChange } : {}),
+      ...(restoration ? { restoration } : {}),
       whitespace: WHITESPACE_NORMALIZATION,
       expected,
     };
@@ -580,8 +703,31 @@ async function readBefore(root: string): Promise<ReconstructionQueue['before']> 
   return { recipeReady: 0, reconstructionRequired: 0, byState: {}, source: 'keine frühere Schlange' };
 }
 
+/**
+ * Lauf 7: Darstellungskonventionen des Portals je Amtsblatt (`formConventions`) – über **alle** geänderten Normen mit
+ * digitaler Stammverkündung, unabhängig von `--only`, damit jede Norm dieselbe Grundlage hat.
+ */
+export async function portalConventions(ctx: RunContext): Promise<FormConventions> {
+  const samples: PublicationBase[] = [];
+  for (const decision of ctx.baseline.decisions) {
+    if (decision.class !== 'changed-after-baseline') continue;
+    const source = await readCached(ctx.root, packageUrl(decision.documentId));
+    if (!source) continue;
+    let norm: CurrentNorm;
+    try {
+      norm = parseCurrentNorm(decision.documentId, source, ctx.evaluationDate);
+    } catch {
+      continue;
+    }
+    const loaded = await loadPublicationBase((ctx.platform ??= cachePlatform(ctx.root)), norm);
+    if (loaded.ok) samples.push({ ...loaded.base, portal: norm.body });
+  }
+  return formConventions(samples);
+}
+
 export async function runReconstruction(root: string, options: ReconstructionOptions = {}): Promise<ReconstructionRun> {
   const ctx = await loadRunContext(root, options);
+  ctx.conventions = await portalConventions(ctx);
   const before = await readBefore(root);
   const changed = ctx.baseline.decisions.filter((decision) => decision.class === 'changed-after-baseline').filter((decision) => !options.only || options.only.includes(decision.documentId));
   const entries: QueueEntry[] = [];
@@ -661,6 +807,7 @@ export async function runReconstruction(root: string, options: ReconstructionOpt
       reasons: dedupeReasons(grouped.reasons),
       alsoFailed: groupFailures(failures.slice(1).filter((failure) => failure.state !== primary.state || failure.reason !== primary.reason)),
       priority: COMMAND_STATE_PRIORITY[primary.state] + Math.min(outcome.amendments, 9),
+      ...(outcome.restorationBase ? { restorationBase: { state: outcome.restorationBase, ...(outcome.restoreNote ? { detail: outcome.restoreNote } : {}) } } : {}),
     });
   }
 
@@ -704,11 +851,12 @@ export async function runReconstruction(root: string, options: ReconstructionOpt
       }])),
       roundTripVerifiedWithoutStart: entries.filter((entry) => entry.roundTripVerified).length,
       formulas,
+      byRestorationBase: count(entries.filter((entry) => entry.state !== 'recipe-ready'), (entry) => entry.restorationBase?.state ?? 'not-reached'),
     },
     entries,
   };
   recipes.sort((left, right) => (left.documentId < right.documentId ? -1 : 1));
-  const audit = await buildAudit(ctx.root, recipes, ctx.baselineDate);
+  const audit = await buildAudit(ctx.root, recipes, ctx.baselineDate, ctx.conventions);
   const sources = buildSourceRegister([...outcomes].map(([documentId, outcome]) => ({ documentId, walk: outcome.walk, recipe: outcome.recipe })));
   const undetermined = options.only ? [] : await recheckUndetermined(ctx);
   const baseline = options.only ? ctx.baseline : applyUndeterminedDecisions(applyDecisions(ctx.baseline, entries), undetermined);

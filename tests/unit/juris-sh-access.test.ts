@@ -266,6 +266,7 @@ describe('Stichtag, baseline-only und Readiness ohne Dokumentinhalt', () => {
 
   const snapshot = (overrides: Partial<AdapterSnapshot> = {}): AdapterSnapshot => ({
     enumeration: {},
+    contentSlugs: [],
     manifest: emptyManifest(),
     review: emptyReviewQueue(),
     contentFiles: 0,
@@ -297,7 +298,7 @@ describe('Stichtag, baseline-only und Readiness ohne Dokumentinhalt', () => {
 
   it('klassifiziert ohne Inhalt alles als undetermined und bleibt NOT READY mit Blocker', () => {
     const base = snapshot();
-    expect(classifyBaseline(base).byArea.landesrecht).toEqual({ 'unchanged-since-baseline': 0, 'changed-after-baseline': 0, 'enacted-after-baseline': 0, undetermined: 0 });
+    expect(classifyBaseline(base).byArea.landesrecht).toEqual({ 'unchanged-since-baseline': 0, 'changed-after-baseline': 0, 'repealed-after-baseline': 0, 'enacted-after-baseline': 0, 'repealed-before-baseline': 0, undetermined: 0 });
     const result = evaluateReadiness(snapshot({
       addressability: {
         schemaVersion: 'juris-sh-content-addressability/1',
@@ -311,13 +312,17 @@ describe('Stichtag, baseline-only und Readiness ohne Dokumentinhalt', () => {
       },
     }));
     expect(result.ready).toBe(false);
-    expect(result.blockers.some((blocker) => blocker.startsWith('inhalt-adressierbar'))).toBe(true);
+    expect(result.blockers.some((blocker) => blocker.startsWith('oeffentlicher-ausgabeweg'))).toBe(true);
     expect(result.checks.find((check) => check.id === 'keine-technische-sperre')?.status).toBe('pass');
-    expect(result.checks.find((check) => check.id === 'kein-ungeprueft-bestand')?.status).toBe('pass');
+    expect(result.checks.find((check) => check.id === 'bestand-konsistent')?.status).toBe('pass');
   });
 
-  it('schaltet Enumeration, Probe und Berichte frei, Bulk/Suchaudit/R2-Sync nicht', () => {
-    for (const command of ['enumerate', 'sample', 'audit', 'coverage', 'readiness', 'reconstruction-queue'] as const) expect(IMPLEMENTED_COMMANDS).toContain(command);
-    for (const command of ['bulk', 'search-audit', 'r2-sync'] as const) expect(IMPLEMENTED_COMMANDS).not.toContain(command);
+  it('meldet Normverzeichnisse ohne übernommenen Manifesteintrag als Blocker', () => {
+    const result = evaluateReadiness(snapshot({ contentSlugs: ['fremd-nsh'] }));
+    expect(result.checks.find((check) => check.id === 'bestand-konsistent')).toMatchObject({ status: 'fail', blocker: true });
+  });
+
+  it('schaltet alle Befehle frei (Enumeration bis R2-Staging und Suchprüfung)', () => {
+    for (const command of ['enumerate', 'sample', 'fetch-corpus', 'inventory', 'bulk', 'audit', 'coverage', 'readiness', 'reconstruction-queue', 'search-audit', 'r2-sync'] as const) expect(IMPLEMENTED_COMMANDS).toContain(command);
   });
 });

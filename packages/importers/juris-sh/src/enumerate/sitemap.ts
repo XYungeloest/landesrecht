@@ -142,3 +142,18 @@ export function inventorySitemaps(locationLists: readonly string[][]): SitemapIn
   }
   return { documentIds, otherUrls, duplicates, byFamily, frames, orphanUnits, vwv, registers, unknown };
 }
+
+/** Einheiten (Einzelfassungen) je Rahmendokument in Sitemap-Reihenfolge – Grundlage der Stichtagsfassung. */
+export function unitIdsByFrame(locationLists: readonly string[][]): Map<string, string[]> {
+  const byFrame = new Map<string, string[]>();
+  for (const url of locationLists.flat()) {
+    const id = documentIdFromUrl(url);
+    if (!id) continue;
+    const classified = classifyDocumentId(id);
+    if (classified.family !== 'landesrecht-unit') continue;
+    const list = byFrame.get(classified.frameId!) ?? [];
+    list.push(id);
+    byFrame.set(classified.frameId!, list);
+  }
+  return byFrame;
+}

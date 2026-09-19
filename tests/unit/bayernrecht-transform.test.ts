@@ -28,7 +28,7 @@ import { parseBayernRechtDocument, parseBayernRechtPackage } from '@landesrecht/
 import { assertJurisdictionSlug, jurisdictionSlugCandidate, JURISDICTION_SUFFIX } from '@landesrecht/importer-bayernrecht/common/slug-registry.ts';
 import { auditTransformation, detectReferences, DOUBLED_TARGET_NAME, SOURCE_STATE_REFERENCE } from '@landesrecht/importer-bayernrecht/transform/detection.ts';
 import { compileInstitutionRegistry, readInstitutionRegistry, validateInstitutionRegistry, type InstitutionRegistry } from '@landesrecht/importer-bayernrecht/transform/institution-registry.ts';
-import { extractSourceOrgans, mapEnactingBody, nominativeOrganName } from '@landesrecht/importer-bayernrecht/transform/organs.ts';
+import { extractSourceOrgans, mapEnactingBody, nominativeOrganName, organParts } from '@landesrecht/importer-bayernrecht/transform/organs.ts';
 import { adjectiveDecision, BAY_ABBREVIATION, SOURCE_ADJECTIVE, targetAdjective, targetAppendedPart, targetGazette, targetProperName, targetShortName, TRANSFORMER_VERSION } from '@landesrecht/importer-bayernrecht/transform/rules.ts';
 import { auditRecord, auditableFields } from '@landesrecht/importer-bayernrecht/transform/audit-record.ts';
 import { deriveSlug, transformText, transformToBayWue, type TransformationChange } from '@landesrecht/importer-bayernrecht/transform/transform.ts';
@@ -94,8 +94,9 @@ describe('Zielbezeichnungen stammen aus dem Jurisdiktionsregister', () => {
 
   it('nennt eine eigene Transformerversion für die Staleness-Erkennung', () => {
     // 1.1.0: Herrschernamen geschützt; 1.2.0: historische Staaten, Organe und Vertragsnamen; 1.3.0: „Bayerisches
-    // Konkordat“ und „Zentrum Digitalisierung.Bayern“ (Nutzerentscheidungen 2026-09-18).
-    expect(TRANSFORMER_VERSION).toBe('bayernrecht-transformer/1.3.0');
+    // Konkordat“ und „Zentrum Digitalisierung.Bayern“ (Nutzerentscheidungen 2026-09-18); 1.3.1: gemeinsame Erlassformeln
+    // und Zusatzklauseln aus lauter historischen Organen sind historisch.
+    expect(TRANSFORMER_VERSION).toBe('bayernrecht-transformer/1.3.1');
   });
 
   it('kennt den angehängten Zielteil, auf dem der Idempotenzschutz beruht', () => {
@@ -481,8 +482,26 @@ describe('Erlassorgan nur aus ausdrücklicher Formel', () => {
     for (const name of ['Bayerisches Staatsministerium der Justiz', 'Bayerisches Staatsministerium des Innern, für Sport und Integration', 'Bayerisches Staatsministerium der Finanzen und für Heimat', 'Bayerisches Staatsministerium für Gesundheit, Pflege und Prävention']) {
       expect(mapEnactingBody(name, { institutions: real }).decision).toBe('manual-review');
     }
-    // Mehrere Ressorts in einer Formel bleiben Prüffall.
-    expect(mapEnactingBody('Bayerisches Staatsministerium des Innern und das Bayerische Staatsministerium für Wirtschaft, Infrastruktur, Verkehr und Technologie', { institutions: real }).decision).toBe('manual-review');
+    // Mehrere Ressorts in einer Formel mit einem am Stichtag bestehenden Ressort bleiben Prüffall.
+    expect(mapEnactingBody('Bayerisches Staatsministerium für Unterricht und Kultus sowie das Bayerische Staatsministerium für Wissenschaft, Forschung und Kunst', { institutions: real }).decision).toBe('manual-review');
+  });
+
+  it('klärt gemeinsame Formeln und Zusatzklauseln nur, wenn jedes genannte Organ belegt historisch ist', () => {
+    const real = registry;
+    for (const name of [
+      'Bayerisches Staatsministerium des Innern und das Bayerische Staatsministerium für Wirtschaft, Infrastruktur, Verkehr und Technologie',
+      'Bayerisches Staatsministerium der Finanzen und des Bayerischen Staatsministeriums für Arbeit und Sozialordnung, Familie, Frauen und Gesundheit',
+      'Bayerisches Staatsministerium für Arbeit und Sozialordnung*',
+      'Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst soweit erforderlich',
+      'Bayerisches Staatsministerium für Arbeit und Soziales, Familie und Integration nach Beschluss des Berufsbildungsausschusses',
+    ]) expect(mapEnactingBody(name, { institutions: real }).decision, name).toBe('source-only');
+    // Ein am Stichtag bestehendes Ressort in der Formel: Prüffall.
+    for (const name of [
+      'Bayerisches Staatsministerium der Justiz und des Bayerischen Staatsministeriums für Wissenschaft, Forschung und Kunst',
+      'Bayerisches Staatsministerium für Digitales und des Bayerischen Staatsministeriums der Finanzen und für Heimat',
+      'Bayerisches Staatsministerium',
+    ]) expect(mapEnactingBody(name, { institutions: real }).decision, name).toBe('manual-review');
+    expect(organParts('Bayerisches Staatsministerium der Justiz und des Bayerischen Staatsministeriums für Wissenschaft, Forschung und Kunst')).toEqual(['Bayerisches Staatsministerium der Justiz', 'Bayerisches Staatsministerium für Wissenschaft, Forschung und Kunst']);
   });
 
   it('erkennt den Ministerpräsidenten auch mit Landesadjektiv als Verfassungsorgan', () => {
@@ -661,6 +680,13 @@ describe('Restpostenprüfung auf der fertigen Norm', () => {
     expect(auditRecord(record).filter((finding) => finding.severity === 'error').map((finding) => finding.code)).toContain('historical-name-transformed');
     record.versions[0]!.body[1]!.title = `Geschäftsstelle Zentrum Digitalisierung.${targetProperName()}`;
     expect(auditRecord(record).filter((finding) => finding.severity === 'error').map((finding) => finding.code)).toContain('historical-name-transformed');
+  });
+
+  it('sperrt Steuerzeichen im Text (NUL-Bytes aus einer Quellseite)', () => {
+    const record = transformed();
+    record.versions[0]!.body[1]!.title = `Text${String.fromCharCode(0)}${String.fromCharCode(0)}`;
+    expect(auditRecord(record).filter((finding) => finding.severity === 'error').map((finding) => finding.code)).toContain('control-character-in-text');
+    expect(auditRecord(transformed()).some((finding) => finding.code === 'control-character-in-text')).toBe(false);
   });
 
   it('meldet einen anderen Markennamen mit Punkt als Prüffall, nicht als Fehler', () => {

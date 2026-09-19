@@ -6,6 +6,9 @@ import { JURIS_SH_ACCESS_POLICY } from '../access/policy.ts';
 import { BASELINE_DATE } from '../common/constants.ts';
 import type { SourceInventory } from '../enumerate/run.ts';
 import type { AddressabilityReport } from '../probe/addressability.ts';
+import type { ExportDiscoveryReport } from '../probe/exports.ts';
+import type { InventoryReport } from '../pipeline/bulk.ts';
+import type { SampleReport } from '../pipeline/sample.ts';
 import type { AuditResult } from './audit.ts';
 import type { BaselineClassification, BaselineOnlyAnalysis, CoverageReport, ReadinessResult, ReconstructionQueue } from './status.ts';
 
@@ -149,7 +152,7 @@ export function renderCoverage(coverage: CoverageReport): string {
       ['davon Einheiten laut Sitemap', coverage.enumerated.units],
       ['enumeriert Verwaltungsvorschriften', coverage.enumerated.vwv],
       ...Object.entries(coverage.excludedByFamily).map(([family, count]) => [`ausgeschlossen: ${family}`, count]),
-      ['Rohquellen archiviert', coverage.rawArchived],
+      ['Rohquellen im Cache (PDF-Gesamtausgaben; R2 nicht in diesem Lauf)', coverage.rawArchived],
       ['geparst', coverage.parsed],
       ['Textintegrität exact / normalisiert / erklärt / review / mismatch', `${coverage.integrity.exact} / ${coverage.integrity.normalized} / ${coverage.integrity.explained} / ${coverage.integrity.review} / ${coverage.integrity.mismatch}`],
       ['transformiert (SH → NSH)', coverage.transformed],
@@ -165,29 +168,32 @@ export function renderCoverage(coverage: CoverageReport): string {
 }
 
 export function renderHistoricalBaseline(classification: BaselineClassification, baselineOnly: BaselineOnlyAnalysis, ledger: { events: number; postBaseline: number }): string {
+  const classes = Object.keys(Object.values(classification.byArea)[0] ?? {});
   const lines = [
     ...HEADER('Historische Baseline juris Schleswig-Holstein', 'node scripts/import-juris-sh.ts reconstruction-queue --write'),
     '## 1 Stichtagsklassifikation',
     '',
-    ...table(['Bereich', 'unchanged-since-baseline', 'changed-after-baseline', 'enacted-after-baseline', 'undetermined'], Object.entries(classification.byArea).map(([area, counts]) => [area, counts['unchanged-since-baseline'], counts['changed-after-baseline'], counts['enacted-after-baseline'], counts.undetermined])),
+    'Je Dokument aus der öffentlichen PDF-Ausgabe (Kopf „Gültig ab/bis“, Ausgabevermerk, „Stand: letzte berücksichtigte Änderung“, Gültigkeit jeder Einheit im Verzeichnis); Quelle `data/audits/juris-sh/corpus-inventory.json`.',
     '',
-    `Grund für \`undetermined\`: ${classification.undeterminedReason}`,
+    ...table(['Bereich', ...classes], Object.entries(classification.byArea).map(([area, counts]) => [area, ...classes.map((key) => (counts as Record<string, number>)[key] ?? 0)])),
     '',
-    `Historische Fassungen gewonnen: **${classification.historicalVersions.recovered}**. ${classification.historicalVersions.note}`,
+    `\`undetermined\` (→ Review): ${classification.undeterminedReason}`,
     '',
-    'Rangfolge für jede Stichtagsfassung (unverändert): 1. öffentlich erreichbare historische juris-Fassung · 2. amtliche vollständige Veröffentlichung · 3. sichere Rekonstruktion · 4. Review. Der heutige Text ersetzt nie die Stichtagsfassung.',
+    `Historische Fassungen: ${classification.historicalVersions.note}`,
     '',
-    '## 2 Ereignisregister (Belege, keine Zuordnung)',
+    'Rangfolge für jede Stichtagsfassung (unverändert): 1. öffentlich erreichbare historische juris-Fassung (Einzelfassungen „genau dieses Dokument“ mit Gültigkeitszeitraum) · 2. amtliche vollständige Veröffentlichung · 3. sichere Rekonstruktion · 4. Review. Der heutige Text ersetzt nie die Stichtagsfassung.',
     '',
-    `Ereignisse gesamt ${ledger.events}, davon nach dem Stichtag ${ledger.postBaseline}. Die Zuordnung Ereignis → DOKNR braucht Titel/Gliederungsnummer aus dem Dokument und ist deshalb offen.`,
+    '## 2 Ereignisregister (bestehend, weiterverwendet)',
+    '',
+    `Ereignisse gesamt ${ledger.events}, davon nach dem Stichtag ${ledger.postBaseline}. Zuordnung Ereignis → DOKNR über Verkündungsblatt + Gliederungsnummer + Ausfertigungsdatum der Zielnorm (bzw. eindeutige Gliederungsnummer); zugeordnete Ereignisse gehen als Belege in die Stichtagsprüfung (Regeln A/B/C), ein Widerspruch zur Ausgabe führt in den Review.`,
     '',
     '## 3 baseline-only-Kandidaten',
     '',
-    `Register (Systematische Übersicht) Stand ${baselineOnly.registerAsOf ?? 'unbekannt'}. Kandidaten **${baselineOnly.candidates}**: Dubletten ${baselineOnly.duplicates} · Ende vor dem Registerstand (durch das Register belegt) ${baselineOnly.confirmedByRegister} · Ende nach dem Registerstand (nur angekündigt, Entfristung nicht ausschließbar) ${baselineOnly.announcedOnly} · mit dem heutigen Bestand abgeglichen ${baselineOnly.matchedAgainstInventory} · wiederhergestellt ${baselineOnly.restored}.`,
+    `Register (Systematische Übersicht) Stand ${baselineOnly.registerAsOf ?? 'unbekannt'}. Kandidaten **${baselineOnly.candidates}**: Dubletten ${baselineOnly.duplicates} · Ende vor dem Registerstand (durch das Register belegt) ${baselineOnly.confirmedByRegister} · Ende nach dem Registerstand (nur angekündigt, Entfristung nicht ausschließbar) ${baselineOnly.announcedOnly} · einem juris-Dokument zugeordnet ${baselineOnly.matchedAgainstInventory} · Stichtagsfassung übernahmefähig ${baselineOnly.restored}.`,
     '',
-    'Für echte Kandidaten braucht die Wiederherstellung die vollständige Belegkette (Stammfassung und alle Änderungen bis zum Stichtag aus GVOBl.) oder die historische juris-Fassung; beides liegt nicht vor.',
+    'Zugeordnete Kandidaten sind in juris als nach dem Stichtag aufgehobene Normen geführt; ihre Stichtagsfassung entsteht aus den Einzelfassungen (sonst Review). Nicht zugeordnete stehen in der Rekonstruktionsqueue.',
     '',
-    ...table(['Ende', 'Typ', 'Gl.Nr.', 'Titel', 'Fundstelle', 'Einordnung'], baselineOnly.entries.map((entry) => [entry.eventDate, entry.eventType, entry.gliederungsnummer ?? '', entry.title.slice(0, 100), entry.citation, entry.classification])),
+    ...table(['Ende', 'Typ', 'Gl.Nr.', 'Titel', 'Fundstelle', 'Einordnung', 'juris', 'Ausgang'], baselineOnly.entries.map((entry) => [entry.eventDate, entry.eventType, entry.gliederungsnummer ?? '', entry.title.slice(0, 100), entry.citation, entry.classification, entry.documentIds?.join(', ') || '–', entry.outcomes?.join(', ') || '–'])),
     '',
   ];
   return `${lines.join('\n')}\n`;
@@ -196,11 +202,11 @@ export function renderHistoricalBaseline(classification: BaselineClassification,
 export function renderReconstructionQueue(queue: ReconstructionQueue): string {
   const lines = [
     ...HEADER('Rekonstruktionsqueue juris Schleswig-Holstein', 'node scripts/import-juris-sh.ts reconstruction-queue --write'),
-    `**Blocker:** ${queue.blocker}`,
+    `**Lage:** ${queue.blocker}`,
     '',
-    `Vorgemerkte Vorschriften: **${queue.totals.items}** (${Object.entries(queue.totals.byOrgan).map(([organ, count]) => `${organ} ${count}`).join(', ')}) mit ${queue.totals.events} Änderungs-, Neufassungs- oder Berichtigungsereignissen nach dem Stichtag (amtliche Register, Beweisklasse strong/supporting). Jede ist ein \`changed-after-baseline\`-Kandidat; ihre DOKNR ist offen (\`sourceIdentity: null\`). Einträge aus dem Amtsblatt umfassen neben Verwaltungsvorschriften auch Bekanntmachungen und Einzelakte; der Scope ist je Dokument offen und wird hier nicht geraten.`,
+    `Vorgemerkt: **${queue.totals.items}** (${Object.entries(queue.totals.byOrgan).map(([organ, count]) => `${organ} ${count}`).join(', ')}${queue.totals.byReason ? `; ${Object.entries(queue.totals.byReason).map(([reason, count]) => `${reason} ${count}`).join(', ')}` : ''}), Registerereignisse nach dem Stichtag ${queue.totals.events}. \`units-missing\`: Einzelfassungen noch nicht (vollständig) geladen; \`unit-selection\`: am Stichtag nicht eindeutig; \`post-baseline-change-unmatched\`: Änderung nach dem Stichtag an einem Registerziel ohne juris-Dokument (DOKNR offen, \`sourceIdentity: null\`); \`register-only-not-in-juris\`: Norm laut amtlichem Register geltend, in juris nicht geführt. Einträge aus dem Amtsblatt umfassen neben Verwaltungsvorschriften auch Bekanntmachungen und Einzelakte; der Scope wird hier nicht geraten.`,
     '',
-    ...table(['Blatt', 'Gl.Nr.', 'Titel', 'Ereignisse', 'erstes', 'letztes'], queue.items.map((item) => [item.organ, item.gliederungsnummer ?? '', item.title.slice(0, 100), item.events.length, item.events[0]?.eventDate ?? '', item.events.at(-1)?.eventDate ?? ''])),
+    ...table(['Blatt', 'Grund', 'DOKNR', 'Gl.Nr.', 'Titel', 'Ereignisse', 'Detail'], queue.items.map((item) => [item.organ, item.reason, item.sourceIdentity ?? '–', item.gliederungsnummer ?? '', item.title.slice(0, 90), item.events.length, (item.detail ?? '').slice(0, 140)])),
     '',
   ];
   return `${lines.join('\n')}\n`;
@@ -211,7 +217,7 @@ export function renderReviewSummary(audit: AuditResult): string {
     ...HEADER('Review-Übersicht juris Schleswig-Holstein', 'node scripts/import-juris-sh.ts audit --write'),
     `Review-Fälle: **${audit.review.total}** (offen ${audit.review.open}). Manifesteinträge: ${audit.manifestEntries}. Kein Fall wurde automatisch entschieden; ein Human Approval oder Freeze findet nicht statt.`,
     '',
-    ...(audit.review.byCategory.length > 0 ? table(['Kategorie', 'Fälle'], audit.review.byCategory) : ['Keine Review-Fälle: Ohne abrufbaren Normtext wurde keine Norm verarbeitet.']),
+    ...(audit.review.byCategory.length > 0 ? table(['Kategorie', 'Fälle'], audit.review.byCategory) : ['Keine Review-Fälle: Es wurde noch kein Bulk-Lauf mit --write ausgeführt.']),
     '',
     '## Konsistenzprüfung',
     '',
@@ -228,6 +234,165 @@ export function renderReadiness(result: ReadinessResult): string {
     '',
     ...(result.blockers.length > 0 ? ['Systemische Blocker:', '', ...result.blockers.map((blocker) => `- ${blocker}`), ''] : []),
     ...table(['Prüfung', 'Status', 'Detail'], result.checks.map((check) => [`${check.label} (\`${check.id}\`)`, check.status === 'pass' ? 'pass' : check.blocker ? '**FAIL (Blocker)**' : 'fail', check.detail])),
+    '',
+  ];
+  return `${lines.join('\n')}\n`;
+}
+
+/** Einordnung der Sitzungsbelege – nur aus den protokollierten Antworten abgeleitet. */
+function sessionFindings(report: ExportDiscoveryReport): string[] {
+  const documentPages = report.probes.filter((probe) => probe.form === 'document' && probe.hops);
+  const documentCookies = documentPages.filter((probe) => probe.hops!.some((hop) => hop.setCookie?.length)).length;
+  const permaHops = report.probes.filter((probe) => probe.form === 'perma-d' && probe.hops?.some((hop) => hop.setCookie?.length));
+  const cookieNames = [...new Set(permaHops.flatMap((probe) => probe.hops!.flatMap((hop) => (hop.setCookie ?? []).map((cookie) => cookie.split(';')[0]!))))].sort();
+  const replay = report.probes.find((probe) => probe.form === 'pdf-export-with-session');
+  return [
+    `- Dokumentseiten \`/bssh/document/…\`: ${documentPages.length} mit Netzabruf, davon mit \`Set-Cookie\` ${documentCookies} (statische Oberflächenseite).`,
+    `- Permalink-Dienst \`/jportal/perma\`: ${permaHops.length} Aufrufe setzen eine anonyme Sitzung (${cookieNames.map((name) => `\`${name}\``).join(', ')}) – ohne Anmeldung.`,
+    `- Sitzungsprobe: Exportadresse mit allen Cookies des vorherigen Permalink-Aufrufs (${(replay?.sessionCookies ?? []).join(', ') || '–'}): **${replay?.outcome ?? 'nicht durchgeführt'}**${replay?.message ? ` („${replay.message}“)` : ''}.`,
+    '- Das CSRF-Token liefert ausschließlich die POST-Initialisierung der internen Schnittstelle (`init` → `csrfToken`); kein öffentlicher Seitenaufruf gibt es aus.',
+    '',
+    replay?.outcome === 'pdf'
+      ? 'Einordnung: **normale anonyme Browsersitzung, keine Zugangskontrolle.** Die PDF-Ausgabe verlangt nur irgendeine Sitzung; die Sitzungscookies setzt der öffentliche Permalink-Aufruf von selbst (wie beim ersten Besuch im Browser). Kein Login, keine Zugangsdaten, kein CSRF-Token, kein Aufruf von `/jportal/wsrest/`. Ohne Sitzung antwortet die Ausgabe mit dem Hinweis „letzte Sitzung bereits beendet“ statt mit einer Sperre (HTTP 200, text/plain) – das ist Sitzungsverwaltung, keine Zugriffssperre. Eine Sitzung genügt für beliebig viele Dokumente.'
+      : 'Einordnung: Für Dokumentinhalt und Ausgabe ist keine Anmeldung nötig – aber Sitzungszustand, den nur die interne Schnittstelle erzeugt: Die Ausgabeadresse bedient erst eine Sitzung, in der das Dokument zuvor über `/jportal/wsrest/recherche3/document` (POST, CSRF-Token aus `init`) geladen wurde. Eine anonyme Sitzung aus einem öffentlichen Seitenaufruf allein genügt nicht.',
+  ];
+}
+
+export function renderExportDiscovery(report: ExportDiscoveryReport): string {
+  const flow = report.flow;
+  const exportProbes = report.probes.filter((probe) => probe.form === 'pdf-export' || probe.form === 'rtf-export' || probe.form === 'html-export' || probe.form === 'pdf-export-with-session');
+  const cookieHops = report.probes.flatMap((probe) => (probe.hops ?? []).filter((hop) => hop.setCookie?.length).map((hop) => [probe.form, hop.url.replace(/^https:\/\/[^/]+/u, ''), hop.status, hop.setCookie!.join(' · ')] as const));
+  const bySample = report.samples.map((sample) => {
+    const forms = report.probes.filter((probe) => probe.documentId === sample.id);
+    const outcome = (form: string): string => forms.find((probe) => probe.form === form)?.outcome ?? '–';
+    return [`\`${sample.id}\``, sample.label, sample.kinds.join(', '), outcome('document'), outcome('document-part'), outcome('xsl'), outcome('xsl-part'), outcome('perma-d'), outcome('pdf-export')];
+  });
+  const lines = [
+    ...HEADER('Public Export Discovery juris Schleswig-Holstein', 'node scripts/import-juris-sh.ts sample --write'),
+    `Ergebnis: **${report.conclusion}**. ${report.summary.samples} Normen, ${report.summary.probes} Proben (${Object.entries(report.summary.byOutcome).map(([outcome, count]) => `${outcome} ${count}`).join(', ')}). Die interne Schnittstelle \`/jportal/wsrest/…\` wurde nicht aufgerufen.`,
+    '',
+    ...report.reasoning.map((reason) => `- ${reason}`),
+    '',
+    '## 1 Wie die Oberfläche Ausgaben anfordert (statische Analyse der Skriptbündel)',
+    '',
+    ...table(['Funktion', 'Anfrage laut Bündel', 'Sitzung/CSRF'], [
+      ['Dokument laden (Text, Metadaten)', 'POST `/jportal/wsrest/recherche3/document` mit JSON `{docId, format: "xsl", keyword, sourceParams}`', `Sitzungscookie (\`credentials: include\`), Kopf \`JURIS-PORTALID\`, \`X-CSRF-TOKEN\`${flow.remoteOperationsPost ? ' – belegt' : ''}`],
+      ['Initialisierung', 'POST `/jportal/wsrest/recherche3/init`', `liefert das CSRF-Token (\`csrfToken\`)${flow.csrfFromInit ? ' – belegt' : ''}`],
+      ['PDF speichern', `GET-Link \`/jportal/<pdfUrl>\` in neuem Fenster${flow.pdfLinkIsPlainGet ? ' – belegt' : ''}; \`pdfUrl\` stammt aus der Dokumentantwort`, 'kein CSRF-Kopf (Navigation), Browser sendet Sitzungscookie'],
+      ['Word/RTF, Originaldokument, HTML-Ansicht, Gesamtausgabe-ZIP', `GET-Links auf \`/jportal/<…Url>\`; Felder ${flow.representationFields.map((field) => `\`${field}\``).join(', ')} aus der Dokumentantwort`, 'wie PDF'],
+      ['Drucken', `Route der Oberfläche \`/bssh/${flow.printRoute ?? 'print/document'}\`, gerendert aus dem geladenen Dokumentzustand`, 'keine eigene Serveranfrage'],
+      ['Permalink', `Text aus der Dokumentantwort (\`content.permalink\`)${flow.permalinkFromDocument ? ' – belegt' : ''}; \`/perma?d=\`, \`/perma?a=\` leiten serverseitig auf \`/bssh/?…\` um`, 'keine'],
+    ]),
+    '',
+    'Die Oberfläche bildet keine Ausgabeadresse selbst: Alle Adressen kommen aus der Antwort der internen Dokumentschnittstelle. Geprüft wurde deshalb die Ausgabeadresse der juris-Plattform `GET /jportal/recherche3doc/<Name>.<pdf|rtf|html>?json={format, docPart: "X", docId, portalId: "bssh"}` – ohne Cookie, ohne CSRF.',
+    '',
+    '## 2 Proben je Norm',
+    '',
+    ...table(['DOKNR', 'Norm (Einordnung laut Suchindex)', 'Merkmale', 'document', 'part/X', 'xsl', 'xsl/part/X', 'perma?d', 'PDF-Export'], bySample),
+    '',
+    '### Ausgabeadressen',
+    '',
+    ...table(['Form', 'Dokument', 'HTTP', 'Typ', 'Ergebnis', 'Antworttext'], exportProbes.slice(0, 40).map((probe) => [probe.form, `\`${probe.documentId}\``, probe.httpStatus ?? '–', probe.contentType ?? '–', probe.outcome, probe.message ?? ''])),
+    '',
+    '## 3 Sitzung und Cookies',
+    '',
+    `Öffentliche Seitenaufrufe (Dokumentseiten, Permalinks) in diesem Lauf mit Netzabruf: ${report.summary.publicPagesProbedFresh}, davon mit \`Set-Cookie\`: ${report.summary.publicPagesSettingCookies}. Die Ausgabeadresse setzt eine neue Sitzung (\`JSESSIONID\`): ${report.summary.exportEndpointSetsSession ? 'ja' : 'nein'}. Cookie-Werte werden nicht gespeichert.`,
+    '',
+    ...(cookieHops.length > 0 ? table(['Form', 'Pfad', 'HTTP', 'Set-Cookie (ohne Wert)'], cookieHops.slice(0, 30)) : ['Keine `Set-Cookie`-Antworten protokolliert.']),
+    '',
+    ...sessionFindings(report),
+    '',
+    '## 4 Permalink-Identität und historische Fassungen',
+    '',
+    '- **genau dieses Dokument:** `/perma?d=<Kennung>` → `/bssh/?query=DOKNR:<DOKNR>` (Alias oder DOKNR; fassungsfest).',
+    '- **gültige Fassung / Gesamtausgabe:** `/perma?a=<juris-Abkürzung>` → `/jportal/perma?portal=bssh&a=…` → `/bssh/?aiz=1&docId=<Rahmendokument>` (gleitend, Gesamtausgabe). Ohne auflösbare Abkürzung fehlt `docId`.',
+    `- **Staatsvertrag:** ${report.staatsvertragAttempts.map((attempt) => `\`${attempt.abbreviation}\` → ${attempt.resolvedId ? `\`${attempt.resolvedId}\`` : 'keine DOKNR'}`).join(', ')}; ohne Titel-Metadaten nicht identifizierbar.`,
+    '',
+    ...table(['Alias mit Fassungssegment', 'Hinweis (Suchindex)', 'DOKNR der Einheit', 'Rahmendokument', 'Dokumentseite'], report.versions.map((version) => [`\`${version.alias}\``, version.note, version.resolvedId ? `\`${version.resolvedId}\`` : '–', version.frameId ? `\`${version.frameId}\`` : '–', version.documentOutcome ?? '–'])),
+    '',
+    report.conclusion === 'public-export-available'
+      ? 'Historische Fassungen sind damit **adressierbar** (eigene DOKNR je Einheit und Fassung unter demselben Rahmendokument) und über denselben öffentlichen Ausgabeweg **abrufbar**: Die PDF-Ausgabe ohne `docPart` liefert genau diese Einzelfassung mit „Fassung vom“, „Gültig ab“ und „Gültig bis“ (Stichprobe: `SAMPLE_REPORT.md`). Mit `docPart: "X"` liefert dieselbe Adresse die aktuelle Gesamtausgabe des Rahmendokuments.'
+      : 'Historische Fassungen sind damit **adressierbar** (eigene DOKNR je Einheit und Fassung unter demselben Rahmendokument), ihr Inhalt ist es über öffentliche Wege nicht.',
+    '',
+    '## 5 TDM-Vorbehalt (getrennt von robots.txt, Erreichbarkeit und Sitzung)',
+    '',
+    `Jede Antwort des Portals trägt den Kopf \`tdm-reservation: 1\`${report.summary.tdmReservationHeader ? ' (in diesem Lauf protokolliert)' : ''}, die Oberflächenseite zusätzlich \`<meta name="tdm-reservation" content="1">\`; \`/.well-known/tdmrep.json\` fehlt (HTTP 404). Das ist ein maschinenlesbarer Nutzungsvorbehalt für Text- und Data-Mining (TDM Reservation Protocol). Er ist unabhängig davon, dass robots.txt für diesen Adapter advisory ist, dass keine technische Sperre besteht und dass die Ausgabe Sitzungszustand verlangt. Eine rechtliche Schlussfolgerung zieht der Adapter nicht; sie bleibt dem Menschen vorbehalten.`,
+    '',
+  ];
+  return `${lines.join('\n')}\n`;
+}
+
+export function renderSampleReport(report: SampleReport): string {
+  const lines = [
+    ...HEADER('Stichprobe Vollweg juris Schleswig-Holstein', 'node scripts/import-juris-sh.ts sample --write'),
+    'Vollweg je Norm: öffentliche PDF-Ausgabe (Permalink-Sitzung, GET, kein CSRF) → Layout (`pdftotext -bbox-layout`) → Parser → SH-Modell → Stichtagseinordnung → Überleitung SH → NSH → `validateNormRecord` → Restpostenprüfung, mit Textintegritätsprüfung. Es werden keine Normen geschrieben.',
+    '',
+    `Ausgänge: ${Object.entries(report.totals).map(([outcome, count]) => `${outcome} ${count}`).join(' · ')}. Textintegrität: ${Object.entries(report.integrity).map(([integrity, count]) => `${integrity} ${count}`).join(' · ')}. Netzabrufe ${report.network.requests}, Cache-Treffer ${report.network.cacheHits}, Sitzungen ${report.network.sessionsOpened}.`,
+    '',
+    ...table(['DOKNR', 'Zweck', 'Titel', 'Typ', 'Ausgang', 'Stichtag', 'Integrität', 'Blöcke/Einheiten/Verz.', 'Gründe'], report.norms.map((norm) => [
+      `\`${norm.documentId}\``,
+      norm.purpose,
+      (norm.title ?? '').slice(0, 70),
+      norm.type ?? '–',
+      norm.outcome,
+      norm.baseline ? `${norm.baseline.class}: ${norm.baseline.basis}`.slice(0, 90) : '–',
+      norm.integrity ? `${norm.integrity.class}${norm.integrity.missing || norm.integrity.extra ? ` (−${norm.integrity.missing}/+${norm.integrity.extra})` : ''}` : '–',
+      norm.counts ? `${norm.counts.blocks}/${norm.counts.units}/${norm.counts.tocEntries}` : '–',
+      norm.reasons.join('; ').slice(0, 200),
+    ])),
+    '',
+    '**Regeln.** `import-ready` nur, wenn die aktuelle Ausgabe nachweislich am Stichtag galt (Kopf, Ausgabevermerk und Gültigkeit jeder Einheit im Verzeichnis), die Textintegrität vollständig ist und weder Parser noch Überleitung eine Warnung melden. Tabellenlayout und Abbildungen führen in den Review: Der Textlayer trägt die Tabellenstruktur nicht sicher, Abbildungen gar nicht. Geänderte oder nach dem Stichtag aufgehobene Normen werden aus den am Stichtag geltenden Einzelfassungen der juris-Historie zusammengesetzt (PDF-Ausgabe „genau dieses Dokument“, Gültigkeitszeitraum je Einheit, aufsteigende Reihenfolge, Integritätsprüfung gegen genau diese Zeilen); sind sie nicht (vollständig) geladen oder nicht eindeutig, bleibt die Norm in der Rekonstruktion. Ihr heutiger Text ersetzt nie die Stichtagsfassung.',
+    '',
+  ];
+  return `${lines.join('\n')}\n`;
+}
+
+const counts = (record: Record<string, number>): string => Object.entries(record).sort(([, left], [, right]) => right - left).map(([key, value]) => `${key} ${value}`).join(' · ') || '–';
+
+export function renderCorpusInventory(report: InventoryReport): string {
+  const t = report.totals;
+  const lines = [
+    ...HEADER('Vollkorpus-Inventur juris Schleswig-Holstein', 'node scripts/import-juris-sh.ts inventory --write'),
+    `Netzfrei aus dem Cache von \`fetch-corpus\` (öffentliche PDF-Ausgabe). Je Dokument der Vollweg der Stichprobe: Parser → SH-Modell → Stichtag (bei späteren Änderungen die am Stichtag geltenden Einzelfassungen) → Überleitung SH → NSH → \`validateNormRecord\` → Textintegrität, dazu Stichtagsbelege mit dem bestehenden Ereignisregister (Regeln A/B/C). Parser \`${report.parserVersion}\`, Überleitung \`${report.transformerVersion}\`.`,
+    '',
+    '## 1 Ausgänge',
+    '',
+    ...table(['Kennzahl', 'Wert'], [
+      ['Enumeriert', t.enumerated],
+      ['Verarbeitet', t.processed],
+      ['Ausgänge', counts(t.byOutcome)],
+      ['Landesrecht', counts(t.byArea.landesrecht ?? {})],
+      ['Verwaltungsvorschriften', counts(t.byArea.vwv ?? {})],
+      ['Manifeststatus', counts(t.byManifestStatus)],
+      ['Stichtagseinordnung der Ausgabe', counts(t.byBaselineClass)],
+      ['Stichtagsregel (A/B/C)', counts(t.evidenceRules)],
+      ['Textintegrität', counts(t.byIntegrity)],
+      ['Normtyp', counts(t.byType)],
+    ]),
+    '',
+    '## 2 Sperrgründe (Dokumente je Grund)',
+    '',
+    ...table(['Grund', 'Dokumente'], Object.entries(t.blockers).sort(([, left], [, right]) => right - left).map(([key, value]) => [`\`${key}\``, value])),
+    '',
+    '`parse:table-layout` und `pdf-only`-Abbildungen gehen in den Review, weil der Textlayer Tabellen- und Bildinhalte nicht sicher trägt; `units-missing` heißt: Am Stichtag galt eine andere Fassung, die Einzelfassungen sind noch nicht (vollständig) im Cache (`npm run import:juris-sh:fetch-corpus -- --phase units`); `baseline:ledger-contradiction`: Das Ereignisregister belegt eine Änderung nach dem Stichtag, die Ausgabe nicht.',
+    '',
+    '## 3 Zweite Quelle: amtliche Register',
+    '',
+    ...table(['Register', 'Bereich', 'Stand', 'Gl.Nr. im Register (Normen)', 'im Bestand', 'Abdeckung', 'ausgenommen (Änderungs-/Mantelgesetze, Tarifverträge)'], report.registerCrosscheck.map((check) => [check.source, check.area, check.asOf ?? '–', check.registerNumbers, check.found, `${(check.coverage * 100).toFixed(1)} %`, check.excludedAmendingOrAgreement ?? 0])),
+    '',
+    ...report.registerCrosscheck.flatMap((check) => check.missing.length === 0 ? [] : [`**${check.source}: im Register, in keinem enumerierten juris-Dokument (${check.missing.length})**`, '', ...table(['Gl.Nr.', 'Titel laut Register'], check.missing.map((entry) => [entry.gliederungsnummer, entry.title])), '']),
+    '',
+    'Die Register führen die zum Registerstand geltenden Vorschriften mit ihren Änderungen (Systematische Übersicht GVOBl., Erlassverzeichnis Amtsbl.). Eine fehlende Gliederungsnummer heißt: Die Vorschrift steht im Register, aber in keinem enumerierten juris-Dokument mit dieser Nummer (andere Schreibung, Sammelnummer, nicht in juris geführt oder nach dem Registerstand aufgehoben und entfernt).',
+    '',
+    '## 4 baseline-only-Kandidaten des Ereignisregisters',
+    '',
+    `${report.baselineOnly.candidates} Kandidaten (Vorschrift endete nach dem Stichtag), ${report.baselineOnly.matched} einem juris-Dokument zugeordnet (Gliederungsnummer + Ausfertigungsdatum bzw. eindeutige Gliederungsnummer). Ausgänge: ${counts(report.baselineOnly.byOutcome)}.`,
+    '',
+    ...table(['Ereignis', 'Datum', 'Gl.Nr.', 'Titel', 'juris', 'Ausgang'], report.baselineOnly.entries.map((entry) => [entry.eventId.slice(0, 40), entry.eventDate, entry.gliederungsnummer ?? '–', entry.title.slice(0, 70), entry.documentIds.join(', ') || '–', entry.outcomes.join(', ') || 'nicht zugeordnet'])),
+    '',
+    '## 5 Regeln',
+    '',
+    'Übernommen wird nur `import-ready` mit Regel B (starker Beginn bis zum Stichtag und starker Fortbestand) ohne widersprechendes Registerereignis. Alles andere bleibt draußen: Review-Fälle unter `data/imports/juris-sh/review/`, keine automatische Freigabe, kein Freeze. Die Einzeldaten je Dokument stehen in `corpus-inventory.json`.',
     '',
   ];
   return `${lines.join('\n')}\n`;

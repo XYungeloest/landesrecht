@@ -1,11 +1,13 @@
 # Zugriffslage: konsolidiertes Landesrecht Schleswig-Holstein (juris)
 
-**Status: robots.txt `advisory` (Nutzerentscheidung 2026-09-18) · Normtext über dokumentierte Adressformen
-NICHT abrufbar · NSH-Bulk blockiert. Stand 2026-09-18.**
+**Status: robots.txt `advisory` (Nutzerentscheidung 2026-09-18) · Normtext über die öffentliche PDF-Ausgabe
+abrufbar (anonyme Sitzung eines öffentlichen Permalink-Aufrufs, GET, kein CSRF, kein Login) · interne
+Schnittstelle `/jportal/wsrest/` nicht benutzt · TDM-Vorbehalt dokumentiert. Stand 2026-09-18 (Run 6).**
 
 Maschinenlesbare Belege: `data/audits/juris-sh/discovery/robots.json`,
-`data/audits/juris-sh/discovery/content-addressability.json`, Berichte `data/audits/juris-sh/SOURCE_INVENTORY.md`,
-`STRUCTURE_REPORT.md`, `READINESS.md`. Die Politik selbst steht im Code: `packages/importers/juris-sh/src/access/policy.ts`.
+`data/audits/juris-sh/discovery/content-addressability.json`, `data/audits/juris-sh/discovery/public-exports.json`,
+Berichte `data/audits/juris-sh/SOURCE_INVENTORY.md`, `STRUCTURE_REPORT.md`, `PUBLIC_EXPORT_DISCOVERY.md`,
+`SAMPLE_REPORT.md`, `READINESS.md`. Die Politik selbst steht im Code: `packages/importers/juris-sh/src/access/policy.ts`.
 
 ## 1 Befund robots.txt (bleibt dokumentiert)
 
@@ -37,6 +39,7 @@ Umsetzung (`robotsPolicy: 'advisory'` in `access/policy.ts`, geprüft vom Fetche
   429/5xx, Abbruch nach aufeinanderfolgenden Sperrantworten, Abrufbudget je Lauf.
 - Technisch verweigert (bevor ein Netzabruf entsteht): jeder andere Host, jede andere Methode als GET, jeder
   Anfragekörper, die internen Schnittstellen `/jportal/wsrest/…` und `/api/…` sowie die Anmeldestrecke `/r3`.
+  Erlaubt sind die öffentlichen Seiten, Permalinks und die dokumentierte Ausgabeadresse `/jportal/recherche3doc/…`.
 - Nicht umgangen werden Login, Authentifizierung, CAPTCHA, IP-Sperren, Sitzungs-/Zugriffskontrolle, Paywalls,
   JavaScript-Bot-Challenges und nicht öffentliche Schnittstellen. Keine Tarnung, keine Suchmaschinen-Caches.
 - Eine Politik `binding` bleibt im Wrapper möglich (dann prüft er jede Anfrage gegen die robots.txt); sie ist
@@ -60,45 +63,61 @@ Die Oberfläche verlinkt Hilfe, Impressum, Datenschutzhinweis und Barrierefreihe
 
 ## 4 Technische Zugriffssperre
 
-**Keine.** Alle Abrufe (robots.txt, Sitemaps, Permalinks, Dokumentadressen, Impressum, Skriptbündel) wurden mit
-HTTP 200 bzw. 404 beantwortet; kein 403, kein 429, keine Challenge-Seite, keine Wiederholung nötig.
+**Keine.** Alle Abrufe (robots.txt, Sitemaps, Permalinks, Dokumentadressen, Impressum, Skriptbündel, PDF-Ausgaben
+des Vollkorpus) wurden mit HTTP 200, 302 bzw. 404 beantwortet; kein 403, kein 429, keine Challenge-Seite.
 
-## 5 Neuer Blocker: Normtext ist über die dokumentierten Adressformen nicht abrufbar
+## 5 Befund Run 5 (gilt weiter): Die Dokumentseiten sind eine Skriptoberfläche
 
-Alle dokumentierten öffentlichen Adressformen (`/bssh/document/<ID>`, `…/part/X`, `…/format/xsl`,
-`…/format/xsl/part/X`; ebenso `/perma?d=`, `/perma?a=`, jlink und die Legacy-Adressen, die serverseitig auf
-`/bssh/` umleiten) liefern für jedes Dokument **dieselbe** 5 353 Bytes große Startseite der Portaloberfläche
-(SHA-256 `ad4afe0ffcb2…`, 20 von 20 Proben über fünf Dokumentfamilien): ein leerer Anwendungscontainer, der Inhalt
-wird erst per JavaScript geladen.
+Alle dokumentierten Dokumentadressen (`/bssh/document/<ID>`, `…/part/X`, `…/format/xsl`, `…/format/xsl/part/X`;
+ebenso `/perma?d=`, `/perma?a=`, jlink und die Legacy-Adressen, die serverseitig auf `/bssh/` umleiten) liefern für
+jedes Dokument **dieselbe** 5 353 Bytes große Startseite der Portaloberfläche (SHA-256 `ad4afe0ffcb2…`): ein leerer
+Anwendungscontainer. Die Oberfläche lädt Text und Metadaten per **POST an `/jportal/wsrest/recherche3/`** mit
+`JURIS-PORTALID: bssh`, `X-CSRF-TOKEN` (aus der POST-Initialisierung `init`) und Sitzungscookie. Diese Schnittstelle
+ist nicht dokumentiert; sie wird **nicht** benutzt und vom Fetcher technisch verweigert (auch in Run 6 kein Aufruf).
 
-Woher (belegt am ausgelieferten Skriptbündel, nicht benutzt): Die Oberfläche lädt Dokumente per **POST an
-`/jportal/wsrest/recherche3/`** mit den Kopfzeilen `JURIS-PORTALID: bssh` und `X-CSRF-TOKEN` sowie Sitzungscookie
-(`credentials: include`). Diese Schnittstelle ist in keiner Hilfeseite dokumentiert und sitzungsgebunden. Nach der
-Auftragsvorgabe („liefert nur ein undokumentierter interner JSON-/REST-Endpunkt die Inhalte, diesen nicht benutzen,
-sondern mit Beleg berichten“) wird sie **nicht** benutzt; der Fetcher verweigert sie technisch.
+## 6 Run 6: öffentlicher Ausgabeweg PDF – was er ist und was er nicht ist
 
-Folgen:
+Befund der Public Export Discovery (23 Normen, statische Analyse der Skriptbündel, `PUBLIC_EXPORT_DISCOVERY.md`):
 
-- Enumeration ist möglich (Sitemap: 2 808 Rahmendokumente Landesrecht, 2 389 Verwaltungsvorschriften; Quellidentität
-  juris-DOKNR), aber **kein Normtext, keine Metadaten** (Titel, Typ, Fassung, Geltung).
-- Keine Rohquellen, kein Parser, keine Strukturinventur, keine Stichtagsklassifikation, kein Bulk.
-- Die Sitemap ist kein Stichtagsbestand: Beim Landesrecht stehen auch außer Kraft getretene Normen darin, bei den
-  Verwaltungsvorschriften fehlen am Stichtag geltende, inzwischen abgelaufene VwV.
+| Zugriffsart | Adresse | Ergebnis |
+| --- | --- | --- |
+| Dokumentseite, Teil, XSL-Ansicht | `GET /bssh/document/<ID>[…]` | Skriptoberfläche ohne Inhalt, setzt keine Cookies |
+| Permalink „genau dieses Dokument“ | `GET /perma?d=<DOKNR oder Alias>` → `/jportal/perma?portal=bssh&d=…` (302) → `/bssh/?query=DOKNR:…` | fassungsfeste Kennung; der Zwischenschritt setzt eine **anonyme Sitzung** (`JSESSIONID`, `LASTACCESS`, `OAuth_Token_Request_State`, `jwtCookie`) – ohne Anmeldung |
+| Permalink „gültige Fassung / Gesamtausgabe“ | `GET /perma?a=<juris-Abkürzung>` → `/bssh/?aiz=1&docId=<Rahmendokument>` | gleitende Kennung, nur bei auflösbarer Abkürzung |
+| **PDF-Ausgabe (Menüpunkt „PDF speichern“)** | `GET /jportal/recherche3doc/<Name>.pdf?json={"format":"pdf","docPart":"X","docId":"<DOKNR>","portalId":"bssh"}` | ohne Sitzung: HTTP 200 text/plain „…letzte Sitzung bereits beendet…“; **mit der Sitzung des Permalink-Aufrufs: das PDF** (Textlayer, kein OCR) |
+| PDF einer Einzelfassung | dieselbe Adresse ohne `docPart` | genau diese historische Fassung mit „Fassung vom“, „Gültig ab/bis“ |
+| RTF-/HTML-Ausgabe | `…/<Name>.rtf` bzw. `format: html` | RTF ohne Sitzung wie PDF; HTML-Ausgabe HTTP 500 – nicht benutzt |
+| Drucken | Route `/bssh/print/document` der Oberfläche | rendert den über die interne Schnittstelle geladenen Zustand – keine eigene Serverausgabe |
+| Gesamtausgabe-ZIP (`aizZipUrl`) | nur aus der internen Dokumentantwort bekannt | nicht benutzt |
 
-## 6 Was nötig wäre (Entscheidung beim Menschen)
+Einordnung (aus Code und `Set-Cookie`-Belegen, nicht durch Aufruf der internen Schnittstelle): Die PDF-Ausgabe
+verlangt **nur eine normale anonyme Browsersitzung**, wie sie jeder Besucher beim ersten öffentlichen Seitenaufruf
+automatisch erhält; es gibt keine Zugangsdaten, keine Anmeldung, kein CSRF-Token und keine Challenge. Das
+Sitzungscookie wird ausschließlich für die offizielle Ausgabefunktion verwendet (eine Sitzung je Lauf, neu eröffnet
+nur, wenn die Ausgabe sie für beendet erklärt). Cookie-Werte werden nicht gespeichert.
 
-1. **Freigabe der internen Schnittstelle** `/jportal/wsrest/recherche3/` durch den Nutzer – mit der Folge, dass der
-   Adapter eine Sitzung aufbaut und das CSRF-Token der Sitzung verwendet (Sitzungssteuerung wie im Browser, keine
-   Anmeldung); oder
-2. **Datenlieferung/Freigabe** durch das Zentrale IT-Management SH bzw. die juris GmbH (Export des konsolidierten
-   Landesrechts einschließlich historischer Fassungen und VwV); oder
-3. **amtliche Verkündungsfassungen** (GVOBl./Amtsbl., Verkündungsportal SH – dort gilt robots.txt verbindlich mit
-   `Crawl-delay: 180`) mit vollständigen Rekonstruktionsketten je Norm – für einen Landesbestand nicht in
-   vertretbarer Zeit leistbar.
+Abrufregeln wie bisher: ehrlicher User-Agent, 1 Anfrage/s für jede Station (auch Weiterleitungen), keine
+Parallelität, Cache `.cache/juris-sh`, Timeout, `Retry-After`, Backoff, Abbruch bei 403/429/Challenge; resumierbar
+(`npm run import:juris-sh:fetch-corpus -- --phase gesamtausgaben|units`).
 
-Bis dahin: NSH bleibt „Enumeration, Zugriffspolitik und Belege bereit, Normtext nicht abrufbar“.
+## 7 TDM-Vorbehalt (eigener Befund, getrennt von robots.txt, Erreichbarkeit und Sitzung)
 
-## 7 Hinweis zu anderen Ländern
+Jede Antwort trägt den HTTP-Kopf `tdm-reservation: 1`, die Oberfläche zusätzlich
+`<meta name="tdm-reservation" content="1">`; `/.well-known/tdmrep.json` fehlt (HTTP 404). Das ist ein
+maschinenlesbarer Nutzungsvorbehalt für Text- und Data-Mining (TDM Reservation Protocol). Er ist unabhängig davon,
+dass robots.txt für diesen Adapter `advisory` ist, dass keine technische Sperre besteht und dass keine Anmeldung nötig
+ist. Der Adapter zieht daraus **keine** rechtliche Schlussfolgerung; die Bewertung (Normtexte als amtliche Werke,
+redaktionelle Aufbereitung, Datenbankschutz) bleibt dem Menschen vorbehalten.
+
+## 8 Folgen
+
+- Enumeration (Sitemap: 2 808 Rahmendokumente Landesrecht, 2 389 Verwaltungsvorschriften) und Normtext über die
+  PDF-Ausgabe: Gesamtausgabe je Rahmendokument/VwV, Einzelfassungen für den Stichtag.
+- Stichprobe (38 Normen, `SAMPLE_REPORT.md`): Textintegrität exact 38/38.
+- Vollkorpus: 5 195 Gesamtausgaben und 18 636 Einzelfassungen über diesen Weg (23 437 Netzabrufe, 0 Sperrantworten);
+  Inventur und Bulk: `docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`, `data/audits/juris-sh/CORPUS_INVENTORY.md`.
+
+## 9 Hinweis zu anderen Ländern
 
 `https://www.gesetze-bayern.de/robots.txt` erlaubt ausdrücklich `User-agent: * / Allow: /`; der BayWü-Adapter ist
 von dieser Politik nicht berührt.

@@ -22,12 +22,24 @@ import { CACHE_DIR } from '../common/constants.ts';
 import { parsePublicationDocument } from '../events/documents.ts';
 import { decodeEntities, parseGvblIssueIndex, type IssueRow } from '../events/listings.ts';
 import { parseLongGermanDate } from '../events/resolve.ts';
+import { parseAmtsblattIssue, parseAmtsblattVolume } from '../baseline-only/platform.ts';
+import { amtsblattIssueUrl, amtsblattVolumeUrl, type MinisterialJournal } from '../baseline-only/references.ts';
 import { gazetteUnits, normalizeGazetteText, type GazetteUnit } from './gazette.ts';
 import { cacheKey, readCached, type CachedSource } from './source.ts';
 
 export const PLATFORM = 'https://www.verkuendung-bayern.de';
 
-export type Organ = 'gvbl' | 'baymbl';
+/**
+ * Lauf 8: auch die Amtsblätter der Ministerien 2009–2018 (AllMBl., KWMBl., FMBl., JMBl.) – amtliche elektronische
+ * Fassung auf der Plattform, erreichbar über Jahrgang → Ausgabe → Dokument (Parser aus `baseline-only/platform.ts`).
+ */
+export type AmtsblattOrgan = 'allmbl' | 'kwmbl' | 'fmbl' | 'jmbl';
+export type Organ = 'gvbl' | 'baymbl' | AmtsblattOrgan;
+
+export const AMTSBLATT_JOURNALS: Readonly<Record<AmtsblattOrgan, MinisterialJournal>> = { allmbl: 'AllMBl', kwmbl: 'KWMBl', fmbl: 'FMBl', jmbl: 'JMBl' };
+export const isAmtsblatt = (organ: Organ): organ is AmtsblattOrgan => organ in AMTSBLATT_JOURNALS;
+/** Jahrgänge der Amtsblätter mit amtlicher elektronischer Fassung auf der Plattform. */
+export const AMTSBLATT_VOLUMES = { first: 2009, last: 2018 } as const;
 
 export interface PublicationRef {
   organ: Organ;
@@ -36,7 +48,7 @@ export interface PublicationRef {
 }
 
 export const publicationKey = (ref: PublicationRef): string => `${ref.organ}|${ref.volume}|${ref.position}`;
-export const publicationCitation = (ref: PublicationRef): string => (ref.organ === 'gvbl' ? `GVBl. ${ref.volume} S. ${ref.position}` : `BayMBl. ${ref.volume} Nr. ${ref.position}`);
+export const publicationCitation = (ref: PublicationRef): string => (ref.organ === 'gvbl' ? `GVBl. ${ref.volume} S. ${ref.position}` : ref.organ === 'baymbl' ? `BayMBl. ${ref.volume} Nr. ${ref.position}` : `${AMTSBLATT_JOURNALS[ref.organ]}. ${ref.volume} S. ${ref.position}`);
 export const detailPageUrl = (ref: PublicationRef): string => `${PLATFORM}/${ref.organ}/${ref.volume}-${ref.position}/`;
 export const gvblIssueIndexUrl = (volume: number): string => `${PLATFORM}/gesetz-und-verordnungsblatt/alle-ausgaben-des-gvbl-ab-1945/?volume=${volume}`;
 
@@ -44,6 +56,10 @@ export const gvblIssueIndexUrl = (volume: number): string => `${PLATFORM}/gesetz
 export const SOURCE_AUTHORITY: Readonly<Record<Organ, { publicationAuthority: string; digitalRepresentation: string }>> = {
   gvbl: { publicationAuthority: 'printed-official', digitalRepresentation: 'official-platform-informational-copy' },
   baymbl: { publicationAuthority: 'electronic-official', digitalRepresentation: 'official-electronic-edition' },
+  allmbl: { publicationAuthority: 'electronic-official', digitalRepresentation: 'official-electronic-edition' },
+  kwmbl: { publicationAuthority: 'electronic-official', digitalRepresentation: 'official-electronic-edition' },
+  fmbl: { publicationAuthority: 'electronic-official', digitalRepresentation: 'official-electronic-edition' },
+  jmbl: { publicationAuthority: 'electronic-official', digitalRepresentation: 'official-electronic-edition' },
 };
 
 /**
@@ -52,16 +68,23 @@ export const SOURCE_AUTHORITY: Readonly<Record<Organ, { publicationAuthority: st
  */
 export function candidateRefs(reference: string | undefined, enactmentDate: string | undefined): PublicationRef[] {
   if (!reference) return [];
-  const match = /^(GVBl|BayMBl)\.?\s*(\d{4})?\s*(S\.|Nr\.)\s*(\d+)/u.exec(reference.trim());
+  // „(BayMBl. 728)“ (ohne „Nr.“, BayMBl. 2023 Nr. 30) zählt wie „BayMBl. Nr. 728“; Amtsblätter nur mit Seite und ohne
+  // Teilangabe („KWMBl. I S. 194“ ist die gedruckte Ausgabe vor 2009).
+  const match = /^(GVBl|BayMBl|AllMBl|AIIMBl|KWMBl|FMBl|JMBl)\.?\s*(\d{4})?\s*(S\.|Nr\.)?\s*(\d+)/u.exec(reference.trim());
   if (!match) return [];
-  const organ: Organ = match[1] === 'GVBl' ? 'gvbl' : 'baymbl';
+  const name = match[1] === 'AIIMBl' ? 'AllMBl' : match[1]!;
+  const organ = name.toLowerCase() as Organ;
+  if (match[3] === undefined && organ !== 'baymbl') return [];
+  if (isAmtsblatt(organ) && match[3] !== 'S.') return [];
   const position = Number(match[4]);
-  if (match[2]) return [{ organ, volume: Number(match[2]), position }];
+  const inRange = (volume: number): boolean => !isAmtsblatt(organ) || (volume >= AMTSBLATT_VOLUMES.first && volume <= AMTSBLATT_VOLUMES.last);
+  if (match[2]) return inRange(Number(match[2])) ? [{ organ, volume: Number(match[2]), position }] : [];
   if (!enactmentDate) return [];
   const volume = Number(enactmentDate.slice(0, 4));
   const refs: PublicationRef[] = [{ organ, volume, position }];
-  if (enactmentDate.slice(5, 7) === '12') refs.push({ organ, volume: volume + 1, position });
-  return refs;
+  // Im Dezember erlassen, im Januar verkündet; Amtsblätter auch später im Folgejahr (Erlass im Herbst).
+  if (enactmentDate.slice(5, 7) === '12' || (isAmtsblatt(organ) && Number(enactmentDate.slice(5, 7)) >= 9)) refs.push({ organ, volume: volume + 1, position });
+  return refs.filter((ref) => inRange(ref.volume));
 }
 
 /** Ausfertigungsdatum in Langform („9. Mai 2006“), wie es die Verkündung druckt. */
@@ -124,7 +147,7 @@ function htmlPage(ref: PublicationRef, cached: CachedSource, root: string): Gaze
 
 function buildHtmlPage(ref: PublicationRef, cached: CachedSource): GazettePage {
   const html = new TextDecoder().decode(cached.bytes);
-  const document = parsePublicationDocument(html, ref.organ, ref.volume, ref.position);
+  const document: Partial<ReturnType<typeof parsePublicationDocument>> = ref.organ === 'gvbl' || ref.organ === 'baymbl' ? parsePublicationDocument(html, ref.organ, ref.volume, ref.position) : {};
   const units = gazetteUnits(html);
   return {
     ref,
@@ -161,6 +184,18 @@ export async function lookupPage(root: string, refs: readonly PublicationRef[], 
   const identity = enactmentDate ? normalizeGazetteText(longGermanDate(enactmentDate)) : undefined;
   const pdfCandidates: PublicationRef[] = [];
   for (const ref of refs) {
+    if (isAmtsblatt(ref.organ)) {
+      const found = await amtsblattPage(root, ref, enactmentDate, tried);
+      if (found.status === 'found') {
+        if (identity && !found.page.identityText.includes(identity)) continue;
+        return { status: 'found', page: found.page, tried };
+      }
+      if (found.status === 'missing') {
+        needs.push(...found.needs);
+        break;
+      }
+      continue;
+    }
     const url = detailPageUrl(ref);
     tried.push(url);
     const cached = await readCached(root, url);
@@ -219,6 +254,58 @@ export async function lookupPage(root: string, refs: readonly PublicationRef[], 
     if (needs.length > 0) return { status: 'missing', needs, tried };
   }
   return { status: 'unavailable', reason: pdfCandidates.length > 0 ? 'Detailseite belegt nicht vorhanden (404), keine PDF-Ausgabe mit passendem Seitenbereich' : `keine Seite trägt das Ausfertigungsdatum ${enactmentDate ?? '–'}`, tried };
+}
+
+/**
+ * Dokument eines Amtsblatts 2009–2018 aus dem Cache: Jahrgangsliste → Ausgaben, deren Seitenbereich die Seite enthält
+ * und die nicht vor dem Erlass erschienen → das Dokument, das auf der Seite beginnt (bei mehreren das mit dem zitierten
+ * Erlassdatum) → seine HTML-Seite. Verkündungsdatum ist das der Ausgabe laut Jahrgangsliste. Fehlt eine Liste oder Seite,
+ * ist sie Bedarf – der Reihe nach, wie die Auflösung sie braucht.
+ */
+async function amtsblattPage(root: string, ref: PublicationRef, enactmentDate: string | undefined, tried: string[]): Promise<{ status: 'found'; page: GazettePage } | { status: 'missing'; needs: string[] } | { status: 'none' }> {
+  const journal = AMTSBLATT_JOURNALS[ref.organ as AmtsblattOrgan];
+  const volumeUrl = amtsblattVolumeUrl(journal, ref.volume);
+  tried.push(volumeUrl);
+  const volumePage = await readCached(root, volumeUrl);
+  if (!volumePage) return (await isNotFound(root, volumeUrl)) ? { status: 'none' } : { status: 'missing', needs: [volumeUrl] };
+  const issues = parseAmtsblattVolume(new TextDecoder().decode(volumePage.bytes)).filter((row) => row.firstPage <= ref.position && ref.position <= row.lastPage && (!enactmentDate || row.publishedAt >= enactmentDate));
+  const found: Array<{ publishedAt: string; htmlPath: string }> = [];
+  const needs: string[] = [];
+  for (const issue of issues) {
+    const issueUrl = amtsblattIssueUrl(issue.htmlPath);
+    tried.push(issueUrl);
+    const issuePage = await readCached(root, issueUrl);
+    if (!issuePage) {
+      if (!(await isNotFound(root, issueUrl))) needs.push(issueUrl);
+      continue;
+    }
+    const rows = parseAmtsblattIssue(new TextDecoder().decode(issuePage.bytes)).documents.filter((row) => row.page === ref.position && row.htmlPath);
+    const dated = rows.length > 1 && enactmentDate ? rows.filter((row) => row.enactmentDate === enactmentDate) : rows;
+    for (const row of dated) found.push({ publishedAt: issue.publishedAt, htmlPath: row.htmlPath! });
+  }
+  if (needs.length > 0) return { status: 'missing', needs };
+  if (found.length !== 1) return { status: 'none' };
+  const url = amtsblattIssueUrl(found[0]!.htmlPath);
+  tried.push(url);
+  const cached = await readCached(root, url);
+  if (!cached) return (await isNotFound(root, url)) ? { status: 'none' } : { status: 'missing', needs: [url] };
+  const key = `${root}\n${cached.url}\n${cached.sha256}`;
+  const known = PAGE_CACHE.get(key);
+  if (known) return { status: 'found', page: known };
+  const html = new TextDecoder().decode(cached.bytes);
+  const page: GazettePage = {
+    ref,
+    citation: publicationCitation(ref),
+    url: cached.url,
+    kind: 'html',
+    sha256: cached.sha256,
+    ...(cached.retrievedAt ? { retrievedAt: cached.retrievedAt } : {}),
+    units: gazetteUnits(html),
+    publishedAt: found[0]!.publishedAt,
+    identityText: normalizeGazetteText(decodeEntities(html.replace(/<[^>]+>/gu, ' '))),
+  };
+  PAGE_CACHE.set(key, page);
+  return { status: 'found', page };
 }
 
 /** Datum in Langform aus einem Zitatteil („vom 9. Mai 2006“) → ISO. */

@@ -282,12 +282,18 @@ export function buildProjectionPlan(records: readonly NormRecord[], options: Pro
   return { jurisdiction: options.jurisdiction, full, groups, stats };
 }
 
+/** NUL-Zeichen im SQL-Text: Wrangler liest die Datei dort ab, der Rest einer Datei ginge stillschweigend verloren. */
+const NUL_CHARACTER = new RegExp('\\u0000', 'u');
+
 /** SQL-Literal für Wrangler-Dateien (`wrangler d1 execute --file`). */
 export function sqlLiteral(value: unknown): string {
   if (value === null || value === undefined) return 'NULL';
   if (typeof value === 'number') return Number.isFinite(value) ? String(value) : 'NULL';
   if (typeof value === 'boolean') return value ? '1' : '0';
-  return `'${String(value).replace(/'/g, "''")}'`;
+  const text = String(value);
+  // Fail-closed: Ein NUL-Zeichen hat 2026-09-18 eine Remote-Datei nach der Hälfte abgeschnitten, ohne Fehlermeldung.
+  if (NUL_CHARACTER.test(text)) throw new Error(`SQL-Literal enthält ein NUL-Zeichen (Inhalt beginnt mit ${JSON.stringify(text.slice(0, 60))}); der Inhalt ist zu bereinigen, nicht die Datei`);
+  return `'${text.replace(/'/g, "''")}'`;
 }
 
 export function renderStatement(query: PlanQuery): string {

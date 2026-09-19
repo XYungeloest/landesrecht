@@ -18,6 +18,9 @@ import { stableStringify } from '@landesrecht/importer-recht-nrw/common/persist.
 
 import type { FormulaId, Operation } from './formulas.ts';
 import type { FieldRef } from './location.ts';
+import type { RecipeTitle } from './title.ts';
+
+export type { RecipeTitle } from './title.ts';
 
 export const RECIPE_SCHEMA = 'bayernrecht-reverse-amendment/1' as const;
 /** Mehrstufige Rückrechnung: `amendments` (jüngste zuerst), je Änderung eigene Schritte. */
@@ -55,6 +58,72 @@ export interface RecipeStep {
   operation: Operation;
   /** Vorher-/Nachher-Beleg: Ausschnitt um die Stelle im Stichtags- und im heutigen Text. */
   evidence: { baseline: string; current: string };
+  /**
+   * `title`: Der Schritt ändert die **Überschrift der Norm** (Titelzeile samt Abkürzungszeile, `title.ts`), nicht den
+   * Körper; `scope` adressiert dann das einzige Feld des synthetischen Titelkörpers (`TITLE_FIELD`).
+   */
+  target?: 'title';
+  /** Offensichtlicher Satzfehler der Quelle, den der Schritt toleriert – mit Beleg (nur, wo das Ergebnis eindeutig ist). */
+  sourceDefect?: string;
+  /**
+   * Alttext aus den Verkündungen (Lauf 7): Fundstelle der Stammverkündung, deren Stand am Stichtag den Wortlaut
+   * vor dem Befehl trägt (`restoration` im Rezept). Nur an Operationen `replace-text`/`replace-blocks`.
+   */
+  restoredFrom?: string;
+}
+
+/**
+ * Alttext aus den Verkündungen (Lauf 7, `forward-from-publication`): Nicht umkehrbare Befehle (Neufassung, Aufhebung,
+ * Streichung ohne Anker) sind mit dem Wortlaut zurückgenommen, den die Stammverkündung am Stichtag trägt. Gebaut wird
+ * dieser Stand **vorwärts** aus den genannten Verkündungen; der ganze zurückgerechnete Stichtagskörper stimmt mit ihm
+ * im Wortlaut überein (`agreement`).
+ */
+export interface RecipeRestoration {
+  method: 'forward-from-publication';
+  /** Verkündungen des Stands am Stichtag: Stammverkündung, dann Änderungen vor dem Stichtag (vorwärts angewandt). */
+  sources: Array<{
+    role: 'base-publication' | 'prior-amendment';
+    citation: string;
+    url: string;
+    sha256: string;
+    retrievedAt?: string;
+    publishedAt?: string;
+    authority: string;
+    representation: string;
+    effectiveDate?: string;
+    /** Änderungen vor dem Stichtag: Abschnitt und Einleitungssatz (Einheit der Seite) des Befehlsblocks für die Norm. */
+    section?: string;
+    introIndex?: number;
+  }>;
+  /** Umsetzer der Verkündungsseite (`baseline-only/html.ts`). */
+  converter: string;
+  /** SHA-256 des normalisierten Seitentexts der Stammverkündung. */
+  pageTextSha256: string;
+  /** Fingerabdruck der Stammverkündung im Blockmodell der Verkündung. */
+  publicationFingerprint: string;
+  /**
+   * Nur mit Änderungen vor dem Stichtag: Fingerabdruck der Stammfassung in Portalgestalt, erreicht durch Rücknahme aller
+   * Änderungen vor dem Stichtag (`prior-amendment`, jüngste zuerst) vom Stichtagskörper aus; Zahl ihrer Schritte.
+   */
+  stammfassungFingerprint?: string;
+  priorSteps?: number;
+  /** Wortlautvergleich: zurückgerechneter Stichtagskörper ↔ Stand der Verkündungen. */
+  agreement: { normalization: string; characters: number; detail: string };
+  /** Zahl der Schritte mit wiederhergestelltem Alttext (`restoredFrom`). */
+  restoredSteps: number;
+  /**
+   * Lauf 8: Befunde der Kette über Veröffentlichungen **nach** dem Stichtag außerhalb der Kette (Registerereignis, andere
+   * Verkündung mit Änderungsbefehl, Änderungsverlauf, Fortführungsnachweis), die nur die Wortlautprobe ausräumt: Der
+   * Stichtagskörper gleicht der Stammverkündung, also hat keine dieser Veröffentlichungen den Wortlaut geändert. Dann kann
+   * `restoredSteps` 0 sein – die Stammverkündung ist hier Beleg, nicht Quelle von Text.
+   */
+  chainChecks?: Array<{ reason: string; detail: string }>;
+}
+
+/** Überschrift der Norm heute und am Stichtag – nur in Rezepten mit Titelschritten. */
+export interface RecipeTitleChange {
+  current: RecipeTitle;
+  baseline: RecipeTitle;
 }
 
 /** Eine zurückgenommene Änderung (v1: `amendment`; v2: Eintrag in `amendments`, dort mit eigenen `steps`). */
@@ -116,6 +185,10 @@ export interface ReconstructionRecipe {
   /** Belege dafür, dass diese Änderung der einzige Schritt zwischen Stichtag und heute ist. */
   chain: string[];
   steps: RecipeStep[];
+  /** Nur wenn ein Schritt die Überschrift der Norm ändert: `applyReverseRecipeToLaw` statt `applyReverseRecipe`. */
+  title?: RecipeTitleChange;
+  /** Nur wenn Schritte ihren Alttext aus den Verkündungen haben (`restoredFrom`). */
+  restoration?: RecipeRestoration;
   whitespace: string;
   expected: {
     /** Fingerabdruck des heutigen geparsten Körpers (kanonisches JSON, SHA-256). */
@@ -158,6 +231,10 @@ export interface ReconstructionRecipeV2 {
   chain: string[];
   /** Alle Verkündungen des Rezepts mit Adresse und Prüfsumme. */
   sources: RecipeSource[];
+  /** Nur wenn ein Schritt die Überschrift der Norm ändert: `applyReverseRecipeToLaw` statt `applyReverseRecipe`. */
+  title?: RecipeTitleChange;
+  /** Nur wenn Schritte ihren Alttext aus den Verkündungen haben (`restoredFrom`). */
+  restoration?: RecipeRestoration;
   whitespace: string;
   expected: {
     currentFingerprint: string;
@@ -186,6 +263,12 @@ export function recipeSources(recipe: AnyReconstructionRecipe): RecipeSource[] {
     ...(recipe.baselineTextInForce.sources ?? []).map((source) => ({ role: 'baseline-start' as const, citation: source.citation, url: source.url, sha256: source.sha256, ...(source.retrievedAt ? { retrievedAt: source.retrievedAt } : {}) })),
   ];
 }
+
+/** Trägt das Rezept Schritte mit Alttext aus den Verkündungen? */
+export const recipeRestores = (recipe: AnyReconstructionRecipe): boolean => recipe.restoration !== undefined || recipeAmendments(recipe).some((amendment) => amendment.steps.some((step) => step.restoredFrom !== undefined));
+
+/** Ändert das Rezept die Überschrift der Norm? */
+export const recipeChangesTitle = (recipe: AnyReconstructionRecipe): boolean => recipe.title !== undefined || recipeAmendments(recipe).some((amendment) => amendment.steps.some((step) => step.target === 'title'));
 
 /** Alle Schritte in Vorwärtsreihenfolge (älteste Änderung zuerst). */
 export function forwardOrder(recipe: AnyReconstructionRecipe): RecipeStep[] {
@@ -244,5 +327,23 @@ export function recipeProblems(recipe: AnyReconstructionRecipe): string[] {
   if (!start || !iso.test(start.date ?? '') || !Array.isArray(start.evidence) || start.evidence.length === 0) problems.push('Beginn der Stichtagsfassung nicht belegt (baselineTextInForce)');
   else if (start.date > recipe.baselineDate) problems.push(`Beginn der Stichtagsfassung ${start.date} liegt nach dem Stichtag`);
   if (!isRecipeV2(recipe) && (!Array.isArray(recipe.steps) || recipe.steps.length === 0) && !problems.some((problem) => problem.startsWith('keine Schritte'))) problems.push('keine Schritte');
+  const titleSteps = amendments.some((amendment) => Array.isArray(amendment?.steps) && amendment.steps.some((step) => step.target === 'title'));
+  if (titleSteps && !recipe.title) problems.push('Titelschritte ohne Überschrift heute/am Stichtag (title)');
+  if (!titleSteps && recipe.title) problems.push('Überschrift (title) ohne Titelschritt');
+  if (recipe.title && (typeof recipe.title.current?.title !== 'string' || typeof recipe.title.baseline?.title !== 'string')) problems.push('Überschrift heute oder am Stichtag ohne Titel');
+  const restoredSteps = amendments.flatMap((amendment) => (Array.isArray(amendment?.steps) ? amendment.steps : [])).filter((step) => step.restoredFrom !== undefined);
+  const restoration = recipe.restoration;
+  if (restoredSteps.length > 0 && !restoration) problems.push('Schritte mit Alttext aus den Verkündungen ohne Beleg (restoration)');
+  if (restoration) {
+    if (restoredSteps.length === 0 && !(Array.isArray(restoration.chainChecks) && restoration.chainChecks.length > 0)) problems.push('Beleg der Wiederherstellung (restoration) ohne wiederhergestellten Schritt und ohne Befund der Kette (chainChecks)');
+    if (restoration.method !== 'forward-from-publication') problems.push(`Wiederherstellung mit unbekannter Methode ${String(restoration.method)}`);
+    const sources = Array.isArray(restoration.sources) ? restoration.sources : [];
+    if (!sources.some((source) => source.role === 'base-publication')) problems.push('Wiederherstellung ohne Stammverkündung');
+    if (sources.some((source) => !source.url || !/^[0-9a-f]{64}$/u.test(source.sha256 ?? ''))) problems.push('Quelle der Wiederherstellung ohne Adresse oder SHA-256');
+    if (restoredSteps.some((step) => !sources.some((source) => source.citation === step.restoredFrom))) problems.push('Schritt nennt eine Quelle, die die Wiederherstellung nicht führt');
+    if (restoredSteps.some((step) => step.operation.kind !== 'replace-text' && step.operation.kind !== 'replace-blocks')) problems.push('wiederhergestellter Schritt ohne Operation replace-text/replace-blocks');
+    if (restoration.restoredSteps !== restoredSteps.length) problems.push(`Zahl der wiederhergestellten Schritte ${restoration.restoredSteps} ≠ ${restoredSteps.length}`);
+    if (!/^[0-9a-f]{64}$/u.test(restoration.publicationFingerprint ?? '') || !restoration.agreement?.detail) problems.push('Wiederherstellung ohne Fingerabdruck oder Wortlautvergleich');
+  }
   return problems;
 }

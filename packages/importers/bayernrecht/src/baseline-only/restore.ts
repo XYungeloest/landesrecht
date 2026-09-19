@@ -59,7 +59,7 @@ export function recipeProblems(recipe: BaselineOnlyRecipe, baselineDate: string)
   if (!(recipe.sources ?? []).some((source) => source.role === 'base' && source.url === recipe.base.url)) problems.push('Stammverkündung fehlt unter den Quellen');
   for (const amendment of recipe.amendments ?? []) {
     if (!iso.test(amendment.effectiveDate) || amendment.effectiveDate > baselineDate) problems.push(`Änderung ${amendment.citation}: Wirkung ${amendment.effectiveDate} nicht bis zum Stichtag`);
-    if (amendment.steps.length === 0) problems.push(`Änderung ${amendment.citation} ohne Schritte`);
+    if (amendment.steps.length === 0 && !amendment.titleChanges?.length) problems.push(`Änderung ${amendment.citation} ohne Schritte`);
   }
   return problems;
 }
@@ -87,8 +87,16 @@ export async function replayRecipe(root: string, recipe: BaselineOnlyRecipe): Pr
     if (bodyFingerprint(body) !== amendment.afterFingerprint) throw new RecipeError('amendment-replay', `${recipe.id}: Nach ${amendment.citation} weicht der Körper vom geprüften ab`);
   }
   if (bodyFingerprint(body) !== recipe.expected.baselineFingerprint) throw new RecipeError('baseline-fingerprint', `${recipe.id}: Stichtagskörper weicht vom geprüften ab`);
+  // Überschrift: Stammfassung → Änderungen → Stichtag, lückenlos.
+  let title = recipe.norm.originalTitle ?? converted.head.title;
+  if (title !== converted.head.title) throw new RecipeError('title-changed', `${recipe.id}: Überschrift der Stammfassung ≠ Rezept`);
+  for (const change of recipe.amendments.flatMap((amendment) => amendment.titleChanges ?? [])) {
+    if (change.before !== title) throw new RecipeError('title-replay', `${recipe.id}: ${change.id} erwartet die Überschrift „${change.before.slice(0, 80)}“`);
+    title = change.after;
+  }
+  if (recipe.amendments.some((amendment) => amendment.titleChanges?.length) && !title.startsWith(recipe.norm.title)) throw new RecipeError('title-replay', `${recipe.id}: Überschrift am Stichtag „${title.slice(0, 80)}“ ≠ Rezept „${recipe.norm.title.slice(0, 80)}“`);
   // Die Geltung hängt auch am Verzeichnis (Positivliste): Es muss unverändert im Cache liegen.
-  for (const source of recipe.sources.filter((entry) => entry.role === 'registry')) await cachedHtml(root, source.url, source.sha256, source.citation ?? 'Verzeichnis');
+  for (const source of recipe.sources.filter((entry) => entry.role === 'registry' || entry.role === 'annex')) await cachedHtml(root, source.url, source.sha256, source.citation ?? 'Verzeichnis');
   return { body };
 }
 
@@ -123,6 +131,20 @@ export function sourceLawFromRecipe(recipe: BaselineOnlyRecipe, body: SourceLaw[
     ...amendments.map((source) => reference(source, `Änderung vor dem Stichtag: ${source.citation}`, 'amendment-evidence', 'Vorwärts angewandt; Rundlauf bestanden')),
     ...(repeal ? [reference(repeal, `Ende der Norm: ${repeal.citation}`, 'amendment-evidence', `Letzter Geltungstag ${recipe.end.lastDay}; Beleg, dass die Vorschrift am Stichtag galt und heute nicht mehr geführt wird`)] : []),
     ...recipe.sources
+      .filter((source) => source.role === 'annex')
+      .map((source): SourceReference => ({
+        kind: 'primary-pdf',
+        system: 'bayernrecht',
+        label: source.citation ?? 'Anlage',
+        availability: 'external',
+        url: source.url,
+        retrievedAt: retrievalDate(source.retrievedAt),
+        sha256: source.sha256,
+        mediaType: 'application/pdf',
+        sourceRole: 'visual-control',
+        note: 'Anlage nur als PDF (Vordruck oder Übersicht): archiviert und als Quelle registriert, nicht als Text übernommen (docs/LEGAL_SCOPE.md, „Text nur als PDF“).',
+      })),
+    ...recipe.sources
       .filter((source) => source.role === 'registry')
       .map((source): SourceReference => ({ ...reference(source, source.citation ?? 'Amtliches Verzeichnis', 'amendment-evidence', 'Fortgeltung ab 1. Januar 2016 nach Nr. 1 VwVWBek (Positivliste)'), mediaType: 'application/pdf' })),
   ];
@@ -145,7 +167,7 @@ export function sourceLawFromRecipe(recipe: BaselineOnlyRecipe, body: SourceLaw[
     sourceNotes: [
       {
         label: 'Wiederherstellung',
-        text: `Heute nicht mehr geführte Vorschrift, am ${formatLongDate(recipe.baselineDate)} geltend. Text aus der amtlichen Verkündung ${recipe.norm.fundstelle}${recipe.amendments.length > 0 ? ` mit den Änderungen ${recipe.amendments.map((amendment) => amendment.citation).join(', ')}` : ''}; ${recipe.end.kind === 'expiry' ? 'außer Kraft' : 'aufgehoben'} durch ${recipe.end.repeal.citation}, letzter Geltungstag ${recipe.end.lastDay}.`,
+        text: `Heute nicht mehr geführte Vorschrift, am ${formatLongDate(recipe.baselineDate)} geltend. Text aus der amtlichen Verkündung ${recipe.norm.fundstelle}${recipe.amendments.length > 0 ? ` mit den Änderungen ${recipe.amendments.map((amendment) => amendment.citation).join(', ')}` : ''}; ${recipe.end.kind === 'expiry' ? 'außer Kraft' : 'aufgehoben'} durch ${recipe.end.repeal.citation}, letzter Geltungstag ${recipe.end.lastDay}.${recipe.sources.some((source) => source.role === 'annex') ? ` Anlagen liegen nur als PDF vor und sind als Quelle referenziert, nicht als Text übernommen: ${recipe.sources.filter((source) => source.role === 'annex').map((source) => source.citation ?? source.url).join('; ')}.` : ''}`,
       },
     ],
     sourceReferences: references,
@@ -217,7 +239,10 @@ export async function restoreNorm(input: RestoreInput): Promise<RestoredNorm> {
   const audit = auditRecord(transformed.record);
   // Nicht entscheidbare Eigennamen bleiben stehen, wie die Regel sie bildet, und werden Prüffall – wie im Bulk.
   const uncertain = audit.filter((finding) => finding.code === 'historical-name-uncertain' || finding.code === 'proper-name-uncertain');
-  const findings: ImportFinding[] = [...transformed.findings, ...uncertain];
+  const annexFindings: ImportFinding[] = recipe.sources
+    .filter((source) => source.role === 'annex')
+    .map((source) => ({ severity: 'warning' as const, code: 'annex-pdf-only', message: `${source.citation ?? 'Anlage'} liegt nur als PDF vor (${source.url}, SHA-256 ${source.sha256.slice(0, 16)}…); archiviert und als Quelle referenziert, nicht als Text übernommen` }));
+  const findings: ImportFinding[] = [...transformed.findings, ...uncertain, ...annexFindings];
   const reviewItems: ReviewItemInput[] = [...new Set(uncertain.map((finding) => finding.code))].map((code) => ({
     category: 'institution-mapping',
     key: code,
@@ -233,9 +258,9 @@ export async function restoreNorm(input: RestoreInput): Promise<RestoredNorm> {
   const assessment = assessBaselineValidity({ baseline: recipe.baselineDate, evidence: recipe.evidence });
   if (assessment.status !== 'active-at-baseline') throw new RecipeError('evidence', `${recipe.id}: Belegkette trägt die Stichtagsgeltung nicht (${assessment.reasons.join('; ')})`);
 
-  const raw = (source: RecipeSource): ManifestRawDocument => ({ role: source.role === 'registry' ? 'pdf' : 'gazette', url: source.url, finalUrl: source.url, sha256: source.sha256, contentType: source.contentType, retrievedAt: source.retrievedAt, byteLength: source.byteLength });
+  const raw = (source: RecipeSource): ManifestRawDocument => ({ role: source.role === 'registry' ? 'pdf' : source.role === 'annex' ? 'annex' : 'gazette', url: source.url, finalUrl: source.url, sha256: source.sha256, contentType: source.contentType, retrievedAt: source.retrievedAt, byteLength: source.byteLength });
   const base = recipe.sources.find((source) => source.role === 'base')!;
-  const archived = recipe.sources.filter((source) => source.role === 'base' || source.role === 'amendment' || source.role === 'repeal' || source.role === 'registry');
+  const archived = recipe.sources.filter((source) => source.role === 'base' || source.role === 'amendment' || source.role === 'repeal' || source.role === 'registry' || source.role === 'annex');
   const statement = `Die Vorschrift ${recipe.norm.fundstelle} galt seit ${recipe.begin.date}${recipe.amendments.length > 0 ? ` in der Fassung der Änderung ${recipe.amendments.at(-1)!.citation}` : ' unverändert'} und wurde durch ${recipe.end.repeal.citation} mit letztem Geltungstag ${recipe.end.lastDay} beendet; damit galt dieser Text am ${recipe.baselineDate}. Sie fehlt im heutigen Portalbestand und ist aus den amtlichen Verkündungen wiederhergestellt.`;
   const entry: BaselineOnlyManifestEntry = {
     ...manifestEntryDefaults(),

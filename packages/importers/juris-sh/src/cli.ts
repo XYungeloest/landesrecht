@@ -2,8 +2,8 @@
  * CLI des juris-SH-Adapters (Aufruf über scripts/import-juris-sh.ts).
  *
  * Dry-run ist überall Standard: Ohne `--write` schreibt kein Befehl. Befehle, deren Fachlogik nicht
- * ausführbar ist (Bulk, Suchaudit, R2-Sync setzen abrufbaren Normtext voraus), melden das ausdrücklich
- * und enden mit Exit 2 – nie mit stillem Erfolg.
+ * ausführbar ist (Suchaudit ohne projizierten Bestand, R2-Sync ohne Freigabe für Cloudflare), melden das
+ * ausdrücklich und enden mit Exit 2 – nie mit stillem Erfolg.
  *
  * Exit-Codes: 0 ok · 1 Fehler oder Abweichung · 2 noch nicht implementiert bzw. systemischer Abbruch.
  */
@@ -21,20 +21,20 @@ import { ENUMERABLE_AREAS } from './enumerate/enumeration.ts';
 import { runEnumerate } from './enumerate/run.ts';
 import { isPostBaseline } from './events/ledger.ts';
 import { ADDRESSABILITY_PATH, runAddressabilityProbe, STRUCTURE_REPORT_PATH } from './probe/addressability.ts';
+import { EXPORTS_PATH, EXPORTS_REPORT_PATH, runExportDiscovery } from './probe/exports.ts';
+import { runSample } from './pipeline/sample.ts';
+import { runFetchCorpus } from './pipeline/corpus.ts';
+import { runBulk } from './pipeline/bulk.ts';
 import { runAudit } from './reports/audit.ts';
 import { renderCoverage, renderHistoricalBaseline, renderReadiness, renderReconstructionQueue, renderReviewSummary } from './reports/render.ts';
 import { analyzeBaselineOnly, buildCoverage, buildReconstructionQueue, classifyBaseline, evaluateReadiness, readSnapshot } from './reports/status.ts';
 
 /** Befehle in der Reihenfolge, in der sie in der Übersicht erscheinen. */
-export const COMMANDS = ['enumerate', 'sample', 'bulk', 'audit', 'coverage', 'review', 'readiness', 'search-audit', 'reconstruction-queue', 'r2-sync', 'events'] as const;
+export const COMMANDS = ['enumerate', 'sample', 'fetch-corpus', 'inventory', 'bulk', 'audit', 'coverage', 'review', 'readiness', 'search-audit', 'reconstruction-queue', 'r2-sync', 'events'] as const;
 export type Command = (typeof COMMANDS)[number];
 
-/**
- * Befehle, die arbeiten. Alles andere endet mit „noch nicht implementiert“ (Exit 2): `bulk`, `search-audit`
- * und `r2-sync` setzen abrufbaren Normtext voraus, den die dokumentierten Adressformen des Portals nicht
- * liefern (data/audits/juris-sh/STRUCTURE_REPORT.md).
- */
-export const IMPLEMENTED_COMMANDS: readonly Command[] = ['enumerate', 'sample', 'audit', 'coverage', 'review', 'readiness', 'reconstruction-queue', 'events'];
+/** Befehle, die arbeiten. Alles andere endet mit „noch nicht implementiert“ (Exit 2). */
+export const IMPLEMENTED_COMMANDS: readonly Command[] = ['enumerate', 'sample', 'fetch-corpus', 'inventory', 'bulk', 'audit', 'coverage', 'review', 'readiness', 'search-audit', 'reconstruction-queue', 'r2-sync', 'events'];
 
 /** Berichte unter data/audits/juris-sh/ (Pfade an einer Stelle). */
 export const REPORT_PATHS = {
@@ -55,6 +55,9 @@ export interface CliOptions {
   offline: boolean;
   /** Quellen neu abrufen statt aus dem Cache (enumerate: robots.txt und Sitemaps – zweiter, unabhängiger Lauf). */
   refresh: boolean;
+  /** fetch-corpus: Phase und Laufzeitbudget in Minuten. */
+  phase?: 'gesamtausgaben' | 'units';
+  maxRuntimeMinutes?: number;
   json: boolean;
   resume: boolean;
   area?: SourceArea;
@@ -68,6 +71,15 @@ export interface CliOptions {
   reason?: string;
   by?: string;
   override?: string;
+  /** r2-sync: nur stagen (kein Netz), Staging-Verzeichnis, Transport, gleichzeitige Normen. */
+  stageOnly?: boolean;
+  stagingDir?: string;
+  r2Transport?: 'wrangler' | 'wrangler-api';
+  concurrency?: number;
+  /** search-audit: Stichprobe, Seed, Vollprüfung. */
+  sample?: number;
+  seed?: string;
+  full?: boolean;
 }
 
 function positiveInteger(value: string, option: string): number {
@@ -94,6 +106,13 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
       case '--dry-run': options.write = false; break;
       case '--offline': options.offline = true; break;
       case '--refresh': options.refresh = true; break;
+      case '--phase': {
+        const phase = take();
+        if (phase !== 'gesamtausgaben' && phase !== 'units') throw new Error('--phase erwartet gesamtausgaben|units');
+        options.phase = phase;
+        break;
+      }
+      case '--max-runtime': options.maxRuntimeMinutes = positiveInteger(take(), '--max-runtime'); break;
       case '--json': options.json = true; break;
       case '--resume': options.resume = true; break;
       case '--limit': options.limit = positiveInteger(take(), '--limit'); break;
@@ -105,6 +124,18 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
       case '--reason': options.reason = take(); break;
       case '--by': options.by = take(); break;
       case '--override': options.override = take(); break;
+      case '--stage-only': options.stageOnly = true; break;
+      case '--staging-dir': options.stagingDir = take(); break;
+      case '--r2-transport': {
+        const transport = take();
+        if (transport !== 'wrangler' && transport !== 'wrangler-api') throw new Error('--r2-transport erwartet wrangler|wrangler-api');
+        options.r2Transport = transport;
+        break;
+      }
+      case '--concurrency': options.concurrency = positiveInteger(take(), '--concurrency'); break;
+      case '--sample': options.sample = positiveInteger(take(), '--sample'); break;
+      case '--seed': options.seed = take(); break;
+      case '--full': options.full = true; break;
       case '--area': {
         const area = take();
         if (!(SOURCE_AREAS as readonly string[]).includes(area)) throw new Error(`--area erwartet ${SOURCE_AREAS.join('|')}`);
@@ -144,15 +175,29 @@ export const COMMAND_HELP: Readonly<Record<Command, string>> = {
   Ziele: data/imports/juris-sh/enumeration-{landesrecht,vwv}.json, data/audits/juris-sh/discovery/robots.json,
          data/audits/juris-sh/source-inventory.json, data/audits/juris-sh/SOURCE_INVENTORY.md`,
   sample: `sample [--write] [--offline]
-  Probe der dokumentierten Adressformen (/bssh/document/<ID>, …/part/X, …/format/xsl, …/format/xsl/part/X)
-  an Probedokumenten je Kennungsfamilie: liefern sie Normtext? Belegt zugleich, woher die Oberfläche den
-  Inhalt lädt (ohne diese interne Schnittstelle je aufzurufen). Sperrsignale (403/429/Challenge) halten an.
-  Ziele: data/audits/juris-sh/discovery/content-addressability.json, data/audits/juris-sh/STRUCTURE_REPORT.md`,
-  bulk: `bulk --area ${SOURCE_AREAS.join('|')} [--write] [--resume] [--limit n] [--only a,b]
-  Bulk-Lauf über die Enumeration: je Stammnorm Auflösung, Import, atomarer Checkpoint; Normfehler →
-  Review/failed und weiter, systemische Fehler → kontrollierter Abbruch. Laufbericht:
-  data/audits/juris-sh/runs/<runId>.json
-  Noch nicht implementiert: Die dokumentierten Adressformen liefern keinen Normtext (readiness: inhalt-adressierbar).`,
+  1. Probe der dokumentierten Adressformen (/bssh/document/<ID>, …/part/X, …/format/xsl, …/format/xsl/part/X)
+     an Probedokumenten je Kennungsfamilie: liefern sie Normtext? Belegt, woher die Oberfläche den Inhalt lädt.
+  2. Public Export Discovery an 23 Normen: Permalinks, Gesamtausgabe, Druckroute, PDF-/RTF-/HTML-Ausgabe
+     (GET ohne Cookie/CSRF), Sitzungsprobe, historische Fassungen, Set-Cookie- und TDM-Belege.
+  Die interne Schnittstelle /jportal/wsrest/ wird nie aufgerufen. Sperrsignale (403/429/Challenge) halten an.
+  Ziele: data/audits/juris-sh/discovery/{content-addressability,public-exports}.json,
+         data/audits/juris-sh/STRUCTURE_REPORT.md, data/audits/juris-sh/PUBLIC_EXPORT_DISCOVERY.md`,
+  'fetch-corpus': `fetch-corpus --phase gesamtausgaben|units [--limit n] [--max-runtime <min>] [--only a,b] [--offline]
+  Beschaffung, kein Import: PDF-Gesamtausgaben aller enumerierten Dokumente bzw. (Phase units) alle
+  Einzelfassungen der Rahmendokumente, deren heutige Ausgabe am Stichtag nicht galt oder deren Stichtagsgeltung
+  nur die Einzelfassungen entscheiden (Stand-Vermerk, fehlendes Verzeichnis). Kleine Rahmen zuerst. Streng nacheinander,
+  1 Anfrage/s, Cache (.cache/juris-sh), resumierbar; --limit begrenzt die Netzabrufe, --max-runtime die Laufzeit.
+  Zustand: data/imports/juris-sh/corpus-state.json (Checkpoint alle 10 Dokumente und am Ende).`,
+  inventory: `inventory [--write] [--json] [--limit n] [--only a,b]
+  Vollkorpus-Inventur netzfrei aus dem Cache: je Dokument Parser, Stichtag (Ausgabe bzw. Einzelfassungen),
+  Überleitung, Validierung, Textintegrität und Stichtagsbelege mit dem bestehenden Ereignisregister.
+  Schreibt keine Normen. Ziele mit --write: data/audits/juris-sh/corpus-inventory.json, CORPUS_INVENTORY.md`,
+  bulk: `bulk [--write] [--limit n] [--only a,b] [--json]
+  Bulk-Lauf wie inventory; mit --write werden übernahmefähige Normen (import-ready, Regel B, kein Registerwiderspruch)
+  nach content/norms/nsh/<slug>/ geschrieben, dazu Manifest (data/imports/juris-sh/manifest/), Review-Fälle
+  (data/imports/juris-sh/review/), Slug-Registry und Fortschritt (data/imports/juris-sh/bulk-state.json).
+  --write nur bei grüner Readiness (npm run import:juris-sh:readiness). Keine automatische Freigabe, kein Freeze.
+  Netzfrei: Fehlende Quellen sind not-cached (npm run import:juris-sh:fetch-corpus).`,
   audit: `audit [--write] [--json]
   Konsistenzprüfung des Zustands: Enumeration (Invarianten, Fingerabdruck), Quelleninventar, Sitemap- und
   Probebelege gegen den Cache (SHA-256 nachgerechnet), Manifest, Review-Queue, Bestand unter content/norms/nsh.
@@ -170,18 +215,24 @@ review --decide <id> --status <s> --reason <text> [--by <name>] [--override <id>
   readiness: `readiness [--write] [--json]
   Maschinelle Bereitschaftsprüfung: erste Zeile READY oder NOT READY (Exit 0/1), danach Prüfungen und
   systemische Blocker. Ziele mit --write: data/audits/juris-sh/readiness.json, data/audits/juris-sh/READINESS.md`,
-  'search-audit': `search-audit [--limit n] [--only a,b] [--json] [--write]
-  Suchintegrität der projizierten NSH-Normen (Sucheinheiten, Strukturadressen, Treffer je Norm).
-  Noch nicht implementiert: setzt einen projizierten Bestand voraus.`,
+  'search-audit': `search-audit [--sample n] [--seed s] [--full] [--json] [--write]
+  Suchintegrität des NSH-Bestands, lokal: Projektion wie in D1 in eine SQLite-Datenbank (node:sqlite), je Norm
+  Titel, Abkürzung, §-/Artikeladressen, Typfilter, Jurisdiktionsgrenze, länderübergreifende Suche, Dubletten,
+  FTS5-Integrität (gemeinsame Prüfung aus dem West-Adapter). Ohne --full geschichtete Stichprobe (Standard 150).
+  Ziel mit --write: data/audits/juris-sh/search/search-audit-<fast|full>.json`,
   'reconstruction-queue': `reconstruction-queue [--write] [--json]
   Stichtagsklassifikation (unchanged/changed-after/enacted-after/undetermined), Analyse der baseline-only-
   Kandidaten des Ereignisregisters und Arbeitsliste der Normen mit Änderungen nach dem Stichtag.
   Ziele: data/imports/juris-sh/reconstruction-queue.json, data/audits/juris-sh/HISTORICAL_BASELINE.md,
          data/audits/juris-sh/RECONSTRUCTION_QUEUE.md`,
-  'r2-sync': `r2-sync [--write] [--limit n]
-  Überträgt gestagte Rohquellen (Manifeststatus staged) nach R2 (Präfix nsh/juris-sh/2023-12-01/) und markiert
-  sie als verified; wiederaufnehmbar, gleicher Inhalt zählt als vorhanden, anderer Inhalt ist ein harter Fehler.
-  Noch nicht implementiert: Es gibt keinen Normrohbestand, der gestagt werden könnte.`,
+  'r2-sync': `r2-sync [--stage-only | --write] [--r2-transport wrangler|wrangler-api] [--concurrency n] [--limit n] [--staging-dir pfad]
+  Rohquellen (PDF) der übernommenen Normen nach R2, Bucket landesrecht-quellen, Präfix nsh/juris-sh/2023-12-01/.
+  ohne Option   Dry-run: rechnet das Staging durch, schreibt nichts, kein Netz
+  --stage-only  Staging nach .cache/juris-sh-r2-staging/ (nachgerechnet, mit Umschlag), Manifest archiveStatus
+                staged; kein Netz
+  --write       Staging, dann Upload mit Rücklesen (Wrangler-OAuth-Anmeldung, kein API-Token), Manifest verified;
+                fortsetzbar, vorhandene Objekte mit anderem Inhalt sind ein harter Fehler
+  Bericht: data/audits/juris-sh/R2_STAGING.{json,md}`,
   events: `events [--write] [--offline] [--json] [--limit n]
   Baut das Post-Baseline-Ereignisregister aus den amtlichen Registern und Inhaltsverzeichnissen der
   Verkündungsblätter Schleswig-Holsteins (Aufhebung, Ersetzung, Ablauf, Neufassung, Änderung, Verkündung)
@@ -197,8 +248,10 @@ export function renderHelp(command?: string): string {
   if (command && (COMMAND_HELP as Record<string, string>)[command]) return `${(COMMAND_HELP as Record<string, string>)[command]}\n\n${COMMON_OPTIONS}`;
   const descriptions: Record<Command, string> = {
     enumerate: 'Enumeration (Sitemap, Fixpunkt, Stichprobenabgleich, Zugriffslage)',
-    sample: 'Probe der dokumentierten Adressformen (Inhaltsadressierbarkeit)',
-    bulk: 'Bulk-Lauf über die Enumeration (Resume, Budgets, Checkpoints)',
+    sample: 'Adressierbarkeit, öffentliche Ausgabewege, Stichprobe Vollweg',
+    'fetch-corpus': 'Vollkorpus über die PDF-Ausgabe in den Cache (resumierbar)',
+    inventory: 'Vollkorpus-Inventur aus dem Cache (Parser, Stichtag, Integrität, Register)',
+    bulk: 'Bulk nach content/norms/nsh (nur bei grüner Readiness)',
     audit: 'Konsistenzprüfung des Bestands',
     coverage: 'Coverage-Report',
     review: 'Review-Fälle anzeigen und entscheiden',
@@ -224,7 +277,7 @@ export function renderHelp(command?: string): string {
 /** Einheitliche Meldung für alles, was noch nicht gebaut ist – nie stiller Erfolg. */
 function notImplemented(command: Command, io: Io): number {
   io.error(`Befehl „${command}“ ist noch nicht implementiert (juris-SH-Adapter).`);
-  io.error(`Was fehlt: siehe „${command} --help“. Enumeration, Probe und Berichte arbeiten; Normtext liefern die dokumentierten Adressformen des Portals nicht (npm run import:juris-sh:readiness).`);
+  io.error(`Was fehlt: siehe „${command} --help“ (npm run import:juris-sh:readiness).`);
   return 2;
 }
 
@@ -346,15 +399,21 @@ async function runEnumerateCommand(options: CliOptions, root: string, io: Io): P
 
 async function runSampleCommand(options: CliOptions, root: string, io: Io): Promise<number> {
   const result = await runAddressabilityProbe({ root, write: options.write, offline: options.offline, ...(options.cacheDir ? { cacheDir: options.cacheDir } : {}), log: options.json ? undefined : io.print });
-  if (options.json) io.print(JSON.stringify({ conclusion: result.report.conclusion, summary: result.report.summary, evidence: result.report.spa.evidence, tdmReservation: result.report.tdmReservation, network: result.network }, null, 2));
+  const exports = await runExportDiscovery({ root, write: options.write, offline: options.offline, ...(options.cacheDir ? { cacheDir: options.cacheDir } : {}), log: options.json ? undefined : io.print });
+  const sample = await runSample({ root, write: options.write, offline: options.offline, ...(options.cacheDir ? { cacheDir: options.cacheDir } : {}), log: options.json ? undefined : io.print });
+  if (options.json) io.print(JSON.stringify({ conclusion: result.report.conclusion, summary: result.report.summary, evidence: result.report.spa.evidence, tdmReservation: result.report.tdmReservation, exports: { conclusion: exports.report.conclusion, summary: exports.report.summary, flow: exports.report.flow }, network: { addressability: result.network, exports: exports.network } }, null, 2));
   else {
-    io.print(`Ergebnis: ${result.report.conclusion}`);
+    io.print(`Adressierbarkeit: ${result.report.conclusion}`);
     for (const reason of result.report.reasoning) io.print(`  ${reason}`);
-    io.print(networkLine(result.network));
+    io.print(`Öffentliche Ausgabewege: ${exports.report.conclusion}`);
+    for (const reason of exports.report.reasoning) io.print(`  ${reason}`);
+    io.print(`Stichprobe: ${Object.entries(sample.report.totals).map(([outcome, count]) => `${outcome} ${count}`).join(' · ')} · Integrität ${Object.entries(sample.report.integrity).map(([integrity, count]) => `${integrity} ${count}`).join(' · ')}`);
+    io.print(`${networkLine(result.network)} · Ausgabeprobe: ${networkLine(exports.network)} · Stichprobe: Netzabrufe ${sample.report.network.requests}, Cache ${sample.report.network.cacheHits}`);
   }
-  if (!options.write) io.print(`Dry-run: nichts geschrieben. Mit --write nach ${ADDRESSABILITY_PATH} und ${STRUCTURE_REPORT_PATH}.`);
-  else io.print(result.written.length === 0 ? 'Unverändert: keine Datei neu geschrieben.' : `Geschrieben: ${result.written.join(', ')}`);
-  return result.report.conclusion === 'blocked' ? 2 : 0;
+  const written = [...result.written, ...exports.written, ...sample.written];
+  if (!options.write) io.print(`Dry-run: nichts geschrieben. Mit --write nach ${ADDRESSABILITY_PATH}, ${STRUCTURE_REPORT_PATH}, ${EXPORTS_PATH}, ${EXPORTS_REPORT_PATH}.`);
+  else io.print(written.length === 0 ? 'Unverändert: keine Datei neu geschrieben.' : `Geschrieben: ${written.join(', ')}`);
+  return result.report.conclusion === 'blocked' || exports.report.probes.some((probe) => probe.outcome === 'blocked') ? 2 : 0;
 }
 
 async function writeOutputs(root: string, outputs: ReadonlyArray<readonly [string, string]>, io: Io): Promise<void> {
@@ -422,6 +481,126 @@ async function runReadinessCommand(options: CliOptions, root: string, io: Io): P
   return result.ready ? 0 : 1;
 }
 
+async function runFetchCorpusCommand(options: CliOptions, root: string, io: Io): Promise<number> {
+  if (!options.phase) {
+    io.error('--phase gesamtausgaben|units ist Pflicht');
+    return 1;
+  }
+  const controller = new AbortController();
+  const onSignal = (): void => controller.abort();
+  process.once('SIGINT', onSignal);
+  try {
+    const result = await runFetchCorpus({
+      root,
+      phase: options.phase,
+      ...(options.limit !== undefined ? { limit: options.limit } : {}),
+      ...(options.maxRuntimeMinutes !== undefined ? { maxRuntimeMs: options.maxRuntimeMinutes * 60_000 } : {}),
+      ...(options.only.length > 0 ? { only: options.only } : {}),
+      ...(options.offline ? { offline: true } : {}),
+      signal: controller.signal,
+      log: io.print,
+    });
+    io.print(`fetch-corpus ${result.phase}: ${result.processed} Dokumente · neu ${result.fetchedNow} · Cache ${result.fromCache} · Fehler ${result.failed}${result.stop ? ` · Halt: ${result.stop}` : ' · vollständig'}`);
+    io.print(`Netzabrufe ${result.network.requests} (${result.network.bytes} Bytes), Sitzungen ${result.network.sessions}, Wiederholungen ${result.network.retries}, Sperrantworten ${result.network.blocked}`);
+    if (result.stop) io.print(`Fortsetzen: node scripts/import-juris-sh.ts fetch-corpus --phase ${result.phase}${options.limit !== undefined ? ` --limit ${options.limit}` : ''}`);
+    return result.stop === 'blocked' ? 2 : 0;
+  } finally {
+    process.off('SIGINT', onSignal);
+  }
+}
+
+async function runSearchAuditCommand(options: CliOptions, root: string, io: Io): Promise<number> {
+  const { runSearchAudit } = await import('@landesrecht/importer-recht-nrw/common/search-audit.ts');
+  const audit = await runSearchAudit(root, {
+    jurisdictions: [TARGET_JURISDICTION],
+    mode: options.full ? 'full' : 'fast',
+    workers: options.full ? 4 : 1,
+    ...(options.sample !== undefined ? { sample: options.sample } : {}),
+    ...(options.seed ? { seed: options.seed } : {}),
+  });
+  if (options.json) io.print(JSON.stringify({ jurisdiction: TARGET_JURISDICTION, ok: audit.ok, norms: audit.norms, searchUnits: audit.searchUnits, checks: audit.checks, failures: audit.failures }, null, 2));
+  else {
+    io.print(`Suchprüfung NSH (${audit.profile.mode}): ${audit.ok ? 'GRÜN' : 'ROT'} · ${audit.norms} Normen · ${audit.searchUnits} Sucheinheiten`);
+    for (const [check, counts] of Object.entries(audit.checks)) if (counts.passed || counts.failed) io.print(`  ${check.padEnd(20)} bestanden ${String(counts.passed).padStart(6)} · gescheitert ${String(counts.failed).padStart(4)}${counts.skipped ? ` · übersprungen ${counts.skipped}` : ''}`);
+    for (const failure of audit.failures.slice(0, 15)) io.print(`  ✗ ${failure.check} ${failure.slug}: ${failure.detail.slice(0, 140)}`);
+  }
+  if (options.write) {
+    const path = `${AUDIT_DIR}/search/search-audit-${audit.profile.mode}.json`;
+    await writeFileAtomic(join(root, path), `${JSON.stringify(audit, null, 2)}\n`);
+    if (!options.json) io.print(`Geschrieben: ${path}`);
+  }
+  return audit.ok ? 0 : 1;
+}
+
+async function runR2SyncCommand(options: CliOptions, root: string, io: Io): Promise<number> {
+  const { readManifest } = await import('./common/manifest.ts');
+  const { stageRawSources, syncStaged } = await import('./r2/sync.ts');
+  const { guardTransport } = await import('./r2/archive.ts');
+  const { createOAuthTransport, writeR2Report } = await import('./r2/command.ts');
+  const manifest = await readManifest(root);
+  const write = options.write || options.stageOnly === true;
+  const stage = await stageRawSources({ root, manifest, write, ...(options.stagingDir ? { stagingDir: options.stagingDir } : {}), ...(options.cacheDir ? { cacheDir: options.cacheDir } : {}), log: io.print });
+  if (stage.conflicts.length > 0 || stage.missingCache.length > 0) {
+    for (const line of [...stage.conflicts, ...stage.missingCache].slice(0, 20)) io.error(`  ! ${line}`);
+    io.error('Staging mit Befunden – kein Upload.');
+    if (write) await writeR2Report(root, { mode: options.stageOnly ? 'stage-only' : options.write ? 'write' : 'dry-run', stage });
+    return 1;
+  }
+  if (!options.write) {
+    if (options.stageOnly) {
+      const written = await writeR2Report(root, { mode: 'stage-only', stage });
+      io.print(`Gestagt (kein Netz). Bericht: ${written.join(', ')}. Upload: npm run import:juris-sh:r2-sync -- --write`);
+    } else io.print('Dry-run: nichts geschrieben, kein Netz. --stage-only stagt, --write stagt und lädt hoch.');
+    return 0;
+  }
+  const transport = guardTransport(createOAuthTransport(options.r2Transport ?? 'wrangler', root));
+  const sync = await syncStaged({ root, manifest, transport, ...(options.stagingDir ? { stagingDir: options.stagingDir } : {}), ...(options.limit !== undefined ? { limit: options.limit } : {}), ...(options.concurrency !== undefined ? { concurrency: options.concurrency } : {}) });
+  const written = await writeR2Report(root, { mode: 'write', stage, sync });
+  io.print(`R2: offen ${sync.pending} · hochgeladen ${sync.uploaded} · vorhanden ${sync.alreadyPresent} · Normen geprüft ${sync.entriesVerified} · Staging fehlt ${sync.missingStaging.length}. Bericht: ${written.join(', ')}`);
+  return sync.missingStaging.length === 0 ? 0 : 1;
+}
+
+async function runBulkCommand(command: 'inventory' | 'bulk', options: CliOptions, root: string, io: Io): Promise<number> {
+  if (command === 'bulk' && options.write) {
+    const readiness = evaluateReadiness(await readSnapshot(root), { forBulkWrite: true });
+    if (!readiness.ready) {
+      io.error('NOT READY – bulk --write schreibt nichts. Offene Prüfungen:');
+      for (const check of readiness.checks.filter((entry) => entry.status === 'fail')) io.error(`  ${check.id}: ${check.detail}`);
+      return 1;
+    }
+  }
+  const controller = new AbortController();
+  const onSignal = (): void => controller.abort();
+  process.once('SIGINT', onSignal);
+  try {
+    const result = await runBulk({
+      root,
+      mode: command,
+      write: options.write,
+      ...(options.only.length > 0 ? { only: options.only } : {}),
+      ...(options.limit !== undefined ? { limit: options.limit } : {}),
+      signal: controller.signal,
+      log: options.json ? undefined : io.print,
+    });
+    const totals = result.report.totals;
+    if (options.json) io.print(JSON.stringify({ totals, registerCrosscheck: result.report.registerCrosscheck.map(({ missing, ...rest }) => ({ ...rest, missing: missing.length })), baselineOnly: { ...result.report.baselineOnly, entries: undefined }, norms: { written: result.normsWritten, unchanged: result.normsUnchanged, removed: result.normsRemoved }, stop: result.stop ?? null }, null, 2));
+    else {
+      io.print(`${command}: ${totals.processed}/${totals.enumerated} Dokumente · ${Object.entries(totals.byOutcome).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
+      io.print(`  Manifeststatus: ${Object.entries(totals.byManifestStatus).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
+      io.print(`  Integrität: ${Object.entries(totals.byIntegrity).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
+      for (const check of result.report.registerCrosscheck) io.print(`  Register ${check.source}: ${check.found}/${check.registerNumbers} Gl.Nr. im Bestand (${(check.coverage * 100).toFixed(1)} %)`);
+      io.print(`  baseline-only: ${result.report.baselineOnly.matched}/${result.report.baselineOnly.candidates} zugeordnet · ${Object.entries(result.report.baselineOnly.byOutcome).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
+      io.print(`  Normen: ${command === 'bulk' && options.write ? 'geschrieben' : 'würden geschrieben'} ${result.normsWritten} · unverändert ${result.normsUnchanged} · zurückgenommen ${result.normsRemoved}${result.stop ? ` · Halt: ${result.stop}` : ''}`);
+    }
+    if (options.json) return 0;
+    if (!options.write) io.print('Dry-run: nichts geschrieben. Mit --write speichern.');
+    else io.print(result.written.length === 0 ? 'Unverändert: keine Datei neu geschrieben.' : `Geschrieben: ${result.written.length} Dateien${result.written.length <= 12 ? ` (${result.written.join(', ')})` : ''}`);
+    return 0;
+  } finally {
+    process.off('SIGINT', onSignal);
+  }
+}
+
 export async function runCli(argv: readonly string[], io: Io = { print: console.log, error: console.error }): Promise<number> {
   const [first, second] = argv;
   if (first === undefined || first === 'help' || first === '--help' || first === '-h') {
@@ -444,9 +623,13 @@ export async function runCli(argv: readonly string[], io: Io = { print: console.
   if (command === 'events') return runEventsCommand(options, root, io);
   if (command === 'enumerate') return runEnumerateCommand(options, root, io);
   if (command === 'sample') return runSampleCommand(options, root, io);
+  if (command === 'fetch-corpus') return runFetchCorpusCommand(options, root, io);
   if (command === 'coverage') return runCoverageCommand(options, root, io);
   if (command === 'reconstruction-queue') return runReconstructionQueueCommand(options, root, io);
   if (command === 'audit') return runAuditCommand(options, root, io);
   if (command === 'readiness') return runReadinessCommand(options, root, io);
+  if (command === 'inventory' || command === 'bulk') return runBulkCommand(command, options, root, io);
+  if (command === 'search-audit') return runSearchAuditCommand(options, root, io);
+  if (command === 'r2-sync') return runR2SyncCommand(options, root, io);
   return notImplemented(command, io);
 }

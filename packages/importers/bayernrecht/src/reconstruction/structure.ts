@@ -39,6 +39,8 @@ export interface CommandNode {
   /** Einheiten mit dem einzufügenden oder neu zu fassenden Wortlaut (Blockzitat hinter „…:“). */
   quoted: GazetteUnit[];
   children: CommandNode[];
+  /** Offensichtliche Satzfehler der Verkündung, die beim Lesen dieses Befehls toleriert wurden (nur eindeutige). */
+  defects?: string[];
 }
 
 export interface CommandBlock {
@@ -132,6 +134,13 @@ const DATED_CITATION = new RegExp(
   'gu',
 );
 const CONSOLIDATED_CITATION = /in\s+der\s+in\s+der\s+Bayerischen\s+Rechtssammlung\s+\(([^()]*)\)\s+veröffentlichten\s+bereinigten\s+Fassung/gu;
+/**
+ * Staatsverträge und Abkommen werden ohne Fundstelle zitiert, mit dem Datum der Unterzeichnung, oft als Zeitraum:
+ * „Der Rundfunkfinanzierungsstaatsvertrag vom 26. August bis 11. September 1996, zuletzt geändert durch …, wird …“,
+ * „… (Jugendmedienschutz-Staatsvertrag – JMStV) vom 10. bis 27. September 2002, …“ (GVBl. 2025 S. 350, 396). Das
+ * Datum des Zitats ist der Beginn des Zeitraums. Nur mit „…vertrag“ oder „Abkommen“ im Titel davor.
+ */
+const TREATY_CITATION = /vom\s+(\d{1,2})\.\s*(?:([A-Za-zÄÖÜäöü]+)\s+(\d{4})(?!\s+bis\s)|([A-Za-zÄÖÜäöü]+)\s+bis\s+\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+(\d{4})|bis\s+\d{1,2}\.\s*([A-Za-zÄÖÜäöü]+)\s+(\d{4}))(?=\s*,)/gu;
 
 export function normCitations(text: string): NormCitation[] {
   const found: NormCitation[] = [];
@@ -160,6 +169,14 @@ export function normCitations(text: string): NormCitation[] {
   }
   for (const match of text.matchAll(CONSOLIDATED_CITATION)) {
     build(match.index!, match.index! + match[0].length, match[1]!, undefined, true);
+  }
+  for (const match of text.matchAll(TREATY_CITATION)) {
+    if (found.some((cited) => cited.anchorStart === match.index)) continue;
+    // „…vertrag“ oder „Abkommen“ im Titel davor, ohne Satzende dazwischen (auch in der Klammer: „(Jugendmedienschutz-Staatsvertrag – JMStV)“).
+    if (!/(?:[Vv]ertrag|Abkommen)[^.;:]{0,200}$/u.test(text.slice(Math.max(0, match.index! - 250), match.index!))) continue;
+    const month = match[2] ?? match[4] ?? match[6]!;
+    const year = match[3] ?? match[5] ?? match[7]!;
+    build(match.index!, match.index! + match[0].length, '', parseLongGermanDate(`${match[1]}. ${month} ${year}`), false);
   }
   return found.sort((left, right) => left.anchorStart - right.anchorStart);
 }
@@ -192,6 +209,8 @@ const PRIOR_CLAUSE = /^\s*,?\s*(?:die|das|der|welche[rs]?)\s+(?:zuletzt\s+)?durc
 const PRIOR_CLAUSE_SHORT = /^\s*,?\s*(?:zuletzt\s+)?geändert\s+(?:durch|mit)\s+([^()]{0,200}\([^()]*\))\s*,?/u;
 /** Unvollständig gesetzt: „…, die zuletzt durch Bekanntmachung vom … (BayMBl. Nr. 941), wird wie folgt geändert:“ (ohne „geändert worden ist“). */
 const PRIOR_CLAUSE_UNFINISHED = /^\s*,?\s*(?:die|das|der)\s+(?:zuletzt\s+)?durch\s+([^()]{0,200}\([^()]*\))\s*,\s*(?=(?:wird|werden)\s)/u;
+/** Staatsverträge: „…, zuletzt geändert durch den Vierten Medienänderungsstaatsvertrag vom 9. bis 16. Mai 2023, wird …“ (ohne Fundstelle). */
+const PRIOR_CLAUSE_TREATY = /^\s*,\s*zuletzt\s+geändert\s+durch\s+([^,()]{1,200}?)\s*,\s*(?=(?:wird|werden)\s)/u;
 
 /**
  * Befehlsform für die **Erkennung** (nie für Wortlaut oder Rezept): Ein Zeilenumbruch mit Trennstrich mitten im
@@ -215,6 +234,46 @@ function quoteBalance(value: string): number {
  */
 const asciiClose = (unit: GazetteUnit): boolean => (unit.text.match(/"/gu)?.length ?? 0) === 1 && /"\s*[.;,]?\s*$/u.test(unit.text);
 
+/**
+ * Satzfehler: doppeltes öffnendes Anführungszeichen am Zitatbeginn, eines am Gliederungszeichen, eines am Text
+ * („„2.2.243.2“ – „„Abgrenzung …“, BayMBl. 2026 Nr. 296). Es zählt als eines.
+ */
+const doubledOpener = (unit: GazetteUnit): boolean => /^[„‚]/u.test(unit.label ?? '') && /^[„‚]/u.test(unit.text);
+
+/** Das nächste Gliederungszeichen derselben Ebene („49.“ → „50.“, „1.2“ → „1.3“, „a)“ → „b)“, „aa)“ → „bb)“). */
+function nextLabel(label: string | undefined): string | undefined {
+  const clean = cleanLabel(label);
+  if (!clean) return undefined;
+  let match = /^((?:\d+\.)*)(\d+)(\.?)$/u.exec(clean);
+  if (match) return `${match[1]}${Number(match[2]) + 1}${match[3]}`;
+  match = /^([a-y])\)$/u.exec(clean);
+  if (match) return `${String.fromCharCode(match[1]!.charCodeAt(0) + 1)})`;
+  match = /^([a-y])\1\)$/u.exec(clean);
+  if (match) {
+    const next = String.fromCharCode(match[1]!.charCodeAt(0) + 1);
+    return `${next}${next})`;
+  }
+  return undefined;
+}
+
+/**
+ * Erste Einheit eines Blockzitats an den Befehl hängen; Ergebnis ist die Anführungstiefe danach. Toleriert werden nur die
+ * eindeutigen Satzfehler `doubledOpener` und `asciiClose` – im Befehl vermerkt.
+ */
+function openQuote(owner: CommandNode, unit: GazetteUnit): number {
+  owner.quoted.push(unit);
+  let balance = quoteBalance(`${unit.label ?? ''} ${unit.text}`);
+  if (doubledOpener(unit)) {
+    balance -= 1;
+    (owner.defects ??= []).push(`doppeltes öffnendes Anführungszeichen am Zitatbeginn (Einheit ${unit.index}), als eines gezählt`);
+  }
+  if (balance === 1 && asciiClose(unit)) {
+    balance = 0;
+    (owner.defects ??= []).push(`Zitat mit geradem Anführungszeichen geschlossen (Einheit ${unit.index})`);
+  }
+  return balance;
+}
+
 const startsQuoted = (unit: GazetteUnit): boolean => /^[„‚]/u.test(unit.label ?? '') || /^[„‚]/u.test(unit.text);
 
 /** Ebene eines Befehls: GVBl. über `EBENE<n>`, BayMBl. über Punktgliederung, sonst über die Zeichenform. */
@@ -228,6 +287,12 @@ function depthOf(unit: GazetteUnit, introLabel: string | undefined): number | un
     if (!label.startsWith(`${base}.`)) return undefined;
     return label.replace(/\.$/u, '').split('.').length - base.split('.').length;
   }
+  // Einleitungssatz selbst Glied einer Liste (GVBl. 2014 S. 286, § 1 Nr. 100: „Die Verordnung … wird wie folgt geändert:“ –
+  // „a) …“): Die Befehle zählen ab der Ebene unter ihm.
+  const rank = (value: string): number | undefined => (/^\d+[a-z]?\.$/u.test(value) ? 1 : /^[a-z]\)$/u.test(value) ? 2 : /^([a-z])\1\)$/u.test(value) ? 3 : /^([a-z])\1\1\)$/u.test(value) ? 4 : undefined);
+  const introRank = introLabel ? rank(introLabel) : undefined;
+  const ownRank = rank(label);
+  if (introRank !== undefined && ownRank !== undefined && ownRank > introRank) return ownRank - introRank;
   if (/^\d+[a-z]?\.$/u.test(label)) return 1;
   // Dezimal gegliederte Befehle unter einem Einleitungssatz ohne Nummer (BayMBl. 2023 Nr. 647: „§ 1“ – „2. Nr. 2.2 wird
   // wie folgt geändert:“ – „2.1 In der Überschrift …“): Ebene = Zahl der Glieder; das Präfix prüft `blockFromCandidate`.
@@ -262,7 +327,7 @@ export function commandAfterCitation(text: string, cited: NormCitation): { comma
   // Aktenzeichen hinter der Fundstelle („(BayMBl. 2023 Nr. 354), Az. G4-7271-1/1387, wird …“) gehört zum Zitat.
   const after = commandForm(text.slice(cited.end)).replace(/^\s*,\s*Az\.\s*[^,()]{1,60}(?=,)/u, '');
   if (/^[\s,]*(?:zuletzt\s+)?(?:geändert|aufgehoben|ersetzt|eingefügt|angefügt|neu\s+gefasst)\s+worden\s+(?:ist|sind)/u.test(after)) return undefined;
-  const prior = PRIOR_CLAUSE.exec(after) ?? PRIOR_CLAUSE_SHORT.exec(after) ?? PRIOR_CLAUSE_UNFINISHED.exec(after);
+  const prior = PRIOR_CLAUSE.exec(after) ?? PRIOR_CLAUSE_SHORT.exec(after) ?? PRIOR_CLAUSE_UNFINISHED.exec(after) ?? (cited.parenthetical === '' ? PRIOR_CLAUSE_TREATY.exec(after) : null);
   const command = (prior ? after.slice(prior[0].length) : after.replace(/^\s*,?\s*/u, '')).trim();
   const verbFirst = /^(?:wird|werden|erhält|erhalten)(?![\p{L}])/u.test(command);
   // „In Teil 1 … der Anlage **wird** in der Zeile … der AufbewV …, die zuletzt …, die Angabe „X“ durch …
@@ -420,20 +485,31 @@ export function blockFromCandidate(units: readonly GazetteUnit[], candidate: Int
     for (let at = intro.index + 1; at < units.length; at += 1) {
       const unit = units[at]!;
       if (quoteOwner) {
-        quoteOwner.quoted.push(unit);
-        blockUnits.push(unit);
-        balance += quoteBalance(`${unit.label ?? ''} ${unit.text}`);
-        if (balance === 1 && asciiClose(unit)) balance = 0;
-        if (balance <= 0) quoteOwner = undefined;
-        continue;
+        // Satzfehler: Das Zitat wird nicht geschlossen, und es folgt das nächste Glied derselben Befehlsebene („49. Nach
+        // Nr. 15.5 wird folgende Nr. 15.6 eingefügt: „15.6 … hingewiesen.“ – „50. Die bisherige Nr. 15.6 …“, BayMBl. 2026
+        // Nr. 72): gleiches Element, gleiche Klasse, fortlaufendes Gliederungszeichen, kein Anführungszeichen. Dann endet
+        // das Zitat davor.
+        const owner = quoteOwner.unit;
+        const expected = nextLabel(quoteOwner.label ?? owner.label);
+        if (balance === 1 && expected && !startsQuoted(unit) && unit.tag === owner.tag && unit.className === owner.className && cleanLabel(unit.label) === expected) {
+          (quoteOwner.defects ??= []).push(`Zitat von „${quoteOwner.label ?? ''} ${quoteOwner.text.slice(0, 60)}“ nicht geschlossen; es endet vor dem nächsten Befehl „${expected}“ (Einheit ${unit.index})`);
+          quoteOwner = undefined;
+          balance = 0;
+        } else {
+          quoteOwner.quoted.push(unit);
+          blockUnits.push(unit);
+          balance += quoteBalance(`${unit.label ?? ''} ${unit.text}`);
+          if (balance === 1 && asciiClose(unit)) balance = 0;
+          if (balance <= 0) quoteOwner = undefined;
+          continue;
+        }
       }
       const last = stack.at(-1);
       // Eine zitierte Überschrift ist im BayMBl. als Überschriftelement gesetzt („Der Nr. 1 wird folgende Überschrift
       // vorangestellt:“ – h3 „„Teil 1 Bayerischer Demenzfonds“.“, BayMBl. 2025 Nr. 391): Sie gehört zum Zitat des Befehls.
       if (unit.heading && startsQuoted(unit) && last && last.quoted.length === 0 && /:\s*$/u.test(last.text)) {
-        last.quoted.push(unit);
+        balance = openQuote(last, unit);
         blockUnits.push(unit);
-        balance = quoteBalance(`${unit.label ?? ''} ${unit.text}`);
         if (balance > 0) quoteOwner = last;
         continue;
       }
@@ -449,10 +525,8 @@ export function blockFromCandidate(units: readonly GazetteUnit[], candidate: Int
       }
       if (startsQuoted(unit) && last && last.quoted.length === 0 && ANNOUNCES_QUOTE.test(last.text)) {
         // „Nach Nr. 1.2 wird folgende Nr. 1.3 angefügt.“ – Punkt statt Doppelpunkt, das Zitat folgt (BayMBl. 2025 Nr. 398).
-        last.quoted.push(unit);
+        balance = openQuote(last, unit);
         blockUnits.push(unit);
-        balance = quoteBalance(`${unit.label ?? ''} ${unit.text}`);
-        if (balance === 1 && asciiClose(unit)) balance = 0;
         if (balance > 0) quoteOwner = last;
         continue;
       }
@@ -476,10 +550,8 @@ export function blockFromCandidate(units: readonly GazetteUnit[], candidate: Int
       }
       if (startsQuoted(unit)) {
         if (!last || !/:\s*$/u.test(last.text)) return { code: 'structure-unreadable', detail: `Einheit ${unit.index}: Zitat ohne vorangehenden Befehl mit Doppelpunkt` };
-        last.quoted.push(unit);
+        balance = openQuote(last, unit);
         blockUnits.push(unit);
-        balance = quoteBalance(`${unit.label ?? ''} ${unit.text}`);
-        if (balance === 1 && asciiClose(unit)) balance = 0;
         if (balance > 0) quoteOwner = last;
         continue;
       }
@@ -518,7 +590,12 @@ export function blockFromCandidate(units: readonly GazetteUnit[], candidate: Int
       while (stack.length > 0 && stack.at(-1)!.depth >= depth) stack.pop();
       const parent = stack.at(-1);
       if (parent) {
-        if (depth !== parent.depth + 1) return { code: 'structure-unreadable', detail: `Einheit ${unit.index}: Gliederungssprung von Ebene ${parent.depth} auf ${depth}` };
+        // Satzfehler: eine übersprungene Dezimalebene („1.20“ – „1.20.1.1“, BayMBl. 2026 Nr. 183). Beginnt das Zeichen mit
+        // dem des übergeordneten Befehls, gehört der Befehl zu ihm; sein Ort ist dann eine Obermenge des fehlenden.
+        const skipped = depth > parent.depth + 1 && /^\d+(?:\.\d+)+\.?$/u.test(node.label ?? '') && parent.label !== undefined && node.label!.startsWith(`${parent.label.replace(/\.$/u, '')}.`);
+        if (skipped) {
+          (node.defects ??= []).push(`Gliederungsebene zwischen „${parent.label}“ und „${node.label}“ fehlt; der Befehl gehört zu „${parent.label}“`);
+        } else if (depth !== parent.depth + 1) return { code: 'structure-unreadable', detail: `Einheit ${unit.index}: Gliederungssprung von Ebene ${parent.depth} auf ${depth}` };
         const decimal = /^\d+(?:\.\d+)+\.?$/u.test(node.label ?? '') && !introLabel;
         if (decimal && !node.label!.startsWith(`${(parent.label ?? '').replace(/\.$/u, '')}.`)) return { code: 'structure-unreadable', detail: `Einheit ${unit.index}: „${node.label}“ gehört nicht zu „${parent.label ?? ''}“` };
         parent.children.push(node);

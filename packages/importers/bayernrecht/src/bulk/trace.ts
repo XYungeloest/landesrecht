@@ -76,6 +76,14 @@ export function reversedAmendmentsText(recipe: AnyReconstructionRecipe): string 
   return [...recipeAmendments(recipe)].reverse().map((amendment) => `${amendment.citation} (Wirkung ab ${amendment.effectiveDate})`).join(', dann ');
 }
 
+/** Hinweis auf wiederhergestellten Alttext: Die Änderungsbefehle nennen ihn nicht, er stammt aus der Stammverkündung. */
+function restorationNote(recipe: AnyReconstructionRecipe): string {
+  const restoration = recipe.restoration;
+  if (!restoration) return '';
+  const base = restoration.sources.find((source) => source.role === 'base-publication');
+  return `; Alttext von ${restoration.restoredSteps} Schritt${restoration.restoredSteps === 1 ? '' : 'en'} aus der Stammverkündung ${base?.citation ?? ''} wiederhergestellt, Wortlautvergleich bestanden`.replace(/\s+wiederhergestellt/u, ' wiederhergestellt');
+}
+
 export function recoveryMethodFor(decision: BaselineDecision | undefined, recipe?: AnyReconstructionRecipe): { method: BaselineRecoveryMethod; note: string } {
   if (!decision) {
     return { method: 'reverse-post-baseline-event', note: 'Ohne Stichtagsklassifikation ist kein Weg bestimmt; der Eintrag wird nicht übernommen.' };
@@ -89,7 +97,7 @@ export function recoveryMethodFor(decision: BaselineDecision | undefined, recipe
   if (decision.method === 'reverse-amendment' && recipe) {
     return {
       method,
-      note: `Stichtagsfassung durch Rücknahme ${recipeAmendments(recipe).length === 1 ? 'der Änderung' : `von ${recipeAmendments(recipe).length} Änderungen`} ${reversedAmendmentsText(recipe)} aus dem heutigen Text zurückgerechnet; Rezept data/imports/bayernrecht/reconstruction/${recipe.documentId}.json, Rundlauf bestanden.`,
+      note: `Stichtagsfassung durch Rücknahme ${recipeAmendments(recipe).length === 1 ? 'der Änderung' : `von ${recipeAmendments(recipe).length} Änderungen`} ${reversedAmendmentsText(recipe)} aus dem heutigen Text zurückgerechnet${restorationNote(recipe)}; Rezept data/imports/bayernrecht/reconstruction/${recipe.documentId}.json, Rundlauf bestanden.`,
     };
   }
   return {

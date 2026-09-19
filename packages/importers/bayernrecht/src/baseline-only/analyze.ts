@@ -23,12 +23,15 @@ import { stableStringify } from '@landesrecht/importer-recht-nrw/common/persist.
 
 import type { ValidityEvidence } from '../common/evidence.ts';
 import { commencementDate, commencementStatements } from '../reconstruction/commencement.ts';
+import { findInAmtsblattListings } from './search.ts';
+import { checkedPublicationDate, ownPublicationDate, relativeDate, relativeRule, repairOwnCommencement, type RelativeRule } from './relative.ts';
+import { pdfText } from '../reconstruction/pdf.ts';
 import type { GazetteUnit } from '../reconstruction/gazette.ts';
 import { gazetteUnits } from '../reconstruction/gazette.ts';
 import { parseLongGermanDate } from '../events/resolve.ts';
 import type { LedgerEvent } from '../events/ledger.ts';
-import { headDates, resolveBase, sourceRef, type GazettePublication } from './base.ts';
-import { AMTSBLATT_FULL_READ_CAP, AMTSBLATT_ISSUE_CAP, amendmentCommencement, applyAmendment, normIdentityOf, scanChain } from './chain.ts';
+import { headDates, resolveBase, sourceRef, type GazettePublication, type SourceDocumentRef } from './base.ts';
+import { AMTSBLATT_FULL_READ_CAP, AMTSBLATT_ISSUE_CAP, amendmentCommencement, applyAmendment, baymblListedDate, normIdentityOf, scanChain } from './chain.ts';
 import { findInPositivliste, loadPositivliste, POSITIVLISTE_CITATION, POSITIVLISTE_URL, type Positivliste, type PositivlisteRow } from './positivliste.ts';
 
 /** Nr. 1 VwVWBek: bis zu diesem Tag erlassene Verwaltungsvorschriften gelten nur mit Aufnahme in die Positivliste fort. */
@@ -38,7 +41,7 @@ import { convertGazetteHtml, ConversionError, CONVERTER_VERSION, type ConvertedG
 import { addDays, determineEndAcross, locateCitation, type EndDetermination, type LocatedCitation } from './identity.ts';
 import { MISSING_LINKS, RECIPE_SCHEMA, type BaselineOnlyRecipe, type CandidateRecord, type MissingLink, type MissingLinkRecord, type Outcome, type RecipeAmendment, type RecipeSource } from './model.ts';
 import { isPageMiss, type Platform } from './platform.ts';
-import { locateBase, parseParenthetical, sameReference, type BaseLocation, type GazetteReference } from './references.ts';
+import { locateBase, parseParenthetical, PLATFORM_ORIGIN, sameReference, type BaseLocation, type GazetteReference } from './references.ts';
 
 const DATE = String.raw`\d{1,2}\.\s*[A-Za-zÄÖÜäöü]+\s+\d{4}`;
 
@@ -66,6 +69,8 @@ export interface CandidateWork {
   location?: BaseLocation;
   publication?: GazettePublication;
   repealSha256?: string;
+  /** Zitat ohne Fundstelle: Beleg der Suche in den Inhaltsübersichten (`search.ts`). */
+  foundBy?: string;
 }
 
 const outcomeOf = (code: MissingLink): Outcome => MISSING_LINKS[code];
@@ -104,27 +109,49 @@ export async function analyzeCandidate(ctx: AnalyzeContext, event: LedgerEvent):
   if (citation.parenthetical) record.fundstelle = citation.parenthetical;
   if (citation.priorClause) record.priorClause = citation.priorClause;
   record.funnel.strongIdentity = true;
+  // Nach dem Stichtag ausgefertigt: Die Norm gab es am Stichtag nicht – gleich, wann und wie sie endete (belegt:
+  // Aufhebungen von Stellenausschreibungen ohne Inkrafttretensvorschrift, BayMBl. 2025 Nr. 219 und Nr. 268).
+  if (citation.documentDate > ctx.baselineDate) return fail(work, 'enacted-after-baseline', `Ausgefertigt am ${citation.documentDate}, nach dem Stichtag ${ctx.baselineDate}`);
 
-  const end = determineEndAcross(units, located.citations, event.eventDate ?? '');
+  const end = determineEndAcross(units, located.citations, event.eventDate ?? '', ownPublicationDate(repealPage.html, event.organ === 'gvbl' ? 'GVBl' : 'BayMBl'));
   work.end = end;
   if (!end.ok) return fail(work, end.code === 'not-a-repeal' ? 'not-a-repeal' : 'end-undetermined', end.reason ?? 'Ende nicht lesbar');
   record.lastDay = end.lastDay!;
   if (end.lastDay! < ctx.baselineDate) return fail(work, 'ended-before-baseline', `Letzter Geltungstag ${end.lastDay} liegt vor dem Stichtag ${ctx.baselineDate} (${end.evidence.at(-1) ?? ''})`);
-  if (citation.documentDate > ctx.baselineDate) return fail(work, 'enacted-after-baseline', `Ausgefertigt am ${citation.documentDate}, nach dem Stichtag ${ctx.baselineDate}`);
 
-  const primary = citation.fundstelle.primary;
+  let primary = citation.fundstelle.primary;
+  let searched = '';
+  if (!primary) {
+    // Ohne Fundstelle: in den Inhaltsübersichten der Amtsblätter 2009–2018 nach Erlassdatum und Titel (`search.ts`).
+    const search = await findInAmtsblattListings(ctx.platform, { documentDate: citation.documentDate, citedTitle: citation.citedTitle });
+    if (!search.ok && search.pending) return fail(work, 'base-not-fetched', `Suche ohne Fundstelle: ${search.reason}`);
+    if (search.ok) {
+      primary = search.match.reference;
+      work.foundBy = search.evidence;
+      record.fundstelle = search.match.reference.text;
+    } else searched = ` Suche in den Inhaltsübersichten: ${search.reason}.`;
+  }
   if (!primary) {
     return fail(work, 'base-unpublished', citation.fundstelle.aktenzeichenOnly || citation.aktenzeichen
-      ? `Zitiert nur mit Aktenzeichen (${citation.aktenzeichen ?? citation.parenthetical ?? ''}): ein nicht verkündetes Schreiben – keine amtliche Veröffentlichung der Ausgangsfassung`
-      : `Zitiert ohne Fundstelle („${citation.unitText.slice(0, 160)}“) – keine amtliche Veröffentlichung der Ausgangsfassung belegt`);
+      ? `Zitiert nur mit Aktenzeichen (${citation.aktenzeichen ?? citation.parenthetical ?? ''}): ein nicht verkündetes Schreiben – keine amtliche Veröffentlichung der Ausgangsfassung.${searched}`
+      : `Zitiert ohne Fundstelle („${citation.unitText.slice(0, 160)}“) – keine amtliche Veröffentlichung der Ausgangsfassung belegt.${searched}`);
   }
   const location = locateBase(primary, citation.documentDate);
   work.location = location;
   if (location.availability === 'paper-only') return fail(work, 'base-paper-only', `${primary.text}: ${location.reason}`);
-  const resolved = await resolveBase(ctx.platform, { location, documentDate: citation.documentDate, citedTitle: citation.citedTitle, ledgerTitle: event.targetTitle });
+  const alternativeTitles = [...new Set(located.citations.map((entry) => entry.citedTitle))].filter((title) => title !== citation.citedTitle);
+  const resolved = await resolveBase(ctx.platform, { location, documentDate: citation.documentDate, citedTitle: citation.citedTitle, ...(alternativeTitles.length > 0 ? { alternativeTitles } : {}), ledgerTitle: event.targetTitle });
   if (!resolved.ok) {
     const code: MissingLink = resolved.code === 'base-not-fetched' ? 'base-not-fetched' : resolved.code === 'base-pdf-only' ? 'base-pdf-only' : resolved.code === 'base-identity-mismatch' ? 'base-identity-mismatch' : resolved.code === 'base-no-text' ? 'base-no-text' : 'base-not-found';
     return fail(work, code, resolved.detail);
+  }
+  if (work.foundBy && citation.aktenzeichen) {
+    // Ohne Fundstelle gefunden: Das zitierte Aktenzeichen muss in der Verkündung stehen.
+    const compact = (value: string): string => value.replace(/[\s\u2010-\u2015\u2212-]+/gu, '').toLowerCase();
+    const pageText = compact(resolved.publication.units.slice(0, 8).map((unit) => unit.text).join(' '));
+    if (!pageText.includes(compact(citation.aktenzeichen.replace(/^Az\.?:?\s*/u, '')))) {
+      return fail(work, 'base-identity-mismatch', `${resolved.publication.page.url}: ohne Fundstelle gefunden, trägt aber nicht das zitierte Aktenzeichen ${citation.aktenzeichen}`);
+    }
   }
   work.publication = resolved.publication;
   record.normId = resolved.publication.identity;
@@ -140,7 +167,7 @@ export async function analyzeCandidate(ctx: AnalyzeContext, event: LedgerEvent):
 const STATE_ISSUER = /\b(?:Staatsregierung|Staatskanzlei|Staatsministeri(?:um|ums|en)|Obersten\s+Baubehörde|Ministerpräsident)/u;
 const NON_STATE_ISSUER = /\b(?:Deutschlandradios?|Rundfunks?|Rundfunkanstalt|ZDF|ARD|Landeszentrale\s+für\s+neue\s+Medien|Kammer|Hochschule|Universität|Verband|Verbandes|Landesamts?\s+für\s+Statistik)\b/u;
 /** Prüffälle nach docs/LEGAL_SCOPE.md („Muster und Vordrucke“, „Merkblätter, Leitfäden“, „Empfehlungen“ …). */
-const NORMATIVITY_REVIEW = /\b(?:Zeugnismuster|Muster|Vordrucke?|Formulare?|Merkblatt|Merkblätter|Leitfaden|Empfehlungen?|Telemedienkonzepte?|Hörfunkprogramme|Wahlergebnisse|Stellenausschreibung|Ausschreibung\s+der\s+Stelle)\b/u;
+const NORMATIVITY_REVIEW = /\b(?:Satzung|Stiftungssatzung|Dienstvereinbarung|Zeugnismuster|Muster|Vordrucke?|Formulare?|Merkblatt|Merkblätter|Leitfaden|Empfehlungen?|Telemedienkonzepte?|Hörfunkprogramme|Wahlergebnisse|Stellenausschreibung|Ausschreibung\s+der\s+Stelle)\b/u;
 
 export interface ScopeDecision {
   ok: boolean;
@@ -148,10 +175,40 @@ export interface ScopeDecision {
   detail: string;
 }
 
-export function scopeDecision(head: { title: string; issuer?: string }): ScopeDecision {
+/**
+ * Bekanntmachung, die nur mitteilt, dass ein Dokument einer Rundfunkanstalt veröffentlicht wird oder wurde
+ * (Telemedienkonzepte nach § 11f Abs. 7 RStV / § 32 Abs. 7 MStV, Hörfunkprogramme nach § 11c Abs. 4 RStV / § 29 Abs. 4
+ * MStV). Kein eigener Regelungsgehalt des Staatsministeriums; das Dokument ist eines der Anstalt – nach
+ * docs/LEGAL_SCOPE.md „Presse- und Informationsmitteilungen“, „Reine Tatsachenbekanntmachungen“, nicht aufzunehmen.
+ */
+const PUBLICATION_NOTICES: ReadonlyArray<{ pattern: RegExp; reason: string }> = [
+  { pattern: /^(?:Das|Der)\s+Staatsministerium\b[^.]{0,120}?\bweist\s+darauf\s+hin,\s+dass\b[\s\S]{0,1500}?\b(?:veröffentlicht|bekannt\s*gemacht)\s+worden\s+(?:ist|sind)\b/u, reason: 'Hinweis, dass ein Dokument einer Rundfunkanstalt an anderer Stelle veröffentlicht worden ist' },
+  { pattern: /^(?:Das|Die)\s+Telemedienkonzepte?\b[\s\S]{0,600}?\bveröffentlicht\s+worden\s+und\s+k(?:ann|önnen)\s+unter\s+\S+\s+abgerufen\s+werden\b/u, reason: 'Hinweis, dass das Telemedienkonzept einer Rundfunkanstalt im Internet veröffentlicht worden ist' },
+  { pattern: /^In\s+der\s+Anlage\s+veröffentlicht\s+das\s+Staatsministerium\b[\s\S]{0,700}?\bgemäß\s+§\s*(?:11f|32)\s+Abs(?:\.|atz)\s*7\b[\s\S]{0,700}?\bTelemedienkonzept/u, reason: 'Veröffentlichung des Telemedienkonzepts einer Rundfunkanstalt (§ 11f Abs. 7 RStV, § 32 Abs. 7 MStV) – das Staatsministerium macht nur bekannt' },
+  { pattern: /^Die\s+in\s+der\s+ARD\s+zusammengeschlossenen\s+Landesrundfunkanstalten\s+und\s+das\s+Deutschlandradio\s+veröffentlichen\s+gemäß\s+§\s*(?:11c|29)\s+Abs\.\s*4\b[\s\S]{0,400}?\bAuflistung\b[\s\S]{0,200}?\bHörfunkprogramme\b/u, reason: 'Auflistung der Hörfunkprogramme durch die Rundfunkanstalten (§ 11c Abs. 4 RStV, § 29 Abs. 4 MStV) – Tatsachenbekanntmachung der Anstalten' },
+];
+const BROADCAST_TITLE = /\b(?:Telemedienkonzepte?|Hörfunkprogramme)\b/u;
+
+/**
+ * Zeugnismuster als normative Anlage einer Schulordnung: Die Bekanntmachung des Staatsministeriums schreibt allen
+ * Schulen der Schulart vor, die Zeugnisse nach den beigefügten Mustern auszustellen – abstrakt-generell, landesweit,
+ * verbindlich, amtlich veröffentlicht. Die Muster sind PDF-Anlagen einer im HTML vollständigen Vorschrift
+ * (docs/LEGAL_SCOPE.md, „Text nur als PDF“).
+ */
+const CERTIFICATE_FORMS_TITLE = /;\s*hier:\s*Zeugnismuster\b/u;
+
+export function scopeDecision(head: { title: string; issuer?: string }, text?: string): ScopeDecision {
   const issuer = head.issuer ?? '';
+  if (text !== undefined && BROADCAST_TITLE.test(head.title)) {
+    const own = text.replace(/\s+/gu, ' ').trim();
+    const notice = PUBLICATION_NOTICES.find((entry) => entry.pattern.test(own));
+    if (notice) return { ok: false, code: 'scope-publication-notice', detail: `${notice.reason}; kein Regelungsgehalt einer Stelle der Staatsverwaltung (docs/LEGAL_SCOPE.md: Informationsmitteilungen, Tatsachenbekanntmachungen)` };
+  }
   if (NON_STATE_ISSUER.test(issuer)) return { ok: false, code: 'scope-not-state-regulation', detail: `Erlassstelle „${issuer}“ ist keine Stelle der Staatsverwaltung; keine Vorschrift des Landesrechts (docs/LEGAL_SCOPE.md)` };
   if (!STATE_ISSUER.test(issuer)) return { ok: false, code: 'scope-normativity-review', detail: `Erlassstelle „${issuer || '–'}“ nicht als Staatsregierung, Staatskanzlei oder Staatsministerium belegt; Vorschriftencharakter nicht eindeutig` };
+  if (text !== undefined && CERTIFICATE_FORMS_TITLE.test(head.title) && DECLARED_FORMS.test(text.replace(/\s+/gu, ' '))) {
+    return { ok: true, detail: `Erlassstelle „${issuer}“; Vorschrift über die Zeugnisse der Schulart – alle Schulen haben sie nach den beigefügten Mustern auszustellen (Muster als Anlage, docs/LEGAL_SCOPE.md „Text nur als PDF“)` };
+  }
   const hit = NORMATIVITY_REVIEW.exec(`${head.title}`);
   if (hit) return { ok: false, code: 'scope-normativity-review', detail: `Prüffall nach docs/LEGAL_SCOPE.md („${hit[0]}“ im Titel „${head.title.slice(0, 120)}“): Vorschriftencharakter wird nicht automatisch festgestellt` };
   return { ok: true, detail: `Erlassstelle „${issuer}“; Verwaltungsvorschrift der Staatsverwaltung` };
@@ -191,39 +248,61 @@ const COMMENCEMENT_PHRASE = String.raw`(?:rückwirkend\s+)?(?:am|zum|mit\s+Wirku
 
 export interface OwnBegin {
   begin?: { date: string; evidence: string };
+  /**
+   * Relatives Inkrafttreten der Stammfassung („am Tag nach der Veröffentlichung“). Das Datum rechnet erst der Aufrufer,
+   * wenn das Veröffentlichungsdatum der Verkündung selbst und des Registers belegt und gleich sind (`relative.ts`).
+   */
+  relative?: { rule: RelativeRule; evidence: string };
+  /** Quellfehler der Inkrafttretensvorschrift mit nur einer Lesart (Beleg im Rezept). */
+  defects?: string[];
   code?: MissingLink;
   detail?: string;
 }
 
 /**
- * Beginn der Norm aus ihrer eigenen Inkrafttretensvorschrift – nur ein **ausdrückliches Kalenderdatum**
- * (`commencement.ts#commencementDate`), nie das Ausfertigungs- oder Verkündungsdatum. Die Satzform „tritt am X in
- * Kraft und mit Ablauf des Y außer Kraft“ wird in ihre Glieder zerlegt (commencement.ts liest nur Sätze, die auf
- * „in Kraft“ enden); dessen Grundregeln müssen, wo es sie liest, dasselbe Datum tragen.
+ * Beginn der Norm aus ihrer eigenen Inkrafttretensvorschrift – ein **ausdrückliches Kalenderdatum**
+ * (`commencement.ts#commencementDate`) oder ein relatives Inkrafttreten nach der Veröffentlichung (`relative.ts`), nie
+ * das Ausfertigungs- oder Verkündungsdatum selbst. Die Satzform „tritt am X in Kraft und mit Ablauf des Y außer Kraft“
+ * wird in ihre Glieder zerlegt (commencement.ts liest nur Sätze, die auf „in Kraft“ enden); dessen Grundregeln müssen,
+ * wo es sie liest, dasselbe Datum tragen.
  */
 export function ownBegin(blocks: readonly NormBodyBlock[], units: readonly GazetteUnit[], publishedAt: string): OwnBegin {
-  const sentences = sentencesOf(blockTexts(blocks));
+  const defects: string[] = [];
+  // Belegt wird der Wortlaut der Quelle; gelesen wird die berichtigte Lesart (nur Quellfehler mit einer Lesart).
+  const sentences = sentencesOf(blockTexts(blocks)).map((original) => {
+    const repaired = repairOwnCommencement(original);
+    defects.push(...repaired.defects);
+    return { original, sentence: repaired.sentence };
+  });
   const begins: Array<{ date: string; evidence: string }> = [];
+  const relatives: Array<{ rule: RelativeRule; evidence: string }> = [];
   const relative: string[] = [];
   const beginPattern = new RegExp(String.raw`^${OWN_SUBJECT}\s+(?:tritt|treten)\s+(${COMMENCEMENT_PHRASE})\s+in\s+Kraft\b`, 'u');
   const anyBegin = new RegExp(String.raw`^${OWN_SUBJECT}\s+(?:tritt|treten)\s+(?:(?!außer\s+Kraft).){0,120}?\bin\s+Kraft\b`, 'u');
-  for (const sentence of sentences) {
+  for (const { original, sentence } of sentences) {
     const begin = beginPattern.exec(sentence);
     if (begin) {
       const date = commencementDate(begin[1]!, publishedAt);
-      if (date) begins.push({ date, evidence: sentence });
+      if (date) begins.push({ date, evidence: original });
       else relative.push(sentence);
-    } else if (anyBegin.test(sentence)) relative.push(sentence);
+      continue;
+    }
+    const rule = relativeRule(sentence);
+    if (rule) relatives.push({ rule, evidence: sentence });
+    else if (anyBegin.test(sentence)) relative.push(sentence);
   }
+  const withDefects = defects.length > 0 ? { defects } : {};
   const official = commencementStatements(units, publishedAt).statements.filter((statement) => statement.refs === null && statement.date);
   const distinct = [...new Set(begins.map((entry) => entry.date))];
   if (distinct.length === 0) {
-    if (relative.length > 0) return { code: 'begin-not-calendar-date', detail: `Inkrafttretensvorschrift ohne Kalenderdatum: „${relative[0]!.slice(0, 200)}“ – verkündet ist nicht in Kraft; ein Datum wird nicht errechnet` };
+    if (relatives.length === 1 && relative.length === 0) return { relative: relatives[0]!, ...withDefects };
+    if (relatives.length > 1) return { code: 'begin-unreadable', detail: `Mehrere relative Inkrafttretensregeln (${relatives.map((entry) => `„${entry.evidence.slice(0, 120)}“`).join('; ')})` };
+    if (relative.length > 0) return { code: 'begin-not-calendar-date', detail: `Inkrafttretensvorschrift ohne Kalenderdatum und ohne belegbaren Bezug auf die Veröffentlichung: „${relative[0]!.slice(0, 200)}“` };
     return { code: 'begin-no-commencement-clause', detail: 'Keine Inkrafttretensvorschrift im Text der Stammverkündung; Beginn der Geltung nicht belegt (Ausfertigung ist nicht Textgeltung)' };
   }
-  if (distinct.length > 1 || relative.length > 0) return { code: 'begin-unreadable', detail: `Mehrere Inkrafttretensregeln (${[...begins.map((entry) => `„${entry.evidence.slice(0, 120)}“`), ...relative.map((sentence) => `„${sentence.slice(0, 120)}“`)].join('; ')})` };
+  if (distinct.length > 1 || relative.length > 0 || relatives.length > 0) return { code: 'begin-unreadable', detail: `Mehrere Inkrafttretensregeln (${[...begins.map((entry) => `„${entry.evidence.slice(0, 120)}“`), ...[...relative, ...relatives.map((entry) => entry.evidence)].map((sentence) => `„${sentence.slice(0, 120)}“`)].join('; ')})` };
   if (official.some((statement) => statement.date !== distinct[0])) return { code: 'begin-unreadable', detail: `commencement.ts liest ein anderes Datum (${official.map((statement) => statement.date).join(', ')}) als die Inkrafttretensvorschrift (${distinct[0]})` };
-  return { begin: begins[0]! };
+  return { begin: begins[0]!, ...withDefects };
 }
 
 export interface OwnExpiry {
@@ -239,8 +318,10 @@ export function ownExpiry(blocks: readonly NormBodyBlock[]): OwnExpiry {
   for (const sentence of sentencesOf(blockTexts(blocks))) {
     if (new RegExp(String.raw`^${OWN_SUBJECT}\s+(?:tritt|treten)\b`, 'u').test(sentence) && /außer\s+Kraft/u.test(sentence)) {
       const expiry = new RegExp(String.raw`mit\s+Ablauf\s+des\s+(${DATE})\s+außer\s+Kraft`, 'u').exec(sentence);
-      const date = expiry ? parseLongGermanDate(expiry[1]!) : undefined;
-      if (date) expiries.push({ date, evidence: sentence });
+      // „… tritt am 1. August 2011 in Kraft und am 31. August 2026 außer Kraft“: letzter Geltungstag ist der Vortag.
+      const onDay = expiry ? null : new RegExp(String.raw`(?:^|\s)(?:am|zum|mit\s+Wirkung\s+vom)\s+(${DATE})\s+außer\s+Kraft`, 'u').exec(sentence);
+      const date = expiry ? parseLongGermanDate(expiry[1]!) : onDay ? addDays(parseLongGermanDate(onDay[1]!) ?? '', -1) : undefined;
+      if (date && /^\d{4}-\d{2}-\d{2}$/u.test(date)) expiries.push({ date, evidence: sentence });
       else unreadable.push(sentence);
     }
     const until = new RegExp(String.raw`^${OWN_SUBJECT}\s+(?:gilt|gelten)\s+bis\s+(?:zum\s+|einschließlich\s+)?(${DATE})`, 'u').exec(sentence);
@@ -269,6 +350,99 @@ export function titleParts(title: string): { title: string; shortTitle?: string;
   const short = parts.length === 2 ? parts[0] : undefined;
   if (parts.length > 2) return { title };
   return { title: match[1]!, ...(short ? { shortTitle: short } : {}), abbr: last };
+}
+
+/* ------------------------------------------------------------------------ Anlagen als Datei */
+
+/**
+ * Anlagen, die nur als Datei vorliegen und den Regelungsgehalt **nicht** tragen: Vordrucke, Muster, Anträge,
+ * Bescheinigungen, Zeugnisse, Teilnehmer- und Schulverzeichnisse, Stundentafeln, Übersichten
+ * (docs/LEGAL_SCOPE.md: „PDF-Anlagen einer im HTML vollständigen Vorschrift (Muster, Vordrucke, Übersichten) werden
+ * archiviert und als Quelle registriert; die Norm wird mit Hinweis übernommen“). Unbenannte Anlagen („Anlage 1“)
+ * sind nicht bestimmbar und bleiben Review.
+ */
+const ANNEX_PREFIX = String.raw`^(?:(?:Anlage|Anhang)\s*(?:[\dIVX]+(?:\.\d+)*)?\s*[a-z]?\s*:\s*)?`;
+/** Formulare im engen Sinn: Ihr Inhalt ist das auszufüllende Formular, nie eine Regel. */
+const FORM_ONLY = String.raw`(?:Muster|Vordruck|Antrag|Auszahlungsantrag|Formular|Erklärung|Bescheinigung|\p{L}*[Zz]eugnis|Zeugnis|Urkunde|Verwendungs(?:nachweis|bestätigung)|Abnahmeprotokoll|Meldebogen)`;
+const FORM_ANNEX = new RegExp(String.raw`${ANNEX_PREFIX}(?:${FORM_ONLY}|Teilnehmer|Versuchsschulen|Stundentafel|Übersicht|Verzeichnis)(?![\p{L}-])`, 'u');
+const STRICT_FORM_ANNEX = new RegExp(String.raw`${ANNEX_PREFIX}${FORM_ONLY}(?![\p{L}-])`, 'u');
+/**
+ * Die Vorschrift erklärt ihre Anlagen selbst zu Mustern: „Die nach der Berufsschulordnung … zu erteilenden Zeugnisse
+ * sind nach den in der Anlage beigefügten Mustern … auszustellen“ (BayMBl. 2022 Nr. 231, 317, 364, 365, 367, 392, 575);
+ * „… werden die anliegenden Vordrucke … bekannt gemacht und verbindlich eingeführt“ (BayMBl. 2021 Nr. 64).
+ */
+const DECLARED_FORMS = /\b(?:Zeugnisse|Bescheinigungen|Urkunden|Vordrucke|Formulare)\b[^.]{0,200}?\bsind\s+nach\s+den\s+(?:in\s+der\s+Anlage\s+beigefügten\s+|beigefügten\s+)?Mustern\b[^.]{0,160}?\bauszustellen\b|\bwerden\s+die\s+(?:anliegenden|beigefügten)\s+(?:Vordrucke|Muster|Formulare)\b[^¹²³⁴⁵⁶⁷⁸⁹]{0,2000}?\b(?:bekannt\s*gemacht|verbindlich\s+eingeführt)\b/u;
+/** Kopf- oder Bekanntgabeerlass: Der Regelungsgehalt steht in der Anlage (vgl. recht-nrw `common/pdf.ts`). */
+const COVER_DECREE: readonly RegExp[] = [
+  /\b(?:werden|wird|sind|ist)\s+(?:[^.]{0,60}\s)?nicht\s+abgedruckt\b/u,
+  /\b(?:Verwaltungsvorschrift(?:en)?|Richtlinien?|Bestimmungen|Baubestimmungen|Vorschriften|Regelungen|VV)\b[^.]{0,200}?\b(?:als\s+Anlagen?|in\s+(?:der|den)\s+Anlagen?)\s+(?:zu\s+dieser\s+(?:Veröffentlichung|Bekanntmachung)\s+)?(?:beigefügt|einsehbar|veröffentlicht|bekannt\s*gegeben|bekannt\s*gemacht|abgedruckt|enthalten)\b/u,
+  /\bin\s+der\s+Anlage\s+enthaltenen\b/u,
+];
+/** Unterhalb dieser Länge des Körpers (ohne Kopf) ist eine Veröffentlichung mit Anlage ein Kopferlass. */
+const COVER_DECREE_MAX_LENGTH = 2500;
+
+export function annexDecision(converted: ConvertedGazette, attachments: readonly { title: string; href: string }[]): { ok: true; declaredForms?: true } | { ok: false; detail: string } {
+  const texts: string[] = [];
+  const visit = (blocks: readonly NormBodyBlock[]): void => {
+    for (const block of blocks) {
+      for (const value of [block.title, block.text]) if (typeof value === 'string') texts.push(value);
+      if (block.children) visit(block.children);
+    }
+  };
+  visit(converted.blocks);
+  const text = texts.join(' ');
+  const plain = text.replace(/\s+/gu, ' ');
+  if (COVER_DECREE.some((pattern) => pattern.test(text))) return { ok: false, detail: 'Kopf- oder Bekanntgabeerlass: Der Text verweist für den Regelungsgehalt auf die Anlage' };
+  // Erklärt der Text seine Anlagen selbst zu Mustern, ist jede Anlage ein Formular und der Text die ganze Regel –
+  // gleich wie kurz er ist.
+  if (attachments.length > 0 && DECLARED_FORMS.test(plain)) return { ok: true, declaredForms: true };
+  // Nur Formulare im engen Sinn: Der Text trägt die Regel („… ist der Vordruck der Anlage zu verwenden“).
+  const formsOnly = attachments.length > 0 && attachments.every((attachment) => STRICT_FORM_ANNEX.test(attachment.title.trim()));
+  if (!formsOnly && plain.length < COVER_DECREE_MAX_LENGTH) return { ok: false, detail: `Kopferlass (${plain.length} Zeichen Text neben ${attachments.length} Anlage(n))` };
+  const unknown = attachments.filter((attachment) => !FORM_ANNEX.test(attachment.title.trim()));
+  if (unknown.length > 0) return { ok: false, detail: `Anlage(n) mit möglichem Regelungsgehalt (weder Vordruck noch Übersicht): ${unknown.map((attachment) => `„${attachment.title.slice(0, 80)}“`).join('; ')}` };
+  return { ok: true };
+}
+
+/**
+ * Das BayMBl. zählt seit 2019 nur nach Nummern; „BayMBl. S. 285“ in einer Änderungsklausel (BayMBl. 2021 Nr. 825 zu
+ * KWMBl. 2016 S. 194) meint die Nummer 285. Gilt nur zusammen mit dem Ausfertigungsdatum der Änderung.
+ */
+function baymblPageAsNumber(named: GazetteReference, own: GazetteReference): boolean {
+  return named.organ === 'BayMBl' && own.organ === 'BayMBl' && named.kind === 'page' && own.kind === 'number' && named.position === own.position && (named.explicitVolume === undefined || own.explicitVolume === undefined || named.explicitVolume === own.explicitVolume);
+}
+
+/** Text der Blöcke in Lesereihenfolge (Überschriften und Texte, ohne Unterschrift), Leerraum normalisiert. */
+export function plainText(blocks: readonly NormBodyBlock[]): string {
+  const texts: string[] = [];
+  const visit = (items: readonly NormBodyBlock[]): void => {
+    for (const block of items) {
+      if (block.type === 'signature') continue;
+      for (const value of [block.title, block.text]) if (typeof value === 'string' && value !== '') texts.push(value);
+      if (block.children) visit(block.children);
+    }
+  };
+  visit(blocks);
+  return texts.join(' ').replace(/\s+/gu, ' ').trim();
+}
+
+/** Anlage, die die Verkündungsseite nur mit ihrer Nummer verlinkt („Anlage 1“, „Anhang“). */
+const BARE_ANNEX = /^(?:Anlage|Anhang)\s*[\dIVX]*\s*[a-z]?$/u;
+
+/**
+ * Bezeichnung einer nur nummerierten Anlage aus dem **Textlayer** ihrer PDF (`pdfText`, kein OCR): der Anfang der
+ * ersten Seite hinter „Anlage <n>“. Ohne sicher dekodierbaren Textlayer oder ohne „Anlage <n>“ am Anfang bleibt die
+ * Anlage unbestimmt (Review).
+ */
+export function annexHeading(bytes: Uint8Array, title: string): string | undefined {
+  const text = pdfText(bytes);
+  if (!text.ok || text.pages.length === 0) return undefined;
+  const first = text.pages[0]!.replace(/\s+/gu, ' ').trim();
+  const number = /[\dIVX]+\s*[a-z]?$/u.exec(title.trim())?.[0]?.replace(/\s+/gu, '');
+  const lead = new RegExp(String.raw`^(?:Anlage|Anhang)\s*${number ? number.split('').join('\\s*') : ''}(?![\dIVX])\s*[:.)–-]?\s*`, 'u').exec(first);
+  if (!lead) return undefined;
+  const heading = first.slice(lead[0].length).slice(0, 160).trim();
+  return heading === '' ? undefined : heading;
 }
 
 /* ---------------------------------------------------------------------------- Normstufe */
@@ -315,19 +489,64 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
     }
     throw error;
   }
-  const scope = scopeDecision({ title: converted.head.title, ...(converted.head.issuer ? { issuer: converted.head.issuer } : {}) });
+  const scope = scopeDecision({ title: converted.head.title, ...(converted.head.issuer ? { issuer: converted.head.issuer } : {}) }, plainText(converted.blocks));
   if (!scope.ok) return failNorm(scope.code!, scope.detail, { converted });
 
-  // 7 – Anlagen nur als Datei.
+  // 7 – Anlagen nur als Datei (docs/LEGAL_SCOPE.md, „Text nur als PDF“): Vordrucke und Übersichten einer im HTML
+  // vollständigen Vorschrift werden archiviert und referenziert; trägt eine Anlage den Regelungsgehalt, bleibt es Review.
+  const annexSources: RecipeSource[] = [];
   if (publication.head.attachments.length > 0) {
-    return failNorm('annex-pdf-only', `Anlage(n) nur als Datei verlinkt: ${publication.head.attachments.map((attachment) => `„${attachment.title.slice(0, 80)}“ (${attachment.href})`).join('; ')} – Regelungsgehalt der Anlage nicht als Text verfügbar (docs/LEGAL_SCOPE.md, „Text nur als PDF“)`, { converted });
+    const annexUrl = (href: string): string => (href.startsWith('http') ? href : `${PLATFORM_ORIGIN}${href.startsWith('/') ? '' : '/'}${href}`);
+    // Nur nummerierte Anlagen: Bezeichnung aus dem Textlayer der PDF – erst wenn der Text die Vorschrift trägt.
+    let attachments = publication.head.attachments;
+    const precheck = annexDecision(converted, []);
+    if (precheck.ok && attachments.some((attachment) => BARE_ANNEX.test(attachment.title.trim()))) {
+      const named: typeof attachments[number][] = [];
+      for (const attachment of attachments) {
+        if (!BARE_ANNEX.test(attachment.title.trim())) { named.push(attachment); continue; }
+        const page = await ctx.platform.get(annexUrl(attachment.href));
+        if (isPageMiss(page)) return failNorm('base-not-fetched', `Anlage „${attachment.title}“ nicht verfügbar: ${page.detail}`, { converted });
+        const heading = annexHeading(page.bytes, attachment.title);
+        named.push(heading ? { ...attachment, title: `${attachment.title.trim()}: ${heading}` } : attachment);
+      }
+      attachments = named;
+    }
+    const annex = annexDecision(converted, attachments);
+    if (!annex.ok) return failNorm('annex-pdf-only', `${annex.detail} – Anlage(n): ${attachments.map((attachment) => `„${attachment.title.slice(0, 80)}“ (${attachment.href})`).join('; ')}`, { converted });
+    for (const attachment of attachments) {
+      const page = await ctx.platform.get(annexUrl(attachment.href));
+      if (isPageMiss(page)) return failNorm('base-not-fetched', `Anlage „${attachment.title.slice(0, 80)}“ nicht verfügbar: ${page.detail}`, { converted });
+      if (!page.contentType.includes('pdf') && !/^%PDF-/u.test(page.html.slice(0, 8))) return failNorm('annex-pdf-only', `Anlage „${attachment.title.slice(0, 80)}“ ist keine PDF-Datei (${page.contentType})`, { converted });
+      annexSources.push({ role: 'annex', ...sourceRef(page), citation: `Anlage zu ${publication.citation}: ${attachment.title}` });
+    }
   }
 
   // 8 – Beginn.
   const baseBody = sourceBody(converted);
   const own = ownBegin(converted.blocks, publication.units, publication.publishedAt);
-  if (!own.begin) return failNorm(own.code!, own.detail!, { converted });
-  if (own.begin.date > ctx.baselineDate) return failNorm('begin-after-baseline', `Inkrafttreten am ${own.begin.date}, nach dem Stichtag: „${own.begin.evidence}“`, { converted });
+  let start: { date: string; evidence: string; notes: string[]; listing?: SourceDocumentRef };
+  if (own.begin) start = { ...own.begin, notes: own.defects ?? [] };
+  else if (own.relative) {
+    // Relativ zur Veröffentlichung: Datum der Verkündung selbst gegen das Register der Plattform.
+    const ownDate = ownPublicationDate(publication.page.html, publication.organ);
+    let registerDate: string | undefined;
+    let registerSource: string;
+    let listing: SourceDocumentRef | undefined;
+    if (publication.organ === 'BayMBl') {
+      const listed = await baymblListedDate(ctx.platform, publication);
+      if (listed.missing) return failNorm('base-not-fetched', `Gliederungssuche für das Veröffentlichungsdatum nicht verfügbar: ${listed.missing}`, { converted });
+      registerDate = listed.date;
+      listing = listed.listing;
+      registerSource = `Gliederungssuche des BayMBl.${listed.listing ? ` (${listed.listing.url})` : ''}`;
+    } else {
+      registerDate = publication.publishedAt;
+      registerSource = `Inhaltsübersicht der Ausgabe (${publication.listings.at(-1)?.url ?? publication.citation})`;
+    }
+    const checked = checkedPublicationDate({ ownDate, registerDate, url: publication.page.url, registerSource });
+    if (!checked.ok) return failNorm('begin-not-calendar-date', `Relatives Inkrafttreten „${own.relative.evidence.slice(0, 160)}“: ${checked.reason}`, { converted });
+    start = { date: relativeDate(own.relative.rule, checked.date!), evidence: own.relative.evidence, notes: [...(own.defects ?? []), ...checked.evidence], ...(listing ? { listing } : {}) };
+  } else return failNorm(own.code!, own.detail!, { converted });
+  if (start.date > ctx.baselineDate) return failNorm('begin-after-baseline', `Inkrafttreten am ${start.date}, nach dem Stichtag: „${start.evidence}“`, { converted });
 
   // 9 – Weitergeltung nach der VwVWBek (AllMBl. 2016 S. 1555): Positivliste.
   let positivliste: { list: Positivliste; row: PositivlisteRow } | undefined;
@@ -341,9 +560,8 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
     if (match.status === 'ambiguous') return failNorm('vwvwbek-positivliste', `Positivliste mehrdeutig: ${match.detail}`, { converted });
     const row = match.row;
     if (row.anwendungsende && row.anwendungsende < ctx.baselineDate) return failNorm('ended-before-baseline', `Positivliste: Anwendungsende ${row.anwendungsende} vor dem Stichtag („${row.title.slice(0, 120)}“)`, { converted });
-    if (row.fassungsdatum !== citation.documentDate) {
-      return failNorm('vwvwbek-amended-before-2016', `Positivliste: Fassungsdatum ${row.fassungsdatum}, Erlassdatum ${row.erlassdatum} – die Vorschrift wurde vor 2016 geändert; diese Änderungen sind nur durch vollständiges Lesen der Amtsblätter seit ${citation.documentDate.slice(0, 4)} nachweisbar (keine Volltextsuche)`, { converted });
-    }
+    // Fassungsdatum ≠ Erlassdatum: vor 2016 geändert. Die Gegenprobe (Schritt 10) liest die Amtsblätter ab der
+    // Verkündung vollständig; sie muss eine Änderung mit diesem Datum finden, sonst bleibt die Kette offen.
     // Fassungsdatum = Erlassdatum belegt keine Unverändertheit: BayMBl. 2026 Nr. 294 nennt eine Änderung der
     // KWMBl.-Bekanntmachung vom 2. Januar 2013 vom 14. Juli 2015, die Liste führt Fassungsdatum = Erlassdatum.
     // Die Gegenprobe beginnt deshalb immer mit der Verkündung der Norm.
@@ -386,22 +604,30 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
     const named = parseParenthetical(amendment.reference ?? '').primary;
     const match = named && amendment.date ? amendmentPages.find((page) => {
       const own = parseParenthetical(page.citation).primary;
-      return own !== undefined && sameReference(named, own) && headDates(page.units).includes(amendment.date!);
+      return own !== undefined && (sameReference(named, own) || baymblPageAsNumber(named, own)) && headDates(page.units).includes(amendment.date!);
     }) : undefined;
     if (!match) {
       return failNorm('chain-named-amendment-missing', `${by} nennt die Änderung „${amendment.text}“, die Gegenprobe findet sie nicht als Änderung der Norm (gefunden: ${amendmentPages.map((page) => page.citation).join(', ') || 'keine Änderung'})`, { converted });
     }
   }
 
+  if (positivliste && positivliste.row.fassungsdatum !== citation.documentDate) {
+    const fassung = positivliste.row.fassungsdatum;
+    if (!amendmentPages.some((page) => page.publishedAt < '2016-01-01' && headDates(page.units).includes(fassung))) {
+      return failNorm('vwvwbek-amended-before-2016', `Positivliste: Fassungsdatum ${fassung}, Erlassdatum ${positivliste.row.erlassdatum} – vor 2016 geändert, die Gegenprobe findet aber keine Änderung vom ${fassung} (gefunden: ${amendmentPages.map((page) => page.citation).join(', ') || 'keine Änderung'})`, { converted });
+    }
+  }
+
   // Änderungen chronologisch anwenden (vor dem Stichtag in Kraft), danach die erste spätere als Ende der Fassung.
-  const identity = normIdentityOf(publication, citation.documentDate, reference, titleParts(converted.head.title).abbr);
+  let identity = normIdentityOf(publication, citation.documentDate, reference, titleParts(converted.head.title).abbr);
   let body = baseBody;
   const applied: RecipeAmendment[] = [];
   let textValidTo: { date: string; reason: string } | undefined;
   const sortedAmendments = [...amendmentPages].sort((left, right) => (left.publishedAt < right.publishedAt ? -1 : left.publishedAt > right.publishedAt ? 1 : left.url < right.url ? -1 : 1));
+  let stichtagTitle = converted.head.title;
   for (const [index, page] of sortedAmendments.entries()) {
-    const attempt = applyAmendment(body, page.units, identity, `a${index + 1}-`);
-    const commencement = amendmentCommencement(page.units, page.publishedAt, attempt.section);
+    const attempt = applyAmendment(body, page.units, identity, `a${index + 1}-`, stichtagTitle);
+    const commencement = amendmentCommencement(page.units, page.publishedAt, attempt.section, { html: page.page.html, organ: page.citation.replace(/\..*$/su, ''), url: page.url });
     if (!commencement.ok) {
       if (page.publishedAt > ctx.baselineDate) {
         // Nach dem Stichtag verkündet: berührt den Stichtagstext nur rückwirkend – das ist ohne Datum nicht auszuschließen.
@@ -421,6 +647,11 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
     if (textValidTo) return failNorm('amendment-commencement-undetermined', `${page.citation} tritt am ${effective} in Kraft, nach einer bereits späteren Änderung – Reihenfolge der Kette widersprüchlich`, { converted });
     if (!attempt.ok) return failNorm(attempt.code!, `${page.citation} (${page.url}): ${attempt.reason}`, { converted });
     body = attempt.after!;
+    if (attempt.title !== undefined) {
+      // Spätere Änderungen zitieren die Norm unter ihrer geänderten Überschrift (BayMBl. 2021 Nr. 649: „… 2017 bis 2021“).
+      stichtagTitle = attempt.title;
+      identity = { ...identity, title: stichtagTitle };
+    }
     applied.push({
       citation: page.citation,
       documentDate: headDates(page.units)[0] ?? page.publishedAt,
@@ -432,6 +663,7 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
       ...(attempt.section ? { section: attempt.section } : {}),
       intro: attempt.intro ?? '',
       steps: attempt.steps,
+      ...(attempt.titleChanges ? { titleChanges: attempt.titleChanges } : {}),
       afterFingerprint: bodyFingerprint(body),
     });
   }
@@ -442,7 +674,7 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
   const expiry = own2.expiry;
   if (expiry && expiry.date < ctx.baselineDate) return failNorm('own-expiry-before-baseline', `Die Norm befristet sich selbst bis ${expiry.date} („${expiry.evidence.slice(0, 200)}“), das Ereignisregister belegt ihre Aufhebung erst nach dem Stichtag`, { converted });
 
-  const beginDate = [own.begin.date, ...applied.map((amendment) => amendment.effectiveDate)].sort().at(-1)!;
+  const beginDate = [start.date, ...applied.map((amendment) => amendment.effectiveDate)].sort().at(-1)!;
   let lastDay = endWork.end!.lastDay!;
   const endEvidence = [...endWork.end!.evidence];
   if (expiry && expiry.date < lastDay) {
@@ -462,7 +694,8 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
   // 11 – Rezept.
   const repealPage = await ctx.platform.get(endWork.event.sourceUrl);
   if (isPageMiss(repealPage)) return failNorm('base-not-fetched', `Aufhebungsverkündung nicht verfügbar: ${repealPage.detail}`, { converted });
-  const parts = titleParts(converted.head.title);
+  // Überschrift am Stichtag: die der Stammfassung, geändert durch die angewandten Änderungen (Metadatum, nicht Körper).
+  const parts = titleParts(stichtagTitle);
   // GVBl.-Normen enden vor der Kette (`chain-organ-unsearchable`); hier bleiben Ministerialblätter.
   const type = 'verwaltungsvorschrift' as const;
   const lastAmendment = applied.at(-1);
@@ -493,7 +726,9 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
     },
     ...publication.listings.map((listing) => ({ role: 'listing' as const, ...listing })),
     ...(positivliste ? [{ role: 'registry' as const, ...sourceRef(positivliste.list.page), citation: POSITIVLISTE_CITATION }] : []),
+    ...annexSources,
     ...scan.listings.map((listing) => ({ role: 'listing' as const, ...listing })),
+    ...(start.listing ? [{ role: 'listing' as const, ...start.listing }] : []),
     ...scan.examined.filter((entry) => entry.relations.length > 0 && !applied.some((amendment) => amendment.url === entry.url) && !repealUrls.has(entry.url)).map((entry) => {
       const page = pages.get(entry.url)!.page;
       return { role: 'chain-publication' as const, ...sourceRef(page), citation: entry.citation, publishedAt: entry.publishedAt };
@@ -506,7 +741,7 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
       kind: 'text-in-force-clause',
       dimension: 'begin',
       strength: 'strong',
-      statement: applied.length > 0 ? `Die Stichtagsfassung gilt seit ${beginDate}: Inkrafttreten der letzten Änderung vor dem Stichtag (${lastAmendment!.citation}): „${lastAmendment!.effectiveEvidence[0] ?? ''}“; Stammfassung seit ${own.begin.date}: „${own.begin.evidence}“` : `Inkrafttretensvorschrift der Stammverkündung: „${own.begin.evidence}“`,
+      statement: applied.length > 0 ? `Die Stichtagsfassung gilt seit ${beginDate}: Inkrafttreten der letzten Änderung vor dem Stichtag (${lastAmendment!.citation}): „${lastAmendment!.effectiveEvidence[0] ?? ''}“; Stammfassung seit ${start.date}: „${start.evidence}“` : `Inkrafttretensvorschrift der Stammverkündung: „${start.evidence}“`,
       date: beginDate,
       sourceUrl: applied.length > 0 ? lastAmendment!.url : publication.page.url,
       sha256: applied.length > 0 ? lastAmendment!.sha256 : publication.page.sha256,
@@ -566,6 +801,7 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
     converterVersion: CONVERTER_VERSION,
     norm: {
       title: parts.title,
+      ...(stichtagTitle !== converted.head.title ? { originalTitle: converted.head.title } : {}),
       ...(parts.shortTitle ? { shortTitle: parts.shortTitle } : {}),
       ...(parts.abbr ? { abbr: parts.abbr } : {}),
       type,
@@ -589,7 +825,7 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
       titleCheck: publication.titleCheck,
     },
     amendments: applied,
-    begin: { date: beginDate, commencementDate: own.begin.date, evidence: [`Stammverkündung ${publication.citation}: „${own.begin.evidence}“`, ...applied.map((amendment) => `${amendment.citation}: ${amendment.effectiveEvidence.map((text) => `„${text}“`).join(' ')}`)] },
+    begin: { date: beginDate, commencementDate: start.date, evidence: [`Stammverkündung ${publication.citation}: „${start.evidence}“`, ...start.notes, ...applied.map((amendment) => `${amendment.citation}: ${amendment.effectiveEvidence.map((text) => `„${text}“`).join(' ')}`)] },
     end: {
       lastDay,
       kind: endWork.end!.kind!,
@@ -623,6 +859,7 @@ export async function analyzeNorm(ctx: AnalyzeContext, works: readonly Candidate
       ...(citation.priorClause ? { priorClause: citation.priorClause } : {}),
       registerTitle: first.event.targetTitle,
       ...(citation.registerDate ? { registerDate: citation.registerDate } : {}),
+      ...(first.foundBy ? { foundBy: first.foundBy } : {}),
     },
     evidence,
     expected: { baselineFingerprint: bodyFingerprint(body) },

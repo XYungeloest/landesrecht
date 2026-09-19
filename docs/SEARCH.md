@@ -44,6 +44,11 @@ ae/oe/ue-Transliteration sowie – bei Eingaben mit ae/oe/ue oder ss – die Rü
 1. Kandidatenabfrage: `law_search MATCH ? AND rank MATCH bm25(…)` mit Join über `rowid` auf `law_search_units`
    (FTS5 mit externem Inhalt lädt für UNINDEXED-Spalten sonst jede Trefferzeile samt `body`; der Umweg über den
    Schlüssel ist 2–3× schneller), Gruppierung je Fassung, Sortierung `identity_hit DESC, current DESC, best`.
+   `identity_hit` vergleicht Abkürzung, Kurztitel und Titel mit der Anfrage; bei Adressanfragen („Nr. 1.1 FüR“)
+   mit der Bezeichnung ohne Adresse (`subjectRaw`, `subjectVariants`). Sonst scheitert eine Abkürzung, die
+   normalisiert einem Funktionswort gleicht („FüR“ → „für“, 302 Treffereinheiten in BayWü), an der
+   Kandidatengrenze, obwohl die Bewertung im Speicher sie voranstellen würde. Seit 2026-09-19 so; West-Voll-Audit
+   und Golden Set danach unverändert (1 482/0, Recall@10 94,1 %, MRR 0,933).
 2. Gesamtzahl: im Plan `and-first` über den MATCH-Ausdruck (nur wenn Kandidaten vorliegen); im Plan `or-prefix`
    ohne treibenden MATCH allein über die AND-Unterabfragen je Wort (die Menge ist dadurch vollständig bestimmt;
    ergibt sie 0, entfällt die Kandidatenabfrage – Nulltreffer kosten wenige Millisekunden).

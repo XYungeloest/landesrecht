@@ -3,6 +3,7 @@
  * Netzstatistik (die hängt vom Cache ab, nicht vom Bestand).
  */
 import { MISSING_LINKS, OUTCOMES, type Outcome } from './model.ts';
+import { AMTSBLATT_FULL_READ_CAP, AMTSBLATT_ISSUE_CAP } from './chain.ts';
 import type { BaselineOnlyRun } from './run.ts';
 
 const OUTCOME_LABELS: Readonly<Record<Outcome, string>> = {
@@ -89,9 +90,13 @@ export function renderReport(run: BaselineOnlyRun, options: { baselineDate: stri
   lines.push('## 5 Grenzen', '');
   lines.push(
     '- Ausgangsfassungen vor 2009 (Amtsblätter nur gedruckt), nicht verkündete Schreiben und Blätter außerhalb der Verkündungsplattform bleiben `missing-base`; es gibt keine OCR und keinen Text aus Sekundärquellen.',
-    '- Verwaltungsvorschriften, die bis 31. Dezember 2015 erlassen wurden, gelten nach der VwVWBek nur fort, wenn sie in der Positivliste stehen (Textlayer vollständig zerlegt, kein OCR). Nicht gelistet heißt: galt am Stichtag nicht (`vwvwbek-not-listed`); vor 2016 geändert (Fassungsdatum ≠ Erlassdatum) bleibt `vwvwbek-amended-before-2016`.',
-    '- Die Kette wird im BayMBl. per Volltextsuche nach Ausfertigungsdatum und Fundstelle gegengeprüft (Gliederungsnummern allein übersehen Sammeländerungen, belegt an BayMBl. 2022 Nr. 766); die Amtsblätter 2009–2018 haben keine Volltextsuche – dort wird jede Veröffentlichung des Zeitraums gelesen, höchstens 200 Ausgaben je Norm – Verwaltungsvorschriften, die vor Herbst 2015 verkündet wurden, bleiben deshalb `chain-amtsblatt-unsearchable`.',
-    '- Änderungen werden nur mit den Wortlautformeln der Rückrechnung angewandt (`reconstruction/formulas.ts`); Neufassungen, Aufhebungen einzelner Glieder, Einfügungen ganzer Glieder und Berichtigungen bleiben `incomplete-chain`.',
+    '- Verwaltungsvorschriften, die bis 31. Dezember 2015 erlassen wurden, gelten nach der VwVWBek nur fort, wenn sie in der Positivliste stehen (Textlayer vollständig zerlegt, kein OCR). Nicht gelistet heißt: galt am Stichtag nicht (`vwvwbek-not-listed`); vor 2016 geändert (Fassungsdatum ≠ Erlassdatum) verlangt eine Änderung dieses Datums in der Gegenprobe, sonst `vwvwbek-amended-before-2016`.',
+    `- Die Kette wird im BayMBl. per Volltextsuche nach Ausfertigungsdatum und Fundstelle gegengeprüft (Gliederungsnummern allein übersehen Sammeländerungen, belegt an BayMBl. 2022 Nr. 766; beim AllMBl. auch in der Schreibweise „AIIMBl.“); die Amtsblätter 2009–2018 haben keine Volltextsuche – dort wird jede Veröffentlichung des Zeitraums gelesen, höchstens ${AMTSBLATT_ISSUE_CAP} Ausgaben und ${AMTSBLATT_FULL_READ_CAP} Veröffentlichungen je Norm; darüber bleibt es \`chain-amtsblatt-unsearchable\`.`,
+    '- Änderungen werden mit den Wortlautformeln der Rückrechnung angewandt (`reconstruction/formulas.ts`) und mit den Strukturbefehlen vorwärts (`structured.ts`): Neufassung und Einfügung auch gegliederter Glieder und Bereiche nach einer Vorlage, Umnummerierung, Satzbefehle, Streichungen, Überschrift der Norm; Aufhebungen einzelner Glieder, Tabellen, Berichtigungen und zusammengesetzte Befehle bleiben `incomplete-chain`.',
+    '- Beginn, Wirksamwerden und Ende mit Kalenderdatum oder relativ zur Veröffentlichung – dann nur mit dem Veröffentlichungsdatum, das die Verkündung selbst druckt und das Register bestätigt; das Veröffentlichungsdatum selbst ist nie das Inkrafttreten.',
+    '- Zitat ohne Fundstelle: nur Amtsblätter 2009–2018 über ihre Inhaltsübersichten (Erlassdatum und Titel, genau eine Zeile); nicht verkündete Schreiben bleiben `base-unpublished`.',
+    '- Umfang: entschieden nur, wo `docs/LEGAL_SCOPE.md` eindeutig ist (Veröffentlichungshinweise zu Rundfunkdokumenten nicht, Zeugnismuster-Vorschriften ja); sonst Review.',
+    '- Anlagen nur als PDF: Vordrucke, Muster, Verzeichnisse, Stundentafeln und Übersichten einer im HTML vollständigen Vorschrift werden archiviert und referenziert (Hinweis `annex-pdf-only` am Eintrag); Kopferlasse und Anlagen mit möglichem Regelungsgehalt bleiben `missing-base`.',
     '- Fingerabdrücke gelten dem Quelltext vor der Überleitung; eine Änderung der Überleitung macht kein Rezept ungültig.',
     '',
   );

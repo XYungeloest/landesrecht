@@ -120,7 +120,7 @@ const titleTokens = (value: string): Set<string> =>
   );
 
 /** Das Zitat nennt nur die Erlassstelle („Die Bekanntmachung der Obersten Baubehörde … vom …“), keinen Titel. */
-const ISSUER_ONLY = /^(?:[¹²³⁴⁵⁶⁷⁸⁹⁰]+)?(?:die\s+|das\s+|der\s+)?(?:gemeinsame\s+)?(?:bekanntmachung|schreiben|richtlinien?)\s+(?:des|der)\s+(?:(?!(?<![\p{L}])über(?![\p{L}])|„|")[\s\S])*$/u;
+const ISSUER_ONLY = /^(?:[¹²³⁴⁵⁶⁷⁸⁹⁰]+)?(?:die\s+|das\s+|der\s+)?(?:gemeinsame\s+)?(?:(?:bekanntmachung|schreiben|richtlinien?)\s+(?:des|der)\s+(?:(?!(?<![\p{L}])über(?![\p{L}])|„|")[\s\S])*|(?:bekanntmachung|richtlinien?|verwaltungsvorschriften?|dienstvereinbarung))$/u;
 
 export interface TitleCheck {
   consistent: boolean;
@@ -165,6 +165,13 @@ export interface ResolveBaseInput {
   location: BaseLocation;
   documentDate: string;
   citedTitle: string;
+  /**
+   * Titel weiterer Zitate derselben Verkündung (gleiches Ausfertigungsdatum, gleiche Fundstelle). Die Titelprüfung ist
+   * Gegenprobe; sie besteht, wenn eines der Zitate passt (BayMBl. 2024 Nr. 466: „1.2 Die RiZ-ING, Ausgabe Januar
+   * 2022, wurden mit Bekanntmachung … eingeführt“ neben dem Außerkrafttretensbefehl „… die Bekanntmachung des
+   * Bayerischen Staatsministeriums für Wohnen, Bau und Verkehr vom 12. Mai 2023 (BayMBl. Nr. 274) außer Kraft“).
+   */
+  alternativeTitles?: readonly string[];
   ledgerTitle: string;
 }
 
@@ -177,7 +184,8 @@ function verifyAndBuild(page: PlatformPage, input: ResolveBaseInput, build: Omit
     return { ok: false, code: 'base-identity-mismatch', detail: `${page.url} trägt im Kopf das Ausfertigungsdatum ${dates.join(', ') || '–'}, zitiert ist ${input.documentDate}`, urls: [page.url] };
   }
   const title = publicationTitle(units);
-  const check = titleCheck(title, input.citedTitle);
+  const checks = [input.citedTitle, ...(input.alternativeTitles ?? [])].map((cited) => titleCheck(title, cited));
+  const check = checks.find((entry) => entry.consistent) ?? checks[0]!;
   if (!check.consistent) {
     return { ok: false, code: 'base-identity-mismatch', detail: `${page.url}: Titel „${title.slice(0, 120)}“ passt nicht zum zitierten Titel „${input.citedTitle.slice(0, 120)}“ (Wortüberdeckung ${check.overlap}/${check.reverseOverlap})`, urls: [page.url] };
   }

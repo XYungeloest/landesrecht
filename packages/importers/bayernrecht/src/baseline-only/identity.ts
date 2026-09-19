@@ -12,6 +12,7 @@
  * gibt es keine Identität – es wird nicht der wahrscheinlichste Treffer genommen.
  */
 import { commencementStatements } from '../reconstruction/commencement.ts';
+import { relativeDate, relativeRule } from './relative.ts';
 import type { GazetteUnit } from '../reconstruction/gazette.ts';
 import { clauseAmendments } from '../reconstruction/structure.ts';
 import { parseLongGermanDate } from '../events/resolve.ts';
@@ -60,6 +61,8 @@ export interface LocatedCitation {
   /** Die Klausel sagt „zuletzt“ – es kann weitere, frühere Änderungen geben. */
   priorClauseLast: boolean;
   priorAmendments: PriorAmendment[];
+  /** Satzklammer vor dem Titel: „Mit Ablauf des 31. Dezember 2023 tritt die“ (der Befehl endet hinter dem Zitat). */
+  bracketLead?: string;
   /** Zitiert „in der Fassung der Bekanntmachung vom …“ (Neubekanntmachung). */
   versionForm: boolean;
   /** Text hinter Zitat und Änderungsklausel bis zum Ende des Glieds. */
@@ -161,13 +164,17 @@ export function locateCitation(units: readonly GazetteUnit[], input: { title: st
       const withoutAbbreviation = before.replace(/\s*\([^()]{1,80}\)\s*$/u, '');
       if (!titleKey(before).endsWith(wanted) && !titleKey(withoutAbbreviation).endsWith(wanted)) continue;
       const anchored = reanchor(text, match.index!) ?? { start: match.index!, end: match.index! + match[0].length, date: input.documentDate, reanchored: false };
-      const head = sentenceTail(text.slice(0, anchored.start));
+      const sentence = sentenceTail(text.slice(0, anchored.start));
+      // Satzklammer vor dem Titel („Mit Ablauf des … tritt die …“) gehört zum Befehl, nicht zum Titel.
+      const lead = BRACKET_PREFIX.exec(sentence);
+      const head = lead ? sentence.slice(lead[0].length) : sentence;
       const versionForm = /in\s+der\s+Fassung\s+der\s+(?:Bekanntmachung|Neubekanntmachung)\s*$/u.test(head);
       const tail = parseCitationTail(text.slice(anchored.end));
       hits.push({
         unitIndex: unit.index,
         unitText: `${unit.label ? `${unit.label} ` : ''}${text}`,
         citedTitle: head.trim(),
+        ...(lead ? { bracketLead: lead[0].trim() } : {}),
         documentDate: anchored.date,
         ...(anchored.reanchored ? { registerDate: input.documentDate } : {}),
         versionForm,
@@ -186,7 +193,8 @@ export function locateCitation(units: readonly GazetteUnit[], input: { title: st
  * Satz („¹Diese Bekanntmachung tritt … in Kraft.“) gehören nicht dazu.
  */
 function sentenceTail(head: string): string {
-  const boundaries = [...head.matchAll(/(?:^|\s)[¹²³⁴⁵⁶⁷⁸⁹⁰]+(?=\S)|[.;:]\s+(?=[A-ZÄÖÜ„])/gu)];
+  // Kein Satzende nach einer Zahl: „Mit Ablauf des 31. Dezember 2023 tritt die …“.
+  const boundaries = [...head.matchAll(/(?:^|\s)[¹²³⁴⁵⁶⁷⁸⁹⁰]+(?=\S)|(?<!\d)[.;:]\s+(?=[A-ZÄÖÜ„])/gu)];
   const last = boundaries.at(-1);
   const start = last ? last.index! + last[0].length : 0;
   return head.slice(start).replace(/^[¹²³⁴⁵⁶⁷⁸⁹⁰]+/u, '').trim();
@@ -234,14 +242,16 @@ export interface EndDetermination {
 
 /** Befehl, der für ein Listenglied gilt: Einleitungssatz der Aufhebungsliste. */
 const LIST_TRIGGER = /\b(?:werden|wird)\s+(?:die\s+|der\s+|das\s+)?(?:folgende[nr]?|nachstehende[nr]?|hiermit\s+folgende[nr]?)\b[^:]{0,160}?\baufgehoben\b\s*:?\s*$|\baufgehoben\s*:\s*$/u;
-const LIST_EXPIRY = new RegExp(String.raw`\b(?:treten|tritt)\s+mit\s+Ablauf\s+des\s+(${DATE})\s+außer\s+Kraft\s*:?\s*$`, 'u');
+const LIST_EXPIRY = new RegExp(String.raw`\b(?:treten|tritt)\s+mit\s+Ablauf\s+des\s+(${DATE})\s+außer\s+Kraft\s*:?\s*$|\bMit\s+Ablauf\s+des\s+(${DATE})\s+(?:treten|tritt)\s+(?:folgende\s+[^:]{0,80}?\s+)?außer\s+Kraft\s*:?\s*$`, 'u');
 /**
- * „am Tag nach der Veröffentlichung“ – für das BayMBl. gleichbedeutend mit „nach der Bekanntmachung“: Die
- * Veröffentlichung auf der Verkündungsplattform ist die amtliche Bekanntmachung (Nutzungshinweise zum
- * BayMBl.). `commencement.ts` kennt nur „Verkündung“ und „Bekanntmachung“; diese Lesart gilt hier allein für
- * das **Ende** der aufgehobenen Norm, nie für den Beginn einer Fassung.
+ * Satzklammer: „²Mit Ablauf des 31. Dezember 2023 tritt die Bekanntmachung … vom 25. Juni 2019 (BayMBl. Nr. 253) …
+ * außer Kraft.“, „²Gleichzeitig tritt die Bekanntmachung … außer Kraft.“ – das Verb steht vor dem Zitat.
  */
-const DAY_AFTER_PUBLICATION = /^(?:Diese|Die)\s+Bekanntmachung\s+tritt\s+am\s+Tag(?:e)?\s+nach\s+(?:der|ihrer)\s+(?:Veröffentlichung|Bekanntgabe)\s+in\s+Kraft\.?$/u;
+const BRACKET_PREFIX = new RegExp(String.raw`^(?:(Mit\s+Ablauf\s+des|Am|Zum|Mit\s+Wirkung\s+vom)\s+(${DATE})\s+|Gleichzeitig\s+)?(?:tritt|treten)\s+(?:die|der|das|den)\s+`, 'u');
+/** Inkrafttreten, das sich auf die Verkündung selbst bezieht (nach dem Angleichen von „Veröffentlichung“). */
+const RELATIVE_TO_PUBLICATION = /\b(?:Tag(?:e)?|Tag\s+des)\b[^.]{0,40}?\b(?:Verkündung|Bekanntmachung)\b/u;
+/** Zulässig: „am Tag nach der Verkündung“, „am ersten Tag des auf die Verkündung folgenden Monats“. */
+const RELATIVE_ALLOWED = /\bam\s+Tag(?:e)?\s+nach\s+(?:der|ihrer|seiner|dieser)\s+(?:Verkündung|Bekanntmachung)\b|\bam\s+ersten\s+Tag\s+des\s+auf\s+(?:die|ihre|seine)\s+(?:Verkündung|Bekanntmachung)\s+folgenden\s+(?:Kalender)?[Mm]onats\b/u;
 
 const fail = (code: NonNullable<EndDetermination['code']>, reason: string, evidence: string[] = [], kind?: EndDetermination['kind']): EndDetermination => ({ ok: false, code, reason, evidence, ...(kind ? { kind } : {}) });
 
@@ -251,7 +261,7 @@ const fail = (code: NonNullable<EndDetermination['code']>, reason: string, evide
  * (`commencement.ts`). „mit Ablauf des X“ ist der letzte Geltungstag; „am X außer Kraft“ und eine Aufhebung,
  * die am X in Kraft tritt, enden mit dem Vortag.
  */
-export function determineEnd(units: readonly GazetteUnit[], citation: LocatedCitation, publishedAt: string): EndDetermination {
+export function determineEnd(units: readonly GazetteUnit[], citation: LocatedCitation, publishedAt: string, ownPublishedAt?: string): EndDetermination {
   const command = citation.command;
   const evidence: string[] = [];
   const quoted = `„${citation.unitText.slice(0, 400)}“`;
@@ -270,8 +280,24 @@ export function determineEnd(units: readonly GazetteUnit[], citation: LocatedCit
   if (/^\W*(?:wird|werden)\s+(?:wie\s+folgt\s+)?(?:geändert|berichtigt|gefasst|ergänzt)/u.test(command) || /^\W*(?:erhält|erhalten)\s/u.test(command)) {
     return fail('not-a-repeal', `Die Verkündung ändert die Norm, sie hebt sie nicht auf: ${quoted}`);
   }
+  // Satzklammer: Verb vor dem Zitat, „außer Kraft“ dahinter – nur im selben Satz.
+  if (/^\W*außer\s+Kraft\b/u.test(command) && citation.bracketLead) {
+    const lead = BRACKET_PREFIX.exec(`${citation.bracketLead} `);
+    if (lead) {
+      if (lead[2]) {
+        const date = parseLongGermanDate(lead[2]);
+        if (!date) return fail('end-unreadable', `Außerkrafttretensdatum nicht lesbar: „${lead[0].slice(0, 120)}“`);
+        const ablauf = /Ablauf/u.test(lead[1] ?? '');
+        const lastDay = ablauf ? date : addDays(date, -1);
+        return { ok: true, lastDay, kind: 'expiry', evidence: [`Befehl (Satzklammer): ${quoted}${ablauf ? '' : ` (außer Kraft ab ${date}, letzter Geltungstag ${lastDay})`}`] };
+      }
+      // „Gleichzeitig tritt … außer Kraft“: Ende mit dem Inkrafttreten der Verkündung (unten).
+      evidence.push(`Befehl (Satzklammer, gleichzeitig mit dem Inkrafttreten): ${quoted}`);
+    }
+  }
   let kind: EndDetermination['kind'];
-  if (/^\W*(?:wird|werden)\s+(?:hiermit\s+)?aufgehoben/u.test(command)) kind = 'repeal';
+  if (evidence.length > 0) kind = 'repeal';
+  else if (/^\W*(?:wird|werden)\s+(?:hiermit\s+)?aufgehoben/u.test(command)) kind = 'repeal';
   else if (/^\W*(?:wird|werden)\s+durch\s+[\s\S]*\b(?:ersetzt|abgelöst)\b/u.test(command)) kind = 'replacement';
   else if (/^\W*(?:tritt|treten)\s+außer\s+Kraft/u.test(command)) kind = 'repeal';
   else {
@@ -281,7 +307,7 @@ export function determineEnd(units: readonly GazetteUnit[], citation: LocatedCit
       const unit = units[index]!;
       const listExpiry = LIST_EXPIRY.exec(unit.text);
       if (listExpiry) {
-        const lastDay = parseLongGermanDate(listExpiry[1]!);
+        const lastDay = parseLongGermanDate((listExpiry[1] ?? listExpiry[2])!);
         if (!lastDay) return fail('end-unreadable', `Außerkrafttretensdatum der Liste nicht lesbar: „${unit.text.slice(0, 120)}“`);
         return { ok: true, lastDay, kind: 'expiry', evidence: [`Listeneinleitung: „${unit.text}“`, `Listenglied: ${quoted}`] };
       }
@@ -301,21 +327,29 @@ export function determineEnd(units: readonly GazetteUnit[], citation: LocatedCit
   }
   if (evidence.length === 0) evidence.push(`Befehl: ${quoted}`);
   const { statements, unreadable } = commencementStatements(units, publishedAt);
-  let effective: string | undefined;
-  let effectiveText: string | undefined;
-  const relative = unreadable.filter((sentence) => DAY_AFTER_PUBLICATION.test(sentence));
-  if (unreadable.length > 0 && !(unreadable.length === 1 && relative.length === 1 && statements.every((statement) => statement.date === undefined))) {
-    return fail('end-unreadable', `Inkrafttretensvorschrift der aufhebenden Verkündung nicht lesbar: „${unreadable[0]!.slice(0, 160)}“`, evidence, kind);
-  }
-  if (relative.length === 1) {
-    effective = addDays(publishedAt, 1);
-    effectiveText = relative[0]!;
+  // „Die Dienstvereinbarung tritt am Tag nach ihrer Veröffentlichung in Kraft.“ liest commencement.ts nicht (Gegenstand
+  // und „Veröffentlichung“); `relative.ts` liest die Regel, das Datum folgt unten nur aus der Verkündung selbst.
+  const relativeOnly = unreadable.length === 1 && statements.every((statement) => statement.date === undefined) ? relativeRule(unreadable[0]!) : undefined;
+  if (unreadable.length > 0 && !relativeOnly) return fail('end-unreadable', `Inkrafttretensvorschrift der aufhebenden Verkündung nicht lesbar: „${unreadable[0]!.slice(0, 160)}“`, evidence, kind);
+  let effective: string;
+  let effectiveText: string;
+  if (relativeOnly) {
+    effective = relativeDate(relativeOnly, publishedAt);
+    effectiveText = unreadable[0]!;
   } else {
     const general = statements.filter((statement) => statement.refs === null);
     if (general.length !== 1 || !general[0]!.date) return fail('end-unreadable', general.length === 0 ? 'Aufhebende Verkündung ohne lesbare Grundregel zum Inkrafttreten' : `${general.length} Grundregeln zum Inkrafttreten der aufhebenden Verkündung`, evidence, kind);
     if (statements.some((statement) => statement.refs !== null)) return fail('end-unreadable', 'Die aufhebende Verkündung regelt ihr Inkrafttreten abschnittsweise; welcher Teil die Aufhebung trägt, wird nicht geraten', evidence, kind);
     effective = general[0]!.date;
     effectiveText = general[0]!.text;
+  }
+  if (relativeOnly || RELATIVE_TO_PUBLICATION.test(effectiveText)) {
+    // Relativ zur Veröffentlichung (Lauf 7): nur „am Tag nach …“ und „am ersten Tag des … folgenden Monats“, und nur
+    // mit dem Datum, das die Verkündung selbst druckt, gleich dem Ereignisregister.
+    if (!relativeOnly && !RELATIVE_ALLOWED.test(effectiveText)) return fail('end-unreadable', `Inkrafttreten am Tag der Veröffentlichung selbst („${effectiveText.slice(0, 160)}“) – das Veröffentlichungsdatum ist nie das Inkrafttreten`, evidence, kind);
+    if (!ownPublishedAt) return fail('end-unreadable', `Inkrafttreten relativ zur Veröffentlichung („${effectiveText.slice(0, 160)}“), deren Datum die Verkündung selbst nicht lesbar nennt`, evidence, kind);
+    if (ownPublishedAt !== publishedAt) return fail('end-unreadable', `Veröffentlichungsdatum widersprüchlich: Verkündung ${ownPublishedAt}, Ereignisregister ${publishedAt}`, evidence, kind);
+    evidence.push(`Veröffentlichungsdatum ${publishedAt} laut Verkündung selbst und Ereignisregister`);
   }
   evidence.push(`Inkrafttreten der aufhebenden Verkündung (verkündet ${publishedAt}): „${effectiveText}“ (${effective}); letzter Geltungstag der aufgehobenen Norm ${addDays(effective, -1)}`);
   return { ok: true, lastDay: addDays(effective, -1), kind, evidence };
@@ -326,8 +360,8 @@ export function determineEnd(units: readonly GazetteUnit[], citation: LocatedCit
  * Bekanntmachung … weiter“) tragen keinen Befehl; maßgeblich ist der Fundort mit Aufhebungs- oder
  * Außerkrafttretensbefehl. Zwei Fundorte mit verschiedenem Ende sind ein Widerspruch.
  */
-export function determineEndAcross(units: readonly GazetteUnit[], citations: readonly LocatedCitation[], publishedAt: string): EndDetermination & { citation?: LocatedCitation } {
-  const results = citations.map((citation) => ({ citation, end: determineEnd(units, citation, publishedAt) }));
+export function determineEndAcross(units: readonly GazetteUnit[], citations: readonly LocatedCitation[], publishedAt: string, ownPublishedAt?: string): EndDetermination & { citation?: LocatedCitation } {
+  const results = citations.map((citation) => ({ citation, end: determineEnd(units, citation, publishedAt, ownPublishedAt) }));
   const definite = results.filter((result) => result.end.ok);
   const lastDays = new Set(definite.map((result) => result.end.lastDay));
   if (lastDays.size > 1) return { ok: false, code: 'end-unreadable', reason: `Mehrere Fundorte mit verschiedenem Ende (${[...lastDays].join(', ')})`, evidence: definite.flatMap((result) => result.end.evidence) };
