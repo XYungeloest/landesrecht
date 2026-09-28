@@ -4,16 +4,16 @@ Erzeugt von `node scripts/import-juris-sh.ts r2-sync --write`. Bucket `landesrec
 
 | Kennzahl | Wert |
 | --- | --- |
-| übernommene Normen | 2450 |
-| Rohquellen (PDF) | 8339 (751 MB) |
+| übernommene Normen | 2592 |
+| Rohquellen (PDF) | 9844 (852 MB) |
 | neu gestagt | 0 |
-| bereits gestagt | 785 |
-| bereits in R2 (uploaded/verified) | 7554 |
+| bereits gestagt | 1258 |
+| bereits in R2 (uploaded/verified) | 8586 |
 | ohne Cache | 0 |
 | Konflikte | 0 |
-| hochgeladen und rückgelesen | 785 |
-| in R2 bereits vorhanden (gleicher Inhalt) | 0 |
-| Normen vollständig geprüft | 77 |
+| hochgeladen und rückgelesen | 0 |
+| in R2 bereits vorhanden (gleicher Inhalt) | 1258 |
+| Normen vollständig geprüft | 86 |
 
 Upload (nur mit Wrangler-OAuth-Anmeldung, fortsetzbar): `npm run import:juris-sh:r2-sync -- --write` (optional `--r2-transport wrangler-api --concurrency 8`).
 

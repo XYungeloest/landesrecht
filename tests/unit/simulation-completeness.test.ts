@@ -122,3 +122,22 @@ describe('Block simulation in inventory-status.json', () => {
     expect(await runCompleteness({ write: false, json: false, jurisdiction: 'baywue' }, root, io)).toBe(1);
   });
 });
+
+describe('SIM_PUBLICATION_INVENTORY.md', () => {
+  it('rendert je Land Blattreihen mit fehlenden und verdächtigen Ausgaben sowie die ungeklärten Zeiträume', async () => {
+    const { renderPublicationInventory } = await import('@landesrecht/importer-simulation/completeness/inventory-doc.ts');
+    const { parseCompletenessFile } = await import('@landesrecht/importer-simulation/completeness/schema.ts');
+    const file = parseCompletenessFile({
+      schemaVersion: 'landesrecht-simulation-completeness/1', jurisdiction: 'west', assessedAt: '2026-09-28', status: 'SIM SOURCES PARTIAL',
+      series: [{ gazette: 'MBl. WD', seriesTitle: 'Ministerialblatt', knownIssues: ['2026 Nr. 1', '2026 Nr. 2'], presentIssues: ['2026 Nr. 1'], missingIssues: ['2026 Nr. 2'], suspiciousIssues: [], evidence: [] }],
+      standaloneActs: { present: 1, evidenceOnly: 0 },
+      unclearPeriods: [{ from: '2026-05-18', to: '2026-09-17', note: 'Ministerialblatt 2026 Nr. 2 fehlt.' }],
+      acts: { secure: 1, review: 0, blocked: 0, draftsWithoutPromulgation: 0 },
+      notes: ['Fehlende Quellen: MBl. WD 2026 Nr. 2.'],
+    });
+    const text = renderPublicationInventory([{ jurisdiction: 'west', file }]);
+    expect(text).toContain('| MBl. WD – Ministerialblatt | 2 | 1 | 2026 Nr. 2 | – |');
+    expect(text).toContain('- 2026-05-18 – 2026-09-17: Ministerialblatt 2026 Nr. 2 fehlt.');
+    expect(text).toContain('- Fehlende Quellen: MBl. WD 2026 Nr. 2.');
+  });
+});

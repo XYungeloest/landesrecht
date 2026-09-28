@@ -5,10 +5,11 @@
  */
 import { join } from 'node:path';
 
-import { readJsonFile } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
+import { readJsonFile, writeFileAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
 import { JURISDICTION_IDS, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 
 import { completenessPath, parseCompletenessFile } from './schema.ts';
+import { PUBLICATION_INVENTORY_DOC_PATH, renderPublicationInventory } from './inventory-doc.ts';
 import { buildSimulationInventoryStatus, countJurisdictionNorms, INVENTORY_STATUS_PATH, writeSimulationInventoryStatus } from './status.ts';
 
 export interface CompletenessCommandOptions {
@@ -25,6 +26,7 @@ export interface Io {
 export async function runCompleteness(options: CompletenessCommandOptions, root: string, io: Io): Promise<number> {
   const jurisdictions = options.jurisdiction ? [options.jurisdiction] : [...JURISDICTION_IDS];
   const results: Array<Record<string, unknown>> = [];
+  const assessed: Array<{ jurisdiction: JurisdictionId; file: ReturnType<typeof parseCompletenessFile> }> = [];
   let written = 0;
   for (const jurisdiction of jurisdictions) {
     const path = completenessPath(jurisdiction);
@@ -38,6 +40,7 @@ export async function runCompleteness(options: CompletenessCommandOptions, root:
     }
     const file = parseCompletenessFile(raw, path);
     if (file.jurisdiction !== jurisdiction) throw new Error(`${path}: jurisdiction ${file.jurisdiction} passt nicht zum Verzeichnis ${jurisdiction}`);
+    assessed.push({ jurisdiction, file });
     const counts = await countJurisdictionNorms(root, jurisdiction);
     const simulation = buildSimulationInventoryStatus(file, counts);
     results.push({ jurisdiction, path, simulation, counts });
@@ -45,6 +48,9 @@ export async function runCompleteness(options: CompletenessCommandOptions, root:
     if (options.write && (await writeSimulationInventoryStatus(root, jurisdiction, simulation, counts))) written += 1;
   }
   if (options.json) io.print(JSON.stringify(results, null, 2));
+  if (options.write && assessed.length > 0 && !options.jurisdiction) {
+    if (await writeFileAtomic(join(root, PUBLICATION_INVENTORY_DOC_PATH), renderPublicationInventory(assessed), { skipIfUnchanged: true })) io.print(`Geschrieben: ${PUBLICATION_INVENTORY_DOC_PATH}`);
+  }
   if (results.length === 0) io.print('Keine Vollständigkeitsbewertung gefunden (data/simulation/<land>/completeness.json).');
   else if (options.write) io.print(written > 0 ? `Geschrieben: ${INVENTORY_STATUS_PATH} (${written} Land/Länder)` : `${INVENTORY_STATUS_PATH} unverändert.`);
   else io.print(`Dry-run: ${INVENTORY_STATUS_PATH} nicht geschrieben (--write).`);

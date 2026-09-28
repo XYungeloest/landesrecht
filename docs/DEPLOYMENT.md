@@ -253,7 +253,10 @@ Nach `docs/SIMULATION_IMPORT.md`, nur bei grünen Gates (`npm run content:check`
 (Originale nach `<land>/simulation/<sha256>.<ext>`, nie überschreiben), dann je Land die inkrementelle D1-Runde (oben; Sim-Normen,
 neue Fassungen, additive Meta, `law_publications`), `npm run build && npm run deploy` (Teilbestandshinweis ist in den Build
 eingebacken) und Smoke: `/<land>/verkuendungen/`, eine Sim-Norm, eine fortgeschriebene Baseline-Norm mit historischer
-Fassung (`/version/2023-12-01/`), `/api/v1/search` (Treffer zeigt die am Stichtag geltende Fassung). Der West-Freeze
+Fassung (`/version/2023-12-01/`), `/api/v1/search` (Treffer zeigt die am Stichtag geltende Fassung). Stichtag vorrücken (`packages/legal-core/src/config/editorial.json`, nur vorwärts): danach je Land
+`consolidate --write` (Status `future-effective` → `in-force` additiv), `content:check`, und – weil der Stichtag Teil des
+Projektionszustands ist – eine **vollständige** D1-Projektion je Land (`d1:plan` meldet „redaktioneller Stichtag … →
+…“ und erzeugt den Vollplan), dann Build/Deploy. Der West-Freeze
 wird nicht über einen Hash aller West-Dateien nachgewiesen (Sim-Fortschreibung ergänzt `meta.json`/`history.json`), sondern
 über Gate G2 (alle `versions/2023-12-01.json` byteidentisch mit dem Freeze-Commit) und G3 (additiv).
 

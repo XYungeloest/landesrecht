@@ -238,7 +238,7 @@ Die einzige Norm mit Folgefassung ist das Fixture `tests/fixtures/content/norms/
 | Zwei Zeitachsen | nur `validFrom/To`; Quellintervall nur an der Quelle | `simulationValidFrom/To` **und** `sourceValidFrom/To` an Fassung und Quelle; `validFrom/To` verboten (`parseNormVersion`) | vorhanden, strenger als Ost |
 | Quellenlage der Baseline | – | `sourceStatus { validity, text, note }` | vorhanden |
 | Lückenlose Intervalle | Konsolidierung berechnet | `validateVersionIntervals` verlangt `simulationValidTo` = Vortag der Folgefassung | vorhanden, kollidiert mit Baseline-Unveränderlichkeit (Abschnitt 3.3) |
-| Geltende Fassung | abgeleitet, `isCurrent` Altfeld | abgeleitet (`getApplicableVersion`, `classifyNormVersion`, `EDITORIAL_REFERENCE_DATE = 2026-09-01`) | vorhanden |
+| Geltende Fassung | abgeleitet, `isCurrent` Altfeld | abgeleitet (`getApplicableVersion`, `classifyNormVersion`, `EDITORIAL_REFERENCE_DATE = 2026-09-28`) | vorhanden |
 | Baseline-Regel | – | `assertBaselineConsistency` (erste Fassung nicht vor 2023-12-01), `getBaselineVersion` | vorhanden |
 | Eigene Sim-Normen | Norm mit später beginnender Fassung | zulässig (Baseline-Regel erlaubt späteren Beginn) | vorhanden |
 | Änderungsakt als Norm | `aenderungsvorschrift`, `one-time-act` | beide Werte in `NORM_TYPES`/`NORM_STATUSES` | vorhanden |
@@ -400,7 +400,7 @@ Reihenfolge; jeder Schritt ist für sich prüfbar und ohne Folgeschritt harmlos.
    und `/[jurisdiction]/verkuendungen/[slug]` (nach `apps/recht/src/pages/verkuendungen/`); Historie verlinkt den
    Sim-Akt über `relatedNorm` (bereits umgesetzt in `historie.astro`). Optional: Wortdiff/„Betroffen“/Marken nach
    `diff.ts`, `affected-units.ts`, `change-marks.ts`; Änderungsdienst nach `change-service.ts`.
-9. **Stichtag**: `packages/legal-core/src/config/editorial.json` (`referenceDate: 2026-09-01`) bestimmt, welche
+9. **Stichtag**: `packages/legal-core/src/config/editorial.json` (`referenceDate: 2026-09-28`) bestimmt, welche
    Sim-Fassung geltend ist; Fortschreibung nur vorwärts (AGENTS.md). Ein Werkzeug nach
    `norms:advance-reference-date` ist optional.
 

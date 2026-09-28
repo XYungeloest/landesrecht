@@ -41,8 +41,8 @@ describe('ledger-sync', () => {
         event('e-amend-other', 'amend', 'pending', 'aendg-west', ['anderes-west']),
         event('e-expire', 'expire', 'pending', 'befristet-west', ['befristet-west']),
         event('e-unmaterialized', 'enact', 'pending', 'fehlt-west', []),
-        event('e-review', 'enact', 'review', null, []),
-        event('e-blocked', 'amend', 'blocked', 'aendg-west', ['gesperrt-west']),
+        event('e-review', 'enact', 'review', null, [], { reasonCode: 'promulgation-unclear' }),
+        event('e-blocked', 'amend', 'blocked', 'aendg-west', ['gesperrt-west'], { reasonCode: 'missing-baseline-target' }),
       ],
     });
   });
@@ -75,6 +75,14 @@ describe('ledger-sync', () => {
     const again = await syncLedger(root, 'west', { write: true });
     expect(again.changes).toEqual([]);
     expect(again.written).toBe(false);
+  });
+
+  it('verlangt für review/blocked einen gültigen reasonCode', async () => {
+    const ledger = JSON.parse(await readFile(join(root, 'data/simulation/west/ledger.json'), 'utf8')) as { events: Array<Record<string, unknown>> };
+    await write('data/simulation/west/ledger.json', { schemaVersion: LEDGER_SCHEMA, jurisdiction: 'west', events: [...ledger.events, event('e-ohne-grund', 'enact', 'review', null, [])] });
+    const result = await syncLedger(root, 'west', { write: true });
+    expect(result.errors).toEqual([expect.stringMatching(/e-ohne-grund: review ohne gültigen reasonCode/u)]);
+    await write('data/simulation/west/ledger.json', { schemaVersion: LEDGER_SCHEMA, jurisdiction: 'west', events: ledger.events });
   });
 
   it('meldet ein applied-Ereignis ohne Akt oder Rezept als Widerspruch und schreibt dann nichts', async () => {

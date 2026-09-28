@@ -7,11 +7,11 @@ Stichtag **2023-12-01** · Auswertungsstichtag 2026-09-18 · erzeugt von `npm ru
 | | vorher | nachher |
 | --- | ---: | ---: |
 | Normen `changed-after-baseline` | 519 | 513 |
-| sicher zurückgerechnet | 13 | **70** |
+| sicher zurückgerechnet | 13 | **71** |
 | davon einstufig (Rezept v1) | 13 | 56 |
-| davon mehrstufig (Rezept v2) | 0 | 14 |
+| davon mehrstufig (Rezept v2) | 0 | 15 |
 | davon mit Alttext aus der Stammverkündung (`restoration`, `forward-from-publication`) | 0 | 21 |
-| `reconstruction-required` | 506 | 443 |
+| `reconstruction-required` | 506 | 442 |
 
 „vorher“: Schlange bayernrecht-reconstruction-queue/1 vor der mehrstufigen Rückrechnung. Jede zurückgerechnete Norm hat in `baseline.json` Methode `reverse-amendment`, Status `active-at-baseline`, keine Blocker.
 
@@ -22,7 +22,7 @@ Alttext für Neufassung, Aufhebung und Streichung ohne Anker kommt aus der Stamm
 | Stammverkündung | offene Normen |
 | --- | ---: |
 | verfügbar – die Norm scheitert an anderem (Grund in der Schlange) (`available`) | 184 |
-| nur PDF-Ausgabe des GVBl. (ohne HTML-Detailseite) (`base-pdf-only`) | 143 |
+| nur PDF-Ausgabe des GVBl. (ohne HTML-Detailseite) (`base-pdf-only`) | 142 |
 | keine Stammverkündung (Neubekanntmachung, Fundstelle fehlt oder nicht lesbar) (`base-none`) | 37 |
 | nur auf Papier (`base-paper-only`) | 34 |
 | HTML nicht sicher umsetzbar (`baseline-only/html.ts`) (`base-unconvertible`) | 17 |
@@ -36,7 +36,7 @@ Nur Textlayer, nie OCR; Quelle wird er nur mit eindeutigen Wortgrenzen und einde
 
 | Textlayer | offene Normen |
 | --- | ---: |
-| Textlayer aus Texterkennung oder Scan – keine Quelle (`pdf-ocr`) | 73 |
+| Textlayer aus Texterkennung oder Scan – keine Quelle (`pdf-ocr`) | 72 |
 | Schrift oder Inhaltsstrom nicht sicher dekodierbar (`pdf-undecodable`) | 34 |
 | Textlayer mehrdeutig (Unterschneidung, Trennstrich am Zeilenende, Satznummern als Ziffern) (`pdf-ambiguous`) | 30 |
 | Ausgabe noch nicht abgerufen (`pdf-not-cached`) | 3 |
@@ -51,7 +51,7 @@ Jede Norm hat **genau eine** Gruppe (Vorrang und Regeln: `src/reconstruction/gro
 | ---: | --- | ---: | ---: | ---: | --- |
 | 1 | genau 1 Änderung nach dem Stichtag (`single-amendment`) | 69 | 56 | 13 | `unsupported-formula/unrecognized` 3, `ambiguous-target/reverse-location-unresolved` 1, `ambiguous-target/reverse-target-ambiguous` 1, `command-unreadable/location-unreadable` 1 |
 | 2 | 2 Änderungen (`two-amendments`) | 16 | 13 | 3 | `ambiguous-target/reverse-location-unresolved` 1, `command-unreadable/location-unreadable` 1, `partial-chain/chain-ledger-unexplained` 1 |
-| 3 | 3 oder mehr Änderungen (`three-or-more-amendments`) | 5 | 1 | 4 | `ambiguous-target/reverse-relabel-form-ambiguous` 1, `missing-base/prior-source-unavailable` 1, `partial-chain/chain-ledger-unexplained` 1, `unsupported-formula/renumber` 1 |
+| 3 | 3 oder mehr Änderungen (`three-or-more-amendments`) | 5 | 2 | 3 | `missing-base/prior-source-unavailable` 1, `partial-chain/chain-ledger-unexplained` 1, `unsupported-formula/renumber` 1 |
 | 4 | vollständige Neufassung (`full-recast`) | 6 | 0 | 6 | `non-invertible-amendment/recast` 2, `ambiguous-target/reverse-location-unresolved` 1, `command-unreadable/chain-block-not-found` 1, `missing-base/prior-treaty-without-reference` 1 |
 | 5 | Anlagenersetzung (`annex-replacement`) | 81 | 0 | 81 | `asset-missing/annex-recast` 27, `non-invertible-amendment/restore-annex-attachment` 11, `command-unreadable/location-unreadable` 7, `command-unreadable/chain-block-not-found` 4 |
 | 6 | Tabellenersetzung (`table-replacement`) | 14 | 0 | 14 | `non-invertible-amendment/recast` 5, `partial-chain/chain-commencement-order` 2, `command-unreadable/chain-block-not-found` 1, `command-unreadable/location-unreadable` 1 |
@@ -71,21 +71,21 @@ Jede Prüfung zählt nur Normen, die sie erreicht haben; „nicht erreicht“ he
 | Inkrafttreten je Änderung bestimmt, in Kettenreihenfolge, jüngstes = inkraft | 394 | 15 | 104 |
 | Befehlsblock und Orte lesbar | 375 | 19 | 119 |
 | jede Klausel mit unterstützter, eindeutig umkehrbarer Formel | 132 | 262 | 119 |
-| Orte aufgelöst, Wortlaut eindeutig, Vorwärtsprobe je Änderung exakt | 74 | 58 | 381 |
-| Beginn der Stichtagsfassung (≤ Stichtag) mit Kalenderdatum belegt | 70 | 1 | 442 |
+| Orte aufgelöst, Wortlaut eindeutig, Vorwärtsprobe je Änderung exakt | 75 | 57 | 381 |
+| Beginn der Stichtagsfassung (≤ Stichtag) mit Kalenderdatum belegt | 71 | 1 | 441 |
 
 ## Zustände
 
 | Zustand | Normen | Bedeutung |
 | --- | ---: | --- |
 | `non-invertible-amendment` | 223 | Befehl nicht umkehrbar (Alttext fehlt) |
-| `recipe-ready` | 70 | sicher zurückgerechnet (Rezept, Forward-Replay exakt) |
+| `recipe-ready` | 71 | sicher zurückgerechnet (Rezept, Forward-Replay exakt) |
 | `partial-chain` | 46 | Kette nicht vollständig belegt |
 | `contradictory` | 33 | Belege widersprechen einander |
 | `command-unreadable` | 29 | Befehl nicht auffindbar oder nicht lesbar |
 | `asset-missing` | 27 | Anlage oder Abbildung ohne Alttext |
-| `ambiguous-target` | 23 | Ort oder Wortlaut nicht eindeutig |
 | `unsupported-formula` | 23 | Formel nicht maschinell angewandt |
+| `ambiguous-target` | 22 | Ort oder Wortlaut nicht eindeutig |
 | `missing-base` | 19 | Quelle fehlt |
 | `effective-date-undetermined` | 15 | Inkrafttreten nicht bestimmbar |
 | `round-trip-failed` | 5 | Rundlauf gescheitert |
@@ -97,7 +97,7 @@ Je Norm zählt der schwerste Befund (Widerspruch → Quelle fehlt → Befehl unl
 | Zustand / Grund | Normen |
 | --- | ---: |
 | `non-invertible-amendment/recast` | 83 |
-| `recipe-ready/reverse-amendment-verified` | 70 |
+| `recipe-ready/reverse-amendment-verified` | 71 |
 | `non-invertible-amendment/repeal-unit` | 39 |
 | `non-invertible-amendment/delete-words` | 29 |
 | `asset-missing/annex-recast` | 27 |
@@ -135,7 +135,6 @@ Je Norm zählt der schwerste Befund (Widerspruch → Quelle fehlt → Befehl unl
 | `non-invertible-amendment/location-unresolved` | 2 |
 | `partial-chain/chain-delayed-predecessor` | 2 |
 | `ambiguous-target/reverse-anchor-mismatch` | 1 |
-| `ambiguous-target/reverse-relabel-form-ambiguous` | 1 |
 | `ambiguous-target/reverse-sentence-ambiguous` | 1 |
 | `ambiguous-target/reverse-title-projection` | 1 |
 | `contradictory/chain-last-amendment` | 1 |
@@ -153,7 +152,7 @@ Erhoben aus allen Befehlsblöcken der Ketten und des Registers; „Klauseln“ z
 
 | Formel | Wortlaut (Beispiel) | Klauseln | Normen | bestimmt Alttext | angewandt |
 | --- | --- | ---: | ---: | :---: | :---: |
-| `replace-words` | „… wird die Angabe „X“ durch die Angabe „Y“ ersetzt“ | 1799 | 267 | ja | ja |
+| `replace-words` | „… wird die Angabe „X“ durch die Angabe „Y“ ersetzt“ | 1800 | 267 | ja | ja |
 | `recast` | „… wird wie folgt gefasst:“ / „erhält folgende Fassung“ | 810 | 236 | nein | nein |
 | `relabel` | „Der bisherige Abs. 3 wird Abs. 4.“ / „Die bisherigen Nrn. 5 bis 7 werden die Nrn. 6 bis 8.“ (neu) | 620 | 138 | ja | ja |
 | `repeal-unit` | „… wird aufgehoben“ / „Satz 5 wird gestrichen“ | 428 | 169 | nein | nein |
@@ -180,7 +179,7 @@ Erhoben aus allen Befehlsblöcken der Ketten und des Registers; „Klauseln“ z
 
 ## Quellen
 
-Das Quellenregister führt **890** Verkündungen (885 HTML-Detailseiten, 5 PDF-Ausgaben), davon 124 für ein Rezept entscheidend; Amtlichkeit: `electronic-official` 395, `printed-official` 495. Je Quelle: Adresse, Fundstelle, Verkündungs- und Ausfertigungsdatum, Amtlichkeit, SHA-256, Rolle je Fall, Abschnitt und Wortlaut der Inkrafttretensvorschrift.
+Das Quellenregister führt **890** Verkündungen (885 HTML-Detailseiten, 5 PDF-Ausgaben), davon 126 für ein Rezept entscheidend; Amtlichkeit: `electronic-official` 395, `printed-official` 495. Je Quelle: Adresse, Fundstelle, Verkündungs- und Ausfertigungsdatum, Amtlichkeit, SHA-256, Rolle je Fall, Abschnitt und Wortlaut der Inkrafttretensvorschrift.
 
 Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayernrecht/reconstruction-fetch.json`): **1000** Netzabrufe (837 Seiten bzw. PDF abgerufen, 160 belegt nicht vorhanden – 404, 3 Fehler), sequenziell über den Adapter-Fetcher mit Cache und identifizierendem User-Agent. Ein Wiederholungslauf mit `--offline` braucht kein Netz.
 
@@ -207,6 +206,7 @@ Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayern
 | `BayFGV` | v2 | GVBl. 2024 S. 332 ← GVBl. 2024 S. 229 | 2024-09-01 ← 2024-07-16 | 2023-01-01 | 6 | insert-block, relabel | `9de19ce8376069e1` |
 | `BayFachVUVAD` | v1 | GVBl. 2025 S. 127 | 2025-06-01 | 2023-02-01 | 4 | insert-words, insert-block, relabel | `ce31cbb349360e65` |
 | `BayFoRG` | v1 | GVBl. 2024 S. 98 | 2024-07-01 | 2019-05-01 | 3 | replace-words | `2a8a3403b0d8a312` |
+| `BayGDVG` | v2 | GVBl. 2026 S. 108 ← GVBl. 2024 S. 630 ← GVBl. 2024 S. 98 | 2026-04-01 ← 2025-01-01 ← 2024-07-01 | 2023-07-01 | 19 | number-sentences, insert-sentence, relabel, replace-words, insert-block | `b91669e532efee9d` |
 | `BayHG2019_2020` | v1 | GVBl. 2024 S. 114 | 2024-01-01 | 2020-01-01 | 1 | replace-words | `c77321a4dbe8d1ac` |
 | `BayJAVollzG` | v1 | GVBl. 2025 S. 178 | 2025-07-01 | 2022-11-01 | 2 | insert-sentence, replace-words | `ca2ed5799de3d8f9` |
 | `BayKJG` | v1 | GVBl. 2026 S. 75 | 2026-04-01 | 2011-08-01 | 4 | repeal-unit, relabel | `97c63b5d6b42bdf0` |
@@ -518,6 +518,51 @@ Gezielter Abruf (`reconstruction-queue --fetch`, Prüfpunkt `data/imports/bayern
   - s03 `replace-words` in Art. 51: „In Art. 7 Abs. 3, Art. 29 Abs. 3 Satz 1 und Art. 51 werden jeweils die Wörter „und Forsten“ durch die Wörter „ , Forsten und Tourismus“ ersetzt.“
     - Stichtag: „Das Staatsministerium für Ernährung, Landwirtschaft und Forsten erläßt im Einvernehmen mit den Staatsministerie…“ · heute: „Das Staatsministerium für Ernährung, Landwirtschaft, Forsten und Tourismus erläßt im Einvernehmen mit den Staatsministerie…“
 - Beginn der Stichtagsfassung: 2019-05-01 – Vorangehende Änderung § 1 Abs. 338 der Verordnung vom 26. März 2019 (GVBl. S. 98): „Diese Verordnung tritt am 1. Mai 2019 in Kraft.“ – https://www.verkuendung-bayern.de/gvbl/2019-98/, SHA-256 cd4c0ab7a010a4f6…
+
+### BayGDVG
+
+- Änderung GVBl. 2026 S. 108 (https://www.verkuendung-bayern.de/gvbl/2026-108/, SHA-256 `4d81e04ae11f579c…`), verkündet 2026-03-31, in Kraft 2026-04-01 („Dieses Gesetz tritt am 1. April 2026 in Kraft.“)
+  - a1-s01 `number-sentences` in Art. 2 Abs. 2: „Der Wortlaut wird Satz 1.“
+    - Stichtag: „(ohne Satznummer)“ · heute: „¹“
+  - a1-s02 `insert-sentence` in Art. 2 Abs. 2: „Die folgenden Sätze 2 und 3 werden angefügt: „²Das Staatsministerium kann anstelle der nachgeordneten Behörden tiergesundheitsrechtliche Anordnungen im eigenen Namen treffen, soweit dies bei Gefahr im Verzug oder in Fällen überörtlicher oder landesweiter Bedeutung für eine einheitliche Wahrnehmung d“
+    - Stichtag: „(Satz fehlt)“ · heute: „²Das Staatsministerium kann anstelle der nachgeordneten Behörden tiergesundheitsrechtliche Anordnungen im eigenen Namen treffen, soweit dies bei Gefahr im Verzug oder in Fällen überörtlicher oder land“
+- Änderung GVBl. 2024 S. 630 (https://www.verkuendung-bayern.de/gvbl/2024-630/, SHA-256 `665cac06f60e32cb…`), verkündet 2024-12-30, in Kraft 2025-01-01 („Dieses Gesetz tritt am 1. Januar 2025 in Kraft.“)
+  - a2-s01 `relabel` in Teil 1 → Teil 1: „Der Erste Teil wird Teil 1.“
+    - Stichtag: „Erster Teil“ · heute: „Teil 1“
+  - a2-s02 `replace-words` in Art. 6 Abs. 4 Halbsatz 2: „In Art. 6 Abs. 4 Halbsatz 2 wird die Angabe „Art. 28“ durch die Angabe „Art. 32“ ersetzt.“
+    - Stichtag: „…VfG) schließen; das Nähere wird durch Rechtsverordnung nach Art. 28 Abs. 1 Nr. 1 bestimmt.“ · heute: „…VfG) schließen; das Nähere wird durch Rechtsverordnung nach Art. 32 Abs. 1 Nr. 1 bestimmt.“
+  - a2-s03 `relabel` in Teil 2 → Teil 2: „Der Zweite Teil wird Teil 2.“
+    - Stichtag: „Zweiter Teil“ · heute: „Teil 2“
+  - a2-s04 `relabel` in Teil 2 Abschnitt I → Kapitel 1: „Die Abschnitte I. und II. werden die Kapitel 1 und 2.“
+    - Stichtag: „I. Abschnitt“ · heute: „Kapitel 1“
+  - a2-s05 `relabel` in Teil 2 Abschnitt II → Kapitel 2: „Die Abschnitte I. und II. werden die Kapitel 1 und 2.“
+    - Stichtag: „II. Abschnitt“ · heute: „Kapitel 2“
+  - a2-s06 `replace-words` in Art. 21 Abs. 2 Satz 2: „In Art. 21 Abs. 2 Satz 2 wird die Angabe „Art. 28“ durch die Angabe „Art. 32“ ersetzt.“
+    - Stichtag: „…ellungsgesetz. ²Das Nähere wird durch Rechtsverordnung nach Art. 28 Abs. 2 Nr. 2 geregelt.“ · heute: „…ellungsgesetz. ²Das Nähere wird durch Rechtsverordnung nach Art. 32 Abs. 2 Nr. 2 geregelt.“
+  - a2-s07 `relabel` in Teil 3 → Teil 3: „Der Dritte Teil wird Teil 3.“
+    - Stichtag: „Dritter Teil“ · heute: „Teil 3“
+  - a2-s08 `insert-block` in Teil 4: „Nach Art. 26 wird folgender Teil 4 eingefügt: „Teil 4 Landtierarztquote Art. 27 Zulassung zum Tiermedizinstudium ¹Soweit zur Gewährleistung der tierärztlichen Versorgung von Nutztieren in Bedarfsgebieten Studienplätze im Studiengang Tiermedizin an der Ludwig-Maximilians-Universität München im Rahmen“
+    - Stichtag: „(Glied fehlt)“ · heute: „Teil 4 Landtierarztquote Art. 27 Zulassung zum Tiermedizinstudium ¹Soweit zur Gewährleistung der tierärztlichen Versorgung von Nutztieren in Bedarfsgebieten Studienplätze im Studiengang Tiermedizin an“
+  - a2-s09 `relabel` in Teil 4 → Teil 5: „Der bisherige Vierte Teil wird Teil 5.“
+    - Stichtag: „Vierter Teil“ · heute: „Teil 5“
+  - a2-s10 `relabel` in Art. 30 → Art. 34: „Die bisherigen Art. 27 bis 30 werden die Art. 31 bis 34.“
+    - Stichtag: „Art. 30“ · heute: „Art. 34“
+  - a2-s11 `relabel` in Art. 29 → Art. 33: „Die bisherigen Art. 27 bis 30 werden die Art. 31 bis 34.“
+    - Stichtag: „Art. 29“ · heute: „Art. 33“
+  - a2-s12 `relabel` in Art. 28 → Art. 32: „Die bisherigen Art. 27 bis 30 werden die Art. 31 bis 34.“
+    - Stichtag: „Art. 28“ · heute: „Art. 32“
+  - a2-s13 `relabel` in Art. 27 → Art. 31: „Die bisherigen Art. 27 bis 30 werden die Art. 31 bis 34.“
+    - Stichtag: „Art. 27“ · heute: „Art. 31“
+  - a2-s14 `relabel` in Art. 31 → Art. 35: „Der bisherige Art. 31 wird Art. 35 und in der Überschrift wird das Wort „In-Kraft-Treten“ durch das Wort „Inkrafttreten“ ersetzt.“
+    - Stichtag: „Art. 31“ · heute: „Art. 35“
+  - a2-s15 `replace-words` in Art. 35 Überschrift: „Der bisherige Art. 31 wird Art. 35 und in der Überschrift wird das Wort „In-Kraft-Treten“ durch das Wort „Inkrafttreten“ ersetzt.“
+    - Stichtag: „In-Kraft-Treten“ · heute: „Inkrafttreten“
+- Änderung GVBl. 2024 S. 98 (https://www.verkuendung-bayern.de/gvbl/2024-98/, SHA-256 `39a30d715faa4cf3…`), verkündet 2024-06-14, in Kraft 2024-07-01 („Diese Verordnung tritt am 1. Juli 2024 in Kraft.“)
+  - a3-s01 `replace-words` in Art. 4 Abs. 1 Satz 2: „In Art. 4 Abs. 1 Satz 2 und Art. 28 Abs. 1 Satzteil vor Nr. 1 werden jeweils die Wörter „und Pflege“ durch die Wörter „ , Pflege und Prävention“ ersetzt.“
+    - Stichtag: „…terien für Umwelt und Verbraucherschutz sowie für Gesundheit und Pflege jeweils für ihren Geschäftsbereich unmittelbar n…“ · heute: „…terien für Umwelt und Verbraucherschutz sowie für Gesundheit, Pflege und Prävention jeweils für ihren Geschäftsbereich unmittelbar n…“
+  - a3-s02 `replace-words` in Art. 28 Abs. 1 Satzteil vor Nr. 1: „In Art. 4 Abs. 1 Satz 2 und Art. 28 Abs. 1 Satzteil vor Nr. 1 werden jeweils die Wörter „und Pflege“ durch die Wörter „ , Pflege und Prävention“ ersetzt.“
+    - Stichtag: „…d Verbraucherschutz und das Staatsministerium für Gesundheit und Pflege werden jeweils ermächtigt, für ihren Geschäftsbe…“ · heute: „…d Verbraucherschutz und das Staatsministerium für Gesundheit, Pflege und Prävention werden jeweils ermächtigt, für ihren Geschäftsbe…“
+- Beginn der Stichtagsfassung: 2023-07-01 – Vorangehende Änderung § 1 des Gesetzes vom 23. Juni 2023 (GVBl. S. 246): „Dieses Gesetz tritt am 1. Juli 2023 in Kraft.“ – https://www.verkuendung-bayern.de/gvbl/2023-246/, SHA-256 9d7958cb22d07b5b…
 
 ### BayHG2019_2020
 
@@ -1359,13 +1404,12 @@ Ergebnis: **14** Fälle geprüft, **1** neu entschieden, 13 bleiben unbestimmt.
 | `BayVV_2210_4_WK_14107` | 2 | `ambiguous-target/reverse-location-unresolved` | BayMBl. 2024 Nr. 438 (Nr. 1): 1.2 Nr. 1.2: Nr. 1.2 nicht gefunden |  |
 | `BayVwV246099` | 2 | `command-unreadable/location-unreadable` | BayMBl. 2025 Nr. 467 (Nr. 1): Ortsangabe „Anhang“ nicht lesbar (1.2) |  |
 
-### 3 oder mehr Änderungen (4)
+### 3 oder mehr Änderungen (3)
 
 | Norm | Änderungen | Zustand / Grund | Befund | weitere Gründe |
 | --- | ---: | --- | --- | --- |
 | `BayAAV` | 4 | `partial-chain/chain-ledger-unexplained` | Das Register führt GVBl. 2023 S. 659 (notice), GVBl. 2024 S. 163 (notice) für die Norm; die Kette der amtlichen Verweise enthält diese Veröffentlichungen nicht |  |
 | `BayGGebO` | 3 | `unsupported-formula/renumber` | GVBl. 2026 S. 151 (§ 2): 1. a) „Der Wortlaut wird Buchst. a und die Angabe „ ; “ am Ende wird durch die Angabe „ , “ ersetzt.“: Umnummerierung: strukturelle Änderung, von diesem Modell nicht angewandt | `insert-unit` |
-| `BayGDVG` | 3 | `ambiguous-target/reverse-relabel-form-ambiguous` | GVBl. 2024 S. 630 (§ 1): 3.: Gestalt der bisherigen Bezeichnung „Abschnitt II“ (vor „Kapitel 2“) im Portal nicht belegt – Gliederungsteile stehen im Bestand als „Abschnitt I“, „I. Abschnitt“ oder „I.“ |  |
 | `BayVwV154422` | 3 | `missing-base/prior-source-unavailable` | Verkündung von „vom 19. März 2024 (BayMBl. Nr. 156)“ nicht verfügbar: keine Seite trägt das Ausfertigungsdatum 2024-03-19 (https://www.verkuendung-bayern.de/baymbl/2024-156/) |  |
 
 ### vollständige Neufassung (6)

@@ -20,9 +20,9 @@
   },
   "totals": {
     "changedAfterBaseline": 513,
-    "recipeReady": 70,
+    "recipeReady": 71,
     "recipeReadySingle": 56,
-    "recipeReadyMulti": 14,
+    "recipeReadyMulti": 15,
     "byGroup": {
       "single-amendment": 69,
       "two-amendments": 16,
@@ -37,20 +37,20 @@
     },
     "byState": {
       "non-invertible-amendment": 223,
-      "recipe-ready": 70,
+      "recipe-ready": 71,
       "partial-chain": 46,
       "contradictory": 33,
       "command-unreadable": 29,
       "asset-missing": 27,
-      "ambiguous-target": 23,
       "unsupported-formula": 23,
+      "ambiguous-target": 22,
       "missing-base": 19,
       "effective-date-undetermined": 15,
       "round-trip-failed": 5
     },
     "byReason": {
       "non-invertible-amendment/recast": 83,
-      "recipe-ready/reverse-amendment-verified": 70,
+      "recipe-ready/reverse-amendment-verified": 71,
       "non-invertible-amendment/repeal-unit": 39,
       "non-invertible-amendment/delete-words": 29,
       "asset-missing/annex-recast": 27,
@@ -88,7 +88,6 @@
       "non-invertible-amendment/location-unresolved": 2,
       "partial-chain/chain-delayed-predecessor": 2,
       "ambiguous-target/reverse-anchor-mismatch": 1,
-      "ambiguous-target/reverse-relabel-form-ambiguous": 1,
       "ambiguous-target/reverse-sentence-ambiguous": 1,
       "ambiguous-target/reverse-title-projection": 1,
       "contradictory/chain-last-amendment": 1,
@@ -120,7 +119,6 @@
         "partial-chain/chain-ledger-unexplained": 1
       },
       "three-or-more-amendments": {
-        "ambiguous-target/reverse-relabel-form-ambiguous": 1,
         "missing-base/prior-source-unavailable": 1,
         "partial-chain/chain-ledger-unexplained": 1,
         "unsupported-formula/renumber": 1
@@ -246,20 +244,20 @@
         "notReached": 119
       },
       "roundTrip": {
-        "passed": 74,
-        "failed": 58,
+        "passed": 75,
+        "failed": 57,
         "notReached": 381
       },
       "baselineStart": {
-        "passed": 70,
+        "passed": 71,
         "failed": 1,
-        "notReached": 442
+        "notReached": 441
       }
     },
     "roundTripVerifiedWithoutStart": 1,
     "formulas": {
       "replace-words": {
-        "clauses": 1799,
+        "clauses": 1800,
         "norms": 267,
         "supported": true,
         "invertible": true
@@ -405,7 +403,7 @@
     },
     "byRestorationBase": {
       "available": 184,
-      "base-pdf-only": 143,
+      "base-pdf-only": 142,
       "base-none": 37,
       "base-paper-only": 34,
       "base-unconvertible": 17,
@@ -414,7 +412,7 @@
       "not-reached": 2
     },
     "byPdfLayer": {
-      "pdf-ocr": 73,
+      "pdf-ocr": 72,
       "pdf-undecodable": 34,
       "pdf-ambiguous": 30,
       "pdf-not-cached": 3,
@@ -3796,6 +3794,69 @@
       }
     },
     {
+      "documentId": "BayGDVG",
+      "steps": 3,
+      "amendments": 3,
+      "events": [
+        {
+          "id": "gvbl-2024-98-n00098-05-b8fa1773af",
+          "eventType": "amend",
+          "eventDate": "2024-06-14",
+          "citation": "GVBl. 2024 S. 98"
+        },
+        {
+          "id": "gvbl-2024-630-n00630-00-f3ef1040c0",
+          "eventType": "amend",
+          "eventDate": "2024-12-30",
+          "citation": "GVBl. 2024 S. 630"
+        },
+        {
+          "id": "gvbl-2026-108-n00108-00-fdba537b19",
+          "eventType": "amend",
+          "eventDate": "2026-03-31",
+          "citation": "GVBl. 2026 S. 108"
+        }
+      ],
+      "chain": [
+        "GVBl. 2026 S. 108 (§ 1)",
+        "GVBl. 2024 S. 630 (§ 1)",
+        "GVBl. 2024 S. 98 (§ 1)"
+      ],
+      "formulas": [
+        "replace-words",
+        "insert-sentence",
+        "insert-block",
+        "relabel",
+        "number-sentences"
+      ],
+      "effectiveDate": "2026-04-01",
+      "priorAmendment": "§ 1 des Gesetzes vom 23. Juni 2023 (GVBl. S. 246)",
+      "checks": {
+        "sources": true,
+        "chain": true,
+        "effectiveDate": true,
+        "block": true,
+        "formulas": true,
+        "roundTrip": true,
+        "baselineStart": true
+      },
+      "state": "recipe-ready",
+      "reason": "reverse-amendment-verified",
+      "detail": "19 Schritt(e) aus GVBl. 2026 S. 108 ← GVBl. 2024 S. 630 ← GVBl. 2024 S. 98, in Kraft 2026-04-01; Rundlauf exakt",
+      "group": "three-or-more-amendments",
+      "reasons": [],
+      "alsoFailed": [],
+      "priority": 0,
+      "recipe": {
+        "path": "data/imports/bayernrecht/reconstruction/BayGDVG.json",
+        "schema": "bayernrecht-reverse-amendment/2",
+        "amendments": 3,
+        "steps": 19,
+        "currentFingerprint": "ce3c8e1a3f544617f86d9018f5d314b24126f1609b2a17a3de734e9420bd2d41",
+        "baselineFingerprint": "b91669e532efee9d37aad4b20a9bb1ce27b9ceda743d31bff9102d36fe1d26c6"
+      }
+    },
+    {
       "documentId": "BayHG2021",
       "steps": 1,
       "amendments": 1,
@@ -4668,71 +4729,6 @@
         "state": "base-pdf-only",
         "pdfLayer": "pdf-ocr",
         "detail": "Stammverkündung nicht verfügbar (base-pdf-only): Keine HTML-Detailseite (https://www.verkuendung-bayern.de/gvbl/1991-189/); die Verkündung liegt nur als PDF-Ausgabe des GVBl. vor · PDF-Textlayer (pdf-ocr): https://www.verkuendung-bayern.de/files/gvbl/1991/14/gvbl-1991-14.pdf (Ausgabe 1991/14, S. 183 - 214): Textlayer aus Texterkennung (Erzeuger); OCR ist keine Rechtsquelle"
-      }
-    },
-    {
-      "documentId": "BayGDVG",
-      "steps": 3,
-      "amendments": 3,
-      "events": [
-        {
-          "id": "gvbl-2024-98-n00098-05-b8fa1773af",
-          "eventType": "amend",
-          "eventDate": "2024-06-14",
-          "citation": "GVBl. 2024 S. 98"
-        },
-        {
-          "id": "gvbl-2024-630-n00630-00-f3ef1040c0",
-          "eventType": "amend",
-          "eventDate": "2024-12-30",
-          "citation": "GVBl. 2024 S. 630"
-        },
-        {
-          "id": "gvbl-2026-108-n00108-00-fdba537b19",
-          "eventType": "amend",
-          "eventDate": "2026-03-31",
-          "citation": "GVBl. 2026 S. 108"
-        }
-      ],
-      "chain": [
-        "GVBl. 2026 S. 108 (§ 1)",
-        "GVBl. 2024 S. 630 (§ 1)",
-        "GVBl. 2024 S. 98 (§ 1)"
-      ],
-      "formulas": [
-        "replace-words",
-        "insert-sentence",
-        "insert-block",
-        "relabel",
-        "number-sentences"
-      ],
-      "effectiveDate": "2026-04-01",
-      "priorAmendment": "§ 1 des Gesetzes vom 23. Juni 2023 (GVBl. S. 246)",
-      "checks": {
-        "sources": true,
-        "chain": true,
-        "effectiveDate": true,
-        "block": true,
-        "formulas": true,
-        "roundTrip": false
-      },
-      "state": "ambiguous-target",
-      "reason": "reverse-relabel-form-ambiguous",
-      "detail": "GVBl. 2024 S. 630 (§ 1): 3.: Gestalt der bisherigen Bezeichnung „Abschnitt II“ (vor „Kapitel 2“) im Portal nicht belegt – Gliederungsteile stehen im Bestand als „Abschnitt I“, „I. Abschnitt“ oder „I.“; Review",
-      "group": "three-or-more-amendments",
-      "reasons": [
-        {
-          "state": "ambiguous-target",
-          "reason": "reverse-relabel-form-ambiguous",
-          "detail": "GVBl. 2024 S. 630 (§ 1): 3.: Gestalt der bisherigen Bezeichnung „Abschnitt II“ (vor „Kapitel 2“) im Portal nicht belegt – Gliederungsteile stehen im Bestand als „Abschnitt I“, „I. Abschnitt“ oder „I.“; Review"
-        }
-      ],
-      "alsoFailed": [],
-      "priority": 203,
-      "restorationBase": {
-        "state": "base-pdf-only",
-        "pdfLayer": "pdf-ocr",
-        "detail": "Stammverkündung nicht verfügbar (base-pdf-only): Keine HTML-Detailseite (https://www.verkuendung-bayern.de/gvbl/2003-452/); die Verkündung liegt nur als PDF-Ausgabe des GVBl. vor · PDF-Textlayer (pdf-ocr): https://www.verkuendung-bayern.de/files/gvbl/2003/16/gvbl-2003-16.pdf (Ausgabe 2003/16, S. 451 - 494): kein verwertbarer Textlayer (scan); OCR ist keine Rechtsquelle"
       }
     },
     {

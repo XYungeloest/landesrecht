@@ -1,6 +1,6 @@
 # R2-Konsistenzaudit
 
-Bucket `landesrecht-quellen`, Präfix `west/recht-nrw/2023-12-01/`, 2026-09-17T06:12:17.499Z – 2026-09-17T06:13:07.593Z. Nur Lesezugriffe (Listing + 150 Byte-Stichproben, Seed `2023-12-01`).
+Bucket `landesrecht-quellen`, Präfix `west/recht-nrw/2023-12-01/`, 2026-09-28T17:39:24.075Z – 2026-09-28T17:40:34.612Z. Nur Lesezugriffe (Listing + 150 Byte-Stichproben, Seed `2023-12-01`).
 
 | Kennzahl | Wert |
 | --- | --- |

@@ -89,4 +89,16 @@ describe('Erzeugung aus den Belegen (BayWü)', () => {
     expect([...written.keys()]).toEqual(['baywue', 'ost']);
     expect(written.get('baywue')).toEqual(status);
   });
+
+  it('lässt den Block simulation der Sim-Fortschreibung beim Neuschreiben des eigenen Eintrags stehen', async () => {
+    const root = await tempRoot('landesrecht-inventory-status-sim-');
+    const { mkdir, writeFile } = await import('node:fs/promises');
+    await mkdir(join(root, 'packages/legal-core/src/config'), { recursive: true });
+    const simulation = { status: 'SIM SOURCES PARTIAL', knownIssues: 8, presentIssues: 8, secureActs: 28, review: 41, draftsWithoutPromulgation: 1, simulationNorms: 45, updatedAt: '2026-09-28' };
+    await writeFile(join(root, INVENTORY_STATUS_PATH), JSON.stringify({ schemaVersion: INVENTORY_STATUS_SCHEMA, jurisdictions: { baywue: { ...entry({ jurisdiction: 'baywue' }), simulation } } }));
+    const status = buildInventoryStatus({ baseline, manifest, baselineOnlyOpen: 0 });
+    expect(await writeInventoryStatus(root, status)).toBe(true);
+    const written = JSON.parse(await readFile(join(root, INVENTORY_STATUS_PATH), 'utf8')) as { jurisdictions: Record<string, Record<string, unknown>> };
+    expect(written.jurisdictions.baywue).toEqual({ ...status, simulation });
+  });
 });

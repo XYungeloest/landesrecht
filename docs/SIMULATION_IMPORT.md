@@ -139,6 +139,14 @@ Chronologisch nach Rechtswirkung (`effectiveDate`, dann `eventDate`), nie nach D
   `expire` das `expiryDate` der Norm selbst). Ein `applied`-Ereignis ohne materialisierten Akt oder Rezept ist ein
   Widerspruch (Exit 1, nichts geschrieben). Nach jedem `consolidate --write` ausführen.
 - `confidence`: `high` · `medium` · `low`.
+- `reasonCode` (Pflicht bei `review` und `blocked`, von `ledger-sync` geprüft – keine Sammelkategorie ohne Grund):
+  `missing-source` (Quelle fehlt im Archiv, z. B. Drucksache, Zielgesetz, Blattseite) · `missing-baseline-target`
+  (Zielnorm nicht im Baseline-Bestand) · `target-under-review` (Ziel ist ein noch nicht materialisierter Sim-Akt) ·
+  `old-text-conflict` (zitierter Alttext ≠ Bestand) · `promulgation-unclear` (Verkündung/Ausfertigung nicht belegt oder
+  widersprüchlich) · `effective-date-undetermined` (verkündet, Wirkdatum nicht bestimmbar) · `draft-only` (als Entwurf
+  betitelt/Platzhalter) · `organizational-act` · `operation-unsupported` (Befehl mehrdeutig, Druckbild nicht
+  transkribierbar) · `substantive-doubt` (echte fachliche Unklarheit) · `out-of-scope` (keine Norm im Sinne von
+  `docs/LEGAL_SCOPE.md`).
 
 ## 4 Verkündungen: `content/publications/<land>/<slug>.json`
 
@@ -373,7 +381,7 @@ sind Fehler (Exit 1); gesperrte Ziele sind dokumentierter Zustand (Exit 0).
 | Gate | Prüfung | Befehl |
 | --- | --- | --- |
 | G1 | Fassungen write-once gegen HEAD | `npm run content:immutability` |
-| G2 | Baseline-Lock: `versions/2023-12-01.json` jeder Norm byteidentisch gegen den Referenz-Commit des Landes aus `data/simulation/baseline-locks.json` (`{ "west": "ff1b1f43…", "nsh": "cdf35263…", "baywue": "cdf35263…" }`; West = Freeze-Commit, NSH/BayWü = letzter Baseline-Commit). Normen, die im Referenz-Commit fehlen, sind ausgenommen; für Normen mit Sim-Fassungen gilt keine Freigabe aus `data/content-immutability-exceptions.json` (auch nicht dokumentiert), für Normen ohne Sim-Fassungen nur mit `baseCommit` = Referenz-Commit | `npm run content:simulation-gates` |
+| G2 | Baseline-Lock: `versions/2023-12-01.json` jeder Norm byteidentisch gegen den Referenz-Commit des Landes aus `data/simulation/baseline-locks.json` (`{ "west": "ff1b1f43…", "nsh": "21bab36e…", "baywue": "21bab36e…" }`; West = Freeze-Commit, NSH/BayWü = letzter Commit, dessen Baseline-Fassungen unverändert gelten – wird nach einem Baseline-Schreiblauf mit dokumentierten Freigaben auf den Commit gesetzt, gegen den `content:immutability` prüft, sofern beide Bestände byteidentisch sind). Normen, die im Referenz-Commit fehlen, sind ausgenommen; für Normen mit Sim-Fassungen gilt keine Freigabe aus `data/content-immutability-exceptions.json` (auch nicht dokumentiert), für Normen ohne Sim-Fassungen nur mit `baseCommit` = Referenz-Commit | `npm run content:simulation-gates` |
 | G3 | `meta.json`/`history.json` von Normen mit Sim-Fassungen nur additiv gegenüber dem Referenz-Commit: alle alten Historieneinträge (in alter Reihenfolge), Beziehungen und Schlagworte unverändert enthalten, `initialVersionId` gleich, alle übrigen Meta-Felder gleich außer `status`, `expiryDate`, `successor`, `successorTarget`, `relations`, `keywords` | `npm run content:simulation-gates` |
 | G4 | Konsolidierung reproduzierbar (`consolidate --check` je Land, s. o.) | `npm run content:simulation-gates` |
 | G5 | Provenienztrennung (Sim-Fassung nur Sim-Belege, keine reale Quellprovenienz; Baseline nie Sim-Belege; eigene Sim-Norm ohne reale Kennung) – im Loader (`assertSimulationProvenance`) | `npm run content:validate` |

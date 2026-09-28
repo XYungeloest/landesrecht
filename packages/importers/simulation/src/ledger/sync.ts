@@ -19,6 +19,9 @@ import type { ConsolidationManifest } from '../consolidate/manifest.ts';
 
 export const LEDGER_SCHEMA = 'landesrecht-simulation-ledger/1' as const;
 
+/** Gründe offener Ereignisse (`review`/`blocked`), docs/SIMULATION_IMPORT.md Abschnitt 3 – Pflicht, keine Sammelkategorie. */
+export const LEDGER_REASON_CODES = ['missing-source', 'missing-baseline-target', 'target-under-review', 'old-text-conflict', 'promulgation-unclear', 'effective-date-undetermined', 'draft-only', 'organizational-act', 'operation-unsupported', 'substantive-doubt', 'out-of-scope'] as const;
+
 /** Ereignisarten, deren Rechtswirkung ein angewandtes Rezept auf die Zielnorm verlangt. */
 const RECIPE_EVENT_TYPES = new Set(['amend', 'repeal', 'replace', 'recast', 'correction']);
 
@@ -30,6 +33,7 @@ export interface LedgerEvent {
   act?: { slug?: string | null; title?: string } | null;
   targets?: Array<{ slug?: string; kind?: string; title?: string }>;
   recipe?: string;
+  reasonCode?: string;
   [key: string]: unknown;
 }
 
@@ -88,6 +92,9 @@ export async function syncLedger(root: string, jurisdiction: JurisdictionId, opt
     const targets = (event.targets ?? []).map((target) => target.slug).filter((target): target is string => typeof target === 'string');
     const recipe = slug ? targets.map((target) => recipes.get(`${slug}\u0000${target}`)).find((found) => found !== undefined) : undefined;
     let next = event;
+    if ((event.status === 'review' || event.status === 'blocked') && !(LEDGER_REASON_CODES as readonly string[]).includes(String(event.reasonCode))) {
+      result.errors.push(`${event.id}: ${event.status} ohne gültigen reasonCode (${LEDGER_REASON_CODES.join(', ')})`);
+    }
     if (event.status === 'applied') {
       if (!slug || !materialized.has(slug)) result.errors.push(`${event.id}: applied, aber Akt ${slug ?? '(ohne slug)'} ist nicht materialisiert`);
       else if (RECIPE_EVENT_TYPES.has(event.type) && recipe === undefined) result.errors.push(`${event.id}: applied, aber kein angewandtes Rezept von ${slug} auf ${targets.join(', ') || '(kein Ziel)'}`);

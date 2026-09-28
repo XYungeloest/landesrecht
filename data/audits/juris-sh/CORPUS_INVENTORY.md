@@ -2,7 +2,7 @@
 
 Erzeugt von `node scripts/import-juris-sh.ts inventory --write`. Stichtag **2023-12-01**. Quelle: Bürgerservice Schleswig-Holstein (juris), Simulationsland Niedersachsen-Holstein (`nsh`).
 
-Netzfrei aus dem Cache von `fetch-corpus` (öffentliche PDF-Ausgabe). Je Dokument der Vollweg der Stichprobe: Parser → SH-Modell → Stichtag (bei späteren Änderungen die am Stichtag geltenden Einzelfassungen) → Überleitung SH → NSH → `validateNormRecord` → Textintegrität, dazu Stichtagsbelege mit dem bestehenden Ereignisregister (Regeln A/B/C). Parser `juris-sh-parser/1.0.0`, Überleitung `juris-sh-transformer/1.2.0`.
+Netzfrei aus dem Cache von `fetch-corpus` (öffentliche PDF-Ausgabe). Je Dokument der Vollweg der Stichprobe: Parser → SH-Modell → Stichtag (bei späteren Änderungen die am Stichtag geltenden Einzelfassungen) → Überleitung SH → NSH → `validateNormRecord` → Textintegrität, dazu Stichtagsbelege mit dem bestehenden Ereignisregister (Regeln A/B/C). Parser `juris-sh-parser/1.0.0`, Überleitung `juris-sh-transformer/1.3.0`.
 
 ## 1 Ausgänge
 
@@ -10,40 +10,37 @@ Netzfrei aus dem Cache von `fetch-corpus` (öffentliche PDF-Ausgabe). Je Dokumen
 | --- | --- |
 | Enumeriert | 5197 |
 | Verarbeitet | 5197 |
-| Ausgänge | import-ready 2450 · not-at-baseline 1720 · review 499 · part-of-main 476 · reconstruction 46 · failed 4 · not-cached 2 |
-| Landesrecht | import-ready 1372 · not-at-baseline 1115 · review 285 · reconstruction 34 · not-cached 2 |
-| Verwaltungsvorschriften | import-ready 1078 · not-at-baseline 605 · part-of-main 476 · review 214 · reconstruction 12 · failed 4 |
-| Manifeststatus | imported-with-warnings 1917 · not-at-baseline 1720 · needs-review 545 · imported 533 · excluded 476 · failed 4 |
-| Stichtagseinordnung der Ausgabe | unchanged-since-baseline 3049 · repealed-before-baseline 962 · enacted-after-baseline 761 · changed-after-baseline 262 · repealed-after-baseline 88 · undetermined 73 |
-| Stichtagsregel (A/B/C) | B-strong-begin-and-continuity 3433 · A-strong-end-before-baseline 962 · C-undetermined 796 |
-| Textintegrität | exact 3027 · explained-difference 2164 · mismatch 3 · review 1 |
+| Ausgänge | import-ready 2591 · not-at-baseline 1722 · part-of-main 476 · review 377 · reconstruction 25 · failed 4 · not-cached 2 |
+| Landesrecht | import-ready 1467 · not-at-baseline 1117 · review 209 · reconstruction 13 · not-cached 2 |
+| Verwaltungsvorschriften | import-ready 1124 · not-at-baseline 605 · part-of-main 476 · review 168 · reconstruction 12 · failed 4 |
+| Manifeststatus | imported-with-warnings 2046 · not-at-baseline 1722 · imported 546 · excluded 476 · needs-review 401 · failed 4 |
+| Stichtagseinordnung der Ausgabe | unchanged-since-baseline 3049 · repealed-before-baseline 962 · enacted-after-baseline 763 · changed-after-baseline 262 · repealed-after-baseline 88 · undetermined 71 |
+| Stichtagsregel (A/B/C) | B-strong-begin-and-continuity 3446 · A-strong-end-before-baseline 962 · C-undetermined 783 |
+| Textintegrität | exact 2916 · explained-difference 2272 · mismatch 3 · review 3 · normalized-equivalent 1 |
 | Normtyp | verwaltungsvorschrift 2389 · verordnung 2025 · gesetz 728 · zustimmungsgesetz 51 · verfassung 2 |
 
 ## 2 Sperrgründe (Dokumente je Grund)
 
 | Grund | Dokumente |
 | --- | --- |
-| `parse:table-layout` | 204 |
+| `parse:table-layout` | 148 |
 | `parse:incomplete-source-text` | 86 |
-| `transform:undecidable-source-state-abbreviation` | 66 |
-| `parse-units:table-layout` | 60 |
-| `historical:unit-selection` | 34 |
-| `transform:organ-formula-conflict` | 30 |
-| `parse:body-unit-not-in-toc` | 18 |
-| `parse:toc-unit-missing` | 16 |
+| `transform:undecidable-source-state-abbreviation` | 65 |
+| `parse-units:table-layout` | 51 |
+| `historical:unit-selection` | 13 |
 | `transform:residual-source-state-reference` | 12 |
 | `parse:figure` | 12 |
 | `units-missing:changed-after-baseline` | 12 |
-| `parse-units:incomplete-source-text` | 9 |
+| `parse-units:incomplete-source-text` | 10 |
 | `parse:vwv-annex-document` | 8 |
-| `baseline:ledger-contradiction` | 7 |
 | `baseline:undetermined` | 4 |
 | `schema:title-missing` | 4 |
 | `parse:annex-separate-document` | 4 |
+| `integrity:mismatch` | 3 |
 | `parse:empty-footnote` | 3 |
 | `parse-units:figure` | 2 |
-| `integrity:mismatch` | 2 |
-| `integrity:review` | 1 |
+| `integrity:review` | 2 |
+| `parse:toc-unit-missing` | 1 |
 
 `parse:table-layout` und `pdf-only`-Abbildungen gehen in den Review, weil der Textlayer Tabellen- und Bildinhalte nicht sicher trägt; `units-missing` heißt: Am Stichtag galt eine andere Fassung, die Einzelfassungen sind noch nicht (vollständig) im Cache (`npm run import:juris-sh:fetch-corpus -- --phase units`); `baseline:ledger-contradiction`: Das Ereignisregister belegt eine Änderung nach dem Stichtag, die Ausgabe nicht.
 
@@ -412,7 +409,7 @@ Zählbasis sind die Köpfe des vollen amtlichen Registers (Audit „NSH-Audit“
 
 ## 4 baseline-only-Kandidaten des Ereignisregisters
 
-54 Kandidaten (Vorschrift endete nach dem Stichtag), 49 einem juris-Dokument zugeordnet (Gliederungsnummer + Ausfertigungsdatum bzw. eindeutige Gliederungsnummer). Ausgänge: import-ready 34 · review 7 · reconstruction 6 · not-matched 5 · not-at-baseline 2.
+54 Kandidaten (Vorschrift endete nach dem Stichtag), 49 einem juris-Dokument zugeordnet (Gliederungsnummer + Ausfertigungsdatum bzw. eindeutige Gliederungsnummer). Ausgänge: import-ready 34 · review 8 · not-matched 5 · reconstruction 5 · not-at-baseline 2.
 
 | Ereignis | Datum | Gl.Nr. | Titel | juris | Ausgang |
 | --- | --- | --- | --- | --- | --- |
@@ -466,7 +463,7 @@ Zählbasis sind die Köpfe des vollen amtlichen Registers (Audit „NSH-Audit“
 | gvobl-systematische-uebersicht-p0050-l04 | 2025-08-30 | 2013-2-65 | Landesverordnung über Verwaltungsgebühren in Angelegenheiten der Leben | jlr-NNLSH00002B1F | import-ready |
 | gvobl-systematische-uebersicht-p0009-l05 | 2025-10-28 | 114-0-4 | Landesverordnung über die örtliche Bekanntmachung und Verkündung (Beka | jlr-NNLSH00002B12 | import-ready |
 | gvobl-systematische-uebersicht-p0202-l02 | 2025-12-31 | 780-3-31 | Landesverordnung über die Wahl der Hauptversammlung der Landwirtschaft | jlr-NNLSH00003019 | review |
-| gvobl-systematische-uebersicht-p0270-l06 | 2025-12-31 | B 850-1-3 | Landesverordnung über die Personalqualifikation in öffentlich geförder | jlr-NNLSH00002B9B | reconstruction |
+| gvobl-systematische-uebersicht-p0270-l06 | 2025-12-31 | B 850-1-3 | Landesverordnung über die Personalqualifikation in öffentlich geförder | jlr-NNLSH00002B9B | review |
 | gvobl-systematische-uebersicht-p0277-l01 | 2025-12-31 | 90-1-14 | Landesverordnung über die Kostentragung bei der Verwaltung von Kreisst | jlr-NNLSH00002AF4 | not-at-baseline |
 | gvobl-systematische-uebersicht-p0010-l02 | 2026-02-19 | 12-3-2 | Landesverordnung zur Feststellung der lebenswichtigen Einrichtungen im | – | nicht zugeordnet |
 | gvobl-systematische-uebersicht-p0272-l06 | 2026-06-10 | B 864-8-16 | Landesverordnung über die Freistellung für ehrenamtliche Mitarbeit in  | jlr-NNLSH00003029 | import-ready |

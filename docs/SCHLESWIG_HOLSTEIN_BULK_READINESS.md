@@ -180,7 +180,23 @@ mit nicht belegter Tabellenstruktur, Befund `withdrawn-after-import`, Freigaben 
   Ausgangsfassung, entstehen der Befund `baseline-locked` im Manifesteintrag und ein blockierender Review-Fall
   (`import-regression`, Schlüssel `baseline-locked`) – die Entscheidung fällt außerhalb des Bulks.
 
-## 8c Run 9 (2026-09-28): Regeln umgesetzt, Schreiblauf noch offen
+## 8d Run 9 Schreiblauf (2026-09-28)
+
+`bulk --write --offline` über 5 197 Dokumente: import-ready 2 591, review 377, reconstruction 25, part-of-main 476, failed 4;
+Normen geschrieben 395, unverändert 2 197, zurückgenommen 2 → **2 592 Baseline-Normen** (vorher 2 450) neben 28 Sim-Normen. Die
+fünf durch die Simulation fortgeschriebenen Normen (`sftg`, `gdg`, `laplag`, `lbo`, `pog`) blieben unberührt (Baseline-Lock).
+Offene Reviewfälle **613 → 451**: historical-gap 34 → 13, institution-mapping 108 → 77, unknown-structure 308 → 212 (davon
+Tabellen 199), validity 17 → 11, import-regression 10 → 4, contradictory-evidence 3 → 0, incomplete-annex 91 → 92, pdf-only 30,
+reconstruction-required 12. Immutability-Freigaben (`data/content-immutability-exceptions.json`, Basis `21bab36ec`): 219 –
+88 Tabellenstruktur, 85 Blockstruktur, 44 Normtext neu aus dem Textlayer, 2 zurückgenommen; keine für gelockte Normen.
+Verbleibende Tabellenfälle nach Ablehnungsgrund (mehrfach je Fall): `columns-vary` 51, `header-unassigned` 47, `hyphenated-cell` 43,
+`no-gutter` 36, `row-before-table` 36, `ambiguous-row-gap` 34, `cell-unassigned` 31, `single-row` 7, `page-break-in-table` 5,
+`too-many-columns` 2, `figure-inside` 1 – in diesem Lauf keine weitere Rasterfreigabe (jede Gruppe braucht eine belegte Regel;
+die 222 veröffentlichten Tabellennormen sind unverändert übernahmefähig). Anlagen: 80 Inhalte nur als gesonderte PDF-Datei in
+juris, 8 VwV-Anlagen als eigenes Dokument ohne Zuordnung, 4 ohne eindeutige Stammnorm – keine OCR, keine Veröffentlichung einer
+Stammnorm, deren normativer Kern ohne Anlage unvollständig wäre (bleibt Review).
+
+## 8c Run 9 (2026-09-28): Regeln umgesetzt, Schreiblauf zunächst offen
 
 Alle Regeln sind im Adapter mit Tests (`tests/unit/juris-sh-run9.test.ts`) umgesetzt und im Dry-run geprüft; der
 Schreiblauf (`bulk --write` und die Kette aus Abschnitt 8) wurde in Run 9 **nicht** ausgeführt – der Bestand unter

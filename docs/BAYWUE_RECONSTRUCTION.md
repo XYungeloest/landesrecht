@@ -1219,9 +1219,9 @@ Ohne sie gelingt die Rückrechnung nur, wenn jeder Befehl nach dem Stichtag sein
 | GrSO = BayVSO (`grso-baywue`) | 4 Änderungen | GVBl. 2008 S. 684, PDF nicht dekodierbar | 10 Befehle ohne Alttext, Anlage aus Anhang (GVBl. 2025 S. 272 u. a.) |
 | BayGSO (`gso-baywue`) | 3 Änderungen | GVBl. 2007 S. 68, Textlayer mehrdeutig | 5 Befehle ohne Alttext; GVBl. 2026 S. 425 (§ 11): Zitat nicht geschlossen |
 | BayKiBiG (`baykibig-baywue`) | 6 Änderungen | GVBl. 2005 S. 236, Textlayer mehrdeutig | 63 Befehle ohne Alttext; Reihenfolge des Inkrafttretens (GVBl. 2026 S. 75 § 30 / S. 139 § 4) |
-| **BayGDVG** (`gdg-baywue`) | 3 (GVBl. 2026 S. 108, 2024 S. 630, 2024 S. 98) | GVBl. 2003 S. 452, OCR | **alle 19 Schritte umkehrbar; offen allein die Gestalt der Bezeichnungen „Abschnitt I/II“ vor GVBl. 2024 S. 630** (`relabel-form-ambiguous`) |
+| **BayGDVG** (`gdg-baywue` → Bestand `gvvg-baywue`) | 3 (GVBl. 2026 S. 108, 2024 S. 630, 2024 S. 98) | GVBl. 2003 S. 452, OCR | **alle 19 Schritte umkehrbar; offen allein die Gestalt der Bezeichnungen „Abschnitt I/II“ vor GVBl. 2024 S. 630** (`relabel-form-ambiguous`) |
 
-Der Sim-Slug `gdg-baywue` gehört zum Dokument `BayGDVG` (GVVG, BayRS 2120-1-U/G); `grso-baywue` zum Dokument `BayVSO`.
+Der vorläufige Sim-Slug `gdg-baywue` gehört zum Dokument `BayGDVG` (im Bestand seit Lauf 13 als `gvvg-baywue`) (GVVG, BayRS 2120-1-U/G); `grso-baywue` zum Dokument `BayVSO`.
 
 ### 24.2 BayGDVG: Gliederungsteile umbenannt, eine Frage der Gestalt
 

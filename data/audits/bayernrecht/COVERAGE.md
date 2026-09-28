@@ -27,7 +27,7 @@ nicht weggelassen.
 
 | Bereich | Einträge | imported | imported-with-warnings | dry-run | failed | needs-review | excluded | not-at-baseline |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| landesrecht | 873 | 314 | 279 | 0 | 0 | 265 | 1 | 14 |
+| landesrecht | 873 | 314 | 280 | 0 | 0 | 264 | 1 | 14 |
 | vwv | 1470 | 435 | 611 | 0 | 0 | 192 | 0 | 232 |
 | baseline-only wiederhergestellt | 61 | 15 | 46 | 0 | 0 | 0 | 0 | 0 |
 
@@ -73,4 +73,4 @@ Gezählt wird, was am abgelegten Paket nachgewiesen ist – nicht, was vorgesehe
 | leere-metadaten | 19 |
 | kein-builddate | 5 |
 
-Fingerabdruck des Inhalts: `2ff50ff9ad55f3d84cbafca11aeb0031492a3466392b0cece2ae41591dc5bbe3`.
+Fingerabdruck des Inhalts: `db99d5fdadf22ab8335c8543d6c5c5d4d9961b40cb1f33b5ae5b918c0c558d87`.

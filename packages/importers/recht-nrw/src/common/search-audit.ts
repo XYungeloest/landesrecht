@@ -352,7 +352,9 @@ export async function auditNorms(corpus: ProjectedCorpus, jurisdiction: Jurisdic
   if (!store) return slice;
   const all = corpus.records.get(jurisdiction) ?? [];
   const wanted = new Set(slugs);
-  const norms = all.filter((norm) => wanted.has(norm.meta.slug));
+  // Aufgehobene, historische und erst künftig geltende Normen (Sim-Fortschreibung) stehen nicht im aktuellen
+  // Suchbestand; die Normprüfungen fragen nur am Stichtag geltende Normen ab.
+  const norms = all.filter((norm) => wanted.has(norm.meta.slug) && !['repealed', 'historical', 'future-effective'].includes(norm.meta.status));
   const ambiguousTitles = ambiguousNames(all, (norm) => norm.meta.title);
   const ambiguousAbbrs = ambiguousNames(all, (norm) => norm.meta.abbr);
   const matchMode = options.matchMode ?? DEFAULT_SEARCH_MATCH_MODE;
