@@ -26,7 +26,7 @@ export function isOstRechtContractError(error: unknown): error is OstRechtContra
 /** Tabellen und Spalten, die der Store liest (Alias-frei; eine Zeile genügt zur Spaltenprüfung). */
 export const OSTRECHT_CONTRACT_COLUMNS: Readonly<Record<string, readonly string[]>> = {
   law_norms: ['id', 'slug', 'title', 'short_title', 'abbr', 'type', 'status', 'current_version_id', 'meta_json', 'history_json', 'sort_title', 'subjects_json', 'aliases_json', 'last_change_date'],
-  law_versions: ['norm_id', 'version_id', 'valid_from', 'valid_to', 'version_json'],
+  law_versions: ['norm_id', 'version_id', 'valid_from', 'valid_to', 'temporal_kind', 'version_json'],
   law_version_blocks: ['norm_id', 'version_id', 'block_index', 'part_index', 'block_json'],
   law_search_units: ['id', 'norm_id', 'version_id', 'provision_path', 'anchor', 'block_type', 'references_json', 'label', 'heading', 'body'],
   law_search_documents: ['norm_id', 'version_id', 'document_json'],

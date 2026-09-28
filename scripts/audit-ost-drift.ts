@@ -5,7 +5,8 @@
  *   npm run audit:ost-drift                       # Remote-D1 über die Wrangler-Anmeldung (wrangler d1 execute --remote)
  *   npm run audit:ost-drift -- --sqlite <datei>    # lokale SQLite im OstRecht-Schema (Seed oder Fixture)
  *   npm run audit:ost-drift -- --ostrecht-root ../staatsregierung   # zusätzlich D1 ↔ OstRecht-Git-Stichprobe (nur lesen)
- *   Optionen: --database ostrecht-recht|ostrecht-recht-staging, --sample 12, --write (Bericht nach data/audits/ostrecht/)
+ *   Optionen: --database ostrecht-recht|ostrecht-recht-staging, --sample 12, --as-of <Datum> (Freshness gegen einen
+ *   künftigen Landesrecht-Stichtag vorab prüfen), --write (Bericht nach data/audits/ostrecht/)
  *
  * Die Laufzeit des Workers braucht kein lokales Repository; der Git-Abgleich ist ein optionaler Zusatzschritt.
  * Der Remote-Zugriff läuft über `wrangler d1 execute` mit Leseanweisungen; es wird nichts geschrieben.
@@ -30,6 +31,7 @@ const database = readOption('database', OSTRECHT_D1_DATABASE_NAMES.production);
 const sqlitePath = readOption('sqlite', '');
 const ostrechtRoot = readOption('ostrecht-root', '');
 const sampleSize = Number.parseInt(readOption('sample', '12'), 10);
+const asOfOption = readOption('as-of', '');
 const write = process.argv.includes('--write');
 if (!(Object.values(OSTRECHT_D1_DATABASE_NAMES) as string[]).includes(database)) throw new Error(`--database ${Object.values(OSTRECHT_D1_DATABASE_NAMES).join('|')}`);
 
@@ -116,7 +118,7 @@ console.log(`Drift-Audit: ${label}`);
 // Feste Stichproben (Mehrfachfassungen, Baseline-Regel) nur, wenn die Datenbank sie führt (eine Fixture kennt sie nicht alle).
 const FIXED_SLUGS = ['saechsische-gemeindeordnung', 'ndr-staatsvertrag', 'ostdeutsches-feiertagsgesetz'];
 const known = new Set((await db.prepare(`SELECT id FROM law_norms WHERE id IN (${FIXED_SLUGS.map(() => '?').join(', ')})`).bind(...FIXED_SLUGS).all<{ id: string }>()).results.map((row) => row.id));
-const report = await auditOstRechtDrift(db, { sample: sampleSize, slugs: FIXED_SLUGS.filter((slug) => known.has(slug)) });
+const report = await auditOstRechtDrift(db, { sample: sampleSize, slugs: FIXED_SLUGS.filter((slug) => known.has(slug)), ...(asOfOption ? { asOf: asOfOption } : {}) });
 const gitProblems = ostrechtRoot ? compareWithGit(report, ostrechtRoot) : [];
 const ok = report.ok && gitProblems.length === 0;
 
@@ -126,6 +128,11 @@ console.log('Contract:', report.contract.ok ? 'ok' : report.contract.problems.jo
 console.log('Stichprobe:', report.samples.map((sample) => `${sample.slug}${sample.ok ? ' ✓' : ` ✗ ${sample.problems.join('; ')}`}`).join('\n  '));
 console.log('Suchparität:', report.searchParity.map((entry) => `${entry.query}: OstRecht-FTS ${entry.upstreamFtsVersions}, Adapter ${entry.adapterTotal}, erster Treffer ${entry.firstHit ?? '–'}${entry.ok ? '' : ' ✗'}`).join('\n  '));
 console.log('Verkündungen:', report.publications.checked, report.publications.problems.join('; ') || 'ok');
+if (report.freshness) {
+  const f = report.freshness;
+  console.log(`Freshness: Landesrecht-Stichtag ${f.referenceDate}; OstRecht-Sync ${f.upstream.syncedAt ?? '?'} (${f.upstream.syncState ?? '?'}), indexierter Stichtag zwischen ${f.upstream.indexedAsOf.notBefore ?? '?'} und vor ${f.upstream.indexedAsOf.before ?? 'offen'}; Such-Readiness ${f.coverage.readiness}, Volltext ${f.coverage.fullText}`);
+  console.log(f.staleNorms.length === 0 ? '  keine Norm mit geltender Fassung ohne Sucheinheiten' : `  betroffen (${f.staleNorms.length}${f.truncated ? '+' : ''}):\n  ${f.staleNorms.map((norm) => `${norm.slug}: geltend ${norm.currentVersionId} (ab ${norm.currentValidFrom}), indexiert ${norm.indexedVersionId ?? '–'}`).join('\n  ')}`);
+}
 if (ostrechtRoot) console.log('Git-Abgleich:', gitProblems.length === 0 ? `ok (${report.samples.length} Normen gegen ${ostrechtRoot})` : gitProblems.join('; '));
 if (write) {
   const directory = join(root, 'data', 'audits', 'ostrecht');

@@ -68,6 +68,28 @@ keine Ost-Sonderlogik.
 - Übernommene sächsische Änderungsvorschriften gehören in OstRecht nicht zur „Grundmenge“ (`in_inventory = 0`);
   Landesrecht zählt und listet sie wie in den anderen Ländern, ordnet sie in der Suche aber hinter Stammnormen ein.
 
+## Freshness und Such-Readiness
+
+`packages/runtime/src/ostrecht-freshness.ts` vergleicht den Landesrecht-Stichtag (`EDITORIAL_REFERENCE_DATE`) mit dem
+Projektionsstand von OstRecht (`law_runtime_meta`: `last_sync_at`, `sync_state`, `projection_fingerprint`; Fenster des
+indexierten Stichtags aus `law_versions.temporal_kind`) und nennt jede Norm, deren am Landesrecht-Stichtag geltende
+Fassung keine Sucheinheiten hat (geltende und von OstRecht indexierte Fassung). Das sind genau die Normen, deren
+nächste Fassung zwischen dem OstRecht-Projektionsstand und dem Landesrecht-Stichtag beginnt. Landesrecht schreibt und
+synchronisiert OstRecht nie; Abhilfe ist ein OstRecht-Sync mit jüngerem Stichtag.
+
+- **Suchabdeckung** (`SearchCoverage`, `NormStore.getSearchCoverage`, `StoreRegistry.searchCoverage`): `readiness`
+  (`ready`/`partial`), `fullText` (`all-versions` für West/NSH/BayWü, `current-version-only` für Ost),
+  `historicalVersions: navigable`, `staleNormCount`. `/api/v1/search` liefert sie als `coverage`, `/api/v1/jurisdictions`
+  als `search`; die Suchseite weist darauf hin, wenn frühere Fassungen gesucht werden oder die Readiness `partial` ist.
+- **Health:** `/health` meldet `search.OSTRECHT_RECHT`; bei `partial` (oder nicht prüfbarer Readiness) lautet der
+  Status `degraded` (HTTP 200), nie `ok`.
+- **Fallback** (`searchStaleOstRechtNorms`): für höchstens 50 betroffene Normen ergänzt die Suche auf der ersten Seite
+  Treffer aus Bezeichnung, Abkürzung, Aliassen, Schlagworten und Zusammenfassung der geltenden Fassung (dieselbe
+  Bewertung wie für alle Treffer). Kein zweiter Volltextindex: der Normtext dieser Fassung bleibt bis zum OstRecht-Sync
+  ohne Volltexttreffer, Anfragen mit Strukturadresse (§/Artikel) werden nicht ergänzt.
+- **Drift-Audit:** `npm run audit:ost-drift` gibt den Freshness-Befund mit Normliste aus und endet mit Befund, sobald
+  eine Norm betroffen ist; `--as-of <Datum>` prüft einen künftigen Stichtag vorab.
+
 ## Schema-Contract und Drift
 
 Vor dem ersten Zugriff (je Binding zwischengespeichert, 5 Minuten; Fehlschlag 15 Sekunden) prüft der Adapter Tabellen
@@ -84,7 +106,7 @@ Zeitpunkt, `upstreamCorpusHash`, `projectionFingerprint`) aus.
   OstRecht-Seed, `npm run fixture:ostrecht`): Normliste, aktuelle Norm, Mehrfachfassungen, Baseline-Regel, ausgeschlossene
   Norm, eigene Sim-Norm, Änderungsgesetz, aufgehobene und künftige Norm, Historie, Relationen, Quellen, Verkündungen,
   Suche (Bezeichnung, Alias, Strukturadresse, Fassungsart), Suchdokument- und Verkündungsadapter, Cross-Jurisdiction,
-  Statistik/Metadaten, Drift-Audit.
+  Statistik/Metadaten, Drift-Audit, Freshness, Such-Fallback und Suchabdeckung.
 - `tests/unit/ostrecht-contract.test.ts` – Read-only-Hülle, Contract (fail closed bei `sync_state`, Spalten, Tabellen,
   JSON), Bindings/Registry (`OSTRECHT_RECHT`, `LANDESRECHT_OST` unbenutzt), Konfiguration, Healthcheck.
 - `tests/unit/ostrecht-compatibility.test.ts` – Adapter auf Dateiebene, optional gegen `../staatsregierung`.

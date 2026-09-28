@@ -364,7 +364,8 @@ Ablauf je Land (`packages/importers/simulation/src/consolidate/run.ts`; Ausgabe 
 
 **Wortlautprobe** (Sicherung gegen falsche Transkription): der Text jedes Blocks (`text`, `title`) des Akts muss im
 Textauszug der in `provenance.transcribedFrom` genannten Quelle (`.cache/simulation/text/<sha256>.txt` oder
-`.layout.txt`) vorkommen – Leerraum gebündelt, Trennstrich + Zeilenumbruch verbunden, U+200B entfernt; ersatzweise
+`.layout.txt`) vorkommen – Leerraum gebündelt, Trennstrich + Zeilenumbruch verbunden, unsichtbare Zeichen (U+200B,
+U+00AD, Richtungssteuerzeichen U+202A–U+202E) entfernt; ersatzweise
 gilt ein Block als „lose“ gefunden, wenn er ohne jeden Leerraum und ohne Striche im Quelltext steht. Jeder nicht
 gefundene Block wird gemeldet, der Akt nicht geschrieben – außer mit `provenance.textCheckOverride`. Fehlt der
 Textauszug (Cache), scheitert der Schreiblauf (Inventar ausführen); `--check` überspringt die Probe dann.

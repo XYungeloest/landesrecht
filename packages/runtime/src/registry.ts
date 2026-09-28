@@ -11,7 +11,7 @@ import { createD1NormStore } from './d1-store.ts';
 import type { D1Database } from './d1-types.ts';
 import { createOstRechtD1Store } from './ostrecht-d1-store.ts';
 import { createReadOnlyD1 } from './read-only-d1.ts';
-import type { NormStore } from './store.ts';
+import { getStoreSearchCoverage, type NormStore, type SearchCoverage } from './store.ts';
 
 export interface StoreRegistry {
   get(jurisdiction: JurisdictionId): NormStore;
@@ -19,6 +19,8 @@ export interface StoreRegistry {
   list(): NormStore[];
   /** Jurisdiktionsübergreifende Suche; leere Jurisdiktionsliste bedeutet alle. */
   search(state: SearchState): Promise<SearchResultPage>;
+  /** Suchabdeckung je Jurisdiktion (leere Liste: alle konfigurierten). */
+  searchCoverage(jurisdictions?: readonly JurisdictionId[]): Promise<Array<SearchCoverage & { jurisdiction: JurisdictionId }>>;
 }
 
 export function createStoreRegistry(stores: Partial<Record<JurisdictionId, NormStore>>): StoreRegistry {
@@ -33,6 +35,10 @@ export function createStoreRegistry(stores: Partial<Record<JurisdictionId, NormS
     },
     list() {
       return JURISDICTION_IDS.flatMap((jurisdiction) => (stores[jurisdiction] ? [stores[jurisdiction]] : []));
+    },
+    async searchCoverage(jurisdictions = []) {
+      const targets = (jurisdictions.length > 0 ? [...jurisdictions] : [...JURISDICTION_IDS]).filter((jurisdiction) => stores[jurisdiction]);
+      return Promise.all(targets.map(async (jurisdiction) => ({ jurisdiction, ...(await getStoreSearchCoverage(stores[jurisdiction]!)) })));
     },
     async search(state) {
       const targets = (state.jurisdictions.length > 0 ? state.jurisdictions : [...JURISDICTION_IDS]).filter((jurisdiction) => stores[jurisdiction]);

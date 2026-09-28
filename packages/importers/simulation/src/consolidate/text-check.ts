@@ -3,7 +3,7 @@
  * Quelle (`.cache/simulation/text/<sha256>.txt` bzw. `.layout.txt`) vorkommen. Das ist die Sicherung gegen
  * falsche oder erfundene Transkription; sie ersetzt keine Sichtprüfung.
  *
- * Normalisierung (beide Seiten): U+200B entfernt, Trennstrich + Zeilenumbruch verbunden, Leerraum gebündelt.
+ * Normalisierung (beide Seiten): unsichtbare Zeichen (U+200B, Richtungssteuerzeichen) entfernt, Trennstrich + Zeilenumbruch verbunden, Leerraum gebündelt.
  * Scheitert das, gilt ein Block noch als „lose“ gefunden, wenn er ohne jeden Leerraum und ohne Binde-/
  * Gedankenstriche im Quelltext vorkommt (Silbentrennung an echten Bindestrichen, Zeilenumbrüche in Tabellen).
  */
@@ -23,7 +23,9 @@ export interface TextCheckResult {
   missing: BlockText[];
 }
 
-const ZERO_WIDTH = /[​­]/gu;
+// Unsichtbare Zeichen: U+200B, U+00AD sowie Richtungs-/Formatsteuerzeichen (U+200E/F, U+202A–U+202E, U+2060, U+FEFF),
+// die manche PDF-Erzeuger (Google Docs/Skia) um jede Zeile setzen.
+const ZERO_WIDTH = /[\u200B\u00AD\u200E\u200F\u202A-\u202E\u2060\uFEFF]/gu;
 
 /** Normalisierung nach Vorgabe: U+200B weg, Trennstrich + Zeilenumbruch verbunden, Leerraum gebündelt. */
 export function normalizeWording(text: string): string {

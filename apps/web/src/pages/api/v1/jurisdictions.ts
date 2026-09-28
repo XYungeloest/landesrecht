@@ -3,6 +3,8 @@ import type { APIRoute } from 'astro';
 import { JURISDICTION_LIST } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { getJurisdictionUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import { OSTRECHT_RUNTIME_META_KEYS } from '@landesrecht/runtime/ostrecht-d1-store.ts';
+import { FULL_SEARCH_COVERAGE } from '@landesrecht/runtime/ostrecht-freshness.ts';
+import { getStoreSearchCoverage } from '@landesrecht/runtime/store.ts';
 
 import { SIMRECHT_SCHEMA_VERSION, type ApiJurisdiction, type ApiJurisdictionsResponse } from '../../../lib/api-types.ts';
 import { getStoreRegistry, jsonResponse } from '../../../lib/runtime/context.ts';
@@ -24,6 +26,7 @@ export const GET: APIRoute = async () => {
         url: getJurisdictionUrl(jurisdiction.id),
         normCount: stats.normCount,
         runtimeSource: jurisdiction.runtimeSource,
+        search: store ? await getStoreSearchCoverage(store) : FULL_SEARCH_COVERAGE,
       };
       if (jurisdiction.upstreamSourceOfTruth) entry.upstreamSourceOfTruth = { system: jurisdiction.upstreamSourceOfTruth.system, label: jurisdiction.upstreamSourceOfTruth.label, siteUrl: jurisdiction.upstreamSourceOfTruth.siteUrl };
       if (jurisdiction.legacySource) entry.legacySource = { system: jurisdiction.legacySource.system, label: jurisdiction.legacySource.label, siteUrl: jurisdiction.legacySource.siteUrl };

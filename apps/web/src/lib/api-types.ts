@@ -38,6 +38,8 @@ export interface ApiJurisdiction {
   upstreamSourceOfTruth?: { system: string; label: string; siteUrl: string };
   /** Bisheriges Rechtsportal (Legacy-Adressen als Verweis), z. B. OstRecht für Ost. */
   legacySource?: { system: string; label: string; siteUrl: string };
+  /** Suchabdeckung des Bestands (Volltextindex je Fassung, fehlende geltende Fassungen). */
+  search: Omit<ApiSearchCoverage, 'jurisdiction'>;
   /** Diagnose der Laufzeitquelle (nur `ostrecht-d1`): Sync-Zustand und Identität der vorgelagerten Projektion. */
   runtime?: { syncState: string | null; syncedAt: string | null; upstreamCorpusHash: string | null; projectionFingerprint: string | null };
 }
@@ -99,6 +101,20 @@ export interface ApiSearchResponse {
   offset: number;
   limit: number;
   hits: Array<Omit<SearchHit, 'rank'>>;
+  /**
+   * Suchabdeckung je durchsuchter Jurisdiktion: `fullText` sagt, ob frühere Fassungen volltextindexiert sind
+   * (`all-versions`) oder nur die geltende (`current-version-only`; Fassungsnavigation bleibt vollständig);
+   * `readiness: partial`, wenn einzelnen geltenden Fassungen der Volltextindex fehlt.
+   */
+  coverage: ApiSearchCoverage[];
+}
+
+export interface ApiSearchCoverage {
+  jurisdiction: JurisdictionId;
+  readiness: 'ready' | 'partial';
+  fullText: 'all-versions' | 'current-version-only';
+  historicalVersions: 'navigable';
+  staleNormCount: number;
 }
 
 /** Verkündungsblatt-Ausgabe in der Übersicht (ohne Einträge und Belege; diese liefert `ApiPublicationResponse`). */

@@ -1,17 +1,22 @@
 # Kontinuität Freistaat Süddeutschland → Freistaat Bayern-Württemberg
 
-Ergebnis der Quellenprüfung vom 2026-09-28 (`data/simulation/baywue/sources.json`). Frage: Sind das
+Ergebnis der Quellenprüfung vom 2026-09-28 (Lauf 14, mit Verfassungsquelle) (`data/simulation/baywue/sources.json`). Frage: Sind das
 „Gesetzes- und Verordnungsblatt des Freistaates Süddeutschland“ (2024) und die späteren Ausgaben des
 Freistaates Bayern-Württemberg Verkündungsblätter desselben Sim-Landes (heutige Jurisdiktion `baywue`)?
 
-**Befund: Die rechtliche Kontinuität ist belegt.** Dasselbe Gemeinwesen mit denselben Organen tritt ab
-Januar 2025 unter dem Namen Bayern-Württemberg auf; seine Rechtsakte bauen ausdrücklich auf dem
-übergeleiteten bayerischen Baseline-Recht und auf dem Süd-Recht auf; Süd-Bezeichnungen laufen 2025 und
-2026 als Synonyme weiter. **Nicht belegt** ist der formale Umbenennungsakt: Er liegt aller Wahrscheinlichkeit
-nach in der „Verfassung des Freistaates Bayern-Württemberg in der Fassung der Bekanntmachung vom
-12. Januar 2025“, die im Archiv fehlt. Folgen für den Bestand: heutige Jurisdiktion `baywue`; historische
-Blattbezeichnung und Regime bleiben in der Provenienz (`gazette: "GVBl. Süd"`, `seriesTitle`, `regime`);
-Normtexte werden nicht rückwirkend umbenannt; spätere Rechtsakte dürfen auf Süd-Normen aufbauen.
+**Befund: Die rechtliche Kontinuität ist belegt, der formale Akt der Namensgebung liegt vor.** Dasselbe Gemeinwesen
+mit denselben Organen tritt ab Januar 2025 unter dem Namen Bayern-Württemberg auf; seine Rechtsakte bauen ausdrücklich
+auf dem übergeleiteten bayerischen Baseline-Recht und auf dem Süd-Recht auf; Süd-Bezeichnungen laufen 2025 und 2026 als
+Synonyme weiter. **Formaler Akt:** die „Staatsverfassung Bayern-Württembergs“, ausgefertigt am 12. Januar 2025 vom
+**Süddeutschen Landtag** (`70f670de35fb`, seit Lauf 14 im Archiv). Sie konstituiert den Staat unter dem Namen
+„Freistaat Bayern-Württemberg“ (Artikel 23 Absatz 1, Präambel), setzt die Verfassungen der bisherigen Länder außer
+Kraft (Artikel 92 Absatz 2) und lässt deren sonstiges Recht fortgelten; an die Stelle der bisherigen Organe treten die
+„Organe des Freistaates Bayern-Württemberg“ (Artikel 92 Absatz 3). Ein gesonderter Umbenennungsakt ist nicht belegt
+und nach diesem Befund nicht erforderlich. Folgen für den Bestand: heutige Jurisdiktion `baywue`; historische
+Blattbezeichnung und Regime bleiben in der Provenienz (`gazette: "GVBl. Süd"`, `seriesTitle`, `regime`); Normtexte und
+historische Bezeichnungen (Freistaat Süddeutschland, Süddeutscher Landtag, Blatttitel) werden nicht umbenannt; spätere
+Rechtsakte dürfen auf Süd-Normen aufbauen. Die Kontinuität ist allein im Datenmodell festgehalten (eine Jurisdiktion,
+Beziehung `replaces` der Staatsverfassung auf die übernommene Verfassung).
 
 ## Chronologie (Hashes = SHA-256-Präfix im Inventar)
 
@@ -23,7 +28,7 @@ Normtexte werden nicht rückwirkend umbenannt; spätere Rechtsakte dürfen auf S
 | 2024-08-22 | `f6c26c824903` Mitteilung der Ministerpräsidentin Jerina Viktoria Murzako | Ministerpräsidentin des Freistaates Süddeutschland | Regierungschefin des „Staatskabinetts Murzako“ (Kopfvermerk des Süd-Blattes). |
 | 2024-09-16 | `f77e2cb76c37` **GVBl. Süd 2024 Nr. 1** | „Gesetzes- und Verordnungsblatt Des Freistaates Süddeutschland – Staatskabinett Murzako“, ausgegeben zu München; Herausgeber Staatsministerium der Justiz und für Verbraucherschutz, Prielmayerstraße 7, 80335 München | Gesetze für das „Land Süddeutschland“; „Gesetz zur Änderung des Süddeutschen Abgeordnetengesetzes“ ändert Artikel 6 und 7 eines Abgeordnetengesetzes mit bayerischer Artikelstruktur (BayAbgG). |
 | 2024-10-04 | `97a82a9fdb01` Mitteilung Murzako | „Süddeutscher Freistaat“ | letzte Süd-Quelle. |
-| 2025-01-12 | – (nicht im Archiv) | „Verfassung des Freistaates Bayern-Württemberg in der Fassung der Bekanntmachung vom 12. Januar 2025“ | Zitiert in `808c468edf51`/`255405100a67` (StRGVV, Eingangsformel), `b5b3f67be559`/`f24b1dab46f2` (StRGO), `cc0a376d5d46` (PflFächPuGWV), in fünf Verfassungsänderungen 2026 und in der Mitteilung vom 13. April 2025 („Artikel 49 Absatz 1 der Staatsverfassung“). `docs/SIM_LAW_PROGRESSION.md` 6.1 nennt eine Datei „Staatsverfassung Bayern-Württembergs, Süddeutscher Landtag, ausgefertigt 12.01.2025“ außerhalb des Archivs – der Süddeutsche Landtag hat die BayWü-Verfassung erlassen. **Lücke Q2.** |
+| 2025-01-12 | `70f670de35fb` **Staatsverfassung Bayern-Württembergs** | Kopf „Süddeutscher Landtag“, „Ausgefertigt am 12.01.2025“; Normtext „Freistaat Bayern-Württemberg“, „Bayern-Württembergische Volk“ | Formaler Akt der Namensgebung und Verfassungsgebung: Artikel 23, Artikel 92 Absätze 2 und 3. Zitiert in `808c468edf51`/`255405100a67` (StRGVV, „in der Fassung der Bekanntmachung vom 12. Januar 2025“), `b5b3f67be559`/`f24b1dab46f2` (StRGO), `cc0a376d5d46` (PflFächPuGWV), in fünf Verfassungsänderungen 2026 und in der Mitteilung vom 13. April 2025. Norm `staatsverfassung-2025-baywue`, Entscheidung in `constitution-decision.md`. |
 | 2025-01-22…26 | `23e49be2d40c`, `25e6c4a2cc63`, `e2afaea2bb83`, `2492c29798b2` Schulverordnungen | „Bayern-Württemberg“, „Freistaat Bayern-Württemberg“, Staatsminister für Unterricht und Kultus | Erste archivierte Akte unter dem neuen Namen; Rechtsgrundlage weiterhin „BayEUG Artikel 89“. |
 | 2025-01-25 | `a6aee1af2cee` Wolfsverordnung | „Bayerisch-Württembergische Staatsregierung“, Ministerpräsident Christian Lehrmann | |
 | 2025-01-30 | `fcdbe54e7a38` **GVBl. BayWü 2025 Nr. 1** | „Gesetzes- und Verordnungsblatt des Freistaates Bayern-Württemberg – Staatskabinett Lehrmann“; **derselbe Herausgeber, dieselbe Anschrift, dasselbe Layout** (Bundesanzeiger-Fußzeile) wie GVBl. Süd 2024 Nr. 1 | Der Normtext (SchuSprG) verpflichtet „die Schulen im Freistaat Süddeutschland“. |

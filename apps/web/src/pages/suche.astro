@@ -20,6 +20,11 @@ const PRIMARY_TYPES: NormType[] = ['gesetz', 'verordnung', 'verwaltungsvorschrif
 const secondaryTypes = NORM_TYPES.filter((type) => !PRIMARY_TYPES.includes(type));
 const registry = await getStoreRegistry();
 const page = state.q || state.types.length > 0 || state.jurisdictions.length < JURISDICTION_LIST.length ? await registry.search(state) : null;
+// Suchabdeckung: Länder, deren Volltextindex nur die geltende Fassung trägt oder einzelne geltende Fassungen noch nicht kennt.
+const coverage = page ? await registry.searchCoverage(state.jurisdictions) : [];
+const historicalRequested = state.versionScope !== 'current' || Boolean(state.validOn);
+const currentOnly = coverage.filter((entry) => entry.fullText === 'current-version-only');
+const partial = coverage.filter((entry) => entry.readiness === 'partial');
 Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=600');
 
 function pageUrl(offset: number): string {
@@ -98,6 +103,12 @@ const activeFilters = [
     <p class="muted">Geben Sie einen Suchbegriff ein oder wählen Sie ein Land. {referenceDateLabel(EDITORIAL_REFERENCE_DATE)}.</p>
   ) : (
     <section aria-labelledby="treffer-heading">
+      {historicalRequested && currentOnly.length > 0 && (
+        <p class="muted" role="note"><strong>Hinweis:</strong> Für {currentOnly.map((entry) => getJurisdiction(entry.jurisdiction).name).join(', ')} ist der Volltext nur für die geltende Fassung durchsuchbar. Frühere Fassungen sind vollständig über die Fassungsübersicht der jeweiligen Vorschrift erreichbar, erscheinen hier aber nicht als Volltexttreffer.</p>
+      )}
+      {partial.length > 0 && (
+        <p class="muted" role="note"><strong>Hinweis:</strong> Für {partial.map((entry) => `${getJurisdiction(entry.jurisdiction).name} (${entry.staleNormCount} ${entry.staleNormCount === 1 ? 'Vorschrift' : 'Vorschriften'})`).join(', ')} ist die geltende Fassung noch nicht im Volltext durchsuchbar; diese Vorschriften werden über Titel, Abkürzung und Schlagworte gefunden.</p>
+      )}
       <h2 id="treffer-heading">{page.total} {page.total === 1 ? 'Treffer' : 'Treffer'}{state.q && <> für „{state.q}“</>}</h2>
       {state.validOn ? <p class="muted">Fassungen, die am {formatDate(state.validOn)} in der Simulation galten.</p> : <p class="muted">{referenceDateLabel(EDITORIAL_REFERENCE_DATE)}.</p>}
       {state.jurisdictions.map((jurisdiction) => <InventoryNotice jurisdiction={jurisdiction} />)}

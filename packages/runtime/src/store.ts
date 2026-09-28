@@ -50,6 +50,9 @@ export interface PublicationQuery {
   limit?: number;
 }
 
+/** Umfang und Bereitschaft der Suche eines Stores (Volltextindex je Fassung, fehlende geltende Fassungen). */
+export type { SearchCoverage } from './ostrecht-freshness.ts';
+
 export interface NormStore {
   readonly kind: 'd1' | 'files';
   readonly jurisdiction: JurisdictionId;
@@ -57,6 +60,11 @@ export interface NormStore {
   /** Aggregierte Zählung je Typ über alle Normen (Typfilter und Länderseite; nie aus einer begrenzten Liste). */
   countNormsByType(): Promise<NormTypeCount[]>;
   getNormSummary(slug: string): Promise<NormSummary | null>;
+  /**
+   * Übersichten mehrerer Normen in wenigen Abfragen (unbekannte Slugs fehlen im Ergebnis). Fehlt die Methode, fragt
+   * `getNormSummaries` einzeln mit begrenzter Parallelität ab.
+   */
+  getNormSummaries?(slugs: readonly string[]): Promise<NormSummary[]>;
   /** Vollständiger Datensatz; `bodies` steuert, welche Fassungen ihren Körper tragen. */
   getNorm(slug: string, bodies?: BodySelection): Promise<NormRecord | null>;
   search(state: SearchState): Promise<SearchResultPage>;
@@ -65,6 +73,33 @@ export interface NormStore {
   /** Verkündungsblatt-Ausgaben der Jurisdiktion, jüngste zuerst (nur law_publications; lädt keine Normen). */
   listPublications(query?: PublicationQuery): Promise<Publication[]>;
   getPublication(slug: string): Promise<Publication | null>;
+  /**
+   * Suchabdeckung des Stores; fehlt die Methode, indexiert der Store alle Fassungen vollständig
+   * (`getStoreSearchCoverage`). Ost (OstRecht-D1) meldet hier den Freshness-Befund.
+   */
+  getSearchCoverage?(): Promise<import('./ostrecht-freshness.ts').SearchCoverage>;
+}
+
+/** Übersichten vieler Normen: gebündelt, wenn der Store es kann; sonst einzeln mit höchstens acht parallelen Abfragen. */
+export async function getNormSummaries(store: NormStore, slugs: readonly string[]): Promise<Map<string, NormSummary>> {
+  const unique = [...new Set(slugs)];
+  const found = new Map<string, NormSummary>();
+  if (store.getNormSummaries) {
+    for (const summary of await store.getNormSummaries(unique)) found.set(summary.slug, summary);
+    return found;
+  }
+  const CONCURRENCY = 8;
+  for (let start = 0; start < unique.length; start += CONCURRENCY) {
+    const chunk = unique.slice(start, start + CONCURRENCY);
+    const summaries = await Promise.all(chunk.map((slug) => store.getNormSummary(slug)));
+    for (const summary of summaries) if (summary) found.set(summary.slug, summary);
+  }
+  return found;
+}
+
+export async function getStoreSearchCoverage(store: NormStore): Promise<import('./ostrecht-freshness.ts').SearchCoverage> {
+  if (store.getSearchCoverage) return store.getSearchCoverage();
+  return { readiness: 'ready', fullText: 'all-versions', historicalVersions: 'navigable', staleNormCount: 0 };
 }
 
 /** Bestimmt anhand von `bodies`, welche Fassungen mit Körper geladen werden. */

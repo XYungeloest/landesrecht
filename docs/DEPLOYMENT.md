@@ -182,6 +182,11 @@ Nach jeder Änderung unter `apps/web/` ist ein Redeploy nötig (`npm run build &
   `incomplete`); HTTP 200 bei `ok`, sonst 503. Kein R2-Zugriff, keine Bestandszahlen, keine Umgebungswerte
   (`apps/web/src/lib/runtime/health.ts`, Test `tests/unit/web-runtime-health.test.ts`). Für Monitoring: 200 +
   `status: ok` erwarten.
+- Such-Readiness: `/health` führt `search.OSTRECHT_RECHT` (`readiness`, `fullText`, `staleNormCount`); fehlen am
+  Landesrecht-Stichtag geltenden Ost-Fassungen die Sucheinheiten, ist der Status `degraded` (HTTP 200). Monitoring, das
+  auf vollständige Suche angewiesen ist, prüft `status: ok`.
+- Smoke: `npm run smoke [-- --base <url>]` (`scripts/smoke.ts`) prüft alle vier Länder gegen den tatsächlichen
+  API-Vertrag; `/health` wird beim Kaltstart bis zu dreimal abgefragt, ein bleibendes 503 ist ein Fehler.
 - Konfigurationsfehler: Fehlt im Worker ein Laufzeit-D1-Binding (oder ist es keine D1-Datenbank), wirft
   `getStoreRegistry()` einen `RuntimeConfigurationError`; ein verletzter Schema-Contract der OstRecht-D1
   (`OstRechtContractError`) wird gleich behandelt (fail-closed, keine Teilkonfiguration, kein Rückfall auf Dateien). Die

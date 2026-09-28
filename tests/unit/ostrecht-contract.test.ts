@@ -9,12 +9,13 @@ import { JURISDICTION_IDS } from '@landesrecht/legal-core/config/jurisdictions.t
 import { D1_BINDINGS, OSTRECHT_D1_BINDING, RUNTIME_D1_BINDINGS, runtimeBindingFor } from '@landesrecht/runtime/bindings.ts';
 import { checkOstRechtSchemaContract, isOstRechtContractError, OstRechtContractError, resetOstRechtContractCache } from '@landesrecht/runtime/ostrecht-contract.ts';
 import { createOstRechtD1Store } from '@landesrecht/runtime/ostrecht-d1-store.ts';
+import { resetOstRechtFreshnessCache } from '@landesrecht/runtime/ostrecht-freshness.ts';
 import { assertReadOnlySql, createReadOnlyD1, isReadOnlyD1, ReadOnlyViolationError } from '@landesrecht/runtime/read-only-d1.ts';
 import { createRegistryFromEnv, missingBindings } from '@landesrecht/runtime/registry.ts';
 import { openSqliteD1 } from '@landesrecht/runtime/sqlite-d1.ts';
 
 import { assertCompleteBindings, isRuntimeConfigurationError } from '../../apps/web/src/lib/runtime/configuration.ts';
-import { checkHealth } from '../../apps/web/src/lib/runtime/health.ts';
+import { checkHealth, healthResponse } from '../../apps/web/src/lib/runtime/health.ts';
 import { openOstRechtFixture } from '../helpers/ostrecht-fixture.ts';
 
 describe('Read-only-D1-Hülle', () => {
@@ -127,7 +128,7 @@ describe('Bindings, Registry, Konfiguration und Healthcheck für Ost', () => {
   });
 
   it('meldet im Healthcheck den OstRecht-Sync-Zustand (ok / incomplete)', async () => {
-    const complete = { prepare: (sql: string) => ({ bind(...values: unknown[]) { return { async first() { return { ok: /sync_state/u.test(sql) && values[0] === 'complete' ? 1 : 2 }; } }; }, async first() { return { ok: 1 }; } }) };
+    const complete = { prepare: (sql: string) => ({ bind(...values: unknown[]) { return { async first() { return { ok: /sync_state/u.test(sql) && values[0] === 'complete' ? 1 : 2 }; }, async all() { return { results: [], success: true }; } }; }, async first() { return { ok: 1 }; }, async all() { return { results: [], success: true }; } }) };
     const env: Record<string, unknown> = { LANDESRECHT_WEST: fakeD1(), LANDESRECHT_NSH: fakeD1(), LANDESRECHT_BAYWUE: fakeD1(), OSTRECHT_RECHT: complete };
     const report = await checkHealth(env, { now: () => new Date('2026-09-28T10:00:00Z') });
     expect(report.status).toBe('ok');
@@ -136,5 +137,21 @@ describe('Bindings, Registry, Konfiguration und Healthcheck für Ost', () => {
     const degraded = await checkHealth({ ...env, OSTRECHT_RECHT: inProgress });
     expect(degraded.status).toBe('error');
     expect(degraded.d1.OSTRECHT_RECHT).toBe('incomplete');
+  });
+
+  it('meldet im Healthcheck eine nur teilweise bereite Ost-Suche als degraded (HTTP 200), nie als vollständig', async () => {
+    const { native, db } = await openOstRechtFixture();
+    const env: Record<string, unknown> = { LANDESRECHT_WEST: fakeD1(), LANDESRECHT_NSH: fakeD1(), LANDESRECHT_BAYWUE: fakeD1(), OSTRECHT_RECHT: native };
+    resetOstRechtFreshnessCache(db);
+    const ready = await checkHealth(env);
+    expect(ready.status).toBe('ok');
+    expect(ready.search).toEqual({ OSTRECHT_RECHT: { readiness: 'ready', fullText: 'current-version-only', historicalVersions: 'navigable', staleNormCount: 0 } });
+    // Geltende Fassung ohne Sucheinheiten (wie nach einem Stichtagswechsel vor dem OstRecht-Sync).
+    native.native.exec("DELETE FROM law_search_units WHERE norm_id = 'ostdeutsches-feiertagsgesetz'");
+    resetOstRechtFreshnessCache(db);
+    const partial = await checkHealth(env);
+    expect(partial.status).toBe('degraded');
+    expect(partial.search?.OSTRECHT_RECHT).toMatchObject({ readiness: 'partial', staleNormCount: 1 });
+    expect(healthResponse(partial).status).toBe(200);
   });
 });

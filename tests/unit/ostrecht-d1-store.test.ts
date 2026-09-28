@@ -10,9 +10,12 @@ import { SIMULATION_BASELINE_DATE } from '@landesrecht/legal-core/config/jurisdi
 import { isSimulationNorm } from '@landesrecht/legal-core/lib/provenance.ts';
 import { classifyNormVersion, getCurrentVersion } from '@landesrecht/legal-core/lib/versions.ts';
 import { createFileNormStore } from '@landesrecht/runtime/file-store.ts';
-import { adaptOstRechtPublication, adaptOstRechtSearchDocument, mergeDerivedRelations, type OstRechtSearchIndexDocument } from '@landesrecht/runtime/ostrecht-d1-store.ts';
+import { adaptOstRechtPublication, adaptOstRechtSearchDocument, createOstRechtD1Store, mergeDerivedRelations, mergeStaleHits, type OstRechtSearchIndexDocument } from '@landesrecht/runtime/ostrecht-d1-store.ts';
+import { checkOstRechtFreshness, resetOstRechtFreshnessCache } from '@landesrecht/runtime/ostrecht-freshness.ts';
 import { auditOstRechtDrift } from '@landesrecht/runtime/ostrecht-drift.ts';
+import { createReadOnlyD1 } from '@landesrecht/runtime/read-only-d1.ts';
 import { createStoreRegistry } from '@landesrecht/runtime/registry.ts';
+import { getNormSummaries } from '@landesrecht/runtime/store.ts';
 import { createSearchState } from '@landesrecht/search/query.ts';
 
 import { buildFixtureNorms, FIXTURE_REFERENCE_DATE } from '../helpers/fixture-corpus.ts';
@@ -300,5 +303,81 @@ describe('OstRecht-D1-Store (Ost, Variante A)', () => {
     expect(report.samples.find((sample) => sample.slug === NDR)).toMatchObject({ ok: true, baselineVersionId: '2021-09-01' });
     expect(report.samples.find((sample) => sample.slug === EXCLUDED)).toMatchObject({ ok: true, versionIds: [] });
     expect(report.searchParity.every((entry) => entry.ok)).toBe(true);
+  });
+});
+
+describe('Ost: Freshness, Such-Readiness und Fallback', () => {
+  it('meldet am Landesrecht-Stichtag volle Readiness, benennt aber den Volltextumfang (nur geltende Fassung)', async () => {
+    const { db, store } = await openOstRechtFixture();
+    const report = await checkOstRechtFreshness(db);
+    expect(report.referenceDate).toBe(EDITORIAL_REFERENCE_DATE);
+    expect(report.staleNorms).toEqual([]);
+    expect(report.coverage).toEqual({ readiness: 'ready', fullText: 'current-version-only', historicalVersions: 'navigable', staleNormCount: 0 });
+    expect(report.upstream).toMatchObject({ syncState: 'complete', syncedAt: '2026-01-01T00:00:00.000Z' });
+    expect(report.upstream.indexedAsOf.before).toBe('2026-10-01');
+    expect(await store.getSearchCoverage!()).toEqual(report.coverage);
+  });
+
+  it('nennt exakt die Normen, deren geltende Fassung OstRecht noch nicht indexiert hat', async () => {
+    const { db } = await openOstRechtFixture();
+    const report = await checkOstRechtFreshness(db, { asOf: '2025-01-01' });
+    expect(report.coverage.readiness).toBe('partial');
+    expect(report.staleNorms).toContainEqual({ slug: FEIERTAG, currentVersionId: '2024-03-07', currentValidFrom: '2024-03-08', indexedVersionId: '2026-03-23' });
+    expect(report.coverage.staleNormCount).toBe(report.staleNorms.length);
+    const drift = await auditOstRechtDrift(db, { sample: 1, queries: ['Feiertag'], asOf: '2025-01-01' });
+    expect(drift.freshness?.staleNorms.map((norm) => norm.slug)).toContain(FEIERTAG);
+    expect(drift.problems.join(' ')).toContain(`${FEIERTAG} (geltend 2024-03-07 ab 2024-03-08, indexiert 2026-03-23)`);
+  });
+
+  it('ergänzt für veraltete Normen Titel-, Abkürzungs- und Schlagworttreffer der geltenden Fassung, ohne Volltext zu behaupten', async () => {
+    const { db } = await openOstRechtFixture();
+    const store = createOstRechtD1Store(db, { asOf: '2025-01-01', contract: false, freshnessRecheckAfterMs: 0 });
+    const byAbbr = await store.search(createSearchState({ q: 'OstFSG', jurisdictions: ['ost'] }));
+    expect(byAbbr.hits[0]).toMatchObject({ slug: FEIERTAG, versionId: '2024-03-07', versionKind: 'current', matchKind: 'identity' });
+    expect(byAbbr.total).toBeGreaterThanOrEqual(1);
+    // Volltext der nicht indexierten Fassung bleibt ohne Treffer: kein zweiter Index.
+    const fullText = await store.search(createSearchState({ q: 'Tanzveranstaltungen', jurisdictions: ['ost'] }));
+    expect(fullText.hits.filter((hit) => hit.slug === FEIERTAG && hit.versionId === '2024-03-07')).toEqual([]);
+    expect(await store.getSearchCoverage!()).toMatchObject({ readiness: 'partial', fullText: 'current-version-only' });
+    resetOstRechtFreshnessCache(db);
+  });
+
+  it('führt Fallback-Treffer nur auf der ersten Seite und ohne Dubletten ein', () => {
+    const hit = (slug: string, rank: number[]) => ({ slug, versionId: 'v', title: slug, jurisdiction: 'ost', rank, simulationValidFrom: '2024-01-01', lastChangeDate: null }) as never;
+    const page = { total: 1, offset: 0, limit: 10, hits: [hit('a', [4, 0])] };
+    const state = createSearchState({ q: 'x', jurisdictions: ['ost'] });
+    expect(mergeStaleHits(page, [hit('b', [0, 0, 0]), hit('a', [4, 0])], state)).toMatchObject({ total: 2, hits: [{ slug: 'b' }, { slug: 'a' }] });
+    expect(mergeStaleHits(page, [hit('b', [0])], { ...state, offset: 10 })).toBe(page);
+  });
+
+  it('weist über die Registry je Jurisdiktion die Suchabdeckung aus (Ost: nur geltende Fassung, übrige: alle Fassungen)', async () => {
+    const { store: ost } = await openOstRechtFixture();
+    const west = createFileNormStore('west', buildFixtureNorms().filter((record) => record.meta.jurisdiction === 'west'), { asOf: FIXTURE_REFERENCE_DATE });
+    const registry = createStoreRegistry({ west, ost });
+    expect(await registry.searchCoverage()).toEqual([
+      { jurisdiction: 'west', readiness: 'ready', fullText: 'all-versions', historicalVersions: 'navigable', staleNormCount: 0 },
+      { jurisdiction: 'ost', readiness: 'ready', fullText: 'current-version-only', historicalVersions: 'navigable', staleNormCount: 0 },
+    ]);
+    expect((await registry.searchCoverage(['ost'])).map((entry) => entry.jurisdiction)).toEqual(['ost']);
+  });
+});
+
+describe('Gebündelte Normübersichten (Verkündungsseiten)', () => {
+  it('liefert viele Übersichten in wenigen Abfragen und lässt unbekannte oder ausgeschlossene Normen aus', async () => {
+    const { native } = await openOstRechtFixture();
+    const queries: string[] = [];
+    const counting = { prepare: (sql: string) => { queries.push(sql); return native.prepare(sql); }, batch: native.batch.bind(native) };
+    const store = createOstRechtD1Store(createReadOnlyD1(counting as never), { contract: false });
+    const slugs = [FEIERTAG, NDR, EXCLUDED, FUTURE, 'gibt-es-nicht', FEIERTAG];
+    const summaries = await getNormSummaries(store, slugs);
+    expect([...summaries.keys()].sort()).toEqual([FUTURE, NDR, FEIERTAG].sort());
+    expect(queries).toHaveLength(1);
+    expect(summaries.get(FEIERTAG)).toEqual(await store.getNormSummary(FEIERTAG));
+    // Stores ohne gebündelte Abfrage werden einzeln, aber mit begrenzter Parallelität gefragt.
+    let active = 0; let peak = 0;
+    const plain = { getNormSummary: async (slug: string) => { active += 1; peak = Math.max(peak, active); await new Promise((resolve) => setTimeout(resolve, 1)); active -= 1; return slug.startsWith('x') ? null : ({ slug } as never); } } as never;
+    const result = await getNormSummaries(plain, Array.from({ length: 30 }, (_, index) => (index % 3 === 0 ? `x${index}` : `n${index}`)));
+    expect(result.size).toBe(20);
+    expect(peak).toBeLessThanOrEqual(8);
   });
 });

@@ -11,7 +11,7 @@ export const prerender = false;
 export const GET: APIRoute = async ({ url }) => {
   const state = parseSearchState(url.searchParams);
   const registry = await getStoreRegistry();
-  const page = await registry.search(state);
+  const [page, coverage] = await Promise.all([registry.search(state), registry.searchCoverage(state.jurisdictions)]);
   const payload: ApiSearchResponse = {
     schemaVersion: SIMRECHT_SCHEMA_VERSION,
     generatedAt: new Date().toISOString(),
@@ -29,6 +29,7 @@ export const GET: APIRoute = async ({ url }) => {
     offset: page.offset,
     limit: page.limit,
     hits: page.hits.map(({ rank: _rank, ...hit }) => hit),
+    coverage,
   };
   return jsonResponse(payload, { headers: { 'cache-control': 'public, max-age=60, s-maxage=600' } });
 };

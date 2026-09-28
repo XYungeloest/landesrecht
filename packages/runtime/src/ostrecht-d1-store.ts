@@ -37,11 +37,12 @@ import {
 } from '@landesrecht/legal-core/lib/schema.ts';
 import { classifyNormVersion, type VersionTemporalKind } from '@landesrecht/legal-core/lib/versions.ts';
 import { adaptOstRechtRecord, adaptOstRechtSource, adaptOstRechtStatus, OSTRECHT_SYSTEM, OSTRECHT_TARGET_JURISDICTION } from '@landesrecht/providers/ostrecht.ts';
-import type { SearchDocument } from '@landesrecht/search/index.ts';
+import { buildSearchQueryPlan, compareHits, documentMatchesFilters, evaluateDocument, type SearchDocument, type SearchHit, type SearchResultPage, type SearchState } from '@landesrecht/search/index.ts';
 
 import type { D1SchemaDialect, DialectDocumentRow } from './d1-dialect.ts';
 import { createD1NormStore } from './d1-store.ts';
 import { assertOstRechtSchemaContract, type OstRechtContractOptions } from './ostrecht-contract.ts';
+import { getOstRechtFreshness, type OstRechtFreshnessReport } from './ostrecht-freshness.ts';
 import type { ReadOnlyD1Database } from './read-only-d1.ts';
 import type { NormStore } from './store.ts';
 
@@ -359,6 +360,56 @@ export function ostrechtDialect(options: OstRechtDialectOptions = {}): D1SchemaD
 export interface OstRechtStoreOptions extends OstRechtDialectOptions {
   /** Contract-Prüfung vor dem ersten Zugriff (Standard: ein); `false` nur für Tests des Dialekts selbst. */
   contract?: boolean | OstRechtContractOptions;
+  /** Erneute Freshness-Prüfung nach dieser Zeit (Standard 5 Minuten). */
+  freshnessRecheckAfterMs?: number;
+}
+
+/** Höchstzahl veralteter Normen, für die die Suche Titel und Metadaten direkt ergänzt; darüber nur Readiness `partial`. */
+export const STALE_FALLBACK_LIMIT = 50;
+
+/**
+ * Such-Fallback für Normen, deren am Landesrecht-Stichtag geltende Fassung OstRecht noch nicht indexiert hat: kein
+ * zweiter Volltextindex – nur Bezeichnung, Abkürzung, Aliasse, Schlagworte und Zusammenfassung des Suchdokuments dieser
+ * Fassung werden im Speicher gegen die Anfrage geprüft (dieselbe Bewertung wie für alle Treffer). Ergänzt wird auf der
+ * ersten Seite; der Normtext selbst bleibt bis zum nächsten OstRecht-Sync ohne Volltexttreffer.
+ */
+export async function searchStaleOstRechtNorms(db: ReadOnlyD1Database, freshness: OstRechtFreshnessReport, state: SearchState, options: OstRechtDialectOptions = {}): Promise<SearchHit[]> {
+  if (freshness.staleNorms.length === 0 || freshness.truncated || freshness.staleNorms.length > STALE_FALLBACK_LIMIT) return [];
+  if (state.q.trim() === '' || state.validOn || (state.versionScope !== 'current' && state.versionScope !== 'all')) return [];
+  const plan = buildSearchQueryPlan(state);
+  if (plan.references.length > 0) return [];
+  const asOf = options.asOf ?? EDITORIAL_REFERENCE_DATE;
+  const hits: SearchHit[] = [];
+  const CHUNK = 40;
+  for (let start = 0; start < freshness.staleNorms.length; start += CHUNK) {
+    const chunk = freshness.staleNorms.slice(start, start + CHUNK);
+    const rows = (await db.prepare(
+      `SELECT d.norm_id, d.version_id, d.document_json AS search_document_json, n.status AS status
+       FROM law_search_documents d JOIN law_norms n ON n.id = d.norm_id
+       WHERE d.norm_id IN (${chunk.map(() => '?').join(', ')})`,
+    ).bind(...chunk.map((entry) => entry.slug)).all<OstRechtDocumentRow>()).results;
+    for (const entry of chunk) {
+      const row = rows.find((candidate) => candidate.norm_id === entry.slug && candidate.version_id === entry.currentVersionId);
+      if (!row) continue;
+      const header = adaptOstRechtSearchDocument(JSON.parse(row.search_document_json) as OstRechtSearchIndexDocument, { status: row.status, asOf, ...(options.baseline ? { baseline: options.baseline } : {}) });
+      const metadata = [header.summary ?? '', ...header.keywords, ...header.subjects, header.citation].filter(Boolean).join('\n');
+      const document: SearchDocument = { ...header, units: [{ index: 0, type: 'metadata', anchor: '', label: '', heading: '', body: metadata }] };
+      if (!documentMatchesFilters(document, state)) continue;
+      const hit = evaluateDocument(document, plan);
+      if (hit) hits.push(hit);
+    }
+  }
+  return hits;
+}
+
+/** Führt Fallback-Treffer in die erste Ergebnisseite ein (ohne Dubletten, in Rangfolge). */
+export function mergeStaleHits(page: SearchResultPage, staleHits: readonly SearchHit[], state: SearchState): SearchResultPage {
+  if (staleHits.length === 0 || state.offset > 0) return page;
+  const known = new Set(page.hits.map((hit) => `${hit.slug}#${hit.versionId}`));
+  const added = staleHits.filter((hit) => !known.has(`${hit.slug}#${hit.versionId}`));
+  if (added.length === 0) return page;
+  const hits = [...page.hits, ...added].sort((left, right) => compareHits(left, right, state.sort)).slice(0, state.limit);
+  return { ...page, total: page.total + added.length, hits };
 }
 
 /**
@@ -369,11 +420,17 @@ export function createOstRechtD1Store(db: ReadOnlyD1Database, options: OstRechtS
   if (db.readOnly !== true) throw new Error('Der OstRecht-Store akzeptiert nur eine Read-only-D1 (createReadOnlyD1).');
   const inner = createD1NormStore(db, OSTRECHT_TARGET_JURISDICTION, ostrechtDialect(options));
   const contract = options.contract ?? true;
-  if (contract === false) return inner;
   const contractOptions = typeof contract === 'object' ? contract : {};
   const guarded = async <T>(action: () => Promise<T>): Promise<T> => {
-    await assertOstRechtSchemaContract(db, contractOptions);
+    if (contract !== false) await assertOstRechtSchemaContract(db, contractOptions);
     return action();
+  };
+  const freshness = (): Promise<OstRechtFreshnessReport> => getOstRechtFreshness(db, { ...(options.asOf ? { asOf: options.asOf } : {}), ...(options.freshnessRecheckAfterMs !== undefined ? { recheckAfterMs: options.freshnessRecheckAfterMs } : {}) });
+  const search = async (state: SearchState): Promise<SearchResultPage> => {
+    const page = await inner.search(state);
+    const report = await freshness();
+    if (report.staleNorms.length === 0) return page;
+    return mergeStaleHits(page, await searchStaleOstRechtNorms(db, report, state, options), state);
   };
   return {
     kind: inner.kind,
@@ -381,8 +438,10 @@ export function createOstRechtD1Store(db: ReadOnlyD1Database, options: OstRechtS
     listNormSummaries: (query) => guarded(() => inner.listNormSummaries(query)),
     countNormsByType: () => guarded(() => inner.countNormsByType()),
     getNormSummary: (slug) => guarded(() => inner.getNormSummary(slug)),
+    getNormSummaries: (slugs) => guarded(() => inner.getNormSummaries!(slugs)),
     getNorm: (slug, bodies) => guarded(() => inner.getNorm(slug, bodies)),
-    search: (state) => guarded(() => inner.search(state)),
+    search: (state) => guarded(() => search(state)),
+    getSearchCoverage: () => guarded(async () => (await freshness()).coverage),
     getStats: () => guarded(() => inner.getStats()),
     getRuntimeMeta: (key) => guarded(() => inner.getRuntimeMeta(key)),
     listPublications: (query) => guarded(() => inner.listPublications(query)),

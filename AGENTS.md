@@ -34,7 +34,9 @@ Prioritäten:
   `ostrecht-recht` über das Read-only-Binding `OSTRECHT_RECHT` (`packages/runtime/src/ostrecht-d1-store.ts`,
   `docs/OSTRECHT_COMPATIBILITY.md`). Kein `content/norms/ost`, kein Ost-Sim-Import, keine eigene Ost-D1
   (kein Binding `LANDESRECHT_OST`, nichts neu anlegen); neue Ost-Rechtsakte entstehen nur in OstRecht.
-  Schema-Contract und Drift-Audit (`npm run audit:ost-drift`) sind fail-closed.
+  Schema-Contract und Drift-Audit (`npm run audit:ost-drift`) sind fail-closed. Vor jedem Fortschreiben des
+  Stichtags den Freshness-Check laufen lassen (`npm run audit:ost-drift -- --as-of <Datum>`): OstRecht indexiert nur
+  die an seinem Stichtag geltende Fassung; nie eine vollständige Ost-Suche behaupten, wenn er Normen nennt.
 - Keine Massenimporte ohne ausdrücklichen Auftrag, kein Scraping, keine Cloudflare-Ressourcen, keine Secrets
   im Repository. Der RECHT.NRW-Bulkimport läuft nur über `npm run import:recht-nrw:bulk` nach
   `docs/RECHT_NRW_BULK_READINESS.md` (Dry-run Standard, Budgets, Mindestabstand, keine Umgehung von
@@ -72,8 +74,8 @@ Prioritäten:
 ## Technik
 
 - Astro 7 mit Cloudflare-Adapter, `output: 'static'`; D1-lesende Routen setzen `prerender = false`.
-- Worker-Bindings: `LANDESRECHT_WEST|NSH|OST|BAYWUE` (D1), `LANDESRECHT_QUELLEN` (R2), definiert in
-  `packages/runtime/src/bindings.ts`, verwendet in `apps/web/wrangler.jsonc`.
+- Worker-Bindings: `LANDESRECHT_WEST|NSH|BAYWUE` und `OSTRECHT_RECHT` (D1, Ost nur lesend), `LANDESRECHT_QUELLEN`
+  (R2), definiert in `packages/runtime/src/bindings.ts`, verwendet in `apps/web/wrangler.jsonc`.
 - Der Worker importiert nie `node:fs`; Dateiloader werden nur außerhalb des Workers dynamisch geladen.
 - TypeScript wird von Node direkt ausgeführt (Type-Stripping): keine Parameter-Properties, keine
   Enums, keine Namespaces; `.ts`-Endungen in Importen.

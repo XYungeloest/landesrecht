@@ -13,6 +13,7 @@ import { SIMULATION_BASELINE_DATE } from '@landesrecht/legal-core/config/jurisdi
 import { createSearchState } from '@landesrecht/search/query.ts';
 
 import { checkOstRechtSchemaContract, type OstRechtContractReport } from './ostrecht-contract.ts';
+import { checkOstRechtFreshness, type OstRechtFreshnessReport } from './ostrecht-freshness.ts';
 import { createOstRechtD1Store, OSTRECHT_RUNTIME_META_KEYS } from './ostrecht-d1-store.ts';
 import type { ReadOnlyD1Database } from './read-only-d1.ts';
 
@@ -56,6 +57,8 @@ export interface OstRechtDriftReport {
   samples: OstRechtDriftSample[];
   searchParity: OstRechtSearchParity[];
   publications: { checked: number; problems: string[] };
+  /** Freshness gegenüber dem Landesrecht-Stichtag: betroffene Normen namentlich, Projektionsstand von OstRecht, Such-Readiness. */
+  freshness: OstRechtFreshnessReport | null;
   problems: string[];
 }
 
@@ -92,6 +95,7 @@ export async function auditOstRechtDrift(db: ReadOnlyD1Database, options: OstRec
       samples: [],
       searchParity: [],
       publications: { checked: 0, problems: [] },
+      freshness: null,
       problems: [...contract.problems],
     };
   }
@@ -132,7 +136,11 @@ export async function auditOstRechtDrift(db: ReadOnlyD1Database, options: OstRec
   if (counts.searchDocuments !== counts.versions) problems.push(`law_search_documents ${counts.searchDocuments} ≠ law_versions ${counts.versions}`);
   const ftsRows = await count(db, 'SELECT count(*) AS n FROM law_search');
   if (ftsRows !== counts.searchUnits) problems.push(`law_search (FTS) ${ftsRows} ≠ law_search_units ${counts.searchUnits}`);
-  if (counts.currentVersionsWithoutUnits > 0) problems.push(`${counts.currentVersionsWithoutUnits} am Landesrecht-Stichtag ${asOf} geltende Fassung(en) ohne Sucheinheiten (OstRecht-Sync mit jüngerem Stichtag nötig)`);
+  const freshness = await checkOstRechtFreshness(db, { asOf, now });
+  if (counts.currentVersionsWithoutUnits > 0) {
+    const named = freshness.staleNorms.map((norm) => `${norm.slug} (geltend ${norm.currentVersionId} ab ${norm.currentValidFrom}, indexiert ${norm.indexedVersionId ?? '–'})`).join(', ');
+    problems.push(`${counts.currentVersionsWithoutUnits} am Landesrecht-Stichtag ${asOf} geltende Fassung(en) ohne Sucheinheiten – Such-Readiness partial; OstRecht-Sync mit jüngerem Stichtag nötig: ${named}${freshness.truncated ? ' …' : ''}`);
+  }
 
   // Der Contract wurde oben vollständig geprüft; der Store nutzt den Cache (Remote: jede Abfrage ist ein Wrangler-Aufruf).
   const store = createOstRechtD1Store(db);
@@ -215,6 +223,7 @@ export async function auditOstRechtDrift(db: ReadOnlyD1Database, options: OstRec
     samples,
     searchParity,
     publications: { checked, problems: publicationProblems },
+    freshness,
     problems,
   };
 }

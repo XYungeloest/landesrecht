@@ -9,14 +9,22 @@ import { JURISDICTION_IDS, JURISDICTIONS } from '@landesrecht/legal-core/config/
 import { OSTRECHT_D1_BINDING, RUNTIME_D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
 import type { D1Database } from '@landesrecht/runtime/d1-types.ts';
 import { OSTRECHT_SYNC_STATE_COMPLETE } from '@landesrecht/runtime/ostrecht-contract.ts';
+import { getOstRechtFreshness, type SearchCoverage } from '@landesrecht/runtime/ostrecht-freshness.ts';
+import { createReadOnlyD1 } from '@landesrecht/runtime/read-only-d1.ts';
 
 export type BindingHealth = 'ok' | 'missing' | 'error' | 'timeout' | 'incomplete';
 
 export interface HealthReport {
-  status: 'ok' | 'error';
+  /** `degraded`: alle Bindings antworten, aber die Suche ist nur teilweise bereit (HTTP 200, kein Ausfall). */
+  status: 'ok' | 'degraded' | 'error';
   worker: 'ok';
   storage: 'd1' | 'file';
   d1: Record<string, BindingHealth>;
+  /**
+   * Such-Readiness der OstRecht-D1 (nur wenn gebunden): `partial`, wenn am Landesrecht-Stichtag geltende Fassungen im
+   * Volltextindex von OstRecht fehlen; `fullText` benennt, dass frühere Fassungen dort nie volltextindexiert sind.
+   */
+  search?: Record<string, SearchCoverage | { readiness: 'unknown' }>;
   checkedAt: string;
 }
 
@@ -60,13 +68,25 @@ export async function checkHealth(env: Record<string, unknown> | null, options: 
     for (const [binding, health] of results) d1[binding] = health;
   }
   const healthy = env === null || Object.values(d1).every((health) => health === 'ok');
-  return { status: healthy ? 'ok' : 'error', worker: 'ok', storage: env ? 'd1' : 'file', d1, checkedAt: now().toISOString() };
+  let search: HealthReport['search'];
+  if (env && d1[OSTRECHT_D1_BINDING] === 'ok' && JURISDICTIONS.ost.runtimeSource === 'ostrecht-d1') {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const deadline = new Promise<{ readiness: 'unknown' }>((resolve) => { timer = setTimeout(() => resolve({ readiness: 'unknown' }), timeoutMs); });
+      const coverage = getOstRechtFreshness(createReadOnlyD1(env[OSTRECHT_D1_BINDING] as D1Database)).then((report) => report.coverage, (): { readiness: 'unknown' } => ({ readiness: 'unknown' }));
+      search = { [OSTRECHT_D1_BINDING]: await Promise.race([coverage, deadline]) };
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
+  const degraded = healthy && search !== undefined && Object.values(search).some((entry) => entry.readiness !== 'ready');
+  return { status: healthy ? (degraded ? 'degraded' : 'ok') : 'error', worker: 'ok', storage: env ? 'd1' : 'file', d1, ...(search ? { search } : {}), checkedAt: now().toISOString() };
 }
 
 /** 200 bei `ok`, sonst 503; nie cachen. */
 export function healthResponse(report: HealthReport): Response {
   return new Response(`${JSON.stringify(report, null, 2)}\n`, {
-    status: report.status === 'ok' ? 200 : 503,
+    status: report.status === 'error' ? 503 : 200,
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
   });
 }

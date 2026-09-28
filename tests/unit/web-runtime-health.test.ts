@@ -40,12 +40,16 @@ describe('Healthcheck', () => {
   it('meldet ok, wenn jede D1-Bindung SELECT 1 beantwortet, und fragt nur das', async () => {
     const env = fullEnv();
     const report = await checkHealth(env, { now: () => new Date('2026-09-16T10:00:00Z') });
-    expect(report).toEqual({ status: 'ok', worker: 'ok', storage: 'd1', d1: { LANDESRECHT_WEST: 'ok', LANDESRECHT_NSH: 'ok', OSTRECHT_RECHT: 'ok', LANDESRECHT_BAYWUE: 'ok' }, checkedAt: '2026-09-16T10:00:00.000Z' });
+    expect(report).toEqual({ status: 'ok', worker: 'ok', storage: 'd1', d1: { LANDESRECHT_WEST: 'ok', LANDESRECHT_NSH: 'ok', OSTRECHT_RECHT: 'ok', LANDESRECHT_BAYWUE: 'ok' }, search: { OSTRECHT_RECHT: { readiness: 'ready', fullText: 'current-version-only', historicalVersions: 'navigable', staleNormCount: 0 } }, checkedAt: '2026-09-16T10:00:00.000Z' });
     // Eigene Datenbanken: nur SELECT 1; die OstRecht-D1 zusätzlich mit dem Sync-Zustand (sync_state = complete).
     for (const jurisdiction of JURISDICTION_IDS) {
       const queries = (env[RUNTIME_D1_BINDINGS[jurisdiction]] as ReturnType<typeof fakeD1>).queries;
-      expect(queries).toHaveLength(1);
-      expect(queries[0]).toMatch(jurisdiction === 'ost' ? /sync_state/u : /^SELECT 1 AS ok$/u);
+      // Ost: Sync-Zustand und danach der Freshness-Check (nur Leseabfragen).
+      if (jurisdiction !== 'ost') expect(queries).toEqual(['SELECT 1 AS ok']);
+      else {
+        expect(queries[0]).toMatch(/sync_state/u);
+        expect(queries.every((query) => /^\s*SELECT/iu.test(query))).toBe(true);
+      }
     }
     const response = healthResponse(report);
     expect(response.status).toBe(200);

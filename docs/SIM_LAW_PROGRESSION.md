@@ -461,7 +461,8 @@ Reihenfolge; jeder Schritt ist für sich prüfbar und ohne Folgeschritt harmlos.
 - **Abgrenzung**: `data/imports/bayernrecht/events/ledger.json` (reale Ereignisse 2023-12-02 bis 2026-09-18) ist
   keine Quelle für Sim-Fassungen.
 - **Besonderheit**: `verfassung-des-freistaates-bayern-wuerttemberg` liegt als Baseline-Norm vor; lokal gibt es
-  eine Sim-„Staatsverfassung Bayern-Württembergs“ (Abschnitt 6) – Verhältnis offen (E6).
+  eine Sim-„Staatsverfassung Bayern-Württembergs“ (Abschnitt 6) – seit Lauf 14 entschieden: neue Normidentität
+  `staatsverfassung-2025-baywue`, ersetzt die übernommene Verfassung (`data/simulation/baywue/constitution-decision.md`).
 - **Reihenfolge**: BayWü-Baseline für die Zielnormen des ersten Sim-Hefts einfrieren → gemeinsamer Pfad → übrige
   Ziele erst nach ihrem Baseline-Beleg.
 

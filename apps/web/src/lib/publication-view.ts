@@ -8,7 +8,7 @@ import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdiction
 import { formatDate } from '@landesrecht/legal-core/lib/display.ts';
 import { getNormSubpageUrl, getNormUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import type { Publication, PublicationEntry } from '@landesrecht/legal-core/lib/schema.ts';
-import type { NormStore, NormSummary } from '@landesrecht/runtime/store.ts';
+import { getNormSummaries, type NormStore, type NormSummary } from '@landesrecht/runtime/store.ts';
 
 export interface PublicationEntryLink {
   href: string;
@@ -32,10 +32,10 @@ export function entryLinkFor(jurisdiction: JurisdictionId, entry: Pick<Publicati
   return { href: getNormUrl(jurisdiction, entry.normSlug), label: 'Geltende Fassung' };
 }
 
-/** Links aller Einträge der Ausgaben; je Norm eine Übersichtsabfrage, nie der gesamte Bestand. */
+/** Links aller Einträge der Ausgaben; Übersichten gebündelt abgefragt (wenige Abfragen), nie der gesamte Bestand. */
 export async function resolveEntryLinks(store: NormStore, jurisdiction: JurisdictionId, publications: readonly Publication[]): Promise<Map<string, PublicationEntryLink | undefined>> {
   const slugs = [...new Set(publications.flatMap((publication) => publication.entries.map((entry) => entry.normSlug)))];
-  const summaries = new Map(await Promise.all(slugs.map(async (slug) => [slug, await store.getNormSummary(slug)] as const)));
+  const summaries = await getNormSummaries(store, slugs);
   const links = new Map<string, PublicationEntryLink | undefined>();
   for (const publication of publications) {
     for (const entry of publication.entries) links.set(entryLinkKey(entry), entryLinkFor(jurisdiction, entry, summaries.get(entry.normSlug)));

@@ -394,6 +394,18 @@ export function createD1NormStore(db: ReadableD1, jurisdiction: JurisdictionId, 
       return row ? dialect.adaptSummary(toSummary(row)) : null;
     },
 
+    async getNormSummaries(slugs) {
+      const ids = [...new Set(slugs)].map((slug) => dialect.normId(jurisdiction, slug));
+      const summaries: NormSummary[] = [];
+      // Gebündelt und nacheinander: wenige Abfragen statt einer je Norm (Verkündungsseiten mit vielen Einträgen).
+      for (let start = 0; start < ids.length; start += D1_MAX_BIND_CHUNK) {
+        const chunk = ids.slice(start, start + D1_MAX_BIND_CHUNK);
+        const rows = await unlessUnprojected(() => db.prepare(`SELECT ${dialect.summaryColumns} FROM law_norms n WHERE n.id IN (${chunk.map(() => '?').join(', ')}) AND ${dialect.normScope.sql}`).bind(...dialect.summaryParams, ...chunk, ...dialect.normScope.params).all<NormRow>(), () => ({ results: [] as NormRow[] }));
+        summaries.push(...rows.results.map((row) => dialect.adaptSummary(toSummary(row))));
+      }
+      return summaries;
+    },
+
     async getNorm(slug, bodies: BodySelection = 'current') {
       const id = dialect.normId(jurisdiction, slug);
       const normRow = await unlessUnprojected(() => db.prepare('SELECT meta_json, history_json, current_version_id FROM law_norms WHERE id = ?').bind(id).first<{ meta_json: string; history_json: string; current_version_id: string }>(), () => null);

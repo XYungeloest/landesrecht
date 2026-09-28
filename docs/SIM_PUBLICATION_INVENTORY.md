@@ -9,7 +9,7 @@ Bewertung nachgetragen (Status je Land bleibt `SIM SOURCES PARTIAL`, bis alle be
 
 | Blattreihe | bekannt | vorhanden | fehlend | verdächtig |
 | --- | ---: | ---: | --- | --- |
-| GV. West – Gesetz- und Verordnungsblatt für Westdeutschland (2024 Serie A) / Westdeutsches Gesetzes- und Verordnungsblatt (2024 Serie B) / Gesetzes- und Verordnungsblatt Des Landes Westdeutschland (2025) / Gesetzes und Verordnungsblatt für das Land Westdeutschland (2025 Nr. 05, 2026) | 16 | 16 | – | 2024 Nr. 04 (Serie B) erscheint vor 2024 Nr. 1 und Nr. 2 (Serie B); Nummern 1–3 dieser Zählung unbekannt; 2024 Nr. 1 und Nr. 2 doppelt (Serie A Februar/April, Serie B Oktober/November); 2025: laufende Nummern 07–11 neben 01/2025–05/2025, widersprüchliche Fußzeilen; 2026 Nr. 3 dreifach vergeben (29.06. mit Platzhalterdatum, 26.08., 18.09.); Nummern 4 ff. unbekannt |
+| GV. West – Gesetz- und Verordnungsblatt für Westdeutschland (2024 Serie A) / Westdeutsches Gesetzes- und Verordnungsblatt (2024 Serie B) / Gesetzes- und Verordnungsblatt Des Landes Westdeutschland (2025) / Gesetzes und Verordnungsblatt für das Land Westdeutschland (2025 Nr. 05, 2026) | 16 | 16 | – | 2024 Nr. 04 (Serie B, 24.09.2024) setzt nach dem Blattverzeichnis die Zählung 2024 Nr. 01–03 fort; die als „Nr. 1“ und „Nr. 2“ gedruckten Ausgaben vom 01.10. und 10.11.2024 führt das Verzeichnis als Nr. 05 und Nr. 06; 2024 Nr. 1 und Nr. 2 doppelt (Serie A Februar/April, Serie B Oktober/November); 2025: laufende Nummern 07–11 neben 01/2025–05/2025 (das Blattverzeichnis zählt 07–10 = 1/2025–4/2025 durch), widersprüchliche Fußzeilen; 2026 Nr. 3 dreifach vergeben (29.06. mit Platzhalterdatum, 26.08., 18.09.); Nummern 4 ff. unbekannt |
 | MBl. WD – Ministerialblatt für das Land Westdeutschland | 7 | 6 | 2026 Nr. 2 | 2026 Nr. 3 mit Platzhalter-Ausgabedatum „09. Monat 2026“ |
 
 Einzelakte ohne Blattausgabe: 9 vorhanden, 0 nur als Verkündungsbeleg.
@@ -24,6 +24,7 @@ Ungeklärte Zeiträume (Suchliste):
 Hinweise zu fehlenden Quellen:
 
 - Rechtsstand nicht vollständig belegbar: Lücken in den Nummernfolgen, dreifache Nummer 3 im Jahrgang 2026, fehlendes Ministerialblatt 2026 Nr. 2, Ausgaben mit Platzhaltern.
+- Blattverzeichnis (gvbl.wiki): Gesetzblätter 2024 Nr. 01–06, 2025 Nr. 07–10, 2026 Nr. 11–12 (17.05.2026) und Ministerialblätter 2025 Nr. 1–2 – alle im Archiv; keine neue Ausgabe. Das Verzeichnis endet am 17.05.2026 und führt GV. West 2025 Nr. 05, MBl. WD 2025 Nr. 3 und die Ausgaben ab Juni 2026 nicht; die dreifache „Nr. 3“ 2026, die Nummern 4 ff. und das fehlende MBl. WD 2026 Nr. 2 bleiben ungeklärt.
 
 ## Land Niedersachsen-Holstein (`nsh`) – SIM SOURCES PARTIAL, Stand 2026-09-28
 
@@ -33,18 +34,17 @@ Hinweise zu fehlenden Quellen:
 | NSH GVBl. LAH-I – Niedersächsisch-Holsteinisches Gesetz- und Verordnungsblatt | 1 | 1 | – | – |
 | NSH GVBl. LAH-II – Niedersächsisch-Holsteinisches Gesetz- und Verordnungsblatt | 2 | 2 | – | – |
 
-Einzelakte ohne Blattausgabe: 15 vorhanden, 5 nur als Verkündungsbeleg.
+Einzelakte ohne Blattausgabe: 15 vorhanden, 4 nur als Verkündungsbeleg.
 
 Ungeklärte Zeiträume (Suchliste):
 
-- 2024-03-05 – 2025-08-03: Keine Blattausgabe zwischen NH GVBl. MAL-I Teil 2/2024 (04.03.2024) und NSH GVBl. LAH-I Teil 1/2025 (04.08.2025); Verkündungen nur durch Mitteilungen (08.07.2024, 17.09.2024, 26.12.2024, 05.05.2025, 12.05.2025). Für 08.07.2024 wurde ein Gesetzblatt angekündigt („Aushändigung folgt in Kürze“), das nicht vorliegt; Drucksachen 02/09–13 fehlen.
+- 2024-03-05 – 2025-08-03: Keine Blattausgabe zwischen NH GVBl. MAL-I Teil 2/2024 (04.03.2024) und NSH GVBl. LAH-I Teil 1/2025 (04.08.2025); Verkündungen nur durch Mitteilungen (08.07.2024, 17.09.2024, 26.12.2024, 05.05.2025, 12.05.2025). Für 08.07.2024 wurde ein Gesetzblatt angekündigt („Aushändigung folgt in Kürze“), das nicht vorliegt; die verkündeten Drucksachen 02/09–13 liegen vor und stehen wortgleich in LAH-I Teil 1/2025.
 - 2025-08-05 – 2026-09-01: Keine Blattausgabe zwischen LAH-I Teil 1/2025 und LAH-II Teil 1/2026 (02.09.2026); Verkündung 24.11.2025 nur durch Mitteilung (Drucksachen 05/06–05/10, später in LAH-II Teil 1/2026). Regime-Bezeichnungen der Blätter (Maluchel I, Lahn I, Lahn II) decken die Regierungen Röttgen, Newsorow und Ulbricht nicht ab.
 
 Hinweise zu fehlenden Quellen:
 
 - Verdächtig: MAL-I Teil 1/2024 enthält nur die Landesverfassung (S. 4–26), das Inhaltsverzeichnis nennt sieben weitere Gesetze („Fehler! Textmarke nicht definiert.“), die fehlen.
-- Fehlende Quellen: Drucksachen 02/09–02/13 (verkündet 08.07.2024); nur durch die Mitteilung belegt (evidenceOnly).
-- Sichere Akte: 26 Akt-Dateien (davon 5 mit Rezept: sftg-nsh, gdg-nsh, laplag-nsh, lbo-nsh, pog-nsh [Aufhebung]); gesperrt: 2 verkündete Änderungsakte ohne Zielnorm im Bestand (Drucksachen 04/07, 04/13) sowie Artikel 1 und 3 des Schülerticket-Gesetzes (Ereignisse); in Prüfung: 32 Ereignisse (13 Blattakte, 15 Einzelakte, Sondervermögensgesetz aus Drucksache 04/14, fehlende Drucksachen 02/09–13, Inhaltsverzeichnis MAL-I Teil 1/2024, Rücknahme der Not-Verordnung); Entwürfe ohne Verkündung: 2 (Drucksache 07/12, SchulReNeuOG).
+- Fehlende Quellen: das für den 08.07.2024 angekündigte Gesetzblatt; Staatsvertrag zum Gesetz vom 09.12.2025 (im Blatt nicht abgedruckt); die sieben im Inhaltsverzeichnis von MAL-I Teil 1/2024 genannten Gesetze.
 
 ## Freistaat Bayern-Württemberg (`baywue`) – SIM SOURCES PARTIAL, Stand 2026-09-28
 
@@ -53,17 +53,16 @@ Hinweise zu fehlenden Quellen:
 | GVBl. Süd – Gesetzes- und Verordnungsblatt des Freistaates Süddeutschland | 1 | 1 | – | – |
 | GVBl. BayWü – Gesetzes- und Verordnungsblatt des Freistaates Bayern-Württemberg (2025) / Gesetz- und Verordnungsblatt für den Freistaat Bayern-Württemberg (2026) | 7 | 7 | – | 2025 Nr. 3; 2026 Nr. 3 |
 
-Einzelakte ohne Blattausgabe: 27 vorhanden, 2 nur als Verkündungsbeleg.
+Einzelakte ohne Blattausgabe: 28 vorhanden, 2 nur als Verkündungsbeleg.
 
 Ungeklärte Zeiträume (Suchliste):
 
-- 2024-10-05 – 2025-01-21: Umbenennung Süddeutschland → Bayern-Württemberg und Sim-Staatsverfassung vom 12. Januar 2025 ohne archivierte Quelle (continuity.md).
-- 2025-04-30 – 2026-05-28: Keine Blattausgabe über 13 Monate; mindestens zwei verkündete Akte fehlen (Gesetz zur Änderung der Staatsverfassung vom 7. Mai 2026, Gesetz zur Bereitstellung finanzieller Hilfen für Erdbebenschäden vom 14. Mai 2026); Nummernfolge 2025 Nr. 3 → 2026 Nr. 1 zeigt keine Lücke.
-- 2026-08-31 – 2026-09-28: Keine Quelle nach GVBl. BayWü 2026 Nr. 4 (30. August 2026).
+- 2025-04-30 – 2026-05-28: Keine Blattausgabe über 13 Monate (das Blattverzeichnis führt zwischen 2025 Nr. 3 und 2026 Nr. 1 keine Ausgabe); das Gesetz zur Bereitstellung finanzieller Hilfen für Erdbebenschäden vom 14. Mai 2026 wird vom Aufhebungsgesetz vom 26. Juni 2026 vorausgesetzt, ist aber weder im Archiv (nur Entwurf) noch im Blattverzeichnis als verkündet belegt.
+- 2026-08-31 – 2026-09-28: Keine Quelle nach GVBl. BayWü 2026 Nr. 4 (30. August 2026); das Blattverzeichnis endet mit dieser Ausgabe.
 
 Hinweise zu fehlenden Quellen:
 
-- Fehlende Quellen: Sim-Staatsverfassung vom 12. Januar 2025 (Zielnorm von fünf verkündeten Änderungsgesetzen); Organisationserlass vom 14. Februar 2025; Erdbebenhilfegesetz vom 14. Mai 2026 (nur Entwurf, durch Gesetz vom 26. Juni 2026 aufgehoben); Verfassungsänderung vom 7. Mai 2026; „Bekanntmachung vom 31. Mai 2026“ der AGO-Änderungsverordnung; weitere „Verordnungen betreffend des Grenzschutzes“ 2024 (Plural); Bekanntmachung des Außerkrafttretens des Handlungsfähigkeitsgesetzes; Anlage (Haushaltsplan) zum Haushaltsgesetz 2026.
+- Fehlende Quellen: Verkündungsblatt oder Bekanntmachung der Staatsverfassung vom 12. Januar 2025 (der Text liegt vor, die Bekanntmachung ist nur durch Zitate belegt); Organisationserlass vom 14. Februar 2025; Erdbebenhilfegesetz vom 14. Mai 2026 (nur Entwurf, durch Gesetz vom 26. Juni 2026 aufgehoben); „Bekanntmachung vom 31. Mai 2026“ der AGO-Änderungsverordnung; weitere „Verordnungen betreffend des Grenzschutzes“ 2024 (Plural; das Blattverzeichnis nennt eine „Verordnung zur Verstärkung der Polizeipräsenz an den Süddeutschen Auslandsgrenzen“ vom 16. August 2024); Bekanntmachung des Außerkrafttretens des Handlungsfähigkeitsgesetzes; Anlage (Haushaltsplan) zum Haushaltsgesetz 2026; Einzelmitteilungen, auf die das Blattverzeichnis für Verordnungen ohne Blatt verweist.
 - Druckmängel: GVBl. BayWü 2025 Nr. 2 – Seite 6 fehlt in der Zählung, Seite 11 ist ein Duplikat von Seite 10 (SzFdPBbJG unvollständig prüfbar); GVBl. Süd 2024 Nr. 1 – § 7 Abs. 2 des Landarzt-Stipendiengesetzes im Satz zerlegt; GVBl. BayWü 2025 Nr. 1 – SchuSprG mit verrutschten §-Bezeichnungen.
 - Blockierte Zielnorm (Baseline fehlt): abgeordnetengesetz-baywue – Bayerisches Abgeordnetengesetz (BayAbgG, BayRS 1100-1-I); benötigt von: gesetz-zur-aenderung-des-sueddeutschen-abgeordnetengesetzes-2024-baywue.
 - Blockierte Zielnorm (Baseline fehlt): pog-baywue – Gesetz über die Organisation der Bayerischen Polizei (Polizeiorganisationsgesetz) (POG, BayRS 2012-2-1-I); benötigt von: BayWueLEXG (GVBl. BayWü 2025 Nr. 2 S. 4, Review); Erlass zur Aufwertung des Grenzschutzes 25-StMIFIKJ-04-E-02 (Review, aufgehoben 13.04.2025).
@@ -78,6 +77,6 @@ Hinweise zu fehlenden Quellen:
 - Blockierte Zielnorm (Baseline fehlt): bayoepnvg-baywue – Gesetz über den öffentlichen Personennahverkehr in Bayern (BayÖPNVG, BayRS 922-1-B); benötigt von: fig-baywue (Artikel 2).
 - Blockierte Zielnorm (Baseline fehlt): grso-baywue – Schulordnung für die Grundschulen in Bayern (Grundschulordnung) (GrSO, BayRS 2232-2-K); benötigt von: grundschuelerentlastungsv-baywue.
 - Blockierte Zielnorm (Baseline fehlt): baykibig-baywue – Bayerisches Gesetz zur Bildung, Erziehung und Betreuung von Kindern in Kindergärten, anderen Kindertageseinrichtungen und in Tagespflege (Bayerisches Kinderbildungs- und -betreuungsgesetz) (BayKiBiG, BayRS 2231-1-A); benötigt von: Gesetz zur Stärkung der Familiengesundheit (GVBl. BayWü 2026 Nr. 4 S. 13, Review).
-- Blockierte Zielnorm (Sim-Norm fehlt): staatsverfassung-2025-baywue – Verfassung des Freistaats Bayern-Württemberg vom 12. Januar 2025; benötigt von: erstes-/zweites-gesetz-zur-aenderung-der-staatsverfassung-baywue, gesetz-zur-aenderung-der-staatsverfassung-art-45-2026-baywue, gesetz-zur-aenderung-der-staatsverfassung-art-24-2026-baywue, fuenftes-gesetz-zur-aenderung-der-staatsverfassung-baywue; Verhältnis zur übernommenen Verfassung (verfassung-des-freistaates-bayern-wuerttemberg) offen (E6).
 - Blockierte Zielnorm (Sim-Norm fehlt): erdbebenhilfeg-2026-baywue – Gesetz zur Bereitstellung finanzieller Hilfen für Erdbebenschäden in Bayern-Württemberg vom 14. Mai 2026 (nur Entwurf); benötigt von: erdbebenhilfeg-aufhebungsg-baywue.
+- Verfassungsänderung „vom 7. Mai 2026“: nur in der Eingangsformel des Änderungsgesetzes zu Artikel 24 genannt; das Blattverzeichnis führt für 2026 genau die fünf vorliegenden Änderungsgesetze, deren Alttexte lückenlos aneinander anschließen – kein eigener fehlender Akt belegt.
 
