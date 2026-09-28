@@ -55,7 +55,7 @@ const changed = keys.filter((key) => left.get(key) !== right.get(key));
       {changed.map((key) => (
         <div class="card">
           <h3>{key}{!left.has(key) ? ' (neu)' : !right.has(key) ? ' (entfallen)' : ''}</h3>
-          <div class="norm-workspace" style="grid-template-columns: 1fr 1fr">
+          <div class="comparison-columns">
             <div><p class="muted">{formatDate(from.simulationValidFrom)}</p><p>{left.get(key) ?? '–'}</p></div>
             <div><p class="muted">{formatDate(to.simulationValidFrom)}</p><p>{right.get(key) ?? '–'}</p></div>
           </div>

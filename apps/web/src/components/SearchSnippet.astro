@@ -1,0 +1,9 @@
+---
+/** Literal highlighting only; the search result and its ranking remain unchanged. */
+interface Props { text: string; query: string; }
+const { text, query } = Astro.props;
+const terms = [...new Set(query.match(/[\p{L}\p{N}]{2,}/gu) ?? [])].sort((a, b) => b.length - a.length);
+const expression = terms.length ? new RegExp(`(${terms.join('|')})`, 'giu') : null;
+const parts = expression ? text.split(expression) : [text];
+---
+{parts.map((part, index) => index % 2 === 1 ? <mark>{part}</mark> : part)}

@@ -8,6 +8,8 @@ import { getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.t
 import { NORM_TYPES, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import { parseSearchState } from '@landesrecht/search/query.ts';
 import InventoryNotice from '../components/InventoryNotice.astro';
+import SearchFilters from '../components/SearchFilters.astro';
+import SearchSnippet from '../components/SearchSnippet.astro';
 import SearchForm from '../components/SearchForm.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getStoreRegistry } from '../lib/runtime/context.ts';
@@ -31,11 +33,31 @@ function pageUrl(offset: number): string {
     offset: offset > 0 ? String(offset) : undefined,
   });
 }
+const filterParams = {
+  q: state.q,
+  jurisdiction: state.jurisdictions.length === JURISDICTION_LIST.length ? undefined : state.jurisdictions.join(','),
+  type: state.types.join(',') || undefined,
+  versionScope: state.versionScope === 'current' ? undefined : state.versionScope,
+  validOn: state.validOn,
+  sort: state.sort,
+};
+const activeFilters = [
+  ...(state.jurisdictions.length < JURISDICTION_LIST.length ? state.jurisdictions.map((id) => ({
+    label: getJurisdiction(id).shortName,
+    url: getSearchUrl({ ...filterParams, jurisdiction: state.jurisdictions.filter((entry) => entry !== id).join(',') || undefined }),
+  })) : []),
+  ...state.types.map((type) => ({ label: typeLabel(type), url: getSearchUrl({ ...filterParams, type: state.types.filter((entry) => entry !== type).join(',') || undefined }) })),
+  ...(state.validOn ? [{ label: `Geltungstag: ${formatDate(state.validOn)}`, url: getSearchUrl({ ...filterParams, validOn: undefined }) }] : []),
+  ...(state.versionScope !== 'current' ? [{ label: state.versionScope === 'all' ? 'Alle Fassungen' : VOCABULARY.version.byKind[state.versionScope].many, url: getSearchUrl({ ...filterParams, versionScope: undefined }) }] : []),
+];
+
 ---
 <BaseLayout title={state.q ? `Suche: ${state.q}` : 'Suche'} robots="noindex, follow">
   <nav class="breadcrumbs" aria-label="Brotkrumen"><ol><li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li><li>Suche</li></ol></nav>
   <h1>Rechtssuche</h1>
   <SearchForm state={state} />
+  <div class="search-workspace">
+  <SearchFilters>
   <form class="filters" method="get" action={PORTAL_PATHS.search}>
     <input type="hidden" name="q" value={state.q} />
     <fieldset>
@@ -64,7 +86,14 @@ function pageUrl(offset: number): string {
       <label>Geltungstag <input type="date" name="validOn" value={state.validOn ?? ''} /></label>
     </fieldset>
     <button type="submit">Filter anwenden</button>
+    <a href={getSearchUrl({ q: state.q })}>Alle Filter zurücksetzen</a>
   </form>
+  </SearchFilters>
+  <div class="search-results">
+  {activeFilters.length > 0 && <nav class="active-filters" aria-label="Aktive Filter">
+    {activeFilters.map((filter) => <a class="filter-chip" href={filter.url} aria-label={`${filter.label}: Filter entfernen`}>{filter.label}<span aria-hidden="true">×</span></a>)}
+    <a href={getSearchUrl({ q: state.q })}>Alle zurücksetzen</a>
+  </nav>}
   {page === null ? (
     <p class="muted">Geben Sie einen Suchbegriff ein oder wählen Sie ein Land. {referenceDateLabel(EDITORIAL_REFERENCE_DATE)}.</p>
   ) : (
@@ -75,13 +104,13 @@ function pageUrl(offset: number): string {
       <ol class="hit-list" start={page.offset + 1}>
         {page.hits.map((hit) => (
           <li class="hit">
+            <p class="hit__meta"><span class="tag">{typeLabel(hit.type)}</span><span class="tag">{getJurisdiction(hit.jurisdiction).shortName}</span></p>
             <h3 class="hit__title"><a href={hit.unit ? hit.unit.url : (hit.versionKind === 'current' ? hit.url : hit.versionUrl)}>{hit.title}</a></h3>
             <p class="hit__meta">
-              <span class="tag">{getJurisdiction(hit.jurisdiction).shortName}</span>
               <span class={`tag tag--${hit.versionKind}`}>{VOCABULARY.version.byKind[hit.versionKind].one}</span>
               {hit.abbr && `${hit.abbr} · `}{typeLabel(hit.type)} · {statusLabel(hit.status)} · {hit.matchLabel}{hit.unit && ` · ${[hit.unit.label, hit.unit.heading].filter(Boolean).join(' ')}`}
             </p>
-            {hit.snippet && <p class="hit__snippet">{hit.snippet}</p>}
+            {hit.snippet && <p class="hit__snippet"><SearchSnippet text={hit.snippet} query={state.q} /></p>}
             <p class="hit__meta">{hit.citation}</p>
           </li>
         ))}
@@ -92,4 +121,6 @@ function pageUrl(offset: number): string {
       </p>
     </section>
   )}
+  </div>
+  </div>
 </BaseLayout>

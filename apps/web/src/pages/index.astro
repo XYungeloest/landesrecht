@@ -1,18 +1,23 @@
 ---
 import { JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
-import { getJurisdictionUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import { getJurisdictionUrl, getSearchUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import InventoryNotice from '../components/InventoryNotice.astro';
 import SearchForm from '../components/SearchForm.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout title={VOCABULARY.portalName} canonical="/">
-  <h1>{VOCABULARY.portalName}</h1>
-  <p class="lead">{VOCABULARY.portalSubtitle}: gemeinsamer Zugang zum Landesrecht der vier Länder der Simulation.</p>
-  <p><strong>Hinweis:</strong> {VOCABULARY.simulationNotice}</p>
-  <section aria-labelledby="suche-heading">
-    <h2 id="suche-heading">Gemeinsame Suche</h2>
+  <section class="home-search" aria-labelledby="suche-heading">
+    <h1 id="suche-heading">Landesrecht durchsuchen</h1>
+    <p class="lead">Gesetze, Verordnungen und Verwaltungsvorschriften der Länder.</p>
     <SearchForm />
+    <nav aria-label="Suche nach Normtyp">
+      <ul class="type-filter">
+        <li><a href={getSearchUrl({ type: 'gesetz' })}>Gesetze</a></li>
+        <li><a href={getSearchUrl({ type: 'verordnung' })}>Verordnungen</a></li>
+        <li><a href={getSearchUrl({ type: 'verwaltungsvorschrift' })}>Verwaltungsvorschriften</a></li>
+      </ul>
+    </nav>
     <p class="muted">Suchbar sind Titel, Kurzbezeichnungen, Abkürzungen, Normtext und Fundstellen; Angaben wie „§ 3 Absatz 2“ oder „Art. 5“ führen zur Vorschrift.</p>
   </section>
   <section aria-labelledby="laender-heading">
@@ -31,4 +36,5 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </ul>
     <p class="muted">Alle vier Länder beginnen mit demselben Ausgangsrechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)}; spätere Änderungen entstehen ausschließlich innerhalb der Simulation.</p>
   </section>
+  <p class="inventory-notice"><strong>Simulation:</strong> {VOCABULARY.simulationNotice}</p>
 </BaseLayout>

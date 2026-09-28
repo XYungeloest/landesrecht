@@ -1,4 +1,5 @@
 ---
+import ResponsiveDisclosure from './ResponsiveDisclosure.astro';
 import type { OutlineEntry } from '@landesrecht/legal-core/lib/body.ts';
 
 interface Props {
@@ -10,7 +11,7 @@ const { entries, root = true } = Astro.props;
 ---
 {root ? (
   <nav class="norm-outline" aria-label="Inhaltsübersicht">
-    <h2>Inhaltsübersicht</h2>
+    <ResponsiveDisclosure label="Inhaltsübersicht">
     <ol>
       {entries.map((entry) => (
         <li>
@@ -19,6 +20,7 @@ const { entries, root = true } = Astro.props;
         </li>
       ))}
     </ol>
+    </ResponsiveDisclosure>
   </nav>
 ) : (
   <ol>
@@ -30,3 +32,16 @@ const { entries, root = true } = Astro.props;
     ))}
   </ol>
 )}
+
+<script>
+  const outline = document.querySelector('.norm-outline');
+  const links = outline?.querySelectorAll<HTMLAnchorElement>('a[href^="#"]');
+  const updateCurrent = () => {
+    links?.forEach((link) => {
+      if (link.hash === window.location.hash) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  };
+  window.addEventListener('hashchange', updateCurrent);
+  updateCurrent();
+</script>

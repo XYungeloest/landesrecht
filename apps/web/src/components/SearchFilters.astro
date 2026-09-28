@@ -1,0 +1,39 @@
+---
+/** The same form is moved into a native modal on mobile; no duplicated controls. */
+---
+<div class="filter-container">
+  <button class="filter-toggle button-secondary" type="button" aria-haspopup="dialog" aria-controls="filter-dialog" hidden>Filter öffnen</button>
+  <aside class="filter-sidebar" aria-labelledby="filter-heading">
+    <h2 id="filter-heading">Suche eingrenzen</h2>
+    <slot />
+  </aside>
+  <dialog id="filter-dialog" class="filter-dialog" aria-labelledby="filter-dialog-heading">
+    <div class="filter-dialog__head">
+      <h2 id="filter-dialog-heading">Suche eingrenzen</h2>
+      <button class="button-secondary" type="button" data-close-filters>Schließen</button>
+    </div>
+  </dialog>
+</div>
+<script>
+  const container = document.querySelector('.filter-container');
+  if (container) {
+    const sidebar = container.querySelector<HTMLElement>('.filter-sidebar')!;
+    const form = sidebar.querySelector('form')!;
+    const toggle = container.querySelector<HTMLButtonElement>('.filter-toggle')!;
+    const dialog = container.querySelector<HTMLDialogElement>('dialog')!;
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const sync = () => {
+      if (dialog.open) dialog.close();
+      sidebar.hidden = !desktop.matches;
+      toggle.hidden = desktop.matches;
+    };
+    toggle.addEventListener('click', () => { dialog.append(form); dialog.showModal(); });
+    dialog.querySelector('[data-close-filters]')!.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => {
+      sidebar.append(form);
+      if (!desktop.matches) toggle.focus();
+    });
+    desktop.addEventListener('change', sync);
+    sync();
+  }
+</script>

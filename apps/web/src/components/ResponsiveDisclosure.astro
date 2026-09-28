@@ -1,0 +1,26 @@
+---
+/** Native disclosure: usable without JavaScript, initially expanded on desktop. */
+interface Props { label: string; class?: string; }
+const { label, class: className } = Astro.props;
+---
+<details class={className} data-responsive-disclosure open>
+  <summary>{label}</summary>
+  <slot />
+</details>
+<script>
+  const desktop = window.matchMedia('(min-width: 1024px)');
+  document.querySelectorAll<HTMLDetailsElement>('[data-responsive-disclosure]').forEach((details) => {
+    const sync = () => { details.open = desktop.matches; };
+    sync();
+    desktop.addEventListener('change', sync);
+    details.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !desktop.matches) {
+        details.open = false;
+        details.querySelector('summary')?.focus();
+      }
+    });
+    details.addEventListener('click', (event) => {
+      if (!desktop.matches && event.target instanceof Element && event.target.closest('a')) details.open = false;
+    });
+  });
+</script>

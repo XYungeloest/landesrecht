@@ -4,6 +4,7 @@ import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editori
 import { referenceDateLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { getJurisdictionUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import '../styles/base.css';
+import ResponsiveDisclosure from '../components/ResponsiveDisclosure.astro';
 
 interface Props {
   title: string;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const { title, description = VOCABULARY.portalSubtitle, canonical, robots } = Astro.props;
+const isActive = (url: string) => Astro.url.pathname === url || (url !== PORTAL_PATHS.home && Astro.url.pathname.startsWith(url));
 const siteUrl = import.meta.env.PUBLIC_SITE_URL;
 const fullTitle = title === VOCABULARY.portalName ? title : `${title} – ${VOCABULARY.portalName}`;
 ---
@@ -35,18 +37,19 @@ const fullTitle = title === VOCABULARY.portalName ? title : `${title} – ${VOCA
     <header class="site-header">
       <div class="site-header__inner">
         <a class="site-brand" href={PORTAL_PATHS.home}>
-          <span class="site-brand__name">{VOCABULARY.portalName}</span>
-          <span class="site-brand__sub">{VOCABULARY.portalSubtitle}</span>
+          <img src="/bild-wortmarke.png" width="1536" height="1024" alt={VOCABULARY.portalName} fetchpriority="high" />
         </a>
-        <nav class="site-nav" aria-label="Länder">
+        <ResponsiveDisclosure class="site-menu" label="Menü">
+        <nav class="site-nav" aria-label="Hauptnavigation">
           <ul>
             {JURISDICTION_LIST.map((jurisdiction) => (
-              <li><a href={getJurisdictionUrl(jurisdiction.id)} title={jurisdiction.name}>{jurisdiction.shortName}</a></li>
+              <li><a href={getJurisdictionUrl(jurisdiction.id)} title={jurisdiction.name} aria-current={isActive(getJurisdictionUrl(jurisdiction.id)) ? 'page' : undefined}>{jurisdiction.shortName}</a></li>
             ))}
-            <li><a href={PORTAL_PATHS.search}>Suche</a></li>
-            <li><a href={PORTAL_PATHS.help}>Hilfe</a></li>
+            <li><a href={PORTAL_PATHS.search} aria-current={isActive(PORTAL_PATHS.search) ? 'page' : undefined}>Suche</a></li>
+            <li><a href={PORTAL_PATHS.help} aria-current={isActive(PORTAL_PATHS.help) ? 'page' : undefined}>Hilfe</a></li>
           </ul>
         </nav>
+        </ResponsiveDisclosure>
       </div>
     </header>
     <main id="hauptinhalt" class="site-main">
