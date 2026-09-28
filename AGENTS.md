@@ -29,8 +29,12 @@ Prioritäten:
   Resolver in `packages/providers/src/resolver.ts` entscheidet über das Ziel.
 - URL-Bildung nur über `packages/legal-core/src/lib/routes.ts`; Bundesrechts-URLs nur über
   `packages/providers/src/federal.ts`.
-- Ostdeutsche Normen werden hier nicht redaktionell gepflegt; sie kommen über den
-  OstRecht-Adapter (`packages/providers/src/ostrecht.ts`, `packages/importers/ostrecht`).
+- Ostdeutsche Normen werden hier nicht redaktionell gepflegt und nicht kopiert: OstRecht ist vorgelagertes
+  Quellsystem (`upstreamSourceOfTruth`), die Laufzeitquelle für Ost ist ausschließlich die OstRecht-D1
+  `ostrecht-recht` über das Read-only-Binding `OSTRECHT_RECHT` (`packages/runtime/src/ostrecht-d1-store.ts`,
+  `docs/OSTRECHT_COMPATIBILITY.md`). Kein `content/norms/ost`, kein Ost-Sim-Import, keine eigene Ost-D1
+  (kein Binding `LANDESRECHT_OST`, nichts neu anlegen); neue Ost-Rechtsakte entstehen nur in OstRecht.
+  Schema-Contract und Drift-Audit (`npm run audit:ost-drift`) sind fail-closed.
 - Keine Massenimporte ohne ausdrücklichen Auftrag, kein Scraping, keine Cloudflare-Ressourcen, keine Secrets
   im Repository. Der RECHT.NRW-Bulkimport läuft nur über `npm run import:recht-nrw:bulk` nach
   `docs/RECHT_NRW_BULK_READINESS.md` (Dry-run Standard, Budgets, Mindestabstand, keine Umgehung von

@@ -63,6 +63,11 @@ const OSTRECHT_STATUS_MAP: Record<string, string> = {
   'one-time-act': 'one-time-act',
 };
 
+/** OstRecht-Status → kanonischer Status (unbekannte Werte bleiben unverändert und fallen in der Validierung auf). */
+export function adaptOstRechtStatus(status: unknown): string {
+  return OSTRECHT_STATUS_MAP[String(status).toLowerCase()] ?? String(status);
+}
+
 function asString(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim() ? value : undefined;
 }
@@ -148,7 +153,7 @@ export function adaptOstRechtMeta(raw: Record<string, unknown>): { meta: Record<
     abbr: raw.abbr,
     shortTitleSource: raw.shortTitleSource,
     type: raw.type,
-    status: OSTRECHT_STATUS_MAP[String(raw.status).toLowerCase()] ?? raw.status,
+    status: adaptOstRechtStatus(raw.status),
     enactingBody: raw.enactingBody,
     originEnactingBody: raw.originEnactingBody,
     responsibleBody: raw.responsibleMinistry ?? raw.ministry,

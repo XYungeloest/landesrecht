@@ -11,7 +11,7 @@ import { isSimulationNorm } from '@landesrecht/legal-core/lib/provenance.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { isSyntheticFixtureNorm } from '@landesrecht/legal-core/lib/schema.ts';
 import { getApplicableVersion, resolveVersionAt } from '@landesrecht/legal-core/lib/versions.ts';
-import { D1_BINDINGS, D1_DATABASE_NAMES, R2_SOURCES_BINDING, R2_SOURCES_BUCKET_NAME } from '@landesrecht/runtime/bindings.ts';
+import { D1_BINDINGS, R2_SOURCES_BINDING, R2_SOURCES_BUCKET_NAME, WORKER_D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
 
 const root = resolveRepositoryRoot();
 /** Synthetischer Testbestand: tests/fixtures/content/ (nie Teil von content/, Projektion oder Build). */
@@ -78,15 +78,20 @@ describe('Wrangler-Konfiguration', () => {
     };
     expect(config.name).toBe('landesrecht');
     expect(config.account_id).toBeUndefined();
-    for (const jurisdiction of JURISDICTION_IDS) {
-      const binding = config.d1_databases.find((entry) => entry.binding === D1_BINDINGS[jurisdiction]);
-      expect(binding?.database_name, jurisdiction).toBe(D1_DATABASE_NAMES[jurisdiction]);
+    // Ein D1-Binding je Jurisdiktion: eigene Datenbanken für West/NSH/BayWü, für Ost die OstRecht-D1 (nur lesend);
+    // kein Binding LANDESRECHT_OST (die Datenbank ist im Konto nicht vorhanden und keine Laufzeitquelle).
+    expect(config.d1_databases.map((entry) => entry.binding).sort()).toEqual(WORKER_D1_BINDINGS.map((entry) => entry.binding).sort());
+    expect(config.d1_databases.map((entry) => entry.binding)).not.toContain(D1_BINDINGS.ost);
+    for (const { binding: name, databaseName } of WORKER_D1_BINDINGS) {
+      const binding = config.d1_databases.find((entry) => entry.binding === name);
+      expect(binding?.database_name, name).toBe(databaseName);
       // Echte D1-Kennungen sind Konfigurationswerte, keine Zugangsdaten: gültige UUID (oder Platzhalter vor dem Anlegen).
       expect(binding?.database_id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u);
-      const staging = config.env.staging.d1_databases.find((entry) => entry.binding === D1_BINDINGS[jurisdiction]);
-      expect(staging?.database_name).toBe(`${D1_DATABASE_NAMES[jurisdiction]}-staging`);
+      const staging = config.env.staging.d1_databases.find((entry) => entry.binding === name);
+      expect(staging?.database_name).toBe(`${databaseName}-staging`);
       expect(staging?.database_id).not.toBe(binding?.database_id);
     }
+    expect(config.env.staging.d1_databases.map((entry) => entry.binding).sort()).toEqual(WORKER_D1_BINDINGS.map((entry) => entry.binding).sort());
     expect(config.r2_buckets).toEqual([{ binding: R2_SOURCES_BINDING, bucket_name: R2_SOURCES_BUCKET_NAME }]);
     expect(config.env.staging.r2_buckets[0]!.bucket_name).toBe(`${R2_SOURCES_BUCKET_NAME}-staging`);
     expect(config.env.staging.vars.APP_ENV).toBe('staging');

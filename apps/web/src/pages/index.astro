@@ -23,8 +23,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <h3><a href={getJurisdictionUrl(jurisdiction.id)}>{jurisdiction.name}</a></h3>
           <p class="card__meta">Kurzbezeichnung: {jurisdiction.shortName} <InventoryNotice jurisdiction={jurisdiction.id} variant="badge" /></p>
           <p>{VOCABULARY.baselineLabel}: {formatBaselineDate(jurisdiction.baselineDate)}</p>
-          {jurisdiction.externalSourceOfTruth && (
-            <p class="muted">Rechtsbestand wird in <a href={jurisdiction.externalSourceOfTruth.siteUrl} rel="noopener noreferrer">{jurisdiction.externalSourceOfTruth.label}</a> geführt.</p>
+          {jurisdiction.upstreamSourceOfTruth && (
+            <p class="muted">Rechtsbestand wird in <a href={jurisdiction.upstreamSourceOfTruth.siteUrl} rel="noopener noreferrer">{jurisdiction.upstreamSourceOfTruth.label}</a> geführt und hier unmittelbar ausgeliefert.</p>
           )}
         </li>
       ))}

@@ -12,7 +12,7 @@
  * sind von der Regel ausgenommen (ihre Provenienz bildet der Adapter ab).
  */
 import { JURISDICTIONS, SIMULATION_BASELINE_DATE, type JurisdictionId } from '../config/jurisdictions.ts';
-import { ContentValidationError, isSimulationSourceKind, type NormRecord, type NormVersion, type SourceReference } from './schema.ts';
+import { ContentValidationError, isSimulationSourceKind, SIMULATION_IDENTIFIER_SYSTEMS, type NormRecord, type NormVersion, type SourceReference } from './schema.ts';
 
 /** Fassung, die durch einen Rechtsakt der Simulation entstanden ist (Beginn nach dem Ausgangsrechtsstand). */
 export function isSimulationVersion(version: Pick<NormVersion, 'simulationValidFrom'>): boolean {
@@ -29,9 +29,9 @@ export function isSimulationNorm(record: Pick<NormRecord, 'versions'>): boolean 
   return record.versions.length > 0 && record.versions.every((version) => isSimulationVersion(version));
 }
 
-/** Jurisdiktion, deren Bestand extern gepflegt wird (Ost → OstRecht); die Provenienzregel gilt dort nicht. */
+/** Jurisdiktion, deren Bestand ein vorgelagertes Quellsystem führt (Ost → OstRecht); die Provenienzregel gilt dort nicht. */
 export function isExternallyMaintained(jurisdiction: JurisdictionId): boolean {
-  return JURISDICTIONS[jurisdiction].externalSourceOfTruth !== undefined;
+  return JURISDICTIONS[jurisdiction].upstreamSourceOfTruth !== undefined;
 }
 
 export function isSimulationSourceReference(reference: Pick<SourceReference, 'kind'>): boolean {
@@ -47,12 +47,15 @@ export function collectSimulationProvenanceProblems(record: NormRecord, context 
     const path = `${context}/versions/${version.versionId}.json`;
     const references = version.sourceReferences ?? [];
     if (isSimulationVersion(version)) {
+      // Übernommener späterer Quellstand (adoptedSources): nur mit Sim-Adoptionsbeleg darf eine Sim-Fassung die reale
+      // Momentaufnahme und deren Quellgeltung tragen; die reale Rechtsentwicklung wird nie von selbst Sim-Recht.
+      const adopted = references.some((reference) => isSimulationSourceReference(reference) && reference.sourceRole === 'adoption-evidence');
       for (const field of ['sourceValidFrom', 'sourceValidTo', 'sourceStatus', 'sourceCitation'] as const) {
-        if (version[field] !== undefined) problems.push(`${path}.${field}: eine Sim-Fassung (Beginn nach ${SIMULATION_BASELINE_DATE}) trägt keine reale Quellprovenienz`);
+        if (version[field] !== undefined && !(adopted && (field === 'sourceValidFrom' || field === 'sourceValidTo' || field === 'sourceCitation'))) problems.push(`${path}.${field}: eine Sim-Fassung (Beginn nach ${SIMULATION_BASELINE_DATE}) trägt keine reale Quellprovenienz`);
       }
       if (references.length === 0) problems.push(`${path}.sourceReferences: eine Sim-Fassung braucht mindestens einen Sim-Beleg`);
       references.forEach((reference, index) => {
-        if (!isSimulationSourceReference(reference)) problems.push(`${path}.sourceReferences[${index}]: „${reference.kind}“ ist kein Sim-Beleg; eine Sim-Fassung trägt ausschließlich Sim-Belege`);
+        if (!isSimulationSourceReference(reference) && !(adopted && reference.kind === 'official-portal-snapshot')) problems.push(`${path}.sourceReferences[${index}]: „${reference.kind}“ ist kein Sim-Beleg; eine Sim-Fassung trägt ausschließlich Sim-Belege (Ausnahme: übernommener Quellstand mit Adoptionsbeleg)`);
       });
     } else {
       references.forEach((reference, index) => {
@@ -63,11 +66,16 @@ export function collectSimulationProvenanceProblems(record: NormRecord, context 
 
   if (isSimulationNorm(record)) {
     const path = `${context}/meta.json`;
-    if (record.meta.externalIdentifiers.length > 0) problems.push(`${path}.externalIdentifiers: eine eigene Sim-Norm trägt keine Kennung eines realen Portals`);
+    // Eine eigene Sim-Norm, deren Erstfassung einen übernommenen Quellstand mit Adoptionsbeleg trägt, führt die reale
+    // Provenienz dieser Übernahme (Ursprungsorgan, Momentaufnahme) auch in meta.json.
+    const adoptedNorm = record.versions.some((version) => (version.sourceReferences ?? []).some((reference) => isSimulationSourceReference(reference) && reference.sourceRole === 'adoption-evidence'));
+    record.meta.externalIdentifiers.forEach((identifier, index) => {
+      if (!(SIMULATION_IDENTIFIER_SYSTEMS as readonly string[]).includes(identifier.system)) problems.push(`${path}.externalIdentifiers[${index}]: eine eigene Sim-Norm trägt keine Kennung eines realen Portals („${identifier.system}“)`);
+    });
     if (record.meta.sourceCitation !== undefined) problems.push(`${path}.sourceCitation: eine eigene Sim-Norm hat keine reale Quellfundstelle`);
-    if (record.meta.originEnactingBody !== undefined) problems.push(`${path}.originEnactingBody: eine eigene Sim-Norm hat kein Ursprungsorgan einer übernommenen Quelle`);
+    if (record.meta.originEnactingBody !== undefined && !adoptedNorm) problems.push(`${path}.originEnactingBody: eine eigene Sim-Norm hat kein Ursprungsorgan einer übernommenen Quelle`);
     record.meta.sourceReferences.forEach((reference, index) => {
-      if (!isSimulationSourceReference(reference)) problems.push(`${path}.sourceReferences[${index}]: „${reference.kind}“ ist kein Sim-Beleg; eine eigene Sim-Norm trägt ausschließlich Sim-Belege`);
+      if (!isSimulationSourceReference(reference) && !(adoptedNorm && reference.kind === 'official-portal-snapshot')) problems.push(`${path}.sourceReferences[${index}]: „${reference.kind}“ ist kein Sim-Beleg; eine eigene Sim-Norm trägt ausschließlich Sim-Belege`);
     });
   }
   return problems;

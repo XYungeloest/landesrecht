@@ -3,12 +3,14 @@
  * Jurisdiktion in welcher Datenbank liegt. Eine Suche über „alle Länder“ fragt jeden Store
  * einzeln und führt die Seiten zusammen (mergeSearchPages).
  */
-import { JURISDICTION_IDS, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { JURISDICTION_IDS, JURISDICTIONS, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { mergeSearchPages, type SearchResultPage, type SearchState } from '@landesrecht/search/index.ts';
 
-import { D1_BINDINGS } from './bindings.ts';
+import { RUNTIME_D1_BINDINGS } from './bindings.ts';
 import { createD1NormStore } from './d1-store.ts';
 import type { D1Database } from './d1-types.ts';
+import { createOstRechtD1Store } from './ostrecht-d1-store.ts';
+import { createReadOnlyD1 } from './read-only-d1.ts';
 import type { NormStore } from './store.ts';
 
 export interface StoreRegistry {
@@ -43,18 +45,22 @@ export function createStoreRegistry(stores: Partial<Record<JurisdictionId, NormS
   };
 }
 
-/** Bindet die D1-Datenbanken aus der Worker-Umgebung an die Jurisdiktionen. */
+/**
+ * Bindet die D1-Datenbanken aus der Worker-Umgebung an die Jurisdiktionen. Ost liest über eine Read-only-Hülle aus der
+ * OstRecht-D1 (`OSTRECHT_RECHT`); `LANDESRECHT_OST` wird hier bewusst nicht verwendet.
+ */
 export function createRegistryFromEnv(env: Record<string, unknown>): StoreRegistry {
   const stores: Partial<Record<JurisdictionId, NormStore>> = {};
   for (const jurisdiction of JURISDICTION_IDS) {
-    const binding = env[D1_BINDINGS[jurisdiction]];
-    if (binding && typeof (binding as D1Database).prepare === 'function') {
-      stores[jurisdiction] = createD1NormStore(binding as D1Database, jurisdiction);
-    }
+    const binding = env[RUNTIME_D1_BINDINGS[jurisdiction]];
+    if (!binding || typeof (binding as D1Database).prepare !== 'function') continue;
+    stores[jurisdiction] = JURISDICTIONS[jurisdiction].runtimeSource === 'ostrecht-d1'
+      ? createOstRechtD1Store(createReadOnlyD1(binding as D1Database))
+      : createD1NormStore(binding as D1Database, jurisdiction);
   }
   return createStoreRegistry(stores);
 }
 
 export function missingBindings(env: Record<string, unknown>): string[] {
-  return JURISDICTION_IDS.map((jurisdiction) => D1_BINDINGS[jurisdiction]).filter((binding) => !env[binding]);
+  return [...new Set(JURISDICTION_IDS.map((jurisdiction) => RUNTIME_D1_BINDINGS[jurisdiction]))].filter((binding) => !env[binding]);
 }

@@ -43,10 +43,22 @@ export interface Jurisdiction {
     portalLabel: string;
   };
   /**
-   * Externer Rechtsbestand, der zunächst fachlicher Source of Truth bleibt (nur Ost: OstRecht).
-   * Fehlt das Feld, pflegt dieses Repository den Bestand selbst.
+   * Laufzeitquelle des Bestands: `landesrecht-d1` (eigene Projektion aus `content/norms/<jurisdiction>/`) oder
+   * `ostrecht-d1` (nur lesender Zugriff auf die OstRecht-D1 `ostrecht-recht`; kein eigener Bestand, keine Projektion).
    */
-  externalSourceOfTruth?: {
+  runtimeSource: 'landesrecht-d1' | 'ostrecht-d1';
+  /**
+   * Vorgelagertes Quellsystem, das den Bestand fachlich führt (nur Ost: OstRecht). Landesrecht liefert diesen Bestand
+   * aus, pflegt ihn aber nicht; neue Rechtsakte entstehen dort. Fehlt das Feld, pflegt dieses Repository den Bestand.
+   */
+  upstreamSourceOfTruth?: {
+    system: 'ostrecht';
+    label: string;
+    siteUrl: string;
+    note: string;
+  };
+  /** Bisheriges öffentliches Rechtsportal derselben Jurisdiktion (Legacy-Adressen bleiben als Verweis erreichbar). */
+  legacySource?: {
     system: 'ostrecht';
     label: string;
     siteUrl: string;
@@ -66,6 +78,7 @@ export const JURISDICTIONS: Readonly<Record<JurisdictionId, Jurisdiction>> = {
     stateForm: 'Land',
     pathSegment: 'west',
     baselineDate: SIMULATION_BASELINE_DATE,
+    runtimeSource: 'landesrecht-d1',
     sourceSystem: { realWorldState: 'Nordrhein-Westfalen', portal: 'recht-nrw', portalLabel: 'RECHT.NRW' },
     gazette: { abbreviation: 'GV. West', title: 'Gesetz- und Verordnungsblatt für das Land Westdeutschland' },
   },
@@ -76,6 +89,7 @@ export const JURISDICTIONS: Readonly<Record<JurisdictionId, Jurisdiction>> = {
     stateForm: 'Land',
     pathSegment: 'nsh',
     baselineDate: SIMULATION_BASELINE_DATE,
+    runtimeSource: 'landesrecht-d1',
     sourceSystem: { realWorldState: 'Schleswig-Holstein', portal: 'juris-sh', portalLabel: 'Landesvorschriften und Landesrechtsprechung Schleswig-Holstein (juris)' },
     gazette: { abbreviation: 'GVOBl. NSH', title: 'Gesetz- und Verordnungsblatt für Niedersachsen-Holstein' },
   },
@@ -86,12 +100,15 @@ export const JURISDICTIONS: Readonly<Record<JurisdictionId, Jurisdiction>> = {
     stateForm: 'Freistaat',
     pathSegment: 'ost',
     baselineDate: SIMULATION_BASELINE_DATE,
+    runtimeSource: 'ostrecht-d1',
     sourceSystem: { realWorldState: 'Sachsen', portal: 'revosax', portalLabel: 'REVOSax' },
-    externalSourceOfTruth: {
+    upstreamSourceOfTruth: {
       system: 'ostrecht',
       label: 'OstRecht',
       siteUrl: 'https://recht.freistaat-ostdeutschland.de',
+      note: 'OstRecht führt den ostdeutschen Rechtsbestand; Landesrecht liest ihn zur Laufzeit nur aus der OstRecht-D1 ostrecht-recht (docs/OSTRECHT_COMPATIBILITY.md).',
     },
+    legacySource: { system: 'ostrecht', label: 'OstRecht', siteUrl: 'https://recht.freistaat-ostdeutschland.de' },
     gazette: { abbreviation: 'OGVBl.', title: 'Ostdeutsches Gesetz- und Verordnungsblatt' },
   },
   baywue: {
@@ -101,6 +118,7 @@ export const JURISDICTIONS: Readonly<Record<JurisdictionId, Jurisdiction>> = {
     stateForm: 'Freistaat',
     pathSegment: 'bayern-wuerttemberg',
     baselineDate: SIMULATION_BASELINE_DATE,
+    runtimeSource: 'landesrecht-d1',
     sourceSystem: { realWorldState: 'Bayern', portal: 'bayernrecht', portalLabel: 'BAYERN.RECHT' },
     gazette: { abbreviation: 'GVBl. BayWü', title: 'Gesetz- und Verordnungsblatt des Freistaates Bayern-Württemberg' },
   },

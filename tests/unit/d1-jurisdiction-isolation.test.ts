@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest';
 import { JURISDICTION_IDS } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { TARGET_JURISDICTION } from '@landesrecht/importer-recht-nrw/common/constants.ts';
-import { D1_BINDINGS, D1_DATABASE_NAMES, d1BindingFor, jurisdictionForBinding, R2_SOURCES_BINDING, R2_SOURCES_BUCKET_NAME } from '@landesrecht/runtime/bindings.ts';
+import { D1_BINDINGS, D1_DATABASE_NAMES, d1BindingFor, jurisdictionForBinding, OSTRECHT_D1_BINDING, OSTRECHT_D1_DATABASE_NAMES, R2_SOURCES_BINDING, R2_SOURCES_BUCKET_NAME, WORKER_D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
 import { buildIncrementalProjectionPlan, projectionStateFor } from '@landesrecht/runtime/incremental.ts';
 import { buildProjectionPlan, normId, renderPlanSql } from '@landesrecht/runtime/projection.ts';
 import { splitPlanIntoSqlFiles } from '@landesrecht/runtime/sql-batches.ts';
@@ -94,9 +94,13 @@ describe('Bindings und Datenbanknamen je Jurisdiktion', () => {
     expect(jurisdictionForBinding('LANDESRECHT_WEST')).toBe('west');
     expect(jurisdictionForBinding('LANDESRECHT_FOO')).toBeUndefined();
     const config = parseJsonc(await readFile(join(root, 'apps', 'web', 'wrangler.jsonc'), 'utf8')) as { d1_databases: Array<{ binding: string; database_name: string }>; r2_buckets: Array<{ binding: string; bucket_name: string }>; env?: { staging?: { d1_databases: Array<{ binding: string; database_name: string }> } } };
-    expect(Object.fromEntries(config.d1_databases.map((entry) => [entry.binding, entry.database_name]))).toEqual(Object.fromEntries(JURISDICTION_IDS.map((jurisdiction) => [D1_BINDINGS[jurisdiction], D1_DATABASE_NAMES[jurisdiction]])));
+    // Drei eigene Datenbanken plus das Read-only-Binding der OstRecht-D1 (Laufzeitquelle für Ost); kein LANDESRECHT_OST.
+    expect(Object.fromEntries(config.d1_databases.map((entry) => [entry.binding, entry.database_name]))).toEqual(Object.fromEntries(WORKER_D1_BINDINGS.map((entry) => [entry.binding, entry.databaseName])));
+    expect(WORKER_D1_BINDINGS.map((entry) => entry.binding)).toEqual(['LANDESRECHT_WEST', 'LANDESRECHT_NSH', OSTRECHT_D1_BINDING, 'LANDESRECHT_BAYWUE']);
     expect(config.r2_buckets).toEqual([{ binding: R2_SOURCES_BINDING, bucket_name: R2_SOURCES_BUCKET_NAME }]);
-    for (const entry of config.env?.staging?.d1_databases ?? []) expect(entry.database_name).toBe(`${D1_DATABASE_NAMES[jurisdictionForBinding(entry.binding)!]}-staging`);
+    for (const entry of config.env?.staging?.d1_databases ?? []) {
+      expect(entry.database_name).toBe(entry.binding === OSTRECHT_D1_BINDING ? OSTRECHT_D1_DATABASE_NAMES.staging : `${D1_DATABASE_NAMES[jurisdictionForBinding(entry.binding)!]}-staging`);
+    }
     // Der RECHT.NRW-Import zielt ausschließlich auf west.
     expect(TARGET_JURISDICTION).toBe('west');
   });

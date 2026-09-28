@@ -15,10 +15,8 @@ import {
   parsePublication,
   validateNormRecord,
   type NormBodyBlock,
-  type NormRecord,
   type NormStatus,
   type NormType,
-  type NormVersion,
   type Publication,
 } from '@landesrecht/legal-core/lib/schema.ts';
 import {
@@ -41,9 +39,14 @@ import {
   type StructuralIntent,
 } from '@landesrecht/search/index.ts';
 
+import type { D1SchemaDialect, DialectCounts, DialectDocumentRow } from './d1-dialect.ts';
 import type { D1Database } from './d1-types.ts';
 import { normId, RUNTIME_META_KEYS } from './projection.ts';
+import type { ReadOnlyD1Database } from './read-only-d1.ts';
 import { selectVersionIds, type BodySelection, type NormStore, type NormSummary, type NormSummaryQuery, type NormTypeCount, type StoreStats } from './store.ts';
+
+/** Der Store liest nur; eine Read-only-Hülle (OstRecht-D1) genügt ihm. */
+export type ReadableD1 = Pick<D1Database, 'prepare'> | ReadOnlyD1Database;
 
 interface NormRow {
   jurisdiction: string;
@@ -89,6 +92,41 @@ interface UnitRow {
 }
 
 const SUMMARY_COLUMNS = 'jurisdiction, slug, title, short_title, abbr, type, status, current_version_id, current_valid_from, version_count, last_change_date, subjects_json';
+
+/** Dialekt der eigenen Projektion (`data/d1/0001_landesrecht.sql`). */
+export function landesrechtDialect(jurisdiction: JurisdictionId): D1SchemaDialect {
+  return {
+    id: 'landesrecht',
+    normId,
+    normScope: { sql: 'n.jurisdiction = ?', params: [jurisdiction] },
+    publicationScope: { sql: 'jurisdiction = ?', params: [jurisdiction] },
+    summaryColumns: SUMMARY_COLUMNS,
+    summaryParams: [],
+    sortKey: 'n.sort_key',
+    validFrom: 'v.simulation_valid_from',
+    validTo: 'v.simulation_valid_to',
+    currentFlag: "(v.temporal_kind = 'current')",
+    temporalKind: (kind) => ({ sql: 'v.temporal_kind = ?', params: [kind] }),
+    unitIndex: (alias) => `${alias}.unit_index`,
+    documentQuery: (placeholders) => `SELECT norm_id, version_id, search_document_json FROM law_versions WHERE norm_id IN (${placeholders})`,
+    adaptDocument: (row) => JSON.parse(row.search_document_json) as Omit<SearchDocument, 'units'>,
+    adaptRecord: ({ id, meta, history, versions }) => validateNormRecord({
+      meta: parseNormMeta(meta, `d1:${id}/meta`),
+      history: parseNormHistory(history, `d1:${id}/history`),
+      versions: versions.map((version) => parseNormVersion(version, `d1:${id}/versions/${String(version.versionId)}`)),
+    }, `d1:${id}`),
+    currentVersionId: (_record, stored) => stored,
+    adaptSummary: (summary) => summary,
+    stats: (meta, _counts) => ({
+      normCount: Number(meta.get(RUNTIME_META_KEYS.normCount) ?? 0),
+      versionCount: Number(meta.get(RUNTIME_META_KEYS.versionCount) ?? 0),
+      projectedAt: meta.get(RUNTIME_META_KEYS.lastProjectedAt) ?? null,
+      projectionFingerprint: meta.get(RUNTIME_META_KEYS.projectionFingerprint) ?? null,
+    }),
+    runtimeMetaKey: (key) => key,
+    adaptPublication: (json, context) => parsePublication(json, context),
+  };
+}
 const MAX_UNITS_PER_HIT = 8;
 /** Obergrenze der Nachsuche nach Identitätstreffern (exakte Bezeichnung) außerhalb der Kandidatenseite. */
 const IDENTITY_SCAN_LIMIT = 500;
@@ -180,7 +218,7 @@ function referenceConditions(references: readonly StructuralIntent[]): { sql: st
  * Filterbedingungen der Kandidaten- und Zählabfrage. `conjuncts` fügt je Suchwort eine AND-Unterabfrage auf
  * Normebene hinzu (Plan `or-prefix`); im Plan `and-first` erzwingt bereits der MATCH-Ausdruck alle Wörter.
  */
-function filterConditions(state: SearchState, plan: SearchQueryPlan, conjuncts = true): { sql: string; params: unknown[] } {
+function filterConditions(dialect: D1SchemaDialect, state: SearchState, plan: SearchQueryPlan, conjuncts = true): { sql: string; params: unknown[] } {
   const clauses: string[] = [];
   const params: unknown[] = [];
   const types = expandNormTypeFilter(state.types);
@@ -196,12 +234,14 @@ function filterConditions(state: SearchState, plan: SearchQueryPlan, conjuncts =
     clauses.push(`EXISTS (SELECT 1 FROM law_norm_subjects s WHERE s.norm_id = n.id AND s.subject IN (${state.subjects.map(() => '?').join(', ')}))`);
     params.push(...state.subjects);
   }
+  if (dialect.versionScope) clauses.push(dialect.versionScope);
   if (state.validOn) {
-    clauses.push('v.simulation_valid_from <= ? AND (v.simulation_valid_to IS NULL OR v.simulation_valid_to >= ?)');
+    clauses.push(`${dialect.validFrom} <= ? AND (${dialect.validTo} IS NULL OR ${dialect.validTo} >= ?)`);
     params.push(state.validOn, state.validOn);
   } else if (state.versionScope !== 'all') {
-    clauses.push('v.temporal_kind = ?');
-    params.push(state.versionScope);
+    const kind = dialect.temporalKind(state.versionScope);
+    clauses.push(kind.sql);
+    params.push(...kind.params);
   }
   if (conjuncts) {
     // Über `rowid` statt der UNINDEXED-Spalten des FTS-Index: FTS5 mit externem Inhalt lädt für jede UNINDEXED-Spalte
@@ -216,15 +256,19 @@ function filterConditions(state: SearchState, plan: SearchQueryPlan, conjuncts =
   return { sql: clauses.map((clause) => ` AND ${clause}`).join('') + references.sql, params: [...params, ...references.params] };
 }
 
-function orderBy(sort: SearchState['sort'], ranked: boolean): string {
-  if (sort === 'title') return 'n.sort_key, n.slug';
-  if (sort === 'activity') return 'COALESCE(n.last_change_date, v.simulation_valid_from) DESC, n.sort_key';
+/** Änderungsvorschriften sind Änderungsträger, keine gleichrangigen Stammnormen: bei gleicher Trefferart dahinter (wie in OstRecht). */
+const AMENDMENT_FLAG = "(n.type = 'aenderungsvorschrift')";
+
+function orderBy(dialect: D1SchemaDialect, sort: SearchState['sort'], ranked: boolean): string {
+  if (sort === 'title') return `${dialect.sortKey}, n.slug`;
+  if (sort === 'activity') return `COALESCE(n.last_change_date, ${dialect.validFrom}) DESC, ${dialect.sortKey}`;
   return ranked
-    ? "identity_hit DESC, (v.temporal_kind = 'current') DESC, best, n.sort_key, n.slug"
-    : "(v.temporal_kind = 'current') DESC, n.sort_key, n.slug";
+    ? `identity_hit DESC, ${dialect.currentFlag} DESC, ${AMENDMENT_FLAG}, best, ${dialect.sortKey}, n.slug`
+    : `${dialect.currentFlag} DESC, ${AMENDMENT_FLAG}, ${dialect.sortKey}, n.slug`;
 }
 
-export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId): NormStore {
+export function createD1NormStore(db: ReadableD1, jurisdiction: JurisdictionId, dialect: D1SchemaDialect = landesrechtDialect(jurisdiction)): NormStore {
+  const unitIndex = dialect.unitIndex('u');
   /**
    * Lädt die Suchdokumente einer Kandidatenliste in Kandidatenreihenfolge (null für fehlende Fassungen).
    * Alle Kandidaten einer Seite werden gemeinsam abgefragt: Eine Volltextabfrage je Kandidat müsste die gesamten
@@ -254,8 +298,8 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     for (let start = 0; start < normIds.length; start += D1_MAX_BIND_CHUNK) {
       const chunk = normIds.slice(start, start + D1_MAX_BIND_CHUNK);
       const placeholders = chunk.map(() => '?').join(', ');
-      const documentQuery = db.prepare(`SELECT norm_id, version_id, search_document_json FROM law_versions WHERE norm_id IN (${placeholders})`).bind(...chunk)
-        .all<{ norm_id: string; version_id: string; search_document_json: string }>().then((result) => result.results);
+      const documentQuery = db.prepare(dialect.documentQuery(placeholders)).bind(...chunk)
+        .all<DialectDocumentRow>().then((result) => result.results);
 
       // Einheiten der Strukturadresse zuerst (sonst könnte „§ 28“ bei großen Normen hinter den acht
       // bestbewerteten Volltext-Einheiten verschwinden), dann die Volltext-Treffer.
@@ -264,8 +308,8 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
             const { conditions, params } = referenceUnitConditions(references);
             return db.prepare(
               `SELECT norm_id, version_id, unit_index, anchor, block_type, references_json, label, heading, body FROM (
-                 SELECT u.norm_id, u.version_id, u.unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body,
-                        row_number() OVER (PARTITION BY u.norm_id, u.version_id ORDER BY u.unit_index) AS position
+                 SELECT u.norm_id, u.version_id, ${unitIndex} AS unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body,
+                        row_number() OVER (PARTITION BY u.norm_id, u.version_id ORDER BY ${unitIndex}) AS position
                  FROM law_search_units u WHERE u.norm_id IN (${placeholders})${conditions.map((condition) => ` AND ${condition}`).join('')}
                ) WHERE position <= ? ORDER BY norm_id, version_id, unit_index`,
             ).bind(...chunk, ...params, MAX_UNITS_PER_HIT).all<UnitRow & CandidateRow>().then((result) => result.results);
@@ -276,7 +320,7 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
       if (unitsMatch) {
         unitQuery = db.prepare(
           `SELECT norm_id, version_id, unit_index, anchor, block_type, references_json, label, heading, body FROM (
-             SELECT u.norm_id, u.version_id, u.unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body,
+             SELECT u.norm_id, u.version_id, ${unitIndex} AS unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body,
                     row_number() OVER (PARTITION BY u.norm_id, u.version_id ORDER BY s.rank) AS position
              FROM law_search s JOIN law_search_units u ON u.id = s.rowid
              WHERE law_search MATCH ? AND u.norm_id IN (${placeholders}) AND rank MATCH ?
@@ -287,14 +331,14 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
       } else {
         unitQuery = db.prepare(
           `SELECT norm_id, version_id, unit_index, anchor, block_type, references_json, label, heading, body FROM (
-             SELECT u.norm_id, u.version_id, u.unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body,
-                    row_number() OVER (PARTITION BY u.norm_id, u.version_id ORDER BY u.unit_index) AS position
+             SELECT u.norm_id, u.version_id, ${unitIndex} AS unit_index, u.anchor, u.block_type, u.references_json, u.label, u.heading, u.body,
+                    row_number() OVER (PARTITION BY u.norm_id, u.version_id ORDER BY ${unitIndex}) AS position
              FROM law_search_units u WHERE u.norm_id IN (${placeholders})
            ) WHERE position <= ? ORDER BY norm_id, version_id, unit_index`,
         ).bind(...chunk, MAX_UNITS_PER_HIT).all<UnitRow & CandidateRow>().then((result) => result.results);
       }
       const [documentRows, referenceResult, unitResult] = await Promise.all([documentQuery, referenceQuery, unitQuery]);
-      for (const row of documentRows) if (wanted.has(pairKey(row))) documents.set(pairKey(row), JSON.parse(row.search_document_json) as Omit<SearchDocument, 'units'>);
+      for (const row of documentRows) if (wanted.has(pairKey(row))) documents.set(pairKey(row), dialect.adaptDocument(row));
       collect(referenceRows, referenceResult);
       collect(unitRows, unitResult);
     }
@@ -330,33 +374,39 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     jurisdiction,
 
     async countNormsByType(): Promise<NormTypeCount[]> {
-      const rows = await unlessUnprojected(() => db.prepare('SELECT n.type AS type, COUNT(*) AS count FROM law_norms n WHERE n.jurisdiction = ? GROUP BY n.type ORDER BY n.type').bind(jurisdiction).all<{ type: string; count: number }>(), () => ({ results: [] as Array<{ type: string; count: number }> }));
+      const rows = await unlessUnprojected(() => db.prepare(`SELECT n.type AS type, COUNT(*) AS count FROM law_norms n WHERE ${dialect.normScope.sql} GROUP BY n.type ORDER BY n.type`).bind(...dialect.normScope.params).all<{ type: string; count: number }>(), () => ({ results: [] as Array<{ type: string; count: number }> }));
       return rows.results.map((row) => ({ type: row.type as NormType, count: Number(row.count) }));
     },
 
     async listNormSummaries(query = {}) {
-      const clauses = ['n.jurisdiction = ?'];
-      const params: unknown[] = [jurisdiction];
+      const clauses = [dialect.normScope.sql];
+      const params: unknown[] = [...dialect.summaryParams, ...dialect.normScope.params];
       if (query.type) { clauses.push('n.type = ?'); params.push(query.type); }
       if (query.status) { clauses.push('n.status = ?'); params.push(query.status); }
       if (query.subject) { clauses.push('EXISTS (SELECT 1 FROM law_norm_subjects s WHERE s.norm_id = n.id AND s.subject = ?)'); params.push(query.subject); }
       const limit = Math.min(Math.max(query.limit ?? 500, 1), 5000);
-      const rows = await unlessUnprojected(() => db.prepare(`SELECT ${SUMMARY_COLUMNS} FROM law_norms n WHERE ${clauses.join(' AND ')} ORDER BY n.sort_key, n.slug LIMIT ?`).bind(...params, limit).all<NormRow>(), () => ({ results: [] as NormRow[] }));
-      return rows.results.map(toSummary);
+      const rows = await unlessUnprojected(() => db.prepare(`SELECT ${dialect.summaryColumns} FROM law_norms n WHERE ${clauses.join(' AND ')} ORDER BY ${dialect.sortKey}, n.slug LIMIT ?`).bind(...params, limit).all<NormRow>(), () => ({ results: [] as NormRow[] }));
+      return rows.results.map((row) => dialect.adaptSummary(toSummary(row)));
     },
 
     async getNormSummary(slug) {
-      const row = await unlessUnprojected(() => db.prepare(`SELECT ${SUMMARY_COLUMNS} FROM law_norms n WHERE n.id = ?`).bind(normId(jurisdiction, slug)).first<NormRow>(), () => null);
-      return row ? toSummary(row) : null;
+      const row = await unlessUnprojected(() => db.prepare(`SELECT ${dialect.summaryColumns} FROM law_norms n WHERE n.id = ? AND ${dialect.normScope.sql}`).bind(...dialect.summaryParams, dialect.normId(jurisdiction, slug), ...dialect.normScope.params).first<NormRow>(), () => null);
+      return row ? dialect.adaptSummary(toSummary(row)) : null;
     },
 
     async getNorm(slug, bodies: BodySelection = 'current') {
-      const id = normId(jurisdiction, slug);
+      const id = dialect.normId(jurisdiction, slug);
       const normRow = await unlessUnprojected(() => db.prepare('SELECT meta_json, history_json, current_version_id FROM law_norms WHERE id = ?').bind(id).first<{ meta_json: string; history_json: string; current_version_id: string }>(), () => null);
       if (!normRow) return null;
-      const versionRows = (await db.prepare('SELECT version_id, version_json FROM law_versions WHERE norm_id = ? ORDER BY simulation_valid_from').bind(id).all<VersionRow>()).results;
-      const skeleton: NormVersion[] = versionRows.map((row) => ({ ...(JSON.parse(row.version_json) as Omit<NormVersion, 'body'>), body: [] }));
-      const wanted = selectVersionIds({ versions: skeleton }, normRow.current_version_id, bodies);
+      const versionRows = (await db.prepare(`SELECT version_id, version_json FROM law_versions WHERE norm_id = ? ORDER BY ${dialect.validFrom.replace(/^v\./u, '')}`).bind(id).all<VersionRow>()).results;
+      const skeleton: Array<Record<string, unknown> & { versionId: string; body: NormBodyBlock[] }> = versionRows.map((row) => ({ ...(JSON.parse(row.version_json) as Record<string, unknown>), versionId: row.version_id, body: [] as NormBodyBlock[] }));
+      const derived = dialect.derivedQuery ? await db.prepare(dialect.derivedQuery).bind(id).first<Record<string, unknown>>() : undefined;
+      const meta = JSON.parse(normRow.meta_json) as Record<string, unknown>;
+      const history = JSON.parse(normRow.history_json) as Record<string, unknown>;
+      // Erst das Skelett übersetzen (Baseline-Regel, Geltungsachse), dann die Körper der gewünschten Fassungen laden.
+      const skeletonRecord = dialect.adaptRecord({ id, meta, history, versions: skeleton, derived });
+      if (!skeletonRecord) return null;
+      const wanted = selectVersionIds(skeletonRecord, dialect.currentVersionId(skeletonRecord, normRow.current_version_id), bodies);
       const versions = await Promise.all(
         skeleton.map(async (version) => {
           if (!wanted.has(version.versionId)) return version;
@@ -364,12 +414,7 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
           return { ...version, body: assembleBlocks(blocks) };
         }),
       );
-      const record: NormRecord = {
-        meta: parseNormMeta(JSON.parse(normRow.meta_json), `d1:${id}/meta`),
-        history: parseNormHistory(JSON.parse(normRow.history_json), `d1:${id}/history`),
-        versions: versions.map((version) => parseNormVersion(version, `d1:${id}/versions/${version.versionId}`)),
-      };
-      return validateNormRecord(record, `d1:${id}`);
+      return dialect.adaptRecord({ id, meta, history, versions, derived });
     },
 
     async search(state) {
@@ -379,30 +424,26 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     async getStats() {
       const rows = (await unlessUnprojected(() => db.prepare('SELECT key, value FROM law_runtime_meta').all<{ key: string; value: string }>(), () => ({ results: [] as Array<{ key: string; value: string }> }))).results;
       const meta = new Map(rows.map((row) => [row.key, row.value]));
-      return {
-        normCount: Number(meta.get(RUNTIME_META_KEYS.normCount) ?? 0),
-        versionCount: Number(meta.get(RUNTIME_META_KEYS.versionCount) ?? 0),
-        projectedAt: meta.get(RUNTIME_META_KEYS.lastProjectedAt) ?? null,
-        projectionFingerprint: meta.get(RUNTIME_META_KEYS.projectionFingerprint) ?? null,
-      } satisfies StoreStats;
+      const counts = dialect.statsQuery ? await unlessUnprojected(() => db.prepare(dialect.statsQuery!).first<DialectCounts>(), () => null) : null;
+      return dialect.stats(meta, counts) satisfies StoreStats;
     },
 
     async getRuntimeMeta(key) {
-      const row = await unlessUnprojected(() => db.prepare('SELECT value FROM law_runtime_meta WHERE key = ?').bind(key).first<{ value: string }>(), () => null);
+      const row = await unlessUnprojected(() => db.prepare('SELECT value FROM law_runtime_meta WHERE key = ?').bind(dialect.runtimeMetaKey(key)).first<{ value: string }>(), () => null);
       return row?.value ?? null;
     },
 
     async listPublications(query = {}) {
       // Nur law_publications; der Normenbestand wird dafür nicht gelesen. Eine Datenbank ohne die Tabelle (Schema 0001,
       // Migration 0002 noch nicht eingespielt) ist ein Leerzustand, kein Fehler.
-      const rows = await unlessUnprojected(() => db.prepare('SELECT slug, publication_json FROM law_publications WHERE jurisdiction = ? ORDER BY publication_date DESC, slug').bind(jurisdiction).all<{ slug: string; publication_json: string }>(), () => ({ results: [] as Array<{ slug: string; publication_json: string }> }));
-      const publications: Publication[] = rows.results.map((row) => parsePublication(JSON.parse(row.publication_json), `d1:${jurisdiction}/publications/${row.slug}`)).sort(comparePublicationsNewestFirst);
+      const rows = await unlessUnprojected(() => db.prepare(`SELECT slug, publication_json FROM law_publications WHERE ${dialect.publicationScope.sql} ORDER BY publication_date DESC, slug`).bind(...dialect.publicationScope.params).all<{ slug: string; publication_json: string }>(), () => ({ results: [] as Array<{ slug: string; publication_json: string }> }));
+      const publications: Publication[] = rows.results.map((row) => dialect.adaptPublication(JSON.parse(row.publication_json), `d1:${jurisdiction}/publications/${row.slug}`)).sort(comparePublicationsNewestFirst);
       return query.limit === undefined ? publications : publications.slice(0, Math.max(0, query.limit));
     },
 
     async getPublication(slug) {
-      const row = await unlessUnprojected(() => db.prepare('SELECT publication_json FROM law_publications WHERE jurisdiction = ? AND slug = ?').bind(jurisdiction, slug).first<{ publication_json: string }>(), () => null);
-      return row ? parsePublication(JSON.parse(row.publication_json), `d1:${jurisdiction}/publications/${slug}`) : null;
+      const row = await unlessUnprojected(() => db.prepare(`SELECT publication_json FROM law_publications WHERE ${dialect.publicationScope.sql} AND slug = ?`).bind(...dialect.publicationScope.params, slug).first<{ publication_json: string }>(), () => null);
+      return row ? dialect.adaptPublication(JSON.parse(row.publication_json), `d1:${jurisdiction}/publications/${slug}`) : null;
     },
   };
 
@@ -421,10 +462,13 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
       : plan.references.length > 0 && plan.subjectRaw !== '' ? [...new Set([plan.subjectRaw, ...plan.subjectVariants])] : [];
     const identityParams = poolIdentity.length > 0 ? poolIdentity : [''];
     const folded = (column: string): string => `lower(replace(replace(replace(${column}, 'Ä', 'ä'), 'Ö', 'ö'), 'Ü', 'ü'))`;
+    // Auch Aliasse (frühere oder alternative Bezeichnungen, `aliases_json`) sind Bezeichnungen der Norm.
+    const identityList = identityParams.map(() => '?').join(', ');
     const identityExpression = poolIdentity.length > 0
-      ? `(${folded('n.abbr')} IN (${identityParams.map(() => '?').join(', ')}) OR ${folded('n.short_title')} IN (${identityParams.map(() => '?').join(', ')}) OR ${folded('n.title')} IN (${identityParams.map(() => '?').join(', ')}))`
+      ? `(${folded('n.abbr')} IN (${identityList}) OR ${folded('n.short_title')} IN (${identityList}) OR ${folded('n.title')} IN (${identityList})
+          OR EXISTS (SELECT 1 FROM json_each(n.aliases_json) alias WHERE ${folded('alias.value')} IN (${identityList})))`
       : '0';
-    const identityBinds = poolIdentity.length > 0 ? [...identityParams, ...identityParams, ...identityParams] : [];
+    const identityBinds = poolIdentity.length > 0 ? [...identityParams, ...identityParams, ...identityParams, ...identityParams] : [];
 
     // Kandidatenseite eines MATCH-Ausdrucks. Der Join über `rowid` auf law_search_units vermeidet, dass FTS5 für die
     // UNINDEXED-Spalten jede Trefferzeile vollständig (mit `body`) aus der Inhaltstabelle lädt.
@@ -433,32 +477,32 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
        FROM law_search s JOIN law_search_units u ON u.id = s.rowid
        JOIN law_versions v ON v.norm_id = u.norm_id AND v.version_id = u.version_id
        JOIN law_norms n ON n.id = u.norm_id
-       WHERE law_search MATCH ? AND rank MATCH ? AND n.jurisdiction = ?${filters.sql}
+       WHERE law_search MATCH ? AND rank MATCH ? AND ${dialect.normScope.sql}${filters.sql}
        GROUP BY u.norm_id, u.version_id
-       ORDER BY ${orderBy(state.sort, true)} LIMIT ?`,
-    ).bind(...(withIdentity ? identityBinds : []), match, SEARCH_RANK_WEIGHTS, jurisdiction, ...filters.params, pageLimit).all<CandidateRow>()).results;
+       ORDER BY ${orderBy(dialect, state.sort, true)} LIMIT ?`,
+    ).bind(...(withIdentity ? identityBinds : []), match, SEARCH_RANK_WEIGHTS, ...dialect.normScope.params, ...filters.params, pageLimit).all<CandidateRow>()).results;
     /** Gesamtzahl über den MATCH-Ausdruck (Plan `and-first`: der Ausdruck selbst erzwingt alle Wörter). */
     const countMatched = async (match: string, filters: { sql: string; params: unknown[] }): Promise<number> => Number((await db.prepare(
       `SELECT count(*) AS total FROM (
          SELECT DISTINCT u.norm_id, u.version_id FROM law_search s JOIN law_search_units u ON u.id = s.rowid
          JOIN law_versions v ON v.norm_id = u.norm_id AND v.version_id = u.version_id
          JOIN law_norms n ON n.id = u.norm_id
-         WHERE law_search MATCH ? AND n.jurisdiction = ?${filters.sql})`,
-    ).bind(match, jurisdiction, ...filters.params).first<{ total: number }>())?.total ?? 0);
+         WHERE law_search MATCH ? AND ${dialect.normScope.sql}${filters.sql})`,
+    ).bind(match, ...dialect.normScope.params, ...filters.params).first<{ total: number }>())?.total ?? 0);
     /**
      * Gesamtzahl des Plans `or-prefix` ohne treibenden MATCH: Die AND-Unterabfragen je Wort bestimmen die Menge bereits
      * vollständig (jede Fassung, die alle Wörter enthält, trifft auch das OR); der Lauf über alle OR-Trefferzeilen
      * entfällt. Ergibt sie 0, wird die Kandidatenabfrage gar nicht erst gestellt.
      */
     const countConjunctive = async (filters: { sql: string; params: unknown[] }): Promise<number> => Number((await db.prepare(
-      `SELECT count(*) AS total FROM law_versions v JOIN law_norms n ON n.id = v.norm_id WHERE n.jurisdiction = ?${filters.sql}`,
-    ).bind(jurisdiction, ...filters.params).first<{ total: number }>())?.total ?? 0);
+      `SELECT count(*) AS total FROM law_versions v JOIN law_norms n ON n.id = v.norm_id WHERE ${dialect.normScope.sql}${filters.sql}`,
+    ).bind(...dialect.normScope.params, ...filters.params).first<{ total: number }>())?.total ?? 0);
 
     // Titel mit Strukturangaben („… zu § 74 Absatz 4 …“): Kandidaten ohne Strukturfilter; übernommen wird nur, was
     // evaluateDocument als Titeltreffer bestätigt (titleCarriesReferences).
     const wantsRelaxed = plan.references.length > 0 && plan.freeText;
     const relaxedTitleHits = async (match: string, conjuncts: boolean, known: ReadonlySet<string>): Promise<SearchHit[]> => {
-      const relaxed = filterConditions(state, { ...plan, references: [] }, conjuncts);
+      const relaxed = filterConditions(dialect, state, { ...plan, references: [] }, conjuncts);
       const rows = await rankedCandidates(match, relaxed, false);
       const unknown = rows.filter((candidate) => !known.has(`${candidate.norm_id}#${candidate.version_id}`));
       const titleHits: SearchHit[] = [];
@@ -473,20 +517,20 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     // Unterabfragen (und bei Strukturangaben die entspannte Titelsuche); liefert beides nichts, der großzügige
     // `or-prefix`-Plan (Wörter aus verschiedenen Einheiten, Präfixe auf früheren Wörtern), sofern er sich unterscheidet.
     let match = orMatch;
-    let filters = filterConditions(state, plan);
+    let filters = filterConditions(dialect, state, plan);
     let candidates: CandidateRow[] = [];
     let total = 0;
     let titleHits: SearchHit[] | null = null;
     const pairKey = (row: CandidateRow): string => `${row.norm_id}#${row.version_id}`;
     if (andMatch && orMatch) {
       match = andMatch;
-      filters = filterConditions(state, plan, false);
+      filters = filterConditions(dialect, state, plan, false);
       candidates = await rankedCandidates(andMatch, filters, true);
       total = candidates.length > 0 ? await countMatched(andMatch, filters) : 0;
       if (candidates.length === 0 && wantsRelaxed) titleHits = await relaxedTitleHits(andMatch, false, new Set());
       if (candidates.length === 0 && (titleHits?.length ?? 0) === 0 && andMatch !== orMatch) {
         match = orMatch;
-        filters = filterConditions(state, plan);
+        filters = filterConditions(dialect, state, plan);
         titleHits = null;
         total = await countConjunctive(filters);
         candidates = total > 0 ? await rankedCandidates(orMatch, filters, true) : [];
@@ -497,8 +541,8 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     } else {
       const rows = await db.prepare(
         `SELECT v.norm_id, v.version_id FROM law_versions v JOIN law_norms n ON n.id = v.norm_id
-         WHERE n.jurisdiction = ?${filters.sql} ORDER BY ${orderBy(state.sort, false)} LIMIT ?`,
-      ).bind(jurisdiction, ...filters.params, pageLimit).all<CandidateRow>();
+         WHERE ${dialect.normScope.sql}${filters.sql} ORDER BY ${orderBy(dialect, state.sort, false)} LIMIT ?`,
+      ).bind(...dialect.normScope.params, ...filters.params, pageLimit).all<CandidateRow>();
       candidates = rows.results;
       total = await countConjunctive(filters);
     }
@@ -540,17 +584,18 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     // voll, liegt bereits jede passende Fassung darauf; die Nachsuche entfällt.
     if (match && plan.identityVariants.length > 0 && pageFull && !hits.some((hit) => hit.matchKind === 'identity')) {
       const rows = await db.prepare(
-        `SELECT DISTINCT u.norm_id, u.version_id, n.title, n.short_title, n.abbr
+        `SELECT DISTINCT u.norm_id, u.version_id, n.title, n.short_title, n.abbr, n.aliases_json
          FROM law_search s JOIN law_search_units u ON u.id = s.rowid
          JOIN law_versions v ON v.norm_id = u.norm_id AND v.version_id = u.version_id
          JOIN law_norms n ON n.id = u.norm_id
-         WHERE law_search MATCH ? AND n.jurisdiction = ?${filters.sql} LIMIT ?`,
-      ).bind(match, jurisdiction, ...filters.params, IDENTITY_SCAN_LIMIT).all<{ norm_id: string; version_id: string; title: string; short_title: string | null; abbr: string | null }>();
+         WHERE law_search MATCH ? AND ${dialect.normScope.sql}${filters.sql} LIMIT ?`,
+      ).bind(match, ...dialect.normScope.params, ...filters.params, IDENTITY_SCAN_LIMIT).all<{ norm_id: string; version_id: string; title: string; short_title: string | null; abbr: string | null; aliases_json: string | null }>();
       const known = new Set(candidates.map(pairKey));
       const identityHits: SearchHit[] = [];
       const nameMatches = rows.results.filter((row) => {
         if (known.has(pairKey(row))) return false;
-        const names = [row.title, row.short_title, row.abbr].filter((value): value is string => Boolean(value));
+        const aliases = row.aliases_json ? (JSON.parse(row.aliases_json) as unknown[]).filter((value): value is string => typeof value === 'string') : [];
+        const names = [row.title, row.short_title, row.abbr, ...aliases].filter((value): value is string => Boolean(value));
         return names.some((name) => buildSearchVariants(name).some((variant) => plan.identityVariants.includes(variant)));
       });
       for (const document of await loadDocuments(nameMatches, match, plan.references)) {

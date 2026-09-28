@@ -6,7 +6,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { JURISDICTION_IDS } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
+import { RUNTIME_D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
 
 import { assertCompleteBindings, configurationErrorResponse, isRuntimeConfigurationError, RuntimeConfigurationError } from '../../apps/web/src/lib/runtime/configuration.ts';
 
@@ -14,7 +14,7 @@ const d1 = (): unknown => ({ prepare: () => ({}), batch: async () => [] });
 
 function envWith(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   const env: Record<string, unknown> = { APP_ENV: 'production', SITE_URL: 'https://landesrecht.example' };
-  for (const jurisdiction of JURISDICTION_IDS) env[D1_BINDINGS[jurisdiction]] = d1();
+  for (const jurisdiction of JURISDICTION_IDS) env[RUNTIME_D1_BINDINGS[jurisdiction]] = d1();
   return { ...env, ...overrides };
 }
 
@@ -22,7 +22,7 @@ const caught = (action: () => void): RuntimeConfigurationError => {
   try {
     action();
   } catch (error) {
-    if (isRuntimeConfigurationError(error)) return error;
+    if (isRuntimeConfigurationError(error)) return error as RuntimeConfigurationError;
     throw error;
   }
   throw new Error('kein Konfigurationsfehler');
@@ -37,8 +37,10 @@ describe('Worker-Konfiguration', () => {
     const one = caught(() => assertCompleteBindings(envWith({ LANDESRECHT_NSH: undefined })));
     expect(one.missing).toEqual(['LANDESRECHT_NSH']);
     expect(one.message).toMatch(/LANDESRECHT_NSH.*wrangler\.jsonc/u);
-    const wrongType = caught(() => assertCompleteBindings(envWith({ LANDESRECHT_OST: { bucket: 'r2-statt-d1' } })));
-    expect(wrongType.missing).toEqual(['LANDESRECHT_OST']);
+    // Ost liest zur Laufzeit aus OSTRECHT_RECHT (OstRecht-D1); LANDESRECHT_OST ist keine Laufzeitquelle und wird nicht geprüft.
+    const wrongType = caught(() => assertCompleteBindings(envWith({ OSTRECHT_RECHT: { bucket: 'r2-statt-d1' } })));
+    expect(wrongType.missing).toEqual(['OSTRECHT_RECHT']);
+    expect(() => assertCompleteBindings(envWith({ LANDESRECHT_OST: undefined }))).not.toThrow();
     const all = caught(() => assertCompleteBindings({ APP_ENV: 'production' }));
     expect(all.missing).toHaveLength(JURISDICTION_IDS.length);
     expect(all.message).toMatch(/^Alle D1-Bindings fehlen/u);

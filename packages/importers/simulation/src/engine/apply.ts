@@ -69,7 +69,7 @@ export interface ConsolidationOperation {
   target?: OperationTarget;
   /** Nur `replaceSiblingRange`: letzter Block des zu ersetzenden Bereichs (dieselbe Geschwisterliste). */
   throughTarget?: OperationTarget;
-  /** Nur `replaceText`: Feld des Zielblocks (Standard `text`). */
+  /** `replaceText`: Feld des Zielblocks (Standard `text`); `renameLaw`: `title` | `shortTitle` | `abbr` (Standard `title`). */
   field?: string;
   expectedHash?: string;
   expectedOld?: string;
@@ -91,9 +91,16 @@ export interface PatchRecipe {
 /** Zustand einer Norm während der Konsolidierung: Titel, roher Körper, Aufhebungsmarke. */
 export interface ConsolidationState {
   title: string;
+  /** Kurzbezeichnung und Abkürzung der Fassung (renameLaw mit `field`). */
+  shortTitle?: string;
+  abbr?: string;
   body: RawBlock[];
   repealed?: boolean;
 }
+
+/** Felder der Normbezeichnung, die `renameLaw` umbenennen kann (Standard `title`). */
+export const RENAME_LAW_FIELDS = ['title', 'shortTitle', 'abbr'] as const;
+export type RenameLawField = (typeof RENAME_LAW_FIELDS)[number];
 
 export class ConsolidationError extends Error {
   constructor(message: string) {
@@ -127,6 +134,15 @@ function matchesTarget(block: RawBlock, target: OperationTarget, parent: RawBloc
     && (!target.text || block.text === target.text)
     && (!target.parentType || parent?.type === target.parentType)
     && (!target.parentLabel || parent?.label === target.parentLabel);
+}
+
+/** Alle Treffer eines Zielankers (Ergebnisprüfungen mit Trefferzahl). */
+export function locateAll(body: RawBlock[], target: OperationTarget): RawBlock[] {
+  const matches: RawBlock[] = [];
+  walk(body, (block, location) => {
+    if (matchesTarget(block, target, location.parent)) matches.push(block);
+  });
+  return matches;
 }
 
 /** Genau ein Treffer des Zielankers – sonst Abbruch (0 oder > 1 Treffer). */
@@ -231,11 +247,13 @@ export function applyPatchRecipe(input: ConsolidationState, recipe: PatchRecipe)
       if (operation.expectedMatches !== 1) {
         throw new ConsolidationError('renameLaw: genau ein Titeltreffer ist erforderlich');
       }
-      if (result.title === operation.value) continue;
-      if (!operation.expectedOld || result.title !== operation.expectedOld) {
-        throw new ConsolidationError('renameLaw: erwarteter bisheriger Normtitel wurde nicht gefunden');
+      const field = (operation.field ?? 'title') as RenameLawField;
+      if (!RENAME_LAW_FIELDS.includes(field)) throw new ConsolidationError(`renameLaw: unbekanntes Feld ${field}`);
+      if (result[field] === operation.value) continue;
+      if (!operation.expectedOld || result[field] !== operation.expectedOld) {
+        throw new ConsolidationError(`renameLaw: erwarteter bisheriger Wert von ${field} wurde nicht gefunden`);
       }
-      result.title = operation.value as string;
+      result[field] = operation.value as string;
       continue;
     }
     if (operation.op === 'repealLaw') {

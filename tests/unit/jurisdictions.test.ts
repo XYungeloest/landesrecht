@@ -47,9 +47,15 @@ describe('Jurisdiktionsregister', () => {
     expect(getJurisdictionByShortName('NSH')?.id).toBe('nsh');
   });
 
-  it('kennt OstRecht als externe Source of Truth nur für Ost', () => {
-    expect(JURISDICTIONS.ost.externalSourceOfTruth?.system).toBe('ostrecht');
-    for (const id of ['west', 'nsh', 'baywue'] as const) expect(JURISDICTIONS[id].externalSourceOfTruth).toBeUndefined();
+  it('kennt OstRecht als vorgelagertes Quellsystem und Laufzeitquelle (ostrecht-d1) nur für Ost', () => {
+    expect(JURISDICTIONS.ost.runtimeSource).toBe('ostrecht-d1');
+    expect(JURISDICTIONS.ost.upstreamSourceOfTruth?.system).toBe('ostrecht');
+    expect(JURISDICTIONS.ost.legacySource?.system).toBe('ostrecht');
+    for (const id of ['west', 'nsh', 'baywue'] as const) {
+      expect(JURISDICTIONS[id].runtimeSource).toBe('landesrecht-d1');
+      expect(JURISDICTIONS[id].upstreamSourceOfTruth).toBeUndefined();
+      expect(JURISDICTIONS[id].legacySource).toBeUndefined();
+    }
   });
 });
 

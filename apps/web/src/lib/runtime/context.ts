@@ -4,7 +4,7 @@
  * Tests) fällt sie auf den Dateistore über content/ zurück. Die Dateiloader (node:fs) werden
  * dynamisch importiert, damit das Worker-Bundle sie nie auflösen muss.
  */
-import { JURISDICTION_IDS, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { JURISDICTION_IDS, JURISDICTIONS, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { createFederalProvider } from '@landesrecht/providers/federal.ts';
 import { createContentProvider } from '@landesrecht/providers/content-provider.ts';
 import { createOstRechtProvider } from '@landesrecht/providers/ostrecht-provider.ts';
@@ -38,6 +38,22 @@ function createFileRegistry(): Promise<StoreRegistry> {
     ]);
     const stores: Partial<Record<JurisdictionId, NormStore>> = {};
     for (const jurisdiction of JURISDICTION_IDS) {
+      if (JURISDICTIONS[jurisdiction].runtimeSource === 'ostrecht-d1') {
+        // Ost hat keinen Dateibestand. Lokal (Entwicklung, Audit) kann eine SQLite im OstRecht-Schema angegeben werden
+        // (OSTRECHT_D1_SQLITE, z. B. ein Seed aus `scripts/d1-runtime-seed.mjs` von OstRecht); sonst bleibt Ost leer.
+        const sqlitePath = typeof process !== 'undefined' ? process.env?.OSTRECHT_D1_SQLITE : undefined;
+        if (sqlitePath) {
+          // Variabler Modulpfad: `node:sqlite` darf nie ins Worker-Bundle (nur Node außerhalb des Workers lädt ihn).
+          const sqliteModule = '@landesrecht/runtime/sqlite-d1.ts';
+          const [{ openSqliteD1 }, { createReadOnlyD1 }, { createOstRechtD1Store }] = await Promise.all([
+            import(/* @vite-ignore */ sqliteModule) as Promise<typeof import('@landesrecht/runtime/sqlite-d1.ts')>,
+            import('@landesrecht/runtime/read-only-d1.ts'),
+            import('@landesrecht/runtime/ostrecht-d1-store.ts'),
+          ]);
+          stores[jurisdiction] = createOstRechtD1Store(createReadOnlyD1(await openSqliteD1(sqlitePath, { readOnly: true })));
+          continue;
+        }
+      }
       stores[jurisdiction] = createFileNormStore(jurisdiction, await loadJurisdictionNorms(jurisdiction), { publications: await loadJurisdictionPublications(jurisdiction) });
     }
     return createStoreRegistry(stores);
@@ -58,12 +74,12 @@ export async function getStoreRegistry(): Promise<StoreRegistry> {
 
 export async function getReferenceResolver(): Promise<ReferenceResolver> {
   const registry = await getStoreRegistry();
-  // Reihenfolge = Priorität: Ost wird zunächst auf OstRecht aufgelöst (externe Source of Truth);
-  // sobald ostdeutsche Normen intern vorliegen, wird der ContentProvider davor gestellt.
+  // Reihenfolge = Priorität: alle vier Länder aus der Registry (Ost über den Read-only-Adapter der OstRecht-D1);
+  // der OstRecht-Provider bleibt als Legacy-Auflösung (Verweis auf OstRecht-Adressen) für Verweise, die die Registry nicht kennt.
   return createReferenceResolver([
     createFederalProvider(),
+    createContentProvider(registry, { jurisdictions: ['west', 'nsh', 'baywue', 'ost'] }),
     createOstRechtProvider(),
-    createContentProvider(registry, { jurisdictions: ['west', 'nsh', 'baywue'] }),
   ]);
 }
 

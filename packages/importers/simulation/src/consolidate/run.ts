@@ -32,7 +32,7 @@ import { assertBaselineConsistency } from '@landesrecht/legal-core/lib/versions.
 import { writeFileAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
 
 import { CACHE_TEXT_DIR } from '../common/paths.ts';
-import { applyPatchRecipe, ConsolidationError, type ConsolidationState, type RawBlock } from '../engine/apply.ts';
+import { applyPatchRecipe, ConsolidationError, locateAll, type ConsolidationState, type RawBlock } from '../engine/apply.ts';
 import { canonicalJson, sha256 } from '../engine/hash.ts';
 import { parseSimulationAct, parseSimulationRecipe, type SimulationAct, type SimulationRecipe } from '../recipes/schema.ts';
 import { actsDir, amendmentsDir, isBaselineVersionFile, jsonText, listDirectories, listJsonFiles, manifestPath, normRelativeDir, parseJsonText, readRawNorm, readTextIfExists, sha256Text, type RawObject } from './files.ts';
@@ -119,6 +119,11 @@ interface PlannedVersion {
   status: 'existing' | 'new';
   /** Durch den Lauf belegt: Baseline, materialisierte Akt-Fassung oder Rezeptergebnis (sonst verwaist). */
   covered: boolean;
+  /**
+   * Gespeicherter Text einer Akt-Fassung, der vom Akt abweicht: zulässig nur, wenn eine Berichtigung des Laufs genau
+   * diesen Text erzeugt (deklaratorische Berichtigung der Erstfassung); sonst Fehler am Ende des Laufs.
+   */
+  diskText?: string;
 }
 
 /** Norm im Lauf: rohe Dateien (Platte) oder aus einem Akt gebaut; Änderungen werden nur angehängt. */
@@ -250,8 +255,12 @@ export function buildActMeta(act: SimulationAct, referenceDate: string = EDITORI
     ['successor', meta.successor],
     ['successorTarget', meta.successorTarget],
     ['relations', meta.relations.map((relation) => withDefined(Object.entries(relation)))],
-    ['externalIdentifiers', []],
+    ['externalIdentifiers', (meta.externalIdentifiers ?? []).map((identifier) => withDefined(Object.entries(identifier)))],
     ['sourceReferences', (meta.sourceReferences ?? act.version.sourceReferences).map((reference) => withDefined(Object.entries(reference)))],
+    ['fundingArea', meta.fundingArea],
+    ['lastAmendedDate', meta.lastAmendedDate],
+    ['agreementDetails', meta.agreementDetails],
+    ['editorialResolutions', meta.editorialResolutions],
   ]);
 }
 
@@ -262,9 +271,9 @@ export function buildActHistory(act: SimulationAct): RawObject {
       withDefined([
         ['date', act.version.simulationValidFrom],
         ['type', 'initial'],
-        ['title', 'Amtlich veröffentlicht (Simulation).'],
+        ['title', act.initialHistory?.title ?? 'Amtlich veröffentlicht (Simulation).'],
         ['citation', act.version.citation],
-        ['note', `Verkündung: ${act.publication.slug}${act.publication.pages ? `, S. ${act.publication.pages}` : ''}`],
+        ['note', act.initialHistory?.note ?? (act.publication ? `Verkündung: ${act.publication.slug}${act.publication.pages ? `, S. ${act.publication.pages}` : ''}` : undefined)],
         ['affectingVersionId', act.version.versionId],
       ]),
     ],
@@ -361,6 +370,7 @@ async function materializeAct(context: RunContext, loaded: LoadedAct): Promise<{
   const relative = normRelativeDir(jurisdiction, act.slug);
   const outcome: ActOutcome = { slug: act.slug, file, status: 'new', versionId: act.version.versionId };
   const problems: string[] = [];
+  let deferredDiskText: string | undefined;
 
   // Wortlautprobe gegen den Textauszug der Quelle.
   const sources = await loadSourceTexts(root, act.provenance.transcribedFrom);
@@ -416,7 +426,9 @@ async function materializeAct(context: RunContext, loaded: LoadedAct): Promise<{
       if (!own || earlier.length > 0) {
         problems.push(`${file}: ${relative}/versions enthält ${disk.versions.map((entry) => entry.versionId).join(', ') || 'keine Fassung'}, der Akt erzeugt ${act.version.versionId}`);
       } else if (own.text !== jsonText(version)) {
-        problems.push(`${file}: ${relative}/versions/${act.version.versionId}.json existiert und weicht vom Akt ab (gespeicherte Fassungen sind unveränderlich)`);
+        // Erst nach den Berichtigungen des Laufs entscheidbar (siehe PlannedVersion.diskText); fehlt eine passende
+        // Berichtigung, meldet runConsolidation die Abweichung.
+        deferredDiskText = own.text;
       }
       const diskEntries = new Set((disk.history.entries as unknown[]).map((entry) => JSON.stringify(canonicalJson(entry))));
       const missingEntries = (history.entries as unknown[]).filter((entry) => !diskEntries.has(JSON.stringify(canonicalJson(entry))));
@@ -442,7 +454,9 @@ async function materializeAct(context: RunContext, loaded: LoadedAct): Promise<{
       meta: disk.meta,
       history: disk.history,
       // Nur die eigene Fassung des Akts gilt als belegt; spätere Fassungen müssen ein Rezept dieses Laufs reproduzieren.
-      versions: new Map(disk.versions.map((entry) => [entry.versionId, { versionId: entry.versionId, raw: entry.raw, text: entry.text, status: 'existing' as const, covered: entry.versionId === act.version.versionId }])),
+      versions: new Map(disk.versions.map((entry) => [entry.versionId, entry.versionId === act.version.versionId && deferredDiskText !== undefined
+        ? { versionId: entry.versionId, raw: version, text: jsonText(version), status: 'existing' as const, covered: true, diskText: deferredDiskText }
+        : { versionId: entry.versionId, raw: entry.raw, text: entry.text, status: 'existing' as const, covered: entry.versionId === act.version.versionId }])),
       diskMetaText: disk.metaText,
       diskHistoryText: disk.historyText,
       metaChanged: false,
@@ -463,7 +477,7 @@ async function materializeAct(context: RunContext, loaded: LoadedAct): Promise<{
     versionSha256: sha256Text(jsonText(version)),
     metaSha256: sha256Text(jsonText(meta)),
     historySha256: sha256Text(jsonText(history)),
-    publication: act.publication.slug,
+    publication: act.publication?.slug ?? null,
     transcribedFrom: act.provenance.transcribedFrom,
     textCheck,
     ...(outcome.textCheckOverride ? { textCheckOverride: outcome.textCheckOverride } : {}),
@@ -511,10 +525,94 @@ function failRecipes(context: RunContext, recipes: readonly LoadedRecipe[], mess
   }
 }
 
+function assertionHolds(state: ConsolidationState, assertion: NonNullable<SimulationRecipe['resultAssertions']>[number]): boolean {
+  if (assertion.scope === 'title') return state.title === assertion.equals;
+  const matches = locateAll(state.body, assertion.target!);
+  if (matches.length !== (assertion.expectedMatches ?? 1)) return false;
+  return matches.every((block) => block[assertion.field ?? 'text'] === assertion.equals);
+}
+
+/**
+ * Deklaratorische Berichtigung (`kind: correction`): berichtigt eine in diesem Lauf erzeugte oder gespeicherte Fassung,
+ * ohne Fassungswechsel. Gilt die Ergebnisprüfung bereits (die Fassung wurde berichtigt gespeichert), werden keine
+ * Operationen angewandt; sonst müssen die Operationen die Ergebnisprüfung erfüllen. Gespeicherte Fassungen bleiben
+ * unveränderlich: Weicht die berichtigte Fassung von der gespeicherten ab, ist das ein Fehler (Freigabe nur über
+ * `data/content-immutability-exceptions.json` mit neuem Lauf).
+ */
+function applyCorrection(context: RunContext, norm: PlannedNorm, target: string, loaded: LoadedRecipe, act: PlannedNorm): void {
+  const { recipe, file } = loaded;
+  const relative = normRelativeDir(context.jurisdiction, target);
+  const fail = (message: string): void => {
+    context.errors.push(`${file}: ${message}`);
+    context.recipeOutcomes.push({ file, amendmentAct: recipe.amendmentAct, target, effectiveDate: recipe.effectiveDate, status: 'error', versionId: recipe.targetVersionId ?? null, detail: message });
+  };
+  const version = norm.versions.get(recipe.targetVersionId!);
+  if (!version) return fail(`Berichtigung: Fassung ${recipe.targetVersionId} ist nicht vorhanden`);
+  if (String(version.raw.simulationValidFrom) !== recipe.effectiveDate) return fail(`Berichtigung darf keinen neuen Geltungsbeginn erzeugen (${version.raw.simulationValidFrom} ≠ ${recipe.effectiveDate})`);
+  let state: ConsolidationState = {
+    title: typeof version.raw.title === 'string' ? version.raw.title : String(norm.meta.title),
+    ...(typeof version.raw.shortTitle === 'string' ? { shortTitle: version.raw.shortTitle } : {}),
+    ...(typeof version.raw.abbr === 'string' ? { abbr: version.raw.abbr } : {}),
+    body: structuredClone(version.raw.body as RawBlock[]),
+  };
+  const assertions = recipe.resultAssertions ?? [];
+  const alreadyCorrect = assertions.every((assertion) => assertionHolds(state, assertion));
+  if (!alreadyCorrect) {
+    if (recipe.operations.length === 0) return fail('Berichtigung: Ergebnisprüfung scheitert und es gibt keine Operationen');
+    try {
+      state = applyPatchRecipe(state, { amendmentAct: recipe.amendmentAct, effectiveDate: recipe.effectiveDate, operations: recipe.operations });
+    } catch (error) {
+      if (!(error instanceof ConsolidationError)) throw error;
+      return fail(`Berichtigung: ${error.message}`);
+    }
+    if (!assertions.every((assertion) => assertionHolds(state, assertion))) return fail('Berichtigung: Ergebnisprüfung nach den Operationen fehlgeschlagen');
+  }
+  if (recipe.metaPatch?.title) {
+    const { expectedOld, value } = recipe.metaPatch.title;
+    if (norm.meta.title !== value) {
+      if (norm.meta.title !== expectedOld) return fail(`Berichtigung: bisheriger Normtitel „${expectedOld}“ nicht gefunden`);
+      if (norm.origin !== 'act') return fail('Berichtigung: der Titel einer Bestandsnorm wird nicht berichtigt (meta.json nur additiv)');
+      setMetaField(norm, 'title', value);
+    }
+  }
+  const note = { label: 'Amtliche Berichtigung', text: `${recipe.amendmentCitation}: ${recipe.changeNote} Die Gültigkeit dieser Fassung beginnt unverändert am ${recipe.effectiveDate}.` };
+  const existingNotes = Array.isArray(version.raw.sourceNotes) ? (version.raw.sourceNotes as Array<Record<string, unknown>>) : [];
+  const notes = existingNotes.some((entry) => entry.label === note.label && entry.text === note.text) ? existingNotes : [...existingNotes, note];
+  const references = uniqueSourceReferences([...((version.raw.sourceReferences as SourceReference[] | undefined) ?? []), ...recipe.sourceReferences]).map((reference) => withDefined(Object.entries(reference)));
+  const entries = Object.entries(version.raw).filter(([key]) => !['title', 'body', 'sourceNotes', 'sourceReferences'].includes(key));
+  const corrected = withDefined([
+    ...entries.filter(([key]) => ['versionId', 'simulationValidFrom', 'simulationValidTo'].includes(key)),
+    ['title', state.title !== norm.meta.title || version.raw.title !== undefined ? state.title : undefined],
+    ...entries.filter(([key]) => !['versionId', 'simulationValidFrom', 'simulationValidTo'].includes(key)),
+    ['sourceReferences', references],
+    ['sourceNotes', notes],
+    ['body', state.body],
+  ]);
+  const text = jsonText(corrected);
+  if (version.status === 'existing' && (version.diskText ?? version.text) !== text) return fail(`${relative}/versions/${version.versionId}.json ist gespeichert und weicht von der Berichtigung ab (gespeicherte Fassungen sind unveränderlich)`);
+  version.raw = corrected;
+  version.text = text;
+  delete version.diskText;
+  ensureHistoryEntry(norm, withDefined([
+    ['date', recipe.correctionPublicationDate],
+    ['type', 'correction'],
+    ['title', recipe.changeNote],
+    ['citation', recipe.amendmentCitation],
+    ['note', 'Deklaratorische Berichtigung der Verkündungsfassung; kein Fassungswechsel.'],
+    ['affectingVersionId', version.versionId],
+    ['relatedNorm', { slug: recipe.amendmentAct }],
+  ]));
+  ensureRelation(norm, { type: 'corrected-by', target: { slug: recipe.amendmentAct }, date: recipe.correctionPublicationDate } as NormRelation);
+  ensureRelation(act, { type: 'corrects', target: { slug: target }, date: recipe.correctionPublicationDate } as NormRelation);
+  context.recipeOutcomes.push({ file, amendmentAct: recipe.amendmentAct, target, effectiveDate: recipe.effectiveDate, status: alreadyCorrect ? 'unchanged' : 'new', versionId: version.versionId, seedVersionId: version.versionId, detail: alreadyCorrect ? 'Berichtigung: Fassung bereits berichtigt gespeichert' : 'Berichtigung angewandt' });
+  context.manifestRecipes.push({ recipe: file, amendmentAct: recipe.amendmentAct, target, effectiveDate: recipe.effectiveDate, kind: 'correction', repealsLaw: false, seedVersionId: version.versionId, seedHash: sha256({ title: state.title, body: version.raw.body }), versionId: version.versionId, versionSha256: sha256Text(text) });
+}
+
 async function consolidateTarget(context: RunContext, target: string, loadedRecipes: readonly LoadedRecipe[]): Promise<void> {
   const { jurisdiction, referenceDate } = context;
   const relative = normRelativeDir(jurisdiction, target);
-  const recipes = [...loadedRecipes].sort((left, right) =>
+  const corrections = loadedRecipes.filter((loaded) => loaded.recipe.kind === 'correction').sort((left, right) => left.recipe.correctionPublicationDate!.localeCompare(right.recipe.correctionPublicationDate!) || left.file.localeCompare(right.file));
+  const recipes = loadedRecipes.filter((loaded) => loaded.recipe.kind !== 'correction').sort((left, right) =>
     left.recipe.effectiveDate.localeCompare(right.recipe.effectiveDate)
     || (left.recipe.sameDayOrder ?? 0) - (right.recipe.sameDayOrder ?? 0)
     || left.file.localeCompare(right.file));
@@ -527,7 +625,7 @@ async function consolidateTarget(context: RunContext, target: string, loadedReci
 
   // Änderungsakte müssen als Norm vorliegen (materialisierter Sim-Akt oder Bestand).
   const acts = new Map<string, PlannedNorm>();
-  for (const loaded of recipes) {
+  for (const loaded of [...recipes, ...corrections]) {
     const actSlug = loaded.recipe.amendmentAct;
     if (actSlug === target) return failRecipes(context, recipes, `${loaded.file}: Änderungsakt und Zielnorm sind identisch`);
     const act = await getNorm(context, actSlug);
@@ -589,6 +687,8 @@ async function consolidateTarget(context: RunContext, target: string, loadedReci
     }
     let state: ConsolidationState = {
       title: typeof seed.raw.title === 'string' ? seed.raw.title : String(norm.meta.title),
+      ...(typeof seed.raw.shortTitle === 'string' ? { shortTitle: seed.raw.shortTitle } : {}),
+      ...(typeof seed.raw.abbr === 'string' ? { abbr: seed.raw.abbr } : {}),
       body: structuredClone(seed.raw.body as RawBlock[]),
     };
     const seedHash = sha256({ title: state.title, body: state.body });
@@ -622,17 +722,22 @@ async function consolidateTarget(context: RunContext, target: string, loadedReci
 
     let versionText: string | null = null;
     if (!repeal) {
+      const last = group.at(-1)!.recipe;
+      const adoptedSnapshot = group.flatMap((loaded) => loaded.recipe.kind === 'adoption' ? loaded.recipe.sourceReferences.filter((reference) => reference.kind === 'official-portal-snapshot') : []);
       const versionRaw = withDefined([
         ['versionId', versionId],
         ['simulationValidFrom', effectiveDate],
         ['simulationValidTo', null],
-        ['title', state.title !== norm.meta.title ? state.title : undefined],
-        ['shortTitle', seed.raw.shortTitle],
-        ['abbr', seed.raw.abbr],
+        ['sourceValidFrom', adoptedSnapshot[0]?.sourceValidFrom],
+        ['sourceValidTo', adoptedSnapshot[0]?.sourceValidTo],
+        ['title', last.resultTitle ?? (state.title !== norm.meta.title ? state.title : undefined)],
+        ['shortTitle', last.resultShortTitle ?? state.shortTitle],
+        ['abbr', last.resultAbbr ?? state.abbr],
         ['summary', seed.raw.summary],
-        ['citation', group.at(-1)!.recipe.resultCitation],
+        ['citation', last.resultCitation],
         ['changeNote', group.map((loaded) => loaded.recipe.changeNote).join(' ')],
         ['sourceReferences', uniqueSourceReferences(group.flatMap((loaded) => loaded.recipe.sourceReferences)).map((reference) => withDefined(Object.entries(reference)))],
+        ['sourceNotes', last.sourceNotes],
         ['body', state.body],
       ]);
       versionText = jsonText(versionRaw);
@@ -650,17 +755,26 @@ async function consolidateTarget(context: RunContext, target: string, loadedReci
     for (const loaded of group) {
       const { recipe } = loaded;
       const act = acts.get(recipe.amendmentAct)!;
+      const adoption = recipe.kind === 'adoption';
       ensureHistoryEntry(norm, withDefined([
         ['date', effectiveDate],
-        ['type', repeal ? 'repeal' : 'amendment'],
+        ['type', repeal ? 'repeal' : adoption ? 'notice' : 'amendment'],
         ['title', recipe.changeNote],
         ['citation', recipe.amendmentCitation],
+        ...(adoption ? [['note', 'Übernommener späterer Quellstand, den der Sim-Akt ausdrücklich als Ausgangsfassung bezeichnet (Adoptionsbeleg).'] as [string, unknown]] : []),
         ['affectingVersionId', repeal ? null : versionId],
         ['relatedNorm', { slug: recipe.amendmentAct }],
       ]));
       const note = recipe.commandCoverage?.length ? recipe.commandCoverage.join('; ') : undefined;
       ensureRelation(norm, withDefined([['type', repeal ? 'repealed-by' : 'amended-by'], ['target', { slug: recipe.amendmentAct }], ['note', note], ['date', effectiveDate]]) as unknown as NormRelation);
       ensureRelation(act, { type: repeal ? 'repeals' : 'amends', target: { slug: target }, date: effectiveDate });
+      for (const contributing of recipe.contributingActs ?? []) {
+        const contributingAct = await getNorm(context, contributing.slug);
+        if (!contributingAct) return failRecipes(context, group, `${loaded.file}: mitwirkender Akt ${contributing.slug} ist nicht im Bestand`);
+        ensureHistoryEntry(norm, withDefined([['date', effectiveDate], ['type', 'amendment'], ['title', contributing.changeNote], ['citation', contributing.citation], ['affectingVersionId', versionId], ['relatedNorm', { slug: contributing.slug }]]));
+        ensureRelation(norm, { type: 'amended-by', target: { slug: contributing.slug }, date: effectiveDate });
+        ensureRelation(contributingAct, { type: 'amends', target: { slug: target }, date: effectiveDate });
+      }
       if (repeal && relationsOf(act.meta).some((relation) => relation.type === 'replaces' && !relation.target.jurisdiction && relation.target.slug === target)) {
         ensureRelation(norm, { type: 'replaced-by', target: { slug: recipe.amendmentAct }, date: effectiveDate });
         if (norm.meta.successor === null || norm.meta.successor === undefined) {
@@ -692,6 +806,8 @@ async function consolidateTarget(context: RunContext, target: string, loadedReci
       });
     }
   }
+
+  for (const loaded of corrections) applyCorrection(context, norm, target, loaded, acts.get(loaded.recipe.amendmentAct)!);
 
   try {
     validatePlannedNorm(norm, jurisdiction);
@@ -775,6 +891,11 @@ export async function runConsolidation(options: ConsolidationOptions): Promise<C
     await consolidateTarget(context, target, group);
   }
 
+  for (const norm of context.planned.values()) {
+    for (const version of norm.versions.values()) {
+      if (version.diskText !== undefined) context.errors.push(`${normRelativeDir(jurisdiction, norm.slug)}/versions/${version.versionId}.json existiert und weicht vom Akt ab (gespeicherte Fassungen sind unveränderlich; keine Berichtigung des Laufs erzeugt den gespeicherten Text)`);
+    }
+  }
   const files = plannedFiles(context);
   for (const file of files) if (file.status === 'conflict') context.errors.push(`${file.path}: Konflikt`);
 

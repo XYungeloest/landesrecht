@@ -3,11 +3,15 @@
 ## Überblick
 
 ```text
-content/norms/<jur>/…  (Git, Source of Truth)
+content/norms/<jur>/…  (Git, Source of Truth für west | nsh | baywue)
         │  scripts/project-d1.ts  →  packages/runtime/projection.ts (deterministischer Plan)
         ▼
-D1 je Jurisdiktion: landesrecht-west | landesrecht-nsh | landesrecht-ost | landesrecht-baywue
-        │  packages/runtime/d1-store.ts (NormStore je Jurisdiktion)
+D1 je Jurisdiktion: landesrecht-west | landesrecht-nsh | landesrecht-baywue      (keine eigene Ost-D1)
+        │  packages/runtime/d1-store.ts (NormStore je Jurisdiktion, Dialekt `landesrecht`)
+        │
+OstRecht Git/Importer → D1 ostrecht-recht (Projektion von OstRecht)               Ost: kein eigener Bestand
+        │  Binding OSTRECHT_RECHT (nur lesend) → packages/runtime/ostrecht-d1-store.ts (Dialekt `ostrecht`,
+        │  Schema-Contract fail closed, Baseline/Stichtag/Suchdokument beim Lesen abgeleitet)
         ▼
 packages/runtime/registry.ts (StoreRegistry: get(jur), search über alle Stores + mergeSearchPages)
         │
@@ -37,8 +41,10 @@ implementieren dieselbe `NormStore`-Schnittstelle (`packages/runtime/src/store.t
 
 Genau ein Register (`jurisdictions.ts`): IDs `west|nsh|ost|baywue`, öffentliche Namen und
 Kurzbezeichnungen, URL-Segmente (`bayern-wuerttemberg`), `baselineDate` (immer
-`SIMULATION_BASELINE_DATE`), Quellportal, Verkündungsblatt, optional `externalSourceOfTruth`
-(nur Ost → OstRecht). Alle anderen Module lesen daraus.
+`SIMULATION_BASELINE_DATE`), Quellportal, Verkündungsblatt, `runtimeSource` (`landesrecht-d1` oder
+`ostrecht-d1`), optional `upstreamSourceOfTruth` (vorgelagertes Quellsystem, nur Ost → OstRecht) und
+`legacySource` (bisheriges Portal für Verweise). Alle anderen Module lesen daraus. Landesrecht ist für Ost
+ausliefernd, OstRecht das vorgelagerte Quellsystem; es gibt bewusst keine zweite kanonische Ost-Datenbank.
 
 ## Zeitmodell
 
@@ -54,7 +60,13 @@ Kurzbezeichnungen, URL-Segmente (`bayern-wuerttemberg`), `baselineDate` (immer
 
 ## Laufzeit und D1-Aufteilung
 
-- Eine D1-Datenbank je Jurisdiktion; Bindings und Datenbanknamen in `bindings.ts`.
+- Eine D1-Datenbank je Jurisdiktion; Bindings und Datenbanknamen in `bindings.ts`. Ost liest zur Laufzeit
+  ausschließlich aus der OstRecht-D1 `ostrecht-recht` (`OSTRECHT_RECHT`, `RUNTIME_D1_BINDINGS`) über die
+  Read-only-Hülle `read-only-d1.ts` (nur SELECT/WITH; keine Migration, kein Batch, keine Projektion). Der
+  D1-Store ist über einen Schema-Dialekt (`d1-dialect.ts`) parametrisiert: `landesrecht` (eigene Projektion)
+  und `ostrecht` (`ostrecht-d1-store.ts`: Baseline-Regel, zeitliche Art aus Intervall und Landesrecht-Stichtag,
+  Suchdokument- und Verkündungsadapter, Relationen aus `law_norm_derived`). Eine eigene Ost-D1 gibt es nicht
+  (`WORKER_D1_BINDINGS` in `bindings.ts`).
 - Die Anwendung nimmt nie an, dass alle Normen in einer Datenbank liegen: jede Seite holt sich den
   Store der Jurisdiktion aus der Registry; die Suche über „alle Länder“ fragt jeden Store bis
   `offset + limit` ab und führt global zusammen (`mergeSearchPages`).
@@ -112,9 +124,9 @@ Implementierungen und klarer Vereinfachung – nicht vorsorglich.
 
 `LegalProvider` trennt internes Modell und externen Lieferanten. Der Resolver bildet je
 Rechtsordnung genau einen Provider ab (Reihenfolge = Priorität): `bund` → FederalProvider
-(`gesetze-sim-internet.de/gesetz.php?g=<abk>`), `ost` → OstRechtProvider (öffentliches OstRecht,
-bis ostdeutsche Normen intern vorliegen), `west|nsh|baywue` → ContentProvider (interne Route mit
-Sprungziel der Vorschrift).
+(`gesetze-sim-internet.de/gesetz.php?g=<abk>`), `west|nsh|baywue|ost` → ContentProvider (interne Route mit
+Sprungziel der Vorschrift; Ost über den OstRecht-D1-Store), danach `ost` → OstRechtProvider als
+Legacy-Auflösung auf OstRecht-Adressen für Verweise, die die Registry nicht kennt.
 
 ## Aus OstRecht übernommen
 

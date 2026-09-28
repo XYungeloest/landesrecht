@@ -28,10 +28,10 @@ export function buildOstRechtNormUrl(siteUrl: string, slug: string, versionId?: 
 
 export function createOstRechtProvider(options: OstRechtProviderOptions = {}): LegalProvider {
   const jurisdiction = getJurisdiction(OSTRECHT_TARGET_JURISDICTION);
-  const siteUrl = options.siteUrl ?? jurisdiction.externalSourceOfTruth?.siteUrl ?? '';
+  const siteUrl = options.siteUrl ?? jurisdiction.upstreamSourceOfTruth?.siteUrl ?? jurisdiction.legacySource?.siteUrl ?? '';
   const storeOptions = options.asOf ? { asOf: options.asOf } : {};
   const store = createFileNormStore(OSTRECHT_TARGET_JURISDICTION, options.records ?? [], storeOptions);
-  const label = jurisdiction.externalSourceOfTruth?.label ?? 'OstRecht';
+  const label = jurisdiction.upstreamSourceOfTruth?.label ?? jurisdiction.legacySource?.label ?? 'OstRecht';
 
   async function resolveSlug(norm: string): Promise<string | null> {
     if (!options.records) return norm.trim().toLowerCase().replace(/[^a-z0-9-]+/g, '-');

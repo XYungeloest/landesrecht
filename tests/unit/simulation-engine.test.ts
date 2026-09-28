@@ -114,7 +114,7 @@ describe('Konsolidierungsengine: Operationen', () => {
     const renamed = apply(state(), operation({ op: 'renameLaw', expectedOld: 'Testgesetz', value: 'Neues Testgesetz' }));
     expect(renamed.title).toBe('Neues Testgesetz');
     expect(apply(renamed, operation({ op: 'renameLaw', expectedOld: 'egal', value: 'Neues Testgesetz' })).title).toBe('Neues Testgesetz');
-    expect(() => apply(state(), operation({ op: 'renameLaw', expectedOld: 'Anderes', value: 'Neu' }))).toThrow(/bisheriger Normtitel wurde nicht gefunden/u);
+    expect(() => apply(state(), operation({ op: 'renameLaw', expectedOld: 'Anderes', value: 'Neu' }))).toThrow(/bisheriger Wert von title wurde nicht gefunden/u);
     expect(() => apply(state(), operation({ op: 'renameLaw', expectedOld: 'Testgesetz', value: 'Neu', expectedMatches: 2 }))).toThrow(/genau ein Titeltreffer/u);
   });
 

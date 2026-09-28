@@ -48,7 +48,8 @@ export interface ManifestAct {
   versionSha256: string;
   metaSha256: string;
   historySha256: string;
-  publication: string;
+  /** Blattausgabe; `null` bei Einzelakt ohne Blattausgabe. */
+  publication: string | null;
   transcribedFrom: string;
   textCheck: ManifestTextCheck;
   textCheckOverride?: string;
@@ -60,6 +61,8 @@ export interface ManifestRecipe {
   target: string;
   effectiveDate: string;
   sameDayOrder?: number;
+  /** `correction`: deklaratorische Berichtigung der Fassung `versionId` (kein Fassungswechsel). */
+  kind?: 'correction';
   repealsLaw: boolean;
   seedVersionId: string;
   seedHash: string;

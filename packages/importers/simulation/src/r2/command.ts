@@ -35,10 +35,10 @@ export function createOAuthTransport(name: 'wrangler' | 'wrangler-api', root: st
 }
 
 /** Das versionierte Inventar; ohne Inventar gibt es nichts zu archivieren (Fehler, kein leerer Lauf). */
-export async function readSourceInventory(root: string): Promise<SourceInventory> {
-  const inventory = await readJsonFile<SourceInventory>(join(root, INVENTORY_PATH));
-  if (!inventory) throw new ArchiveError('guard', `${INVENTORY_PATH} fehlt – zuerst npm run import:simulation:inventory -- --write`);
-  if (inventory.schemaVersion !== INVENTORY_SCHEMA || !Array.isArray(inventory.sources)) throw new ArchiveError('guard', `${INVENTORY_PATH}: Schema ${INVENTORY_SCHEMA} erwartet`);
+export async function readSourceInventory(root: string, inventoryPath: string = INVENTORY_PATH): Promise<SourceInventory> {
+  const inventory = await readJsonFile<SourceInventory>(join(root, inventoryPath));
+  if (!inventory) throw new ArchiveError('guard', `${inventoryPath} fehlt – zuerst npm run import:simulation:inventory -- --write`);
+  if (inventory.schemaVersion !== INVENTORY_SCHEMA || !Array.isArray(inventory.sources)) throw new ArchiveError('guard', `${inventoryPath}: Schema ${INVENTORY_SCHEMA} erwartet`);
   return inventory;
 }
 
@@ -103,6 +103,8 @@ export interface R2SyncCommandOptions {
   limit?: number;
   stagingDir?: string;
   cacheDir?: string;
+  /** Alternatives Inventar (z. B. `data/imports/ostrecht/source-inventory.json` der Ost-Migration); Standard `INVENTORY_PATH`. */
+  inventoryPath?: string;
 }
 
 export interface Io {
@@ -112,7 +114,7 @@ export interface Io {
 
 /** Ablauf des Befehls; der Transport wird nur für `--write` erzeugt (kein Netz sonst). */
 export async function runR2Sync(options: R2SyncCommandOptions, root: string, io: Io, transportFactory: (name: 'wrangler' | 'wrangler-api') => R2Transport = (name) => createOAuthTransport(name, root)): Promise<number> {
-  const inventory = await readSourceInventory(root);
+  const inventory = await readSourceInventory(root, options.inventoryPath);
   const manifest = await readArchiveManifest(root);
   const write = options.write || options.stageOnly;
   const stage = await stageSources({ root, inventory, manifest, write, ...(options.stagingDir ? { stagingDir: options.stagingDir } : {}), ...(options.cacheDir ? { cacheDir: options.cacheDir } : {}), log: io.print });

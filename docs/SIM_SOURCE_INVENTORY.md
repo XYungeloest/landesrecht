@@ -6,18 +6,18 @@ Die Tabellen zeigen die **Vorsortierung** aus Textauszug und Dokumentkopf. Sie i
 
 ## Kennzahlen
 
-- Dateien im Archiv: **123**, davon hashidentische Dubletten 0 → **123 Quellen**
-- Je Land: BayWü 39 · NSH 51 · West 33
-- Medienart: application/pdf 112 · application/vnd.openxmlformats-officedocument.wordprocessingml.document 1 · text/plain 10
-- Textebene: not-applicable 11 · text 112 (`none`/`sparse` = Scan oder Deckblatt, keine OCR)
-- Vorsortierte Dokumentart: gazette 32 · informational 4 · legislative-document 21 · ministerial-gazette 5 · press-release 1 · promulgation-notice 2 · standalone-official-act 54 · unknown 4
-- Werkzeuge: pdftotext version 26.07.0; utf-8; unzip word/document.xml
+- Dateien im Archiv: **132**, davon hashidentische Dubletten 1 → **131 Quellen**
+- Je Land: BayWü 41 · NSH 56 · West 34
+- Medienart: application/octet-stream 2 · application/pdf 118 · application/vnd.openxmlformats-officedocument.wordprocessingml.document 1 · text/plain 10
+- Textebene: none 2 · not-applicable 11 · text 118 (`none`/`sparse` = Scan oder Deckblatt, keine OCR)
+- Vorsortierte Dokumentart: gazette 32 · informational 4 · legislative-document 26 · ministerial-gazette 5 · press-release 1 · promulgation-notice 2 · standalone-official-act 55 · unknown 6
+- Werkzeuge: pdftotext version 26.07.0; utf-8; keine Extraktion; unzip word/document.xml
 
 ## Container-Abgleich
 
-`imports/Archiv.zip`: 123 Einträge (ohne `__MACOSX`/`.DS_Store`). Nur im Zip: keine. Nur im Ordner: keine. Der Zip-Inhalt wird nicht gesondert inventarisiert.
+`imports/Archiv.zip`: 123 Einträge (ohne `__MACOSX`/`.DS_Store`). Nur im Zip: keine. Nur im Ordner: `Landesverfassung_Bayern-Württemberg (2).pdf`, `Staatsverfassung_Bayern_Württemberg.pdf`, `ds_2_10.pdf`, `ds_2_11.pdf`, `ds_2_12.pdf`, `ds_2_13.pdf`, `ds_2_9.pdf`, `gvbl.wiki`. Der Zip-Inhalt wird nicht gesondert inventarisiert.
 
-## Land Westdeutschland (33 Quellen)
+## Land Westdeutschland (34 Quellen)
 
 | Datei | SHA-256 | Typ | S. | Textebene | Titel (erkannt) | Dokumentdatum | Ausgabedatum | Organ | Blatt/Serie | Nummer | Dokumentart (vorsortiert) |
 | --- | --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -30,6 +30,7 @@ Die Tabellen zeigen die **Vorsortierung** aus Textauszug und Dokumentkopf. Sie i
 | west/Gesetz-und-Verordnungsblatt-fur-Westdeutschland-22-April-2024-Nr-3.pdf | `99b86ee678e1` | pdf | 88 | text | Gesetz- und Verordnungsblatt | 2024-04-22 | – | Ministerpräsident | Gesetz- und Verordnungsblatt | – | gazette |
 | west/Gesetz-und-Verordnungsblatt-fur-Westdeutschland-NR2.pdf | `733754ca940e` | pdf | 4 | text | Gesetz- und Verordnungsblatt | 2024-04-02 | – | Ministerpräsident | Gesetz- und Verordnungsblatt | – | gazette |
 | west/Gesetz-und-Verordnungsblatt-fur-Westdeutschland.pdf | `02136c0428cb` | pdf | 19 | text | Gesetz- und Verordnungsblatt | 2024-02-23 | – | Staatskanzlei des Landes | Gesetz- und Verordnungsblatt | – | gazette |
+| west/gvbl.wiki | `0ba6809a4d25` | octet-stream | – | none | – | – | – | – | – | – | unknown |
 | west/Landesregierung-Verordnung-LMKG-001.pdf | `b0a0a32e714c` | pdf | 1 | text | 03. März 2024 | 2024-03-03 | – | Ministerpräsident | – | – | standalone-official-act |
 | west/MBl. WD 2025 Nr. 2.pdf | `cf579176ca03` | pdf | 13 | text | Ministerialblatt | 2025-11-10 | 2025-11-10 | Landesregierung | Ministerialblatt | Nr. 2 | ministerial-gazette |
 | west/MBl. WD 2025 Nr. 3.pdf | `8fb3fd044f5d` | pdf | 8 | text | Ministerialblatt | 2025-12-19 | 2025-12-19 | Landesregierung | Ministerialblatt | Nr. 3 | ministerial-gazette |
@@ -55,7 +56,7 @@ Die Tabellen zeigen die **Vorsortierung** aus Textauszug und Dokumentkopf. Sie i
 | west/WestGVBl-I-3-2026.pdf | `320380ce5e59` | pdf | 4 | text | Gesetzes- und Verordnungsblatt | 2026-06-29 | – | Staatskanzlei des Landes Westdeutschland | Gesetzes- und Verordnungsblatt | Nr. 3 | gazette |
 | west/WestMB-I-2-2026 (1) (3) (2).pdf | `f9a4aa548e35` | pdf | 5 | text | Gesetzes und Verordnungsblattes eine hoheitliche Tätigkeit ist. | 2026-07-13 | 2026-07-13 | Landesregierung | Gesetzes und Verordnungsblattes eine hoheitliche T | Nr. 1 | gazette |
 
-## Land Niedersachsen-Holstein (51 Quellen)
+## Land Niedersachsen-Holstein (56 Quellen)
 
 | Datei | SHA-256 | Typ | S. | Textebene | Titel (erkannt) | Dokumentdatum | Ausgabedatum | Organ | Blatt/Serie | Nummer | Dokumentart (vorsortiert) |
 | --- | --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -78,6 +79,11 @@ Die Tabellen zeigen die **Vorsortierung** aus Textauszug und Dokumentkopf. Sie i
 | nsh/Drucksache 03_12-Entwurf Änderung LaplaG.pdf | `e01458e8e818` | pdf | 5 | text | Landtag Niedersachsen-Holstein Drucksache 03/12 | 2024-11-05 | – | Ministerpräsident des Landes Niedersachsen-Holstei | Landtag Niedersachsen-Holstein Drucksache 03/12 | Drs. 03/12 | legislative-document |
 | nsh/Drucksache 03_16.PDF | `e468f35c4162` | pdf | 5 | text | Landtag Niedersachsen-Holstein Drucksache 03/16 | 2024-11-07 | – | Landtag Niedersachsen-Holstein Drucksache 03/16 | Landtag Niedersachsen-Holstein Drucksache 03/16 | Drs. 03/16 | legislative-document |
 | nsh/Drucksache 2_19 Landesprogramm _Feuerwehrgerätehäuser 2024_ 11072024 (2).pdf | `13e7fdb7f4f8` | pdf | 5 | text | Landtag Niedersachsen-Holstein Drucksache 02/19 | 2024-07-08 | – | Ministerpräsident des Landes Niedersachsen-Holstei | Drucksache 02/19 | Drs. 02/19 | legislative-document |
+| nsh/ds_2_10.pdf | `7f3a541aac78` | pdf | 6 | text | Landtag Niedersachsen-Holstein Drucksache 02/10 | 2024-05-25 | – | Ministerpräsident | Drucksache 02/10 | Drs. 02/10 | legislative-document |
+| nsh/ds_2_11.pdf | `8e0bb4b077f9` | pdf | 6 | text | Landtag Niedersachsen-Holstein Drucksache 02/11 | 2024-05-25 | – | Ministerpräsident | Drucksache 02/11 | Drs. 02/11 | legislative-document |
+| nsh/ds_2_12.pdf | `fcb11f5cd1e2` | pdf | 6 | text | Landtag Niedersachsen-Holstein Drucksache 01/12 | 2024-05-25 | – | Ministerpräsident | Drucksache 01/12 | Drs. 01/12 | legislative-document |
+| nsh/ds_2_13.pdf | `0167bf62de94` | pdf | 6 | text | Landtag Niedersachsen-Holstein Drucksache 02/13 | 2024-05-25 | – | Ministerpräsident | Drucksache 02/13 | Drs. 02/13 | legislative-document |
+| nsh/ds_2_9.pdf | `6acd3afff0a1` | pdf | 4 | text | Landtag Niedersachsen-Holstein Drucksache 01/09 | 2024-05-26 | – | Ministerpräsident | Drucksache 01/09 | Drs. 01/09 | legislative-document |
 | nsh/Einheitstarif-Verordnung_amtliches_Layout.pdf | `2db4528345ef` | pdf | 2 | text | Verordnung zur Festlegung eines Einheitstarifs für den | 2025-11-17 | – | – | – | – | standalone-official-act |
 | nsh/Entwurf Gesetz zur kostenfreien Bereitstellung von Menstruationsprodukten an öffentlichen Orten_ Drs. 04_08.pdf | `8e74401f9bfb` | pdf | 5 | text | Landtag Niedersachsen-Holstein Drucksache 04/08 | 2025-03-14 | – | Landtag Niedersachsen-Holstein Drucksache 04/08 | Landtag Niedersachsen-Holstein Drucksache 04/08 | Drs. 04/08 | legislative-document |
 | nsh/Erlass_uber_die_Auszeichnungen_des_Landes_Niedersachsen-Holstein.pdf | `7efbb382e3b3` | pdf | 14 | text | Die Landesregierung Der Ministerpräsident | 2024-03-16 | – | Ministerpräsident | – | – | standalone-official-act |
@@ -111,7 +117,7 @@ Die Tabellen zeigen die **Vorsortierung** aus Textauszug und Dokumentkopf. Sie i
 | nsh/Verordnung_zur_einheitlichen_Regelung_des_Verfassungsschutzwesens_im_Lande.pdf | `fd20ed2b847a` | pdf | 24 | text | NIEDERSÄCHSISCH-HOLSTEINISCHE STAATSKANZLEI | 2024-02-26 | – | Ministerpräsident | – | – | standalone-official-act |
 | nsh/WGFV.docx.pdf | `c5a69b933353` | pdf | 3 | text | Die Landesregierung | 2026-02-08 | – | Landesregierung | – | – | standalone-official-act |
 
-## Freistaat Bayern-Württemberg (39 Quellen)
+## Freistaat Bayern-Württemberg (41 Quellen)
 
 | Datei | SHA-256 | Typ | S. | Textebene | Titel (erkannt) | Dokumentdatum | Ausgabedatum | Organ | Blatt/Serie | Nummer | Dokumentart (vorsortiert) |
 | --- | --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -136,6 +142,8 @@ Die Tabellen zeigen die **Vorsortierung** aus Textauszug und Dokumentkopf. Sie i
 | baywü/GVBL_Lehrmann_Teil_Eins_2025.pdf | `fcdbe54e7a38` | pdf | 5 | text | Gesetzes- und Verordnungsblatt | 2025-01-30 | – | Staatsministerium der Justiz und für Verbrauchersc | Gesetzes- und Verordnungsblatt | Nr. 1 | gazette |
 | baywü/GVBL_Lehrmann_Teil_Zwei_2025 (1).pdf | `706185d0d69e` | pdf | 15 | text | Gesetzes- und Verordnungsblatt | 2025-03-12 | – | Staatsministerium des Innern | Gesetzes- und Verordnungsblatt | Nr. 2 | gazette |
 | baywü/GVBL_SUED_MUR_01_24 (1).pdf | `f77e2cb76c37` | pdf | 16 | text | Gesetzes- und Verordnungsblatt | 2024-09-16 | – | Staatsministerium der Justiz und für Verbrauchersc | Gesetzes- und Verordnungsblatt | Nr. 1 | gazette |
+| baywü/gvbl.wiki | `319d93ca0191` | octet-stream | – | none | – | – | – | – | – | – | unknown |
+| baywü/Landesverfassung_Bayern-Württemberg (2).pdf (+1 Dublette) | `70f670de35fb` | pdf | 28 | text | ‭Staatsverfassung Bayern-Württembergs‬ ‭Süddeutscher Landtag‬ | 2025-01-12 | – | Landtag | – | – | standalone-official-act |
 | baywü/mitteilung041024.txt | `97a82a9fdb01` | text/plain | – | not-applicable | 4. Oktober 2024: | 1980-07-18 | – | – | – | Nr. 29 | informational |
 | baywü/mitteilung070524.txt | `7a20ec7b6142` | text/plain | – | not-applicable | 7. Mai 2024: | 1980-07-18 | – | Ministerpräsident | – | Nr. 29 | informational |
 | baywü/mitteilung130425.txt | `a6b93967804d` | text/plain | – | not-applicable | 13. April 2025: | 2025-04-13 | – | Ministerpräsidentin | – | – | standalone-official-act |

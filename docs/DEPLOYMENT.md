@@ -29,17 +29,54 @@ Keine Secrets im Repository (`.env` ist ignoriert, `.env.example` dokumentiert d
 ```sh
 npx wrangler d1 create landesrecht-west
 npx wrangler d1 create landesrecht-nsh
-npx wrangler d1 create landesrecht-ost
 npx wrangler d1 create landesrecht-baywue
 npx wrangler r2 bucket create landesrecht-quellen
-# Staging analog mit Suffix -staging
+# Staging analog mit Suffix -staging; Ost braucht keine eigene Datenbank (OstRecht-D1, siehe unten)
 ```
 
 Die zurückgegebenen `database_id`-Werte ersetzen die Platzhalter in `apps/web/wrangler.jsonc`
-(Muster `00000000-0000-4000-8000-0000000000NN`). Bindings: `LANDESRECHT_WEST|NSH|OST|BAYWUE`,
-`LANDESRECHT_QUELLEN` (`packages/runtime/src/bindings.ts`). Die Worker-Environments erben
+(Muster `00000000-0000-4000-8000-0000000000NN`). Bindings: `LANDESRECHT_WEST|NSH|BAYWUE`,
+`OSTRECHT_RECHT`, `LANDESRECHT_QUELLEN` (`packages/runtime/src/bindings.ts`, `WORKER_D1_BINDINGS`). Die Worker-Environments erben
 Bindings nicht; `env.staging` deklariert eigene Datenbanken und einen eigenen Bucket
 (`tests/unit/content-and-config.test.ts` prüft das).
+
+### Ost: OstRecht-D1 als einzige Laufzeitquelle (`OSTRECHT_RECHT`)
+
+Datenfluss: `OstRecht Git/Importer → D1 ostrecht-recht (Sync von OstRecht) → Landesrecht Runtime-Adapter
+(packages/runtime/src/ostrecht-d1-store.ts) → Landesrecht Web/API`. Das Binding `OSTRECHT_RECHT` zeigt auf die
+bestehende OstRecht-Datenbank `ostrecht-recht` (Produktion `2491f200-de20-4a45-b028-d00a4fd57840`, Staging
+`ostrecht-recht-staging` `ba9c0e0b-ba18-4aec-b28e-fe65c8b69674`) desselben Cloudflare-Kontos; es wurde keine neue
+Ressource angelegt. Regeln:
+
+- Nur lesen: der Worker spricht das Binding ausschließlich über `createReadOnlyD1` an (einzelne SELECT/WITH-
+  Anweisungen; `INSERT/UPDATE/DELETE/CREATE/…`, Batches und Migrationen sind unerreichbar). Landesrecht spielt gegen
+  `ostrecht-recht` nie Migrationen ein, projiziert nichts hinein und synchronisiert kein Ost-R2.
+- Es gibt kein Binding `LANDESRECHT_OST`. Die frühere leere Datenbank `landesrecht-ost`
+  (`fae13440-7670-4f50-b14e-d4aeafad40b9`) war am 2026-09-28 (≈ 20:00 UTC) im Konto nicht mehr vorhanden
+  (`wrangler d1 list`/`d1 info`: not found; die Wrangler-Logs dieses Projekts enthalten keinen Löschaufruf) und
+  ließ den bis dahin deployten Worker mit `/health` 503 antworten. Sie wird nicht neu angelegt: Ost hat keine
+  eigene Landesrecht-Datenbank, die Registry liest ausschließlich `OSTRECHT_RECHT`
+  (`tests/unit/ostrecht-contract.test.ts`, `tests/unit/content-and-config.test.ts`).
+- Fail closed: vor dem ersten Zugriff prüft der Adapter den Schema-Contract (`ostrecht-contract.ts`: Tabellen und
+  Spalten, JSON-Grundstruktur, FTS5, `law_runtime_meta` mit `sync_state = complete`, Fingerabdruck, `corpus_hash`).
+  Bei Abweichung oder laufendem OstRecht-Sync antworten Ost-Seiten und -API mit dem Konfigurationsfehler (HTTP 500),
+  nie mit halbgültigen Daten; die Prüfung wird je Binding fünf Minuten zwischengespeichert (Fehlschlag: 15 s).
+- Stichtage: OstRecht führt einen eigenen redaktionellen Stichtag. Landesrecht leitet geltend/historisch/künftig
+  beim Lesen aus Intervall und eigenem Stichtag ab; OstRecht indexiert Sucheinheiten nur für die an seinem Stichtag
+  geltende Fassung (frühere Fassungen sind über Fassungsseiten erreichbar, aber nicht volltextsuchbar). Liegt der
+  Landesrecht-Stichtag hinter einer künftigen OstRecht-Fassung, bevor OstRecht neu synchronisiert, fehlt dieser
+  Fassung der Suchindex – das Drift-Audit meldet es (`currentVersionsWithoutUnits`).
+- Diagnose: `/api/v1/jurisdictions` liefert für Ost `runtimeSource: ostrecht-d1` und `runtime` (Sync-Zustand,
+  Sync-Zeitpunkt, `upstreamCorpusHash`, `projectionFingerprint`); `/health` prüft für `OSTRECHT_RECHT` zusätzlich
+  `sync_state = complete` (`incomplete` → 503).
+- Drift-/Freshness-Audit: `npm run audit:ost-drift` (Remote über die Wrangler-Anmeldung, nur Leseanweisungen),
+  `-- --sqlite <seed.sqlite|fixture.sql>` lokal, `-- --ostrecht-root ../staatsregierung` zusätzlich Stichprobe
+  D1 ↔ OstRecht-Git (nur lesen), `--write` schreibt den Bericht nach `data/audits/ostrecht/`. Geprüft werden
+  Contract, `sync_state`, Identität, Zähler, Store-Stichprobe, Suchparität und Verkündungen.
+- Lokal ohne Worker: `OSTRECHT_D1_SQLITE=<seed.sqlite> npm run dev` liest Ost aus einem lokal erzeugten OstRecht-
+  Seed (`node scripts/d1-runtime-seed.mjs build --out …` im OstRecht-Repository, nur lesend); ohne die Variable
+  bleibt Ost lokal leer. Die Test-Fixture `tests/fixtures/ostrecht/ostrecht-recht.sql` (Auszug, kein Bestand) wird
+  mit `npm run fixture:ostrecht -- --seed <seed.sqlite>` erzeugt.
 
 ## D1-Schema und Projektion
 
@@ -140,12 +177,14 @@ Nach jeder Änderung unter `apps/web/` ist ein Redeploy nötig (`npm run build &
 
 ### Healthcheck und Fehlermodus
 
-- `GET /health` (nicht cachebar): `{ status: ok|error, worker: ok, storage: d1|file, d1: { LANDESRECHT_WEST: ok|missing|error|timeout, … }, checkedAt }`
-  – je D1-Binding ein `SELECT 1` mit 3-s-Frist; HTTP 200 bei `ok`, sonst 503. Kein R2-Zugriff, keine Bestands-
-  zahlen, keine Umgebungswerte (`apps/web/src/lib/runtime/health.ts`, Test `tests/unit/web-runtime-health.test.ts`).
-  Für Monitoring: 200 + `status: ok` erwarten.
-- Konfigurationsfehler: Fehlt im Worker ein D1-Binding (oder ist es keine D1-Datenbank), wirft `getStoreRegistry()`
-  einen `RuntimeConfigurationError` (fail-closed, keine Teilkonfiguration, kein Rückfall auf Dateien). Die
+- `GET /health` (nicht cachebar): `{ status: ok|error, worker: ok, storage: d1|file, d1: { LANDESRECHT_WEST: ok|missing|error|timeout, OSTRECHT_RECHT: ok|incomplete|…, … }, checkedAt }`
+  – je Laufzeit-D1-Binding ein `SELECT 1` mit 3-s-Frist (Ost: `OSTRECHT_RECHT` mit `sync_state = complete`, sonst
+  `incomplete`); HTTP 200 bei `ok`, sonst 503. Kein R2-Zugriff, keine Bestandszahlen, keine Umgebungswerte
+  (`apps/web/src/lib/runtime/health.ts`, Test `tests/unit/web-runtime-health.test.ts`). Für Monitoring: 200 +
+  `status: ok` erwarten.
+- Konfigurationsfehler: Fehlt im Worker ein Laufzeit-D1-Binding (oder ist es keine D1-Datenbank), wirft
+  `getStoreRegistry()` einen `RuntimeConfigurationError`; ein verletzter Schema-Contract der OstRecht-D1
+  (`OstRechtContractError`) wird gleich behandelt (fail-closed, keine Teilkonfiguration, kein Rückfall auf Dateien). Die
   Middleware `apps/web/src/middleware.ts` beantwortet ihn mit HTTP 500 `text/plain`, `cache-control: no-store` und
   interner Meldung (Binding-Namen, Hinweis auf `wrangler.jsonc`/`--env`) und schreibt eine Zeile ins Worker-Log –
   nie eine stille leere Website (`apps/web/src/lib/runtime/configuration.ts`, Test

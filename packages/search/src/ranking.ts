@@ -139,7 +139,8 @@ export function evaluateDocument(document: SearchDocument, plan: SearchQueryPlan
     rank = [1, titleMatch ? 0 : 1, subjectExact ? 0 : subjectMatch ? 1 : 2];
   } else if (titleMatch) {
     matchKind = 'title';
-    rank = [2];
+    // Titeltreffer einer Änderungsvorschrift („Gesetz zur Änderung der Gemeindeordnung“) hinter die Stammnorm.
+    rank = [2, document.type === 'aenderungsvorschrift' ? 1 : 0];
   } else if (referenceUnit) {
     matchKind = 'reference';
     rank = [3];

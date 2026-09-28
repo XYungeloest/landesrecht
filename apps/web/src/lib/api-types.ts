@@ -32,7 +32,14 @@ export interface ApiJurisdiction {
   baselineDate: string;
   url: string;
   normCount: number;
-  externalSourceOfTruth?: { system: string; label: string; siteUrl: string };
+  /** Laufzeitquelle des Bestands: eigene Projektion oder OstRecht-D1 (nur Ost). */
+  runtimeSource: 'landesrecht-d1' | 'ostrecht-d1';
+  /** Vorgelagertes Quellsystem, das den Bestand führt (nur Ost: OstRecht). */
+  upstreamSourceOfTruth?: { system: string; label: string; siteUrl: string };
+  /** Bisheriges Rechtsportal (Legacy-Adressen als Verweis), z. B. OstRecht für Ost. */
+  legacySource?: { system: string; label: string; siteUrl: string };
+  /** Diagnose der Laufzeitquelle (nur `ostrecht-d1`): Sync-Zustand und Identität der vorgelagerten Projektion. */
+  runtime?: { syncState: string | null; syncedAt: string | null; upstreamCorpusHash: string | null; projectionFingerprint: string | null };
 }
 
 export interface ApiJurisdictionsResponse {

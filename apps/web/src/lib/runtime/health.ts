@@ -5,11 +5,12 @@
  * (Node-Prerendering, lokaler Dateistore) wird `storage: file` gemeldet. Testbar mit Fake-Umgebung
  * (tests/unit/web-runtime-health.test.ts).
  */
-import { JURISDICTION_IDS } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
+import { JURISDICTION_IDS, JURISDICTIONS } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { OSTRECHT_D1_BINDING, RUNTIME_D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
 import type { D1Database } from '@landesrecht/runtime/d1-types.ts';
+import { OSTRECHT_SYNC_STATE_COMPLETE } from '@landesrecht/runtime/ostrecht-contract.ts';
 
-export type BindingHealth = 'ok' | 'missing' | 'error' | 'timeout';
+export type BindingHealth = 'ok' | 'missing' | 'error' | 'timeout' | 'incomplete';
 
 export interface HealthReport {
   status: 'ok' | 'error';
@@ -27,7 +28,10 @@ export interface HealthOptions {
 
 export const HEALTH_TIMEOUT_MS = 3_000;
 
-async function probeBinding(binding: unknown, timeoutMs: number): Promise<BindingHealth> {
+/** OstRecht-D1: zusätzlich muss der vorgelagerte Sync vollständig sein (`sync_state = complete`), sonst `incomplete`. */
+const OSTRECHT_PROBE = "SELECT CASE WHEN (SELECT value FROM law_runtime_meta WHERE key = 'sync_state') = ? THEN 1 ELSE 2 END AS ok";
+
+async function probeBinding(binding: unknown, timeoutMs: number, kind: 'landesrecht' | 'ostrecht' = 'landesrecht'): Promise<BindingHealth> {
   if (!binding || typeof (binding as D1Database).prepare !== 'function') return 'missing';
   let timer: ReturnType<typeof setTimeout> | undefined;
   const deadline = new Promise<'timeout'>((resolve) => {
@@ -35,8 +39,10 @@ async function probeBinding(binding: unknown, timeoutMs: number): Promise<Bindin
   });
   try {
     const query = Promise.resolve()
-      .then(() => (binding as D1Database).prepare('SELECT 1 AS ok').first<{ ok: number }>())
-      .then((row): BindingHealth => (row && Number(row.ok) === 1 ? 'ok' : 'error'), (): BindingHealth => 'error');
+      .then(() => (kind === 'ostrecht'
+        ? (binding as D1Database).prepare(OSTRECHT_PROBE).bind(OSTRECHT_SYNC_STATE_COMPLETE).first<{ ok: number }>()
+        : (binding as D1Database).prepare('SELECT 1 AS ok').first<{ ok: number }>()))
+      .then((row): BindingHealth => (row && Number(row.ok) === 1 ? 'ok' : row && Number(row.ok) === 2 ? 'incomplete' : 'error'), (): BindingHealth => 'error');
     return await Promise.race([query, deadline]);
   } finally {
     if (timer) clearTimeout(timer);
@@ -48,7 +54,9 @@ export async function checkHealth(env: Record<string, unknown> | null, options: 
   const timeoutMs = options.timeoutMs ?? HEALTH_TIMEOUT_MS;
   const d1: Record<string, BindingHealth> = {};
   if (env) {
-    const results = await Promise.all(JURISDICTION_IDS.map(async (jurisdiction) => [D1_BINDINGS[jurisdiction], await probeBinding(env[D1_BINDINGS[jurisdiction]], timeoutMs)] as const));
+    const bindings = [...new Set(JURISDICTION_IDS.map((jurisdiction) => RUNTIME_D1_BINDINGS[jurisdiction]))];
+    const kindOf = (binding: string): 'landesrecht' | 'ostrecht' => (binding === OSTRECHT_D1_BINDING && JURISDICTIONS.ost.runtimeSource === 'ostrecht-d1' ? 'ostrecht' : 'landesrecht');
+    const results = await Promise.all(bindings.map(async (binding) => [binding, await probeBinding(env[binding], timeoutMs, kindOf(binding))] as const));
     for (const [binding, health] of results) d1[binding] = health;
   }
   const healthy = env === null || Object.values(d1).every((health) => health === 'ok');

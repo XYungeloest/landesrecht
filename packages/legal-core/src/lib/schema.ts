@@ -160,7 +160,12 @@ export const SOURCE_ROLES = [
   'amendment-evidence',
   'envelope-snapshot',
   'provider-sync',
+  /** Sim-Beleg, dass ein Sim-Akt einen späteren realen Quellstand ausdrücklich als Ausgangsfassung übernimmt (adoptedSources). */
+  'adoption-evidence',
 ] as const;
+
+/** Kennungssysteme der Simulation selbst (kein reales Rechtsportal); eigene Sim-Normen dürfen sie tragen. */
+export const SIMULATION_IDENTIFIER_SYSTEMS = ['ostrecht', 'simulation'] as const;
 
 export const MEDIA_TYPES = [
   'text/html',
@@ -208,6 +213,8 @@ export const NORM_RELATION_TYPES = [
   'contains',
   'refers-to',
   'related',
+  'corrects',
+  'corrected-by',
 ] as const;
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
@@ -347,6 +354,14 @@ export interface NormMeta {
   relations: NormRelation[];
   externalIdentifiers: ExternalIdentifier[];
   sourceReferences: SourceReference[];
+  /** Förderbereich einer Förderrichtlinie (übernommene Systematik, z. B. OstRecht). */
+  fundingArea?: string;
+  /** Datum der letzten Änderung laut Quelle, soweit die Quelle es getrennt führt. */
+  lastAmendedDate?: string;
+  /** Vertragsdaten eines Staatsvertrags/Verwaltungsabkommens (Parteien, Unterzeichnung, Wirksamkeit) – frei strukturiert, quellgetreu. */
+  agreementDetails?: Record<string, unknown>;
+  /** Redaktionell entschiedene Quellkonflikte (je Eintrag mindestens `id`), quellgetreu übernommen. */
+  editorialResolutions?: Array<{ id: string; [key: string]: unknown }>;
   /**
    * Nur für Testbestände: `synthetic-fixture` kennzeichnet synthetische Normen (tests/fixtures/content/).
    * Produktionsbestand, Projektion und Build weisen solche Normen zurück.
@@ -454,6 +469,10 @@ export interface Publication {
   regime?: string;
   /** Ausgabeort. */
   place?: string;
+  /** Herausgeber wie gedruckt. */
+  publisher?: string;
+  /** Weitere gedruckte Bezeichnungen derselben Ausgabe (ursprüngliche/alternative Nummerierung). */
+  alternativeDesignations?: string[];
   year: number;
   issue: string;
   date: string;
@@ -730,6 +749,15 @@ export function parseNormMeta(value: unknown, path = 'meta.json'): NormMeta {
     relations: expectOptionalArray(object.relations, `${path}.relations`).map((entry, index) => parseNormRelation(entry, `${path}.relations[${index}]`)),
     externalIdentifiers,
     sourceReferences: parseSourceReferences(object.sourceReferences, `${path}.sourceReferences`),
+    fundingArea: expectOptionalString(object.fundingArea, `${path}.fundingArea`),
+    lastAmendedDate: expectOptionalIsoDate(object.lastAmendedDate, `${path}.lastAmendedDate`),
+    agreementDetails: object.agreementDetails === undefined ? undefined : expectObject(object.agreementDetails, `${path}.agreementDetails`),
+    editorialResolutions: object.editorialResolutions === undefined
+      ? undefined
+      : expectArray(object.editorialResolutions, `${path}.editorialResolutions`).map((entry, index) => {
+        const resolution = expectObject(entry, `${path}.editorialResolutions[${index}]`);
+        return { ...resolution, id: expectString(resolution.id, `${path}.editorialResolutions[${index}].id`) };
+      }),
     dataset: object.dataset === undefined ? undefined : expectEnumValue(object.dataset, `${path}.dataset`, ['synthetic-fixture'] as const),
   };
 }
@@ -981,6 +1009,9 @@ export function parsePublication(value: unknown, path = 'publication.json'): Pub
   if (regime !== undefined) publication.regime = regime;
   const place = expectOptionalString(object.place, `${path}.place`);
   if (place !== undefined) publication.place = place;
+  const publisher = expectOptionalString(object.publisher, `${path}.publisher`);
+  if (publisher !== undefined) publication.publisher = publisher;
+  if (object.alternativeDesignations !== undefined) publication.alternativeDesignations = expectStringArray(object.alternativeDesignations, `${path}.alternativeDesignations`);
   return publication;
 }
 

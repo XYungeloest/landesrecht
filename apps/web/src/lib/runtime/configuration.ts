@@ -5,7 +5,8 @@
  * Logik mit einer Fake-Umgebung testbar ist (tests/unit/web-runtime-configuration.test.ts).
  */
 import { JURISDICTION_IDS } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
+import { RUNTIME_D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
+import { isOstRechtContractError } from '@landesrecht/runtime/ostrecht-contract.ts';
 import { missingBindings } from '@landesrecht/runtime/registry.ts';
 
 export class RuntimeConfigurationError extends Error {
@@ -18,14 +19,15 @@ export class RuntimeConfigurationError extends Error {
   }
 }
 
-export function isRuntimeConfigurationError(error: unknown): error is RuntimeConfigurationError {
-  return error instanceof RuntimeConfigurationError || (error instanceof Error && error.name === 'RuntimeConfigurationError');
+/** Konfigurationsfehler des Workers oder verletzter Schema-Contract der OstRecht-D1: beides fail-closed (500). */
+export function isRuntimeConfigurationError(error: unknown): error is RuntimeConfigurationError | Error {
+  return error instanceof RuntimeConfigurationError || (error instanceof Error && error.name === 'RuntimeConfigurationError') || isOstRechtContractError(error);
 }
 
-/** Alle D1-Bindings (eine je Jurisdiktion) müssen vorhanden sein und `prepare` anbieten; sonst Konfigurationsfehler. */
+/** Alle Laufzeit-D1-Bindings (eines je Jurisdiktion; Ost: OstRecht-D1) müssen vorhanden sein und `prepare` anbieten. */
 export function assertCompleteBindings(env: Record<string, unknown>): void {
   const missing = missingBindings(env);
-  const malformed = JURISDICTION_IDS.map((jurisdiction) => D1_BINDINGS[jurisdiction]).filter((binding) => env[binding] && typeof (env[binding] as { prepare?: unknown }).prepare !== 'function');
+  const malformed = [...new Set(JURISDICTION_IDS.map((jurisdiction) => RUNTIME_D1_BINDINGS[jurisdiction]))].filter((binding) => env[binding] && typeof (env[binding] as { prepare?: unknown }).prepare !== 'function');
   const problems = [...missing, ...malformed];
   if (problems.length === 0) return;
   const all = missing.length === JURISDICTION_IDS.length;
@@ -36,7 +38,7 @@ export function assertCompleteBindings(env: Record<string, unknown>): void {
 }
 
 /** Interne 500-Antwort für Konfigurationsfehler: Klartext, nicht cachebar, ohne Umgebungswerte. */
-export function configurationErrorResponse(error: RuntimeConfigurationError): Response {
+export function configurationErrorResponse(error: Error): Response {
   const body = ['Konfigurationsfehler des Landesrechtsportals (HTTP 500).', '', error.message, '', 'Diese Meldung ist für den Betrieb bestimmt; die Website ist erst nach Korrektur der Worker-Konfiguration erreichbar.'].join('\n');
   return new Response(body, { status: 500, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
 }
