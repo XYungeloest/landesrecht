@@ -1,0 +1,94 @@
+---
+export const prerender = false;
+
+import { jurisdictionGenitive } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { formatDate, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { comparePublicationsNewestFirst, getPublicationLabel, hasNumberedIssue, publicationEntryPages } from '@landesrecht/legal-core/lib/publications.ts';
+import { getJurisdictionUrl, getPublicationsUrl, getPublicationUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import SourceList from '../../../components/SourceList.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { jurisdictionFromParam } from '../../../lib/norm-view.ts';
+import { entryLinkKey, resolveEntryLinks } from '../../../lib/publication-view.ts';
+import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../../lib/runtime/context.ts';
+
+// Eine Ausgabe (Vorbild OstRecht apps/recht/src/pages/verkuendungen/[slug].astro): Einträge mit Seiten,
+// Dokumentart und Verknüpfung zur Norm bzw. entstandenen Fassung, dazu die Quellenbelege der Ausgabe mit
+// SHA-256 und Archivobjekt – ohne Bilddaten, der Bucket bleibt privat.
+const resolved = jurisdictionFromParam(Astro.params.jurisdiction);
+if (!resolved || !Astro.params.slug) return Astro.rewrite('/404');
+const { id, jurisdiction } = resolved;
+const registry = await getStoreRegistry();
+if (!registry.has(id)) return Astro.rewrite('/404');
+const store = registry.get(id);
+const publication = await store.getPublication(Astro.params.slug);
+if (!publication) return Astro.rewrite('/404');
+const [links, all] = await Promise.all([resolveEntryLinks(store, id, [publication]), store.listPublications()]);
+const label = getPublicationLabel(publication);
+// Vorherige und nächste Ausgabe desselben Blatts.
+const siblings = all.filter((entry) => entry.gazette === publication.gazette).sort(comparePublicationsNewestFirst);
+const index = siblings.findIndex((entry) => entry.slug === publication.slug);
+const next = index > 0 ? siblings[index - 1] : undefined;
+const previous = index >= 0 && index < siblings.length - 1 ? siblings[index + 1] : undefined;
+// Seitenumfang der Ausgabe aus den Einträgen: erste Seite und, wo eine Spanne angegeben ist, deren Ende.
+const pages = publication.entries.flatMap((entry) => {
+  const span = /(\d+)\s*[–-]\s*(\d+)/u.exec(entry.pages ?? '');
+  return [entry.startPage, span ? Number(span[1]) : Number.parseInt(entry.pages ?? '', 10), span ? Number(span[2]) : undefined].filter((page): page is number => page !== undefined && Number.isFinite(page));
+});
+Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
+---
+<BaseLayout title={`${label} (${jurisdiction.shortName})`} description={`${publication.title} vom ${formatDate(publication.date)}: Verkündungen mit Fundstellen und verlinkten Fassungen.`} canonical={getPublicationUrl(id, publication.slug)}>
+  <nav class="breadcrumbs" aria-label="Brotkrumen"><ol><li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li><li><a href={getJurisdictionUrl(id)}>{jurisdiction.name}</a></li><li><a href={getPublicationsUrl(id)}>Verkündungen</a></li><li>{label}</li></ol></nav>
+  <header class="norm-head">
+    <span class="norm-band norm-band--current">VERKÜNDUNG</span>
+    <h1>{publication.title}</h1>
+    <p class="norm-head__short">{label} · {publication.seriesTitle ?? publication.gazette} · {jurisdiction.name} ({jurisdiction.shortName})</p>
+    <dl class="facts norm-head__facts">
+      <dt>Blatt</dt><dd>{publication.gazette}{publication.seriesTitle && ` – ${publication.seriesTitle}`}</dd>
+      {publication.regime && <><dt>Bezeichnung zur Zeit der Ausgabe</dt><dd>{publication.regime}</dd></>}
+      <dt>Ausgabedatum</dt><dd><time datetime={publication.date}>{formatDate(publication.date)}</time></dd>
+      <dt>Jahrgang und Nummer</dt><dd>{publication.year}{hasNumberedIssue(publication) ? ` Nr. ${publication.issue}` : ` (${publication.issue})`}</dd>
+      {publication.place && <><dt>Ausgabeort</dt><dd>{publication.place}</dd></>}
+      {pages.length > 0 && <><dt>Seiten</dt><dd>{Math.min(...pages)}{pages.length > 1 && ` – ${Math.max(...pages)}`}</dd></>}
+      <dt>Zitieren</dt><dd>{label}</dd>
+    </dl>
+    {publication.regime && <p class="norm-head__note">Die Ausgabe erschien unter einer früheren Bezeichnung des Landes; sie gehört heute zum Rechtsbestand des {jurisdictionGenitive(jurisdiction)}.</p>}
+  </header>
+  <p>
+    {previous && <a class="button-link" href={getPublicationUrl(id, previous.slug)} rel="prev">Vorherige Ausgabe ({getPublicationLabel(previous)})</a>}
+    {' '}
+    {next && <a class="button-link" href={getPublicationUrl(id, next.slug)} rel="next">Nächste Ausgabe ({getPublicationLabel(next)})</a>}
+  </p>
+  <section aria-labelledby="inhalt-heading">
+    <h2 id="inhalt-heading">Inhalt der Ausgabe ({publication.entries.length})</h2>
+    {publication.entries.length === 0 ? <p class="muted">Keine Einträge.</p> : (
+      <div class="norm-table-wrap" tabindex="0" role="region" aria-label="Einträge der Ausgabe">
+        <table>
+          <caption class="visually-hidden">Einträge dieser Ausgabe mit Seite, Gegenstand, Dokumentart und Verknüpfung zur Norm</caption>
+          <thead><tr><th scope="col">Seite</th><th scope="col">Eintrag</th><th scope="col">Dokumentart</th><th scope="col">Norm im Portal</th></tr></thead>
+          <tbody>
+            {publication.entries.map((entry, position) => {
+              const link = links.get(entryLinkKey(entry));
+              return (
+                <tr id={`eintrag-${position + 1}`}>
+                  <td>{publicationEntryPages(entry) ?? '–'}</td>
+                  <td>
+                    <strong>{entry.title}</strong>
+                    <p class="muted">{entry.citation}{entry.documentDate && ` · vom ${formatDate(entry.documentDate)}`}</p>
+                  </td>
+                  <td>{entry.type ? typeLabel(entry.type) : '–'}</td>
+                  <td>{link ? <><a href={link.href}>{link.label}</a>{link.historyUrl && <> · <a href={link.historyUrl}>{VOCABULARY.sections.history}</a></>}</> : <span class="muted">nicht im Bestand</span>}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    )}
+    <p class="muted">Verknüpfte Vorschriften führen zur geltenden oder zur durch diese Ausgabe entstandenen Fassung.</p>
+  </section>
+  <section aria-labelledby="quellen-heading">
+    <h2 id="quellen-heading">Quellenbelege der Ausgabe</h2>
+    <SourceList sources={publication.sourceReferences} />
+    <p class="muted">Belege nennen Archivobjekt und SHA-256 der unveränderten Quelle; das Quellenarchiv ist nicht öffentlich.</p>
+  </section>
+</BaseLayout>

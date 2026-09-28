@@ -16,6 +16,8 @@ import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 
 export type StepKind =
   | 'teil'
+  /** Lauf 12: „Kapitel 1“ (GVBl. 2024 S. 630: Abschnitte werden Kapitel). */
+  | 'kapitel'
   | 'abschnitt'
   | 'unterabschnitt'
   | 'anlage'
@@ -51,6 +53,7 @@ export type LocationPath = LocationStep[];
 const RANK: Record<StepKind, number> = {
   teil: 0,
   anlage: 0,
+  kapitel: 0.5,
   abschnitt: 1,
   unterabschnitt: 2,
   paragraph: 3,
@@ -79,6 +82,25 @@ const ORDINALS: Readonly<Record<string, string>> = {
 };
 
 const ROMAN: Readonly<Record<string, string>> = { I: '1', II: '2', III: '3', IV: '4', V: '5', VI: '6', VII: '7', VIII: '8', IX: '9', X: '10', XI: '11', XII: '12' };
+const ROMAN_OF: Readonly<Record<string, string>> = Object.fromEntries(Object.entries(ROMAN).map(([roman, arabic]) => [arabic, roman]));
+
+/** Lauf 12: Bezeichnung eines Gliederungsteils mit Ordnungswort, wie sie im Gesetz steht („Erster Teil“, „Zweiter Abschnitt“). */
+export const ORDINAL_STRONG: readonly string[] = ['Erster', 'Zweiter', 'Dritter', 'Vierter', 'Fünfter', 'Sechster', 'Siebter', 'Achter', 'Neunter', 'Zehnter'];
+const DIVISION_WORD: Readonly<Partial<Record<StepKind, string>>> = { teil: 'Teil', kapitel: 'Kapitel', abschnitt: 'Abschnitt', unterabschnitt: 'Unterabschnitt' };
+export const ordinalDesignation = (kind: StepKind, value: string): string | undefined => {
+  const word = DIVISION_WORD[kind];
+  const ordinal = ORDINAL_STRONG[Number(value) - 1];
+  return word && /^\d+$/u.test(value) && ordinal ? `${ordinal} ${word}` : undefined;
+};
+/** Schreibweisen eines Gliederungsteils im Bestand: „Teil 1“, „Erster Teil“, „1. Teil“, „Teil I“, „I. Teil“. */
+function divisionLabelMatches(kind: StepKind, label: string, value: string): boolean {
+  const word = DIVISION_WORD[kind];
+  if (!word) return false;
+  const arabic = ROMAN[value] ?? value;
+  const roman = ROMAN_OF[arabic];
+  const ordinal = ORDINAL_STRONG[Number(arabic) - 1];
+  return label === `${word} ${value}` || label === `${word} ${arabic}` || (roman !== undefined && (label === `${word} ${roman}` || label === `${roman}. ${word}`)) || label === `${arabic}. ${word}` || (ordinal !== undefined && label === `${ordinal} ${word}`);
+}
 
 const VALUE = String.raw`\d+[a-z]?(?:\.\d+[a-z]?)*\.?|[IVX]+|[A-Z]|[a-z]{1,3}`;
 
@@ -112,6 +134,7 @@ function tokenize(input: string): Token[] | undefined {
     // „Spiegelsprich“: Satzfehler der Quelle (BayMBl. 2025 Nr. 278), nur eine Lesart.
     [/^(?:Spiegelstrichen|Spiegelstrichs|Spiegelstrich|Spiegelsprich)(?![\p{L}])\s*/u, 'spiegelstrich'],
     [/^(?:Unterabschnitts|Unterabschnitt)(?![\p{L}])\s*/u, 'unterabschnitt'],
+    [/^(?:Kapitels|Kapiteln|Kapitel)(?![\p{L}])\s*/u, 'kapitel'],
     [/^(?:Abschnitts|Abschnitt)(?![\p{L}])\s*/u, 'abschnitt'],
     [/^(?:Teilen|Teiles|Teile|Teils|Teil)(?![\p{L}])\s*/u, 'teil'],
     [/^(?:Anlagen|Anlage)(?![\p{L}])\s*/u, 'anlage'],
@@ -121,6 +144,13 @@ function tokenize(input: string): Token[] | undefined {
   if (vorspannFirst) return [{ kind: 'vorspann', value: '' }, { kind: 'satz', value: vorspannFirst[1]! }];
   while (rest !== '') {
     let match: RegExpExecArray | null;
+    // Lauf 12: „des ersten Teils“, „im Zweiten Abschnitt“ – Ordnungswort vor dem Gliederungswort (GVBl. 2025 S. 699, 2024 S. 630).
+    if ((match = /^(?:im\s+|in\s+dem\s+|dem\s+|der\s+|den\s+|des\s+)?(ersten|zweiten|dritten|vierten|fünften|sechsten|siebten|achten|neunten|zehnten|erste|zweite|dritte|vierte|fünfte|sechste|siebte|achte|neunte|zehnte|erster|zweiter|dritter|vierter|fünfter|sechster|siebter|achter|neunter|zehnter)\s+(Teil|Kapitel|Abschnitt|Unterabschnitt)(?:s|es|e|en|n)?(?![\p{L}])\s*/iu.exec(rest))) {
+      const kind = ({ teil: 'teil', kapitel: 'kapitel', abschnitt: 'abschnitt', unterabschnitt: 'unterabschnitt' } as Record<string, StepKind>)[match[2]!.toLowerCase()]!;
+      tokens.push({ kind, value: ORDINALS[match[1]!.toLowerCase()]! });
+      rest = rest.slice(match[0].length);
+      continue;
+    }
     // „Im Wortlaut vor Buchst. a“ = Satzteil vor Buchst. a; „Im Wortlaut“ allein = der Text des Glieds (keine Stufe).
     if ((match = /^(?:dem\s+)?Wortlaut\s+vor\s+/u.exec(rest))) {
       rest = `Satzteil vor ${rest.slice(match[0].length)}`;
@@ -339,7 +369,7 @@ export function parseLocation(input: string): LocationPath[] | undefined {
   // „Teil 1 Abschnitt 6 Unterabschnitt 2 der Anlage“: Die Anlage im Genitiv ist das äußerste Glied.
   for (const path of paths) {
     const at = path.findIndex((step) => step.kind === 'anlage');
-    if (at > 0 && path.slice(0, at).every((step) => step.kind === 'teil' || step.kind === 'abschnitt' || step.kind === 'unterabschnitt' || step.kind === 'nummer')) path.unshift(...path.splice(at, 1));
+    if (at > 0 && path.slice(0, at).every((step) => step.kind === 'teil' || step.kind === 'kapitel' || step.kind === 'abschnitt' || step.kind === 'unterabschnitt' || step.kind === 'nummer')) path.unshift(...path.splice(at, 1));
   }
   return paths.length > 0 ? paths : undefined;
 }
@@ -361,6 +391,7 @@ export const formatPath = (path: LocationPath): string =>
             case 'dreifachbuchstabe': return `Dreifachbuchst. ${step.value}`;
             case 'spiegelstrich': return `Spiegelstrich ${step.value}`;
             case 'teil': return `Teil ${step.value}`;
+            case 'kapitel': return `Kapitel ${step.value}`;
             case 'abschnitt': return `Abschnitt ${step.value}`;
             case 'unterabschnitt': return `Unterabschnitt ${step.value}`;
             case 'anlage': return step.value === '' ? 'Anlage' : `Anlage ${step.value}`;
@@ -441,11 +472,10 @@ function labelMatches(step: LocationStep, block: NormBodyBlock): boolean {
     case 'dreifachbuchstabe':
       return label === `${value})`;
     case 'teil':
-      return label === `Teil ${value}` || label === `Teil ${arabic}`;
+    case 'kapitel':
     case 'abschnitt':
-      return label === `Abschnitt ${value}` || label === `Abschnitt ${arabic}`;
     case 'unterabschnitt':
-      return label === `Unterabschnitt ${value}` || label === `Unterabschnitt ${arabic}`;
+      return divisionLabelMatches(step.kind, label, value);
     case 'anlage':
       if (value === '') return label === 'Anlage';
       return label === `Anlage ${value}` || label === `Anlage ${arabic}`;
@@ -845,9 +875,12 @@ export function relabel(existing: string | undefined, step: LocationStep, value:
     case 'dreifachbuchstabe':
       return label.endsWith(')') ? `${value})` : `${value}.`;
     case 'teil':
+    case 'kapitel':
     case 'abschnitt':
     case 'unterabschnitt':
     case 'anlage': {
+      // Nur die Schreibweise „Wort Wert“ ist mit neuem Wert fortzuschreiben; „Erster Teil“, „1. Teil“, „I. Abschnitt“ nicht.
+      if (!/^(?:Teil|Kapitel|Abschnitt|Unterabschnitt|Anlage)(?:\s|$)/u.test(label)) return undefined;
       const prefix = label.replace(/\s+\S+$/u, '');
       return `${prefix} ${value}`;
     }

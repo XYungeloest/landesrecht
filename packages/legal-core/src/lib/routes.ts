@@ -6,6 +6,8 @@
  *   /<land>/norm/<slug>/                       geltende Fassung (dynamischer Link)
  *   /<land>/norm/<slug>/version/<versionId>/   unveränderliche Fassung
  *   /<land>/norm/<slug>/daten/ | /historie/ | /vergleich/ | /quellen/
+ *   /<land>/verkuendungen/                     Verkündungsblatt-Ausgaben der Simulation (jüngste zuerst)
+ *   /<land>/verkuendungen/<slug>/              eine Ausgabe mit ihren Einträgen und Quellenbelegen
  *   /assets/<land>/<sha256>.<endung>           Asset einer normativen Abbildung (inhaltsadressiert, unveränderlich)
  *
  * `<land>` ist das öffentliche URL-Segment der Jurisdiktion (`bayern-wuerttemberg`, nicht `baywue`).
@@ -83,6 +85,24 @@ export function getApiNormUrl(jurisdiction: JurisdictionId, slug: string): strin
 
 export function getApiNormVersionsUrl(jurisdiction: JurisdictionId, slug: string): string {
   return `${getApiNormUrl(jurisdiction, slug)}/versions`;
+}
+
+/** Verkündungsblatt-Ausgaben einer Jurisdiktion (Übersicht). */
+export function getPublicationsUrl(jurisdiction: JurisdictionId): string {
+  return `/${segment(jurisdiction)}/verkuendungen/`;
+}
+
+/** Eine Ausgabe; kollidierende Nummern sind verschiedene Slugs und damit verschiedene Adressen. */
+export function getPublicationUrl(jurisdiction: JurisdictionId, slug: string): string {
+  return `${getPublicationsUrl(jurisdiction)}${slug}/`;
+}
+
+export function getApiPublicationsUrl(jurisdiction: JurisdictionId): string {
+  return `${PORTAL_PATHS.api}/publications/${jurisdiction}`;
+}
+
+export function getApiPublicationUrl(jurisdiction: JurisdictionId, slug: string): string {
+  return `${getApiPublicationsUrl(jurisdiction)}/${slug}`;
 }
 
 export function getApiSearchUrl(): string {

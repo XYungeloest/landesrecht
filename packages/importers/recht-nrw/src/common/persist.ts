@@ -12,6 +12,7 @@ import { readdir, rename, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import type { NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
+import { inspectBaselineLock, storedBaselineEquals } from '@landesrecht/importer-common/baseline-lock.ts';
 import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 
 import { readJsonFile, writeFileAtomic, writeJsonAtomic } from './atomic.ts';
@@ -65,9 +66,13 @@ export async function writeInitialNorm(writer: FileWriter, record: NormRecord, b
   const directory = normsDirectory(writer.root);
   const normDir = join(directory, record.meta.slug);
   const existingVersions = await readdir(join(normDir, 'versions')).catch(() => [] as string[]);
-  const foreignVersions = existingVersions.filter((file) => file !== `${baseline}.json`);
-  if (foreignVersions.length > 0) {
-    return { severity: 'error', code: 'existing-versions', message: `Für ${record.meta.slug} liegen bereits weitere Fassungen vor (${foreignVersions.join(', ')}); der Initialimport überschreibt nichts` };
+  const lock = await inspectBaselineLock(normDir, baseline);
+  if (lock.locked) {
+    // Baseline-Lock: Hat die Simulation die Norm fortgeschrieben (Folgefassungen, Aufhebung, Beziehungen), ist ihre
+    // Ausgangsfassung eingefroren. Ergibt der Import byteidentisch dieselbe Ausgangsfassung, ist die Norm unverändert
+    // (kein Befund, nichts geschrieben – auch meta.json/history.json nicht, dort stehen additive Sim-Ergänzungen).
+    if (await storedBaselineEquals(normDir, baseline, record.versions[0])) return null;
+    return { severity: 'error', code: 'existing-versions', message: `Für ${record.meta.slug} liegt eine Sim-Fortschreibung vor (${lock.reasons.join('; ')}); der Initialimport überschreibt nichts` };
   }
   // Bulkmodus: Normen des Beispielkorpus (versionierte Rohquellen unter sources/recht-nrw) werden nie ersetzt.
   if (options.protectVersionedSources && existingVersions.includes(`${baseline}.json`)) {
@@ -104,9 +109,8 @@ export async function writeInitialNorm(writer: FileWriter, record: NormRecord, b
 export async function depublishInitialNorm(writer: FileWriter, slug: string, baseline: string): Promise<ImportFinding | null> {
   const directory = normsDirectory(writer.root);
   const normDir = join(directory, slug);
-  const existingVersions = await readdir(join(normDir, 'versions')).catch(() => [] as string[]);
-  const foreignVersions = existingVersions.filter((file) => file !== `${baseline}.json`);
-  if (foreignVersions.length > 0) return { severity: 'error', code: 'existing-versions', message: `Für ${slug} liegen weitere Fassungen vor (${foreignVersions.join(', ')}); die Depublikation der Ausgangsfassung entfernt nichts` };
+  const lock = await inspectBaselineLock(normDir, baseline);
+  if (lock.locked) return { severity: 'error', code: 'existing-versions', message: `Für ${slug} liegt eine Sim-Fortschreibung vor (${lock.reasons.join('; ')}); die Depublikation der Ausgangsfassung entfernt nichts` };
   const exists = await readdir(normDir).then(() => true, () => false);
   if (!exists) return null;
   const token = `${process.pid}-${randomBytes(4).toString('hex')}`;
@@ -148,6 +152,22 @@ export async function recoverInterruptedNormWrites(root: string): Promise<string
 export async function listExistingSlugs(root: string): Promise<Set<string>> {
   const entries = await readdir(normsDirectory(root), { withFileTypes: true }).catch(() => []);
   return new Set(entries.filter((entry) => entry.isDirectory() && !entry.name.startsWith('.')).map((entry) => entry.name));
+}
+
+/**
+ * Normen der Simulation im Bestand des Landes: ohne Kennung des Quellportals und ohne Ausgangsfassung zum
+ * Stichtag (`versions/<baseline>.json`) – sie haben keinen Manifesteintrag und zählen nicht als „Inhalt ohne
+ * Manifest“. Für die Slug-Vergabe bleiben sie in `listExistingSlugs` (Kollisionen vermeiden).
+ */
+export async function listSimulationSlugs(root: string, baseline: string, system = 'recht-nrw'): Promise<Set<string>> {
+  const result = new Set<string>();
+  for (const slug of await listExistingSlugs(root)) {
+    const meta = await readJsonFile<{ externalIdentifiers?: Array<{ system?: string }> }>(join(normsDirectory(root), slug, 'meta.json')).catch(() => undefined);
+    if (!meta || (meta.externalIdentifiers ?? []).some((identifier) => identifier.system === system)) continue;
+    const versions = await readdir(join(normsDirectory(root), slug, 'versions')).catch(() => [] as string[]);
+    if (versions.length > 0 && !versions.includes(`${baseline}.json`)) result.add(slug);
+  }
+  return result;
 }
 
 export function reviewStatusFor(queue: ReviewQueue, sourceIdentity: string): ReviewStatus {

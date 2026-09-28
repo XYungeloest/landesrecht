@@ -11,7 +11,7 @@ Nordrhein-Westfalen → Land Westdeutschland (`docs/RECHT_NRW_IMPORT.md`,
 | --- | --- |
 | Quellland (Provenienz, nie transformiert) | Schleswig-Holstein (`SOURCE_STATE`) |
 | Zieljurisdiktion | `nsh` – „Land Niedersachsen-Holstein“, Kurzform „NSH“, Verkündungsblatt „GVOBl. NSH“ |
-| Transformerversion | `juris-sh-transformer/1.2.0` (`TRANSFORMER_VERSION` in `transform/rules.ts`); 1.1.0 (Run 7): Abkürzungsregel für bekannte Normabkürzungen, Schutz historischer Eigennamen; 1.2.0 (Run 8): Kürzel in der Mitte, amtliche Kurzbezeichnungen aus Titeln, Fundstellen ohne Blattnamen, weitere Aktenzeichenformen |
+| Transformerversion | `juris-sh-transformer/1.3.0` (`TRANSFORMER_VERSION` in `transform/rules.ts`); 1.1.0 (Run 7): Abkürzungsregel für bekannte Normabkürzungen, Schutz historischer Eigennamen; 1.2.0 (Run 8): Kürzel in der Mitte, amtliche Kurzbezeichnungen aus Titeln, Fundstellen ohne Blattnamen, weitere Aktenzeichenformen; 1.3.0 (Run 9): Erlassorgane gemeinsamer Verordnungen, Namensvarianten desselben Organs, Normgeber des juris-Kopfs als Entscheid zwischen Formelorganen |
 | Reportschema | `juris-sh-transformation-report/1` |
 | Institutionen-Zuordnung | `data/imports/juris-sh/institution-mapping.json` (`juris-sh-institution-mapping/1`) |
 | Tests | `tests/unit/juris-sh-transform.test.ts` |
@@ -190,7 +190,26 @@ abgeleitet:
 
 Unpersönliche Formeln („Aufgrund des § 5 wird verordnet:“) benennen kein Organ; Unterschriften
 belegen die Ausfertigung, nicht den Erlass. Fehlt die Formel oder widersprechen sich Formeln, bleibt
-das Organ leer (`not-available` bzw. Befund `organ-formula-conflict`). Übergeleitet wird ein Organ
+das Organ leer (`not-available` bzw. Befund `organ-formula-conflict`).
+
+Mehrere Formeln führen nur in drei belegten Fällen zu einem Organ (1.3.0, Run 9; Report `organs.resolution`):
+
+* **Gemeinsame Verordnung** (`joint-enactment`): Jede Formel weist ihrem Organ Vorschriften zu
+  („verordnet der Minister für Natur und Umwelt die folgenden §§ 1 bis 8 …; verordnet der Minister für
+  Ernährung, Landwirtschaft, Forsten und Fischerei den folgenden § 5 …“, auch „verordnen das Ministerium A und
+  das Ministerium B im Rahmen ihrer jeweiligen Zuständigkeit“). Erlassorgan sind alle genannten Organe in
+  Reihenfolge der Formeln („A und B“); Befund (info) `organ-joint-enactment`.
+* **Dasselbe Organ in Varianten** (`same-organ`): Zusätze hinter dem Namen (Zuständigkeitsvorbehalt „als
+  zuständige Stelle nach § 46“, Ermächtigung „auf der Grundlage von § 35“, Geltungsbereich, zugewiesene
+  Vorschriften), der Landeszusatz „des Landes Schleswig-Holstein“, Kommata und das Kopfwort
+  Minister/Ministerin/Ministerium (dasselbe Ressort als Amt und als Behörde) unterscheiden kein Organ
+  (`organCore`, `organKey`). Genannt wird die erste Formel der Quelle, ohne Zusätze.
+* **Normgeber** (`normgeber`): Verwaltungsvorschriften mit Bekanntmachungen mehrerer Ressorts über die Zeit
+  (Ursprungserlass, Änderungs- und Ergänzungsbekanntmachungen). Nennt der juris-Kopf „Normgeber“ genau eines
+  der Formelorgane, ist es das Erlassorgan; Befund (info) `organ-normgeber`. Der Normgeber ersetzt nie eine
+  Formel und entscheidet nie zwischen Organen, die keine Formel nennt.
+
+Übergeleitet wird ein Organ
 nur bei einem Verfassungsorgan (dann nur die Landesbezeichnung) oder bei einem `map`-Eintrag der
 Zuordnung; sonst bleibt `enactingBody` leer, `originEnactingBody` erhalten und es entsteht der
 nicht blockierende Befund `enacting-body-mapping-required`.

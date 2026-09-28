@@ -10,9 +10,10 @@ import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { readJsonFile } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
+import { isSimulationSourceKind } from '@landesrecht/legal-core/lib/schema.ts';
 
 import { ACCESS_CONSTRAINT_DOC, JURIS_SH_ACCESS_POLICY } from '../access/policy.ts';
-import { IMPORT_DATA_DIR, TARGET_JURISDICTION } from '../common/constants.ts';
+import { BASELINE_DATE, IMPORT_DATA_DIR, TARGET_JURISDICTION } from '../common/constants.ts';
 import { readManifest, type ImportManifest } from '../common/manifest.ts';
 import { RECONSTRUCTION_QUEUE_PATH, SLUG_REGISTRY_PATH } from '../common/paths.ts';
 import { readReviewQueue, type ReviewQueue } from '../common/review.ts';
@@ -38,8 +39,16 @@ export interface AdapterSnapshot {
   sample?: SampleReport;
   corpus?: CorpusState;
   corpusInventory?: InventoryReport;
-  /** Normverzeichnisse unter content/norms/nsh. */
+  /** Normverzeichnisse unter content/norms/nsh (einschließlich Sim-Normen). */
   contentSlugs: string[];
+  /**
+   * Eigene Normen der Simulationsrechtsfortschreibung unter content/norms/nsh: kein Manifesteintrag, keine Kennung
+   * `juris-sh`, ausschließlich Sim-Belege (`simulation-…`) in Metadaten und Fassungen. Sie gehören nicht zum
+   * juris-Bestand und zählen im Abgleich Bestand ↔ Manifest getrennt.
+   */
+  simulationSlugs?: string[];
+  /** Dateien der Simulation unter content/norms/nsh: Sim-Normen und Sim-Folgefassungen gesperrter juris-Normen. */
+  simulationFiles?: number;
   /** Menschliche Freigabe der Quellenrechte (optional). */
   sourceRightsApproval?: { decision: 'approved' | 'rejected'; decidedAt?: string; decidedBy?: string; reason?: string };
   manifest: ImportManifest;
@@ -48,6 +57,43 @@ export interface AdapterSnapshot {
   contentFiles: number;
   slugRegistryPresent: boolean;
   accessDoc?: string;
+}
+
+/**
+ * Normverzeichnisse unter `content/norms/nsh`, getrennt nach juris-Bestand und Sim-Normen. Eine Sim-Norm trägt in
+ * `meta.json` keine externe Kennung `juris-sh`, und alle Belege (`sourceReferences` der Metadaten und aller Fassungen)
+ * sind Sim-Belege (`simulation-…`, `isSimulationSourceKind`). Alles andere gilt als juris-Bestand (und braucht einen Manifesteintrag).
+ */
+export async function classifyContentDirectories(root: string): Promise<{ contentSlugs: string[]; simulationSlugs: string[]; simulationFiles: number }> {
+  const directory = join(root, CONTENT_DIR);
+  const contentSlugs = (await readdir(directory, { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isDirectory() && !entry.name.startsWith('.')).map((entry) => entry.name).sort();
+  const simulationSlugs: string[] = [];
+  let simulationFiles = 0;
+  const references = (value: unknown): Array<{ kind?: unknown }> => (value && typeof value === 'object' && Array.isArray((value as { sourceReferences?: unknown }).sourceReferences) ? ((value as { sourceReferences: Array<{ kind?: unknown }> }).sourceReferences) : []);
+  // Rohdaten aus JSON: die Belegart wird als Zeichenkette gegen die Sim-Belegarten geprüft (`isSimulationSourceKind`, dieselbe
+  // Definition, die `isSimulationSourceReference` in legal-core/lib/provenance.ts verwendet).
+  const simulationOnly = (list: Array<{ kind?: unknown }>): boolean => list.every((reference) => typeof reference.kind === 'string' && isSimulationSourceKind(reference.kind));
+  for (const slug of contentSlugs) {
+    const meta = await readJsonFile<{ externalIdentifiers?: Array<{ system?: string }>; sourceReferences?: unknown }>(join(directory, slug, 'meta.json')).catch(() => undefined);
+    if (!meta || (meta.externalIdentifiers ?? []).some((identifier) => identifier.system === 'juris-sh')) {
+      // juris-Norm mit Sim-Folgefassungen (Baseline-Lock): Jede Fassungsdatei neben der Ausgangsfassung stammt aus der
+      // Simulation und zählt nicht zu den drei Dateien des juris-Bestands.
+      const versionFiles = (await readdir(join(directory, slug, 'versions')).catch(() => [] as string[])).filter((file) => file.endsWith('.json') && file !== `${BASELINE_DATE}.json`);
+      simulationFiles += versionFiles.length;
+      continue;
+    }
+    if (!simulationOnly(references(meta))) continue;
+    const versionFiles = (await readdir(join(directory, slug, 'versions')).catch(() => [] as string[])).filter((file) => file.endsWith('.json'));
+    let allSimulation = versionFiles.length > 0;
+    for (const file of versionFiles) {
+      const version = await readJsonFile<unknown>(join(directory, slug, 'versions', file)).catch(() => undefined);
+      if (!version || !simulationOnly(references(version))) allSimulation = false;
+    }
+    if (!allSimulation) continue;
+    simulationSlugs.push(slug);
+    simulationFiles += await countFiles(join(directory, slug));
+  }
+  return { contentSlugs, simulationSlugs, simulationFiles };
 }
 
 async function countFiles(directory: string): Promise<number> {
@@ -90,7 +136,7 @@ export async function readSnapshot(root: string): Promise<AdapterSnapshot> {
   const corpus = await readCorpusState(root);
   const corpusInventory = await readJsonFile<InventoryReport>(join(root, INVENTORY_JSON_PATH));
   const sourceRightsApproval = await readJsonFile<NonNullable<AdapterSnapshot['sourceRightsApproval']>>(join(root, 'data/imports/juris-sh/source-rights-approval.json'));
-  const contentSlugs = (await readdir(join(root, CONTENT_DIR), { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isDirectory() && !entry.name.startsWith('.')).map((entry) => entry.name).sort();
+  const { contentSlugs, simulationSlugs, simulationFiles } = await classifyContentDirectories(root);
   const accessDoc = await readText(join(root, ACCESS_CONSTRAINT_DOC));
   return {
     enumeration,
@@ -102,6 +148,8 @@ export async function readSnapshot(root: string): Promise<AdapterSnapshot> {
     ...(Object.keys(corpus.documents).length > 0 ? { corpus } : {}),
     ...(corpusInventory ? { corpusInventory } : {}),
     contentSlugs,
+    simulationSlugs,
+    simulationFiles,
     ...(sourceRightsApproval ? { sourceRightsApproval } : {}),
     manifest: await readManifest(root),
     review: await readReviewQueue(root),
@@ -591,9 +639,11 @@ export function evaluateReadiness(snapshot: AdapterSnapshot, options: { forBulkW
     const label = 'Bestand content/norms/nsh deckt sich mit den übernommenen Manifesteinträgen';
     const imported = new Set(snapshot.manifest.entries.filter((entry) => entry.importStatus === 'imported' || entry.importStatus === 'imported-with-warnings').map((entry) => entry.targetSlug));
     const content = new Set(snapshot.contentSlugs);
-    const orphan = [...content].filter((slug) => !imported.has(slug));
+    // Sim-Normen (eigene Normen der Simulationsrechtsfortschreibung) haben keinen Manifesteintrag – kein Fehler.
+    const simulation = new Set(snapshot.simulationSlugs ?? []);
+    const orphan = [...content].filter((slug) => !imported.has(slug) && !simulation.has(slug));
     const missing = [...imported].filter((slug) => !content.has(slug));
-    checks.push(orphan.length > 0 || missing.length > 0 ? fail(id, label, `ohne Manifest: ${orphan.slice(0, 5).join(', ') || '–'} (${orphan.length}); ohne Verzeichnis: ${missing.slice(0, 5).join(', ') || '–'} (${missing.length})`, true) : pass(id, label, `${content.size} Normen, ${snapshot.manifest.entries.length} Manifesteinträge, ${snapshot.review.items.length} Review-Fälle`));
+    checks.push(orphan.length > 0 || missing.length > 0 ? fail(id, label, `ohne Manifest: ${orphan.slice(0, 5).join(', ') || '–'} (${orphan.length}); ohne Verzeichnis: ${missing.slice(0, 5).join(', ') || '–'} (${missing.length}); Sim-Normen ${simulation.size}`, true) : pass(id, label, `${content.size - simulation.size} Normen, ${snapshot.manifest.entries.length} Manifesteinträge, ${snapshot.review.items.length} Review-Fälle, Sim-Normen ${simulation.size}`));
   }
 
   void options;

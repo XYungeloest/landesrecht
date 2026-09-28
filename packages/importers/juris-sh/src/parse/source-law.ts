@@ -91,6 +91,9 @@ export type EditionBaseline =
 export function classifyEdition(parsed: ParsedJurisPdf, isVwv: boolean, baseline = BASELINE_DATE): EditionBaseline {
   const validFrom = isoDate(parsed.header['Gültig ab']);
   const validTo = isoDate(parsed.header['Gültig bis']);
+  // juris kennzeichnet noch nicht in Kraft getretene Vorschriften (Staatsverträge, Abkommen vor der Ratifikation) mit
+  // „Gültig ab: zukünftig“ – am Stichtag galten sie nicht.
+  if (/^zukünftig$/iu.test(parsed.header['Gültig ab']?.trim() ?? '')) return { class: 'enacted-after-baseline', basis: 'Gültig ab: zukünftig (noch nicht in Kraft)' };
   const enacted = validFrom ?? isoDate(parsed.header.Ausfertigungsdatum) ?? isoDate(parsed.header.Erlassdatum);
   // „Gültig bis“ ist der letzte Geltungstag: Wer bis zum Stichtag selbst gilt, galt am Stichtag.
   if (validTo && validTo < baseline) return { class: 'repealed-before-baseline', basis: `Gültig bis ${validTo}` };

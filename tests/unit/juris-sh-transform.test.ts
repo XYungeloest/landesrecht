@@ -72,7 +72,7 @@ describe('Zielbezeichnungen stammen aus dem Jurisdiktionsregister', () => {
   });
 
   it('nennt eine eigene Transformerversion für die Staleness-Erkennung', () => {
-    expect(TRANSFORMER_VERSION).toBe('juris-sh-transformer/1.2.0');
+    expect(TRANSFORMER_VERSION).toBe('juris-sh-transformer/1.3.0');
   });
 });
 

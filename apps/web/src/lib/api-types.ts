@@ -3,7 +3,7 @@
  * Schemaversion 1.0 – Änderungen an Feldern erfordern eine neue Schemaversion.
  */
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import type { NormHistory, NormMeta, NormStatus, NormType, NormVersion } from '@landesrecht/legal-core/lib/schema.ts';
+import type { NormHistory, NormMeta, NormStatus, NormType, NormVersion, Publication, PublicationEntry } from '@landesrecht/legal-core/lib/schema.ts';
 import type { SearchHit } from '@landesrecht/search/ranking.ts';
 
 export const SIMRECHT_SCHEMA_VERSION = '1.0';
@@ -92,6 +92,48 @@ export interface ApiSearchResponse {
   offset: number;
   limit: number;
   hits: Array<Omit<SearchHit, 'rank'>>;
+}
+
+/** Verkündungsblatt-Ausgabe in der Übersicht (ohne Einträge und Belege; diese liefert `ApiPublicationResponse`). */
+export interface ApiPublicationSummary {
+  slug: string;
+  title: string;
+  /** Kurzzitat, z. B. „GV. West 2026 Nr. 2“. */
+  label: string;
+  /** Blattkürzel wie gedruckt bzw. historisch. */
+  gazette: string;
+  seriesTitle?: string;
+  year: number;
+  issue: string;
+  date: string;
+  entryCount: number;
+  url: string;
+  apiUrl: string;
+}
+
+export interface ApiPublicationsResponse {
+  schemaVersion: typeof SIMRECHT_SCHEMA_VERSION;
+  generatedAt: string;
+  jurisdiction: JurisdictionId;
+  url: string;
+  publications: ApiPublicationSummary[];
+}
+
+export interface ApiPublicationEntry extends PublicationEntry {
+  /** Adresse der verkündeten Norm bzw. der entstandenen Fassung im Portal. */
+  normUrl: string;
+  versionUrl?: string;
+}
+
+export interface ApiPublicationResponse {
+  schemaVersion: typeof SIMRECHT_SCHEMA_VERSION;
+  generatedAt: string;
+  jurisdiction: JurisdictionId;
+  url: string;
+  label: string;
+  /** Die vollständige Ausgabe einschließlich Quellenbelegen (SHA-256, Objektschlüssel); keine Bilddaten. */
+  publication: Publication;
+  entries: ApiPublicationEntry[];
 }
 
 export interface ApiError {

@@ -53,6 +53,32 @@ Die Projektion ist deterministisch (`projection_fingerprint` in `law_runtime_met
 nie automatisch gegen eine produktive Datenbank. Lokale Prüfung: `npm run d1:seed:local`,
 `npm run d1:schema:check`. Reihenfolge bei Änderungen: lokal → Staging → Produktion.
 
+### Migration 0002: Verkündungen (`law_publications`)
+
+`data/d1/0002_publications.sql` ergänzt die Tabelle `law_publications` (Verkündungsblatt-Ausgaben der Simulation aus
+`content/publications/<land>/`, Vorbild OstRecht) **additiv**: `CREATE TABLE IF NOT EXISTS`, keine Änderung an den
+Normtabellen. Die drei produktiven Datenbanken tragen Schema 0001 und erhalten die Tabelle einzeln, aus `apps/web`:
+
+```sh
+npx wrangler d1 execute landesrecht-west   --remote --config wrangler.jsonc --file ../../data/d1/0002_publications.sql --yes
+npx wrangler d1 execute landesrecht-nsh    --remote --config wrangler.jsonc --file ../../data/d1/0002_publications.sql --yes
+npx wrangler d1 execute landesrecht-baywue --remote --config wrangler.jsonc --file ../../data/d1/0002_publications.sql --yes
+```
+
+- Reihenfolge: Migration zuerst, dann `npm run d1:plan -- --jurisdiction <land> --incremental` und `d1:apply:batches`.
+  Ein Plan, der Verkündungen schreibt oder eine Vollprojektion ist (`DELETE FROM law_publications` im Reset), scheitert
+  auf einer Datenbank ohne die Tabelle mit `no such table: law_publications`, bevor Normen berührt werden.
+- Der Fingerabdruck eines Bestands **ohne** Verkündungen ändert sich durch die Tabelle nicht: Verkündungen fließen erst
+  in `projection_fingerprint` und in den Projektionszustand (`state.json`, Feld `publications`) ein, wenn ein Land
+  welche führt. West bleibt gegenüber `data/runtime/projection-state-west.remote.json` „noop“; ein Remote-Zustand ohne
+  das Feld `publications` gilt als „keine Verkündungen projiziert“.
+- Der Worker liest die Tabelle fehlertolerant (`listPublications`/`getPublication` liefern ohne Tabelle leere
+  Ergebnisse); `npm run audit:d1-remote` zählt `law_publications` lokal ↔ remote und meldet eine fehlende Tabelle als
+  Befund statt abzubrechen.
+- Verkündungen werden inkrementell wie Normen behandelt: neue, geänderte und entfernte Ausgaben erzeugen eigene
+  Plangruppen (`(verkündung) <slug>`, `(verkündung entfernt) <slug>`); die Web-Routen `/<land>/verkuendungen/…` und
+  `/api/v1/publications/<land>…` lesen ausschließlich `law_publications`.
+
 `d1:apply:remote` schreibt eine einzige SQL-Datei und ist nur für kleine Bestände gedacht. Für mehrere
 Tausend Normen (West nach dem Bulkimport) gilt der Batch-Weg:
 
@@ -218,6 +244,18 @@ geändert heißt: anderer Datensatz **oder** andere Sucheinheiten (so kommen auc
 Sucheinheiten remote an). Der erste Batch prüft in SQL, dass die Remote-D1 genau auf dem Vorzustand steht. Danach
 `npm run d1:seed:dev -- --jurisdiction <land>` und `d1-remote-check.ts`: Der Vergleich mit der frisch gesäten
 lokalen Vollprojektion zeigt, dass die inkrementelle Runde dasselbe ergibt wie eine vollständige.
+
+### Sim-Rechtsfortschreibung (Release-Reihenfolge)
+
+Nach `docs/SIMULATION_IMPORT.md`, nur bei grünen Gates (`npm run content:check` enthält `content:simulation-gates`):
+`import:simulation:consolidate -- --jurisdiction <land> --write` und `--check`, `import:simulation:ledger-sync -- --jurisdiction <land> --write`,
+`import:simulation:completeness -- --write` (Block `simulation` im Teilbestandshinweis), `import:simulation:r2-sync -- --write`
+(Originale nach `<land>/simulation/<sha256>.<ext>`, nie überschreiben), dann je Land die inkrementelle D1-Runde (oben; Sim-Normen,
+neue Fassungen, additive Meta, `law_publications`), `npm run build && npm run deploy` (Teilbestandshinweis ist in den Build
+eingebacken) und Smoke: `/<land>/verkuendungen/`, eine Sim-Norm, eine fortgeschriebene Baseline-Norm mit historischer
+Fassung (`/version/2023-12-01/`), `/api/v1/search` (Treffer zeigt die am Stichtag geltende Fassung). Der West-Freeze
+wird nicht über einen Hash aller West-Dateien nachgewiesen (Sim-Fortschreibung ergänzt `meta.json`/`history.json`), sondern
+über Gate G2 (alle `versions/2023-12-01.json` byteidentisch mit dem Freeze-Commit) und G3 (additiv).
 
 ## Offen
 

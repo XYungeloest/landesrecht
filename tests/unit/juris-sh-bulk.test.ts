@@ -3,7 +3,7 @@
  * Reihenfolge historischer Einzelfassungen, Slugvorschau, Schreibpfad nach content/norms/nsh und die
  * Zuordnung der Sperrgründe zu Review-Fällen. Synthetische Daten, kein Netz, kein Cache.
  */
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'vitest';
@@ -210,9 +210,63 @@ describe('Slugvorschau und Schreibpfad', () => {
     expect(foreign.finding?.code).toBe('foreign-norm-directory');
     await mkdir(join(root, 'content/norms/nsh/lbo-nsh/versions'), { recursive: true });
     await writeFile(join(root, 'content/norms/nsh/lbo-nsh/versions/2025-01-01.json'), '{}');
-    expect((await writeNormRecord({ root, record: record('lbo-nsh', 'jlr-B'), sourceIdentity: 'jlr-B', baselineDate: '2023-12-01', write: true })).finding?.code).toBe('existing-versions');
+    // Baseline-Lock: Mit fremder Folgefassung ist eine byteidentische Ausgangsfassung „unverändert“ (kein Befund, nichts geschrieben) …
+    const locked = await writeNormRecord({ root, record: record('lbo-nsh', 'jlr-B'), sourceIdentity: 'jlr-B', baselineDate: '2023-12-01', write: true });
+    expect(locked).toEqual({ files: ['content/norms/nsh/lbo-nsh/meta.json', 'content/norms/nsh/lbo-nsh/history.json', 'content/norms/nsh/lbo-nsh/versions/2023-12-01.json'], changed: false });
+    // … eine abweichende Ausgangsfassung bleibt Befund; meta.json, history.json und die Fassungen bleiben unberührt.
+    await writeFile(join(root, 'content/norms/nsh/lbo-nsh/history.json'), '{"entries":[{"sim":true}]}');
+    const before = await readFile(join(root, 'content/norms/nsh/lbo-nsh/versions/2023-12-01.json'), 'utf8');
+    const changedRecord = record('lbo-nsh', 'jlr-B');
+    changedRecord.versions[0]!.citation = 'y';
+    const blocked = await writeNormRecord({ root, record: changedRecord, sourceIdentity: 'jlr-B', baselineDate: '2023-12-01', write: true });
+    expect(blocked.finding?.code).toBe('existing-versions');
+    expect(blocked.changed).toBe(false);
+    expect(await readFile(join(root, 'content/norms/nsh/lbo-nsh/versions/2023-12-01.json'), 'utf8')).toBe(before);
+    expect(await readFile(join(root, 'content/norms/nsh/lbo-nsh/history.json'), 'utf8')).toBe('{"entries":[{"sim":true}]}');
+    // Eine gesperrte Norm wird nie zurückgenommen.
+    await expect(removeOwnNormDirectory({ root, slug: 'lbo-nsh', sourceIdentity: 'jlr-B', write: true })).rejects.toThrow(/durch die Simulation fortgeschrieben/u);
+    await rm(join(root, 'content/norms/nsh/lbo-nsh/versions/2025-01-01.json'));
+    await writeFile(join(root, 'content/norms/nsh/lbo-nsh/history.json'), '{"entries":[]}');
     await expect(removeOwnNormDirectory({ root, slug: 'lbo-nsh', sourceIdentity: 'jlr-C', write: true })).rejects.toThrow(/gehört nicht/u);
     expect(await removeOwnNormDirectory({ root, slug: 'lbo-nsh', sourceIdentity: 'jlr-B', write: true })).toBe('content/norms/nsh/lbo-nsh');
+  });
+
+  it('sperrt auch bei einer reinen Aufhebung (Historieneintrag nach dem Stichtag, keine Fassungsdatei)', async () => {
+    const root = await tempRoot();
+    await writeNormRecord({ root, record: record('pog-nsh', 'jlr-P'), sourceIdentity: 'jlr-P', baselineDate: '2023-12-01', write: true });
+    const history = '{"entries":[{"date":"2024-06-01","type":"repeal","note":"Aufhebung durch das POG 2024"}]}';
+    await writeFile(join(root, 'content/norms/nsh/pog-nsh/history.json'), history);
+    const meta = await readFile(join(root, 'content/norms/nsh/pog-nsh/meta.json'), 'utf8');
+    const identical = await writeNormRecord({ root, record: record('pog-nsh', 'jlr-P'), sourceIdentity: 'jlr-P', baselineDate: '2023-12-01', write: true });
+    expect(identical).toEqual({ files: ['content/norms/nsh/pog-nsh/meta.json', 'content/norms/nsh/pog-nsh/history.json', 'content/norms/nsh/pog-nsh/versions/2023-12-01.json'], changed: false });
+    const changedRecord = record('pog-nsh', 'jlr-P');
+    changedRecord.versions[0]!.changeNote = 'korrigiert';
+    const blocked = await writeNormRecord({ root, record: changedRecord, sourceIdentity: 'jlr-P', baselineDate: '2023-12-01', write: true });
+    expect(blocked.finding).toMatchObject({ code: 'existing-versions' });
+    expect(blocked.finding?.message).toMatch(/Historieneinträge nach dem Stichtag \(repeal 2024-06-01\)/u);
+    expect(await readFile(join(root, 'content/norms/nsh/pog-nsh/history.json'), 'utf8')).toBe(history);
+    expect(await readFile(join(root, 'content/norms/nsh/pog-nsh/meta.json'), 'utf8')).toBe(meta);
+    await expect(removeOwnNormDirectory({ root, slug: 'pog-nsh', sourceIdentity: 'jlr-P', write: true })).rejects.toThrow(/fortgeschrieben/u);
+  });
+
+  it('zählt eigene Sim-Normen (ohne juris-Kennung, nur Sim-Belege) getrennt vom juris-Bestand', async () => {
+    const { classifyContentDirectories } = await import('@landesrecht/importer-juris-sh/reports/status.ts');
+    const root = await tempRoot();
+    await writeNormRecord({ root, record: record('lbo-nsh', 'jlr-B'), sourceIdentity: 'jlr-B', baselineDate: '2023-12-01', write: true });
+    const sim = join(root, 'content/norms/nsh/sim-gesetz-nsh');
+    await mkdir(join(sim, 'versions'), { recursive: true });
+    await writeFile(join(sim, 'meta.json'), JSON.stringify({ slug: 'sim-gesetz-nsh', externalIdentifiers: [], sourceReferences: [{ kind: 'simulation-standalone-act' }] }));
+    await writeFile(join(sim, 'history.json'), '{"entries":[]}');
+    await writeFile(join(sim, 'versions/2026-01-01.json'), JSON.stringify({ versionId: '2026-01-01', simulationValidFrom: '2026-01-01', sourceReferences: [{ kind: 'simulation-gazette' }] }));
+    // Eine Norm mit realem Beleg in einer Fassung ist keine Sim-Norm (und braucht einen Manifesteintrag).
+    const mixed = join(root, 'content/norms/nsh/misch-nsh');
+    await mkdir(join(mixed, 'versions'), { recursive: true });
+    await writeFile(join(mixed, 'meta.json'), JSON.stringify({ slug: 'misch-nsh', externalIdentifiers: [], sourceReferences: [{ kind: 'simulation-standalone-act' }] }));
+    await writeFile(join(mixed, 'versions/2026-01-01.json'), JSON.stringify({ versionId: '2026-01-01', sourceReferences: [{ kind: 'official-portal-snapshot' }] }));
+    expect(await classifyContentDirectories(root)).toEqual({ contentSlugs: ['lbo-nsh', 'misch-nsh', 'sim-gesetz-nsh'], simulationSlugs: ['sim-gesetz-nsh'], simulationFiles: 3 });
+    // Sim-Folgefassung einer juris-Norm (Baseline-Lock): zählt zu den Sim-Dateien, die Norm bleibt juris-Bestand.
+    await writeFile(join(root, 'content/norms/nsh/lbo-nsh/versions/2026-01-01.json'), JSON.stringify({ versionId: '2026-01-01', sourceReferences: [{ kind: 'simulation-gazette' }] }));
+    expect(await classifyContentDirectories(root)).toMatchObject({ simulationSlugs: ['sim-gesetz-nsh'], simulationFiles: 4 });
   });
 });
 

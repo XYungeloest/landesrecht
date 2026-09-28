@@ -6,8 +6,9 @@
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { getNormSortKey, getNormVersionIdentity } from '@landesrecht/legal-core/lib/identity.ts';
+import { comparePublicationsNewestFirst } from '@landesrecht/legal-core/lib/publications.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
-import type { NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
+import type { NormRecord, Publication } from '@landesrecht/legal-core/lib/schema.ts';
 import { getApplicableVersion, getNormLastChangeDate } from '@landesrecht/legal-core/lib/versions.ts';
 import { buildSearchDocument, buildSearchQueryPlan, runSearch, type SearchDocument } from '@landesrecht/search/index.ts';
 
@@ -15,12 +16,15 @@ import { selectVersionIds, type BodySelection, type NormStore, type NormSummary,
 
 export interface FileStoreOptions {
   asOf?: string;
+  /** Verkündungsblatt-Ausgaben (content/publications/); fremde Jurisdiktionen werden übergangen. */
+  publications?: readonly Publication[];
 }
 
 export function createFileNormStore(jurisdiction: JurisdictionId, records: readonly NormRecord[], options: FileStoreOptions = {}): NormStore {
   const asOf = options.asOf ?? EDITORIAL_REFERENCE_DATE;
   const own = records.filter((record) => record.meta.jurisdiction === jurisdiction);
   const bySlug = new Map(own.map((record) => [record.meta.slug, record]));
+  const publications = (options.publications ?? []).filter((publication) => publication.jurisdiction === jurisdiction).sort(comparePublicationsNewestFirst);
   let documents: SearchDocument[] | null = null;
 
   function summarize(record: NormRecord): NormSummary {
@@ -99,6 +103,14 @@ export function createFileNormStore(jurisdiction: JurisdictionId, records: reado
 
     async getRuntimeMeta() {
       return null;
+    },
+
+    async listPublications(query = {}) {
+      return query.limit === undefined ? [...publications] : publications.slice(0, Math.max(0, query.limit));
+    },
+
+    async getPublication(slug) {
+      return publications.find((publication) => publication.slug === slug) ?? null;
     },
   };
 }

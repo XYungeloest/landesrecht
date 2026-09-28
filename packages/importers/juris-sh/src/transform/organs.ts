@@ -26,18 +26,27 @@ import { applySegments, NAME_SEPARATOR, planTransformation, targetStateName, typ
 export type OrganFormula = 'legislative-resolution' | 'ordinance-formula' | 'decree-head';
 
 export interface OrganEvidence {
-  /** Organ im Nominativ, wie es die Formel nennt (nur Kopfwort grammatisch normalisiert). */
+  /** Organ im Nominativ, wie es die Formel nennt (nur Kopfwort grammatisch normalisiert, Zusätze hinter dem Namen abgeschnitten). */
   name: string;
   formula: OrganFormula;
   /** Wörtlicher Ausschnitt der Quelle. */
   text: string;
   path: string;
+  /** Die Formel weist dem Organ bestimmte Vorschriften zu („… die folgenden §§ 1 bis 8“): Teil einer gemeinsamen Verordnung. */
+  scoped?: boolean;
 }
 
 export interface SourceOrganExtraction {
   enactingBody?: OrganEvidence;
   candidates: OrganEvidence[];
   conflict: boolean;
+  /**
+   * Wie mehrere Formeln zu einem Organ geführt haben (Run 9): `same-organ` – dieselbe Bezeichnung in Varianten (Kopfwort,
+   * Landeszusatz, Kommata); `joint-enactment` – gemeinsame Verordnung mehrerer Organe, jede Formel weist Vorschriften zu;
+   * `normgeber` – der juris-Kopf „Normgeber“ nennt genau eines der Formelorgane (Bekanntmachungen verschiedener Ressorts
+   * über die Zeit).
+   */
+  resolution?: 'same-organ' | 'joint-enactment' | 'normgeber';
 }
 
 export interface EnactingBodyMapping {
@@ -63,7 +72,7 @@ const FORMULAS: ReadonlyArray<{ formula: OrganFormula; pattern: RegExp }> = [
   },
   {
     formula: 'ordinance-formula',
-    pattern: new RegExp(`\\b(?:verordnet|verordnen|erlässt|erlassen)\\s+(?:die|das|der)\\s+(${ORGAN})(?=\\s*(?:,(?!\\s*[A-ZÄÖÜ])|:|;|$|\\s+(?:im\\s+Einvernehmen|mit\\s+Zustimmung|nach\\s+Anhörung|im\\s+Benehmen|nach\\s+Beteiligung|die\\s+folgende|das\\s+folgende|folgende|unter\\s+Beachtung|zugleich)))`, 'u'),
+    pattern: new RegExp(`\\b(?:verordnet|verordnen|erlässt|erlassen)\\s+(?:die|das|der)\\s+(${ORGAN})(?=\\s*(?:,(?!\\s*[A-ZÄÖÜ])|:|;|$|\\s+(?:im\\s+Einvernehmen|mit\\s+Zustimmung|nach\\s+Anhörung|im\\s+Benehmen|nach\\s+Beteiligung|die\\s+folgende|das\\s+folgende|den\\s+folgenden|folgende|unter\\s+Beachtung|zugleich)))`, 'u'),
   },
   {
     formula: 'ordinance-formula',
@@ -101,8 +110,44 @@ function formulaAreaTexts(blocks: readonly NormBodyBlock[]): Array<{ path: strin
   return area;
 }
 
-/** Sucht ausdrückliche Erlassformeln im Vorspann des Normkörpers und in Kopfzeilen (Erlasskopf). */
-export function extractSourceOrgans(input: { blocks: readonly NormBodyBlock[]; headLines?: ReadonlyArray<{ path: string; text: string }> }): SourceOrganExtraction {
+/**
+ * Zusatz hinter der Organbezeichnung, der nicht zum Namen gehört: Zuständigkeitsvorbehalt („als zuständige Stelle nach
+ * § 46“), Ermächtigung („auf der Grundlage von § 35“), Geltungsbereich („für den örtlichen Geltungsbereich nach § 3“)
+ * oder die zugewiesenen Vorschriften („die folgenden §§ 1 bis 8“).
+ */
+const NAME_TAIL = /\s+(?:als\s|auf\s+der\s+Grundlage\b|auf\s+Grund\b|aufgrund\b|gemäß\b|nach\s+(?:§|Artikel|Art\.|Anhörung|Maßgabe|Beteiligung)|im\s+Rahmen\b|im\s+Einvernehmen\b|im\s+Benehmen\b|mit\s+Zustimmung\b|in\s+Verbindung\b|für\s+den\s+örtlichen\s+Geltungsbereich\b|(?:die|den|das)\s+folgenden?\b|folgende[ns]?\b|eine[nrs]?\s|hiermit\b|unter\s)/u;
+
+/** Organbezeichnung ohne Zusätze und ohne nachlaufenden Artikel („… Fischerei den“ vor „folgenden § 5“). */
+export function organCore(name: string): string {
+  const flat = name.replace(/\s+/gu, ' ').trim();
+  const cut = NAME_TAIL.exec(flat);
+  return (cut ? flat.slice(0, cut.index) : flat).replace(/\s+(?:den|die|das|der|dem)$/u, '').trim();
+}
+
+/**
+ * Vergleichsschlüssel zweier Formelorgane: Kopfwort Minister/Ministerin/Ministerium gleichgesetzt (dasselbe Ressort in
+ * verschiedenen Formeln und im juris-Kopf „Normgeber“), Landeszusatz, Kommata und Leerraum unbeachtet.
+ */
+export function organKey(name: string): string {
+  return organCore(name)
+    .replace(new RegExp(String.raw`\s+(?:des\s+Landes\s+)?${STATE}$`, 'u'), '')
+    .replace(/^((?:[A-ZÄÖÜ][a-zäöüß]+)?)[Mm]inister(?:in|ium)?\b/u, '$1ministerium')
+    .replace(/,/gu, '')
+    .replace(/\s+/gu, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+/** Zuweisung von Vorschriften hinter dem Organ: „die folgenden §§ 1 bis 8“, „den folgenden § 5“, „die folgenden Artikel 1 und 4“, „… Geltungsbereich nach § 3 … die §§ 1, 2“. */
+const SCOPE_AFTER = /^\s*(?:(?:für\s+den\s+örtlichen\s+Geltungsbereich\b|im\s+Rahmen\s+ihrer\s+jeweiligen\s+Zuständigkeit\b)[^;:]*?)?\s*(?:(?:die|den|das)\s+)?(?:folgenden?\s+)?(?:§§?|Artikel|Art\.)\s*\d/u;
+/** Mehrere Organe in einer Formel („verordnen das Ministerium A und das Ministerium B“). */
+const JOINT_SPLIT = new RegExp(String.raw`\s+und\s+(?:das|die|der)\s+(?=${ORGAN_HEAD})`, 'u');
+
+/**
+ * Sucht ausdrückliche Erlassformeln im Vorspann des Normkörpers und in Kopfzeilen (Erlasskopf). `normgeber` ist der
+ * juris-Kopf „Normgeber“ der Verwaltungsvorschriften – er entscheidet nur zwischen Formelorganen, ersetzt keine Formel.
+ */
+export function extractSourceOrgans(input: { blocks: readonly NormBodyBlock[]; headLines?: ReadonlyArray<{ path: string; text: string }>; normgeber?: string }): SourceOrganExtraction {
   const candidates: OrganEvidence[] = [];
   const texts = [...(input.headLines ?? []), ...formulaAreaTexts(input.blocks)];
   for (const { path, text } of texts) {
@@ -110,12 +155,51 @@ export function extractSourceOrgans(input: { blocks: readonly NormBodyBlock[]; h
     for (const { formula, pattern } of FORMULAS) {
       const match = pattern.exec(flat);
       if (!match?.[1]) continue;
-      candidates.push({ name: nominativeOrganName(match[1]), formula, text: match[0], path });
+      let raw = match[1];
+      const rawStart = match.index + match[0].indexOf(raw);
+      // Fehlendes Leerzeichen der Quelle vor „folgenden“ („… Fischereiden folgenden § 5“).
+      if (/\p{Ll}den$/u.test(raw) && /^\s*folgenden?\b/u.test(flat.slice(rawStart + raw.length))) raw = raw.slice(0, -3);
+      const parts = formula === 'ordinance-formula' ? organCore(raw).split(JOINT_SPLIT) : [organCore(raw)];
+      const after = flat.slice(rawStart + organCore(raw).length);
+      const scoped = formula === 'ordinance-formula' && SCOPE_AFTER.test(after);
+      for (const part of parts) {
+        const name = nominativeOrganName(part);
+        if (!name) continue;
+        candidates.push({ name, formula, text: match[0], path, ...(scoped ? { scoped: true } : {}) });
+      }
     }
   }
-  const names = new Set(candidates.map((candidate) => candidate.name));
-  const extraction: SourceOrganExtraction = { candidates, conflict: names.size > 1 };
-  if (names.size === 1) extraction.enactingBody = candidates[0]!;
+  const groups = new Map<string, OrganEvidence[]>();
+  for (const candidate of candidates) {
+    const key = organKey(candidate.name);
+    const group = groups.get(key);
+    if (group) group.push(candidate);
+    else groups.set(key, [candidate]);
+  }
+  const extraction: SourceOrganExtraction = { candidates, conflict: false };
+  if (groups.size === 1) {
+    extraction.enactingBody = candidates[0]!;
+    if (new Set(candidates.map((candidate) => candidate.name)).size > 1) extraction.resolution = 'same-organ';
+    return extraction;
+  }
+  if (groups.size === 0) return extraction;
+  // Gemeinsame Verordnung: Jede Formel weist ihrem Organ bestimmte Vorschriften zu („verordnet der Minister A die folgenden
+  // §§ 1 bis 8 …; verordnet der Minister B den folgenden § 5“). Erlassorgane sind alle genannten, in Reihenfolge der Formeln.
+  if (candidates.every((candidate) => candidate.formula === 'ordinance-formula' && candidate.scoped)) {
+    const first = candidates[0]!;
+    extraction.enactingBody = { name: [...groups.values()].map((group) => group[0]!.name).join(' und '), formula: 'ordinance-formula', text: [...groups.values()].map((group) => group[0]!.text).join(' … '), path: first.path, scoped: true };
+    extraction.resolution = 'joint-enactment';
+    return extraction;
+  }
+  // Bekanntmachungen verschiedener Ressorts über die Zeit (Erlasskopf, Änderungsbekanntmachungen): Der juris-Kopf
+  // „Normgeber“ nennt genau eines der Formelorgane.
+  const normgeber = input.normgeber ? groups.get(organKey(input.normgeber)) : undefined;
+  if (normgeber) {
+    extraction.enactingBody = normgeber[0]!;
+    extraction.resolution = 'normgeber';
+    return extraction;
+  }
+  extraction.conflict = true;
   return extraction;
 }
 

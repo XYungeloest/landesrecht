@@ -21,6 +21,7 @@ import { stableStringify, type RecipeStep, type ScopeRecord } from './recipe.ts'
 import { commandUnitPath, deletionRequest, disambiguatedReplacement, realizeRestore, RestoreError, restoreRequest, restoreUnit, unitFor, type PublicationBase, type RestoreRequest } from './restore.ts';
 import { parseStructural, quoteGroups, realize, StructuralError, structuralEvidence, type StructuralOperation, type StructuralParse, type StructuralTemplate } from './structural.ts';
 import type { CommandBlock, CommandNode } from './structure.ts';
+import type { LabelFormDecision } from './decisions.ts';
 import type { GazetteUnit } from './gazette.ts';
 import { sameTitle, TITLE_FIELD, TitleError, titleText, type RecipeTitle } from './title.ts';
 
@@ -120,6 +121,17 @@ export function commandLeaves(block: CommandBlock): { leaves: Leaf[]; failures: 
       const repealAndUnlabel = node.quoted.length === 0 && node.children.length === 0 ? /^(.+?\s(?:wird|werden)\s+aufgehoben)\s*[,;]\s*die\s+Absatzbezeichnung\s+(?:im|in)\s+(?:bisherigen\s+)?Abs\.\s*1\s+entfällt\s*\.?$/u.exec(node.text.trim()) : null;
       if (repealAndUnlabel) {
         walk([`${repealAndUnlabel[1]}.`, 'In Abs. 1 wird die Absatzbezeichnung „(1)“ gestrichen.'].map((text) => ({ ...node, text, label: undefined, children: [], quoted: [] }) as CommandNode), context, nodeLabels, statisticsOnly, source);
+        continue;
+      }
+      // Lauf 12: „Der Zweite Teil wird Teil 2 und die Abschnitte I. und II. werden die Kapitel 1 und 2.“ (GVBl. 2024 S. 630) –
+      // zwei Umbenennungen; die zweite unter dem umbenannten Teil (neue Bezeichnung).
+      const divisionPair = node.quoted.length === 0 && node.children.length === 0 ? /^((?:Der|Die|Das)\s+(?:bisherigen?\s+)?[A-ZÄÖÜ][a-zäöü]+\s+(?:Teil|Kapitel|Abschnitt|Unterabschnitt)\s+wird\s+(?:Teil|Kapitel|Abschnitt|Unterabschnitt)\s+(\d+))\s+und\s+((?:die|der|das)\s+(?:bisherigen?\s+)?(?:Teile?|Kapitel|Abschnitte?|Unterabschnitte?)\s+[IVX\d][\s\S]*?\s(?:wird|werden)\s[\s\S]+?)\s*\.?$/u.exec(node.text.trim()) : null;
+      const divisionHead = divisionPair ? parseStructural(`${divisionPair[1]}.`, context, []) : undefined;
+      if (divisionPair && divisionHead?.templates?.[0]?.kind === 'relabel' && divisionHead.templates[0].pairs.length === 1) {
+        const renamed = divisionHead.templates[0].pairs[0]![1];
+        walk([{ ...node, text: `${divisionPair[1]}.`, label: undefined, children: [], quoted: [] } as CommandNode], context, nodeLabels, statisticsOnly, source);
+        const second = `${divisionPair[3]!.charAt(0).toUpperCase()}${divisionPair[3]!.slice(1)}.`;
+        walk([{ ...node, text: second, label: undefined, children: [], quoted: [] } as CommandNode], [...context, [renamed]], nodeLabels, statisticsOnly, [...source, [divisionHead.templates[0].pairs[0]![0]]]);
         continue;
       }
       // Lauf 11: „§ 97 Abs. 4 und 5 werden aufgehoben; die bisherigen Abs. 6 und 7 werden Abs. 4 und 5.“ (GVBl. 2014 S. 450)
@@ -367,7 +379,7 @@ function failureFor(formula: FormulaId, detail: string): StepFailure {
   return { state: 'unsupported-formula', reason: formula, detail };
 }
 
-const codeState = (code: string): ReconstructionState => (code === 'target-ambiguous' || code === 'end-not-determined' || code === 'location-unresolved' || code === 'sentence-ambiguous' || code === 'renumber-ambiguous' || code === 'anchor-mismatch' || code === 'title-projection' ? 'ambiguous-target' : code === 'image-in-inserted-unit' ? 'asset-missing' : 'round-trip-failed');
+const codeState = (code: string): ReconstructionState => (code === 'target-ambiguous' || code === 'end-not-determined' || code === 'location-unresolved' || code === 'sentence-ambiguous' || code === 'renumber-ambiguous' || code === 'relabel-form-ambiguous' || code === 'anchor-mismatch' || code === 'title-projection' ? 'ambiguous-target' : code === 'image-in-inserted-unit' ? 'asset-missing' : 'round-trip-failed');
 
 /** Toleriert gelesene Satzfehler der Verkündung am Befehl – im Rezeptschritt vermerkt. */
 const defectOf = (leaf: Leaf, note?: string): { sourceDefect?: string } => {
@@ -384,7 +396,9 @@ export const isNormTitle = (path: LocationPath): boolean => path.length === 1 &&
  */
 export interface RestoreOptions {
   /** Stand der Verkündungen (Stammverkündung) für Alttext. */
-  base: PublicationBase;
+  base?: PublicationBase;
+  /** Lauf 12: Reviewentscheidungen zur Gestalt bisheriger Bezeichnungen, je neuer Bezeichnung (`decisions.ts`). */
+  labelForms?: ReadonlyMap<string, LabelFormDecision>;
   /**
    * Rückfall: Ein Befehl, den die Rücknahme nicht lesen oder umkehren kann, ersetzt das ganze Glied, das er ändert, durch
    * das der Stammverkündung (`restoreUnit`); weitere Befehle an diesem Glied gehen darin auf. Nur wo die Probe im
@@ -494,10 +508,10 @@ export function reverseAmendment(after: readonly NormBodyBlock[], block: Command
       return realizedSteps;
     }
     if (item.template) {
-      const realized = realize(working, item.template, `${leaf.labels.join(' ')}`, explicit.has(formatPath((item.template as { context: LocationPath }).context)));
+      const realized = realize(working, item.template, `${leaf.labels.join(' ')}`, explicit.has(formatPath((item.template as { context: LocationPath }).context)), options?.labelForms);
       for (const entry of realized) {
         const scope: ScopeRecord = { fields: entry.field ? [entry.field] : [], resolved: entry.resolved, widened: entry.widened };
-        realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: item.formula, location: entry.location, scope, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation), ...defectOf(leaf, entry.note) });
+        realizedSteps.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: item.formula, location: entry.location, scope, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation), ...defectOf(leaf, entry.note), ...(entry.reviewDecision ? { reviewDecision: entry.reviewDecision } : {}) });
       }
       return realizedSteps;
     }
@@ -592,13 +606,14 @@ export function reverseAmendment(after: readonly NormBodyBlock[], block: Command
       const owners = group.flatMap((index) => (parsed[index]!.parsed.items![0]!.template as Extract<StructuralTemplate, { kind: 'relabel' }>).pairs.map(() => index));
       const first = parsed[group[0]!]!;
       const template = first.parsed.items![0]!.template as Extract<StructuralTemplate, { kind: 'relabel' }>;
-      const merged: StructuralTemplate = { kind: 'relabel', context: template.context, pairs: group.flatMap((index) => (parsed[index]!.parsed.items![0]!.template as Extract<StructuralTemplate, { kind: 'relabel' }>).pairs) };
-      const realized = realize(working, merged, group.map((index) => parsed[index]!.leaf.labels.join(' ')).join(', '), false);
+      const templates = group.map((index) => parsed[index]!.parsed.items![0]!.template as Extract<StructuralTemplate, { kind: 'relabel' }>);
+      const merged: StructuralTemplate = { kind: 'relabel', context: template.context, pairs: templates.flatMap((entry) => entry.pairs), ...(templates.some((entry) => entry.labels) ? { labels: templates.flatMap((entry) => entry.pairs.map((_pair, index) => entry.labels?.[index])) } : {}) };
+      const realized = realize(working, merged, group.map((index) => parsed[index]!.leaf.labels.join(' ')).join(', '), false, options?.labelForms);
       const relabels = new Map<number, RecipeStep[]>(group.map((index) => [index, []]));
       for (const entry of realized) {
         const owner = owners[entry.pair!]!;
         const { leaf, parsed: command } = parsed[owner]!;
-        relabels.get(owner)!.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: command.items![0]!.formula, location: entry.location, scope: { fields: [], resolved: entry.resolved, widened: entry.widened }, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation), ...defectOf(leaf) });
+        relabels.get(owner)!.push({ id: '', command: leaf.command, commandPath: leaf.labels, formula: command.items![0]!.formula, location: entry.location, scope: { fields: [], resolved: entry.resolved, widened: entry.widened }, operation: entry.operation as Operation, evidence: structuralEvidence(entry.operation), ...defectOf(leaf), ...(entry.reviewDecision ? { reviewDecision: entry.reviewDecision } : {}) });
       }
       for (const entry of [...realized].reverse()) applyBackward(working, { fields: [], resolved: entry.resolved, widened: entry.widened }, entry.operation as Operation, `${first.leaf.labels.join(' ')} ${entry.location}`);
       for (const index of [...group].reverse()) collected.unshift([...relabels.get(index)!, ...rest.get(index)!]);

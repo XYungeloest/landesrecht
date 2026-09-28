@@ -19,7 +19,8 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { readJsonFile, writeFileAtomic, writeJsonAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
+import { jsonText, readJsonFile, writeFileAtomic, writeJsonAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
+import { inspectBaselineLock, readStoredBaseline } from '@landesrecht/importer-common/baseline-lock.ts';
 import { cacheKey, RechtNrwFetchError } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
 
 import { validateNormRecord } from '@landesrecht/legal-core/lib/schema.ts';
@@ -41,7 +42,7 @@ import { collectOfficialAbbreviations, OFFICIAL_ABBREVIATIONS_PATH } from './abb
 import { readCorpusState } from './corpus.ts';
 import { gazetteVolumesFromLedger } from '../parse/source-law.ts';
 import { processDocument, STAND_UNDETERMINED, type DocumentBlocker, type DocumentResult } from './document.ts';
-import { listExistingSlugs, recoverInterruptedNormWrites, removeOwnNormDirectory, writeNormRecord } from './persist.ts';
+import { listExistingSlugs, normsDirectory, recoverInterruptedNormWrites, removeOwnNormDirectory, writeNormRecord } from './persist.ts';
 import { loadUnits, sitemapUnits } from './units.ts';
 
 export const INVENTORY_JSON_PATH = `${AUDIT_DIR}/corpus-inventory.json`;
@@ -477,12 +478,31 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
     const evidence = result.outcome === 'failed' ? undefined : baselineEvidence(result, matches);
     // Anlage einer Stammnorm: Review-Fälle gehören zur Stammnorm (dort übernommen), nicht zur Anlage.
     const inputs = result.outcome === 'part-of-main' ? [] : reviewInputsFor(result, evidence);
-    const reviewBlocking = inputs.some((input) => input.severity === 'blocking');
-    const status = manifestStatusFor(result, reviewBlocking);
-    const outcome = result.outcome === 'import-ready' && reviewBlocking ? 'review' : result.outcome;
     const previous = previousByIdentity.get(item.id);
+    // Baseline-Lock: Hat die Simulation eine übernommene Norm fortgeschrieben (Folgefassungen, Historie oder Beziehungen
+    // nach dem Stichtag), bleibt ihre veröffentlichte Ausgangsfassung eingefroren – der Lauf nimmt sie weder zurück noch
+    // schreibt er sie neu; Manifeststatus und Slug bleiben. Ergäbe der Lauf eine andere Ausgangsfassung oder wäre die
+    // Norm nicht mehr übernahmefähig, ist das ein Review-Fall (Entscheidung außerhalb des Bulks), kein Schreibvorgang.
+    const lock = previous && isImportedStatus(previous.importStatus) ? await inspectBaselineLock(join(normsDirectory(root), previous.targetSlug), BASELINE_DATE) : undefined;
+    const lockedPrevious = lock?.locked ? previous : undefined;
+    if (lock?.locked && previous) {
+      const stored = await readStoredBaseline(join(normsDirectory(root), previous.targetSlug), BASELINE_DATE);
+      const identical = Boolean(result.record) && stored !== undefined && stored === jsonText(result.record!.versions[0]);
+      const stillImportable = isImportedStatus(manifestStatusFor(result, inputs.some((input) => input.severity === 'blocking')));
+      if (!stillImportable || !identical) {
+        const why = !stillImportable ? `in diesem Lauf nicht mehr übernahmefähig (${result.reasons.slice(0, 2).join('; ') || result.outcome})` : 'der Wiederholungslauf ergäbe eine abweichende Ausgangsfassung';
+        const message = `Ausgangsfassung von ${previous.targetSlug} durch die Simulation eingefroren (${lock.reasons.join('; ')}); ${why} – weder zurückgenommen noch neu geschrieben (Baseline-Lock, Entscheidung außerhalb des Bulks)`;
+        result.findings.push({ severity: 'warning', code: 'baseline-locked', message });
+        inputs.push({ category: 'import-regression', key: 'baseline-locked', severity: 'blocking', summary: message.slice(0, 400), details: [...lock.reasons, ...result.reasons.slice(0, 3)] });
+      }
+    }
+    const reviewBlocking = inputs.some((input) => input.severity === 'blocking');
+    const status = lockedPrevious ? lockedPrevious.importStatus : manifestStatusFor(result, reviewBlocking);
+    const outcome = result.outcome === 'import-ready' && reviewBlocking ? 'review' : result.outcome;
     let slug: string | undefined;
-    if (isImportedStatus(status) && result.record) {
+    if (lockedPrevious) {
+      slug = lockedPrevious.targetSlug;
+    } else if (isImportedStatus(status) && result.record) {
       // Reserviert wird erst jetzt, in Dokumentreihenfolge (auch im Dry-run, nur im Speicher). Weicht der Slug von der
       // Vorschau ab (gleicher Kandidat bei zwei Normen dieses Laufs), werden Kennung und Slug der Norm nachgezogen.
       const reservation = reserver.reserve(item.id, slugCandidates.get(item.id) ?? result.record.meta.slug);
@@ -521,7 +541,10 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
     const reviewStatus = review.items.some((entry) => entry.sourceIdentity === item.id && entry.status === 'open' && entry.occurrence === 'current') ? 'open' : review.items.some((entry) => entry.sourceIdentity === item.id) ? 'resolved' : 'none';
 
     if (writeNorms) {
-      if (slug && result.record) {
+      if (lockedPrevious) {
+        // Gesperrte Norm: nichts schreiben (byteidentisch = unverändert; Abweichung = Review-Fall oben).
+        normsUnchanged += 1;
+      } else if (slug && result.record) {
         const write = await writeNormRecord({ root, record: result.record, sourceIdentity: item.id, baselineDate: BASELINE_DATE, write: true });
         if (write.finding) throw new Error(`${item.id}: ${write.finding.message}`);
         if (write.changed) {
@@ -529,7 +552,11 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
           written.push(...write.files);
         } else normsUnchanged += 1;
       }
-      const entry = manifestEntryFor(result, status, evidence, slug, reviewStatus, now, unitRaw);
+      // Gesperrte Norm: Der bisherige Manifesteintrag bleibt (Ausgangsfassung eingefroren); nur Befund und Reviewstatus
+      // werden nachgeführt.
+      const entry: ManifestEntry | undefined = lockedPrevious
+        ? { ...lockedPrevious, findings: [...lockedPrevious.findings.filter((finding) => finding.code !== 'baseline-locked'), ...result.findings.filter((finding) => finding.code === 'baseline-locked')], reviewStatus }
+        : manifestEntryFor(result, status, evidence, slug, reviewStatus, now, unitRaw);
       // Archivstand (Staging/R2) gleicher Rohquellen bleibt erhalten – ein Bulk-Lauf stuft nie zurück.
       if (entry && previous) {
         for (const raw of entry.rawDocuments) {
@@ -543,6 +570,8 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
       }
       const shard = await writeReviewShard(root, review, item.area, item.id);
       if (shard.changed) written.push(shard.path);
+    } else if (lockedPrevious) {
+      normsUnchanged += 1;
     } else if (slug && result.record) {
       const check = await writeNormRecord({ root, record: result.record, sourceIdentity: item.id, baselineDate: BASELINE_DATE, write: false });
       if (check.changed) normsWritten += 1;

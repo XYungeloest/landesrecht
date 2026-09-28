@@ -12,7 +12,9 @@ import { createSearchState } from '@landesrecht/search/query.ts';
 import { SEARCH_FTS_TABLE_SQL, SEARCH_TRIGGERS, SEARCH_UNIT_COLUMNS } from '@landesrecht/search/schema.ts';
 import { createFileNormStore } from '@landesrecht/runtime/file-store.ts';
 
-import { buildFixtureNorms, FIXTURE_REFERENCE_DATE, norm } from '../helpers/fixture-corpus.ts';
+import { SIMULATION_BASELINE_DATE } from '@landesrecht/legal-core/config/jurisdictions.ts';
+
+import { buildFixtureNorms, FIXTURE_REFERENCE_DATE, norm, paragraph } from '../helpers/fixture-corpus.ts';
 
 const root = resolveRepositoryRoot();
 const migrationsDir = join(root, 'data', 'd1');
@@ -43,6 +45,33 @@ describe('Projektionsplan', () => {
     expect(deletes).toHaveLength(9);
     for (const query of deletes) expect(query.params).toEqual(['nsh:deichgesetz-nsh']);
     expect(plan.groups[0]!.queries[0]!.params).toContain(RUNTIME_META_KEYS.projectionState);
+  });
+
+  it('projiziert das abgeleitete Fassungsende und die maßgebliche Fassung einer Norm mit Baseline, Sim-Fassung und Aufhebung', () => {
+    const simGazette = { kind: 'simulation-gazette', system: 'simulation', label: 'GV. West 2026 Nr. 2', availability: 'r2-archived', bucket: 'landesrecht-quellen', objectKey: `west/simulation/${'c'.repeat(64)}.pdf`, sha256: 'c'.repeat(64), mediaType: 'application/pdf', publicationSlug: 'gv-west-2026-2-20260517' };
+    const repealed = norm({
+      jurisdiction: 'west', slug: 'aufgehoben-west', meta: { title: 'Aufgehobenes Gesetz', status: 'repealed', expiryDate: '2026-06-30' },
+      history: { initialVersionId: SIMULATION_BASELINE_DATE, entries: [
+        { date: SIMULATION_BASELINE_DATE, type: 'initial', title: 'Ausgangsfassung', citation: 'Stammzitat', affectingVersionId: SIMULATION_BASELINE_DATE },
+        { date: '2026-03-01', type: 'amendment', title: 'Geändert', citation: 'Änderungsgesetz', affectingVersionId: '2026-03-01', relatedNorm: { slug: 'aendg-west' } },
+        { date: '2026-07-01', type: 'repeal', title: 'Aufgehoben', citation: 'Aufhebungsgesetz', affectingVersionId: null, relatedNorm: { slug: 'aufhg-west' } },
+      ] },
+      versions: [
+        // Baseline-Datei bleibt bei null: das Ende wird beim Laden abgeleitet.
+        { versionId: SIMULATION_BASELINE_DATE, simulationValidFrom: SIMULATION_BASELINE_DATE, simulationValidTo: null, sourceValidFrom: '2023-08-01', body: [paragraph('§ 1', 'Zweck', 'Alt.')] },
+        { versionId: '2026-03-01', simulationValidFrom: '2026-03-01', simulationValidTo: null, sourceReferences: [simGazette], body: [paragraph('§ 1', 'Zweck', 'Neu.')] },
+      ],
+    });
+    const plan = buildProjectionPlan([repealed], { jurisdiction: 'west', full: true, asOf: FIXTURE_REFERENCE_DATE, now: NOW });
+    const queries = plan.groups.flatMap((group) => group.queries);
+    const versions = queries.filter((query) => query.sql.startsWith('INSERT INTO law_versions')).map((query) => [query.params[1], query.params[3], query.params[6]]);
+    expect(versions).toEqual([[SIMULATION_BASELINE_DATE, '2026-02-28', 'historical'], ['2026-03-01', '2026-06-30', 'historical']]);
+    const normRow = queries.find((query) => query.sql.startsWith('INSERT INTO law_norms'))!;
+    expect(normRow.params[7]).toBe('repealed');
+    expect(normRow.params[8]).toBe('2026-03-01');
+    expect(normRow.params[13]).toBe('2026-06-30');
+    const sources = queries.filter((query) => query.sql.startsWith('INSERT INTO law_source_objects')).map((query) => [query.params[1], query.params[3]]);
+    expect(sources).toEqual([['2026-03-01', 'simulation-gazette']]);
   });
 
   it('zerlegt große Blöcke in Teile und setzt sie wieder zusammen', () => {

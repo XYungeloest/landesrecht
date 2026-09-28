@@ -37,6 +37,14 @@ export interface LineSegment {
   text: string;
 }
 
+/** Wort einer Zeile mit Lage; hochgestellte Wörter (Fußnotenzeichen) sind markiert. */
+export interface LineWord {
+  x0: number;
+  x1: number;
+  text: string;
+  superscript: boolean;
+}
+
 export interface PdfLine {
   page: number;
   /** Laufende Nummer über das ganze Dokument (Lesereihenfolge). */
@@ -49,6 +57,8 @@ export interface PdfLine {
   height: number;
   /** Spalten der Zeile (durch große Abstände getrennt). */
   segments: LineSegment[];
+  /** Wörter der Zeile in waagerechter Reihenfolge (für die Neuaufteilung an Spaltenzwischenräumen von Tabellen). */
+  words?: LineWord[];
   /** Zeilentext; Spalten durch ein Leerzeichen getrennt, hochgestellte Zeichen angehängt. */
   text: string;
   /** Hochgestellte Zeichen dieser Zeile (Fußnotenzeichen), in Reihenfolge. */
@@ -261,6 +271,7 @@ export function buildLayout(pages: PdfPageGeometry[], words: PdfWord[]): PdfLayo
         y1,
         height,
         segments,
+        words: tokens.map(({ word, sup }) => ({ x0: word.x0, x1: word.x1, text: word.text, superscript: sup })),
         text,
         superscripts: sups.map((word) => word.text),
         plainText: sorted.map((word) => word.text).join(' '),

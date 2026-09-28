@@ -84,7 +84,9 @@ async function writeNorm(contentRoot: string, input: NormInput): Promise<void> {
   await writeFile(join(directory, 'history.json'), `${JSON.stringify(history, null, 2)}\n`, 'utf8');
   for (const [index, version] of input.versions.entries()) {
     const next = input.versions[index + 1];
-    const file = { versionId: version.versionId, simulationValidFrom: version.versionId, simulationValidTo: next ? previousDay(next.versionId) : null, citation, changeNote: index === 0 ? 'Ausgangsfassung' : 'Folgefassung', body: version.body };
+    // Folgefassungen sind Sim-Fassungen: sie tragen ausschließlich Sim-Belege (Provenienztrennung, Gate G5).
+    const simulationSource = { kind: 'simulation-gazette', system: 'simulation', label: 'Synthetische Sim-Verkündung', availability: 'r2-archived', bucket: 'landesrecht-quellen', objectKey: `${input.jurisdiction}/simulation/${'0'.repeat(64)}.pdf`, sha256: '0'.repeat(64), mediaType: 'application/pdf' };
+    const file = { versionId: version.versionId, simulationValidFrom: version.versionId, simulationValidTo: next ? previousDay(next.versionId) : null, citation, changeNote: index === 0 ? 'Ausgangsfassung' : 'Folgefassung', ...(index > 0 ? { sourceReferences: [simulationSource] } : {}), body: version.body };
     await writeFile(join(directory, 'versions', `${version.versionId}.json`), `${JSON.stringify(file, null, 2)}\n`, 'utf8');
   }
 }

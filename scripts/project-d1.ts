@@ -21,11 +21,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { JURISDICTION_IDS, isJurisdictionId, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { loadJurisdictionNorms } from '@landesrecht/legal-core/lib/loader.ts';
+import { loadJurisdictionNorms, loadJurisdictionPublications } from '@landesrecht/legal-core/lib/loader.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import type { NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
 import { D1_DATABASE_NAMES } from '@landesrecht/runtime/bindings.ts';
-import { buildIncrementalProjectionPlan, projectionStateFor, type IncrementalProjection, type ProjectionState } from '@landesrecht/runtime/incremental.ts';
+import { buildIncrementalProjectionPlan, emptyProjectionDiff, projectionStateFor, type IncrementalProjection, type ProjectionState } from '@landesrecht/runtime/incremental.ts';
 import { buildProjectionPlan, renderPlanSql } from '@landesrecht/runtime/projection.ts';
 import { splitPlanIntoSqlFiles } from '@landesrecht/runtime/sql-batches.ts';
 import { checkSearchIndexIntegrity, executePlan, openSqliteD1 } from '@landesrecht/runtime/sqlite-d1.ts';
@@ -62,6 +62,17 @@ function assertProductionContent(records: readonly NormRecord[], jurisdiction: s
   if (fixtures.length > 0) throw new Error(`${jurisdiction}: synthetische Testfixtures im Produktionsbestand (${fixtures.map((record) => record.meta.slug).join(', ')})`);
 }
 
+/** Entpackt einen Pfad aus einer Git-Referenz; ein Pfad, den es dort nicht gibt, ergibt schlicht nichts. */
+function extractFromGitRef(ref: string, path: string, temp: string): void {
+  try {
+    const tar = execFileSync('git', ['archive', '--format=tar', ref, path], { cwd: root, maxBuffer: 2 * 1024 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
+    execFileSync('tar', ['-x', '-C', temp], { input: tar });
+  } catch (error) {
+    if (/did not match any files|pathspec/iu.test(String((error as { stderr?: Buffer }).stderr ?? (error as Error).message))) return;
+    throw error;
+  }
+}
+
 async function stateFromGitRef(ref: string, jurisdiction: JurisdictionId): Promise<ProjectionState | undefined> {
   const changedLogic = execFileSync('git', ['diff', '--name-only', ref, '--', ...PROJECTION_LOGIC_PATHS], { cwd: root, encoding: 'utf8' }).trim();
   if (changedLogic) {
@@ -70,12 +81,9 @@ async function stateFromGitRef(ref: string, jurisdiction: JurisdictionId): Promi
   }
   const temp = await mkdtemp(join(tmpdir(), 'landesrecht-projection-'));
   try {
-    const tar = execFileSync('git', ['archive', '--format=tar', ref, `content/norms/${jurisdiction}`], { cwd: root, maxBuffer: 2 * 1024 * 1024 * 1024 });
-    execFileSync('tar', ['-x', '-C', temp], { input: tar });
-    return projectionStateFor(await loadJurisdictionNorms(jurisdiction, temp), { jurisdiction });
-  } catch (error) {
-    if (/did not match any files|pathspec/iu.test(String((error as { stderr?: Buffer }).stderr ?? (error as Error).message))) return projectionStateFor([], { jurisdiction });
-    throw error;
+    extractFromGitRef(ref, `content/norms/${jurisdiction}`, temp);
+    extractFromGitRef(ref, `content/publications/${jurisdiction}`, temp);
+    return projectionStateFor(await loadJurisdictionNorms(jurisdiction, temp), { jurisdiction, publications: await loadJurisdictionPublications(jurisdiction, temp) });
   } finally {
     await rm(temp, { recursive: true, force: true });
   }
@@ -93,6 +101,7 @@ for (const jurisdiction of jurisdictions) {
   const database = D1_DATABASE_NAMES[jurisdiction];
   const records = await loadJurisdictionNorms(jurisdiction, root);
   assertProductionContent(records, jurisdiction);
+  const publications = await loadJurisdictionPublications(jurisdiction, root);
   const now = new Date().toISOString();
   const localStateFile = join(runtimeDir, `projection-state-${jurisdiction}.json`);
   const remoteStateFile = join(runtimeDir, `projection-state-${jurisdiction}.remote.json`);
@@ -100,13 +109,13 @@ for (const jurisdiction of jurisdictions) {
   if (incremental) {
     const explicitState = readOption('state');
     const previous = since ? await stateFromGitRef(since, jurisdiction) : await readState(explicitState ?? (target === 'remote-batches' ? remoteStateFile : localStateFile));
-    projection = buildIncrementalProjectionPlan(records, previous, { jurisdiction, now });
+    projection = buildIncrementalProjectionPlan(records, previous, { jurisdiction, now, publications });
   } else {
-    projection = { plan: buildProjectionPlan(records, { jurisdiction, full: true, now }), state: projectionStateFor(records, { jurisdiction }), mode: 'full', diff: { requiresFull: true, reasons: ['vollständige Projektion angefordert'], added: [], removed: [], changedVersions: [], changedMeta: [], changedSearch: [], changedOther: [], unchanged: 0 } };
+    projection = { plan: buildProjectionPlan(records, { jurisdiction, full: true, now, publications }), state: projectionStateFor(records, { jurisdiction, publications }), mode: 'full', diff: { ...emptyProjectionDiff(), requiresFull: true, reasons: ['vollständige Projektion angefordert'] } };
   }
   const { plan, diff } = projection;
-  const summary = `${database}: ${projection.mode} · ${plan.stats.norms} Normen, ${plan.stats.versions} Fassungen, ${plan.stats.blocks} Blöcke (${plan.stats.blockParts} Teile), ${plan.stats.searchUnits} Sucheinheiten, ${plan.stats.statements} Anweisungen`;
-  const diffLine = projection.mode === 'full' ? `  vollständig: ${diff.reasons.join('; ')}` : `  inkrementell: neu ${diff.added.length}, entfernt ${diff.removed.length}, Fassungen ${diff.changedVersions.length}, Metadaten ${diff.changedMeta.length}, Suche ${diff.changedSearch.length}, sonstige ${diff.changedOther.length}, unverändert ${diff.unchanged}`;
+  const summary = `${database}: ${projection.mode} · ${plan.stats.norms} Normen, ${plan.stats.versions} Fassungen, ${plan.stats.blocks} Blöcke (${plan.stats.blockParts} Teile), ${plan.stats.searchUnits} Sucheinheiten, ${plan.stats.publications} Verkündungen, ${plan.stats.statements} Anweisungen`;
+  const diffLine = projection.mode === 'full' ? `  vollständig: ${diff.reasons.join('; ')}` : `  inkrementell: neu ${diff.added.length}, entfernt ${diff.removed.length}, Fassungen ${diff.changedVersions.length}, Metadaten ${diff.changedMeta.length}, Suche ${diff.changedSearch.length}, sonstige ${diff.changedOther.length}, unverändert ${diff.unchanged}; Verkündungen neu ${diff.addedPublications.length}, entfernt ${diff.removedPublications.length}, geändert ${diff.changedPublications.length}`;
 
   if (target === 'plan') {
     console.log(`${summary}\n${diffLine}`);
@@ -127,7 +136,7 @@ for (const jurisdiction of jurisdictions) {
     const maxBytes = readOption('max-bytes');
     const batches = splitPlanIntoSqlFiles(plan, { database, resumable: !process.argv.includes('--not-resumable'), ...(maxStatements ? { maxStatements: Number(maxStatements) } : {}), ...(maxBytes ? { maxBytes: Number(maxBytes) } : {}) });
     for (const file of batches.files) await writeFile(join(directory, file.name), file.sql, 'utf8');
-    await writeFile(join(directory, 'plan.json'), `${JSON.stringify({ ...batches.plan, projectionMode: projection.mode, diff: { reasons: diff.reasons, added: diff.added.length, removed: diff.removed.length, changedVersions: diff.changedVersions.length, changedMeta: diff.changedMeta.length, changedSearch: diff.changedSearch.length, changedOther: diff.changedOther.length, unchanged: diff.unchanged }, targetFingerprint: projection.state.corpusFingerprint, generatedAt: now }, null, 2)}\n`, 'utf8');
+    await writeFile(join(directory, 'plan.json'), `${JSON.stringify({ ...batches.plan, projectionMode: projection.mode, diff: { reasons: diff.reasons, added: diff.added.length, removed: diff.removed.length, changedVersions: diff.changedVersions.length, changedMeta: diff.changedMeta.length, changedSearch: diff.changedSearch.length, changedOther: diff.changedOther.length, unchanged: diff.unchanged, addedPublications: diff.addedPublications.length, removedPublications: diff.removedPublications.length, changedPublications: diff.changedPublications.length }, targetFingerprint: projection.state.corpusFingerprint, generatedAt: now }, null, 2)}\n`, 'utf8');
     await writeFile(join(directory, 'state.json'), `${JSON.stringify(projection.state)}\n`, 'utf8');
     console.log(`${summary}\n${diffLine}\n  → ${directory}: ${batches.plan.files.length} Dateien, ${Math.round(batches.plan.totals.bytes / 1024)} KiB, größte Datei ${Math.round(Math.max(0, ...batches.plan.files.map((file) => file.bytes)) / 1024)} KiB`);
     for (const warning of batches.plan.warnings) console.log(`  Warnung: ${warning}`);

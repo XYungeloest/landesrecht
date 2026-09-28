@@ -27,7 +27,8 @@ import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
 import { stableStringify } from '@landesrecht/importer-recht-nrw/common/persist.ts';
 
 import type { GazetteUnit } from './gazette.ts';
-import { blockAt, blockCandidates, blockLabelMatches, formatPath, locateBlock, parseLocation, relabel, resolvePath, type FieldRef, type LocationPath, type LocationStep, type StepKind } from './location.ts';
+import type { LabelFormDecision } from './decisions.ts';
+import { blockAt, blockCandidates, blockLabelMatches, formatPath, locateBlock, ordinalDesignation, parseLocation, relabel, resolvePath, type FieldRef, type LocationPath, type LocationStep, type StepKind } from './location.ts';
 
 export class StructuralError extends Error {
   readonly code: string;
@@ -76,7 +77,8 @@ export type StructuralOperation =
   | { kind: 'unnumber-sentences' }
   /** Glied `block` an Stelle `index` unter `parent` (Indexpfad; `[]` = oberste Ebene). */
   | { kind: 'insert-block'; parent: number[]; index: number; block: NormBodyBlock }
-  | { kind: 'relabel'; path: number[]; from: string; to: string }
+  /** Lauf 12: `fromType`/`toType` nur bei Wechsel der Gliederungsart („Abschnitt I“ (section) → „Kapitel 1“ (chapter)). */
+  | { kind: 'relabel'; path: number[]; from: string; to: string; fromType?: NormBodyBlock['type']; toType?: NormBodyBlock['type'] }
   | { kind: 'insert-title'; path: number[]; title: string }
   /** Wörter oder Satzzeichen am Ende des einzigen Feldes streichen (`text` wie zitiert). */
   | { kind: 'delete-final'; text: string }
@@ -215,7 +217,9 @@ export function structuralForward(body: NormBodyBlock[], field: FieldRef | undef
     case 'relabel': {
       const block = blockAt(body, operation.path);
       if (!block || block.label !== operation.from) throw new StructuralError('target-not-found', `${step}: Glied [${operation.path.join(',')}] trägt nicht die Bezeichnung „${operation.from}“`);
+      if (operation.fromType !== undefined && block.type !== operation.fromType) throw new StructuralError('target-not-found', `${step}: Glied [${operation.path.join(',')}] ist ${block.type}, nicht ${operation.fromType}`);
       block.label = operation.to;
+      if (operation.toType !== undefined) block.type = operation.toType;
       return;
     }
     case 'number-paragraph': {
@@ -332,7 +336,9 @@ export function structuralBackward(body: NormBodyBlock[], field: FieldRef | unde
     case 'relabel': {
       const block = blockAt(body, operation.path);
       if (!block || block.label !== operation.to) throw new StructuralError('target-not-found', `${step}: Glied [${operation.path.join(',')}] trägt nicht die Bezeichnung „${operation.to}“`);
+      if (operation.toType !== undefined && block.type !== operation.toType) throw new StructuralError('target-not-found', `${step}: Glied [${operation.path.join(',')}] ist ${block.type}, nicht ${operation.toType}`);
       block.label = operation.from;
+      if (operation.fromType !== undefined) block.type = operation.fromType;
       return;
     }
     case 'number-paragraph': {
@@ -438,7 +444,17 @@ export type StructuralTemplate =
   | { kind: 'number-sentences'; context: LocationPath }
   | { kind: 'unnumber-sentences'; context: LocationPath }
   | { kind: 'insert-blocks'; context: LocationPath; targets: LocationStep[]; quotes: string[]; anchor?: { side: 'after' | 'before'; step: LocationStep }; append: boolean }
-  | { kind: 'relabel'; context: LocationPath; pairs: Array<[LocationStep, LocationStep]> }
+  | {
+    kind: 'relabel';
+    context: LocationPath;
+    pairs: Array<[LocationStep, LocationStep]>;
+    /**
+     * Lauf 12: Bezeichnungen, wie das Gesetz sie nennt, wo sie sich nicht aus Art und Wert ergeben – „Erster Teil“ → „Teil 1“
+     * (GVBl. 2024 S. 630). Fehlt die bisherige Bezeichnung bei Wechsel der Gliederungsart oder römischer Zählung, ist ihre
+     * Gestalt im Portal nicht belegt (`relabel-form-ambiguous`).
+     */
+    labels?: Array<{ from?: string; to?: string } | undefined>;
+  }
   | { kind: 'insert-title'; context: LocationPath; title: string }
   | { kind: 'replace-final'; context: LocationPath; from: string; to: string }
   | { kind: 'delete-final'; context: LocationPath; text: string }
@@ -465,14 +481,16 @@ const KIND_WORDS: ReadonlyArray<[RegExp, StepKind]> = [
   [/^(?:Nr\.|Nrn\.|Nummer|Nummern)$/u, 'nummer'],
   [/^(?:Buchst\.|Buchstabe|Buchstaben)$/u, 'buchstabe'],
   [/^(?:Doppelbuchst\.)$/u, 'doppelbuchstabe'],
-  [/^(?:Teil)$/u, 'teil'],
+  [/^(?:Teil|Teile)$/u, 'teil'],
+  [/^(?:Kapitel)$/u, 'kapitel'],
   [/^(?:Abschnitt|Abschnitte)$/u, 'abschnitt'],
+  [/^(?:Unterabschnitt|Unterabschnitte)$/u, 'unterabschnitt'],
   [/^(?:Anlage|Anlagen)$/u, 'anlage'],
 ];
 
 const kindOf = (word: string): StepKind | undefined => KIND_WORDS.find(([pattern]) => pattern.test(word))?.[1];
 
-const UNIT = String.raw`(§§?|Art\.|Artikel|Abs\.|Absatz|Absätze|Nrn?\.|Nummer|Nummern|Buchst\.|Buchstabe|Buchstaben|Doppelbuchst\.|Teil|Abschnitt|Anlage)`;
+const UNIT = String.raw`(§§?|Art\.|Artikel|Abs\.|Absatz|Absätze|Nrn?\.|Nummer|Nummern|Buchst\.|Buchstabe|Buchstaben|Doppelbuchst\.|Teil|Kapitel|Abschnitt|Anlage)`;
 const VALUE = String.raw`(\d+[a-z]?(?:\.\d+[a-z]?)*|[a-z]{1,3})`;
 const VALUES = String.raw`(\d+[a-z]?(?:\.\d+[a-z]?)*|[a-z]{1,3})((?:\s*(?:,|und|bis)\s*(?:\d+[a-z]?(?:\.\d+[a-z]?)*|[a-z]{1,3}))*)`;
 
@@ -570,6 +588,29 @@ export function parseStructural(input: string, context: readonly LocationPath[],
   }
   // „Der Wortlaut wird Abs. 1.“ (GVBl. 2024 S. 562, 2026 S. 190)
   if (/^Der\s+(?:bisherige\s+)?Wortlaut\s+wird\s+Abs\.\s*1\.?$/u.test(text)) return { formula: 'number-paragraph', templates: [{ kind: 'number-paragraph', context: flat(context) }] };
+
+  // Lauf 12: Gliederungsteil mit Ordnungswort („Der Erste Teil wird Teil 1.“, „Der bisherige Vierte Teil wird Teil 5.“,
+  // GVBl. 2024 S. 630): Die bisherige Bezeichnung ist die genannte („Erster Teil“), die neue die genannte („Teil 1“).
+  const ordinalDivision = /^(?:(?:Der|Die|Das)\s+)?(?:bisherigen?\s+)?(Erste|Zweite|Dritte|Vierte|Fünfte|Sechste|Siebte|Siebente|Achte|Neunte|Zehnte)r?\s+(Teil|Kapitel|Abschnitt|Unterabschnitt)\s+wird\s+(?:zu\s+)?(?:(?:der|dem|den)\s+)?(Teil|Kapitel|Abschnitt|Unterabschnitt)\s+(\d+)\.?$/u.exec(text);
+  if (ordinalDivision) {
+    const fromKind = kindOf(ordinalDivision[2]!)!;
+    const toKind = kindOf(ordinalDivision[3]!)!;
+    const value = String(['Erste', 'Zweite', 'Dritte', 'Vierte', 'Fünfte', 'Sechste', 'Siebte', 'Achte', 'Neunte', 'Zehnte'].indexOf(ordinalDivision[1]!.replace(/^Siebente$/u, 'Siebte')) + 1);
+    return { formula: 'relabel', templates: [{ kind: 'relabel', context: flat(context), pairs: [[{ kind: fromKind, value }, { kind: toKind, value: ordinalDivision[4]! }]], labels: [{ from: ordinalDesignation(fromKind, value)!, to: `${ordinalDivision[3]} ${ordinalDivision[4]}` }] }] };
+  }
+  // Lauf 12: römisch gezählte Gliederungsteile, auch mit Wechsel der Gliederungsart („die Abschnitte I. und II. werden die
+  // Kapitel 1 und 2“, GVBl. 2024 S. 630): die neue Bezeichnung ist die genannte; die bisherige ist in ihrer Gestalt („Abschnitt I“,
+  // „I. Abschnitt“, „I.“ – je im Bestand belegt) nicht bestimmt und bleibt offen (`realize`).
+  const romanDivision = /^(?:(?:Der|Die|Das)\s+)?(?:bisherigen?\s+)?(Teile?|Kapitel|Abschnitte?|Unterabschnitte?)\s+([IVX]+\.?(?:(?:\s*,\s*|\s+und\s+)[IVX]+\.?)*)\s+(?:wird|werden)\s+(?:zu\s+)?(?:(?:die|der|den|dem)\s+)?(Teile?|Kapitel|Abschnitte?|Unterabschnitte?)\s+(\d+(?:(?:\s*,\s*|\s+und\s+)\d+)*)\.?$/u.exec(text);
+  if (romanDivision) {
+    const fromKind = kindOf(romanDivision[1]!)!;
+    const toKind = kindOf(romanDivision[3]!)!;
+    const from = romanDivision[2]!.split(/\s*(?:,|und)\s*/u).map((value) => value.replace(/\.$/u, '').trim());
+    const to = romanDivision[4]!.split(/\s*(?:,|und)\s*/u).map((value) => value.trim());
+    if (from.length !== to.length) return { formula: 'renumber', reason: 'Umnummerierung nicht eindeutig lesbar (Zahl der Glieder)' };
+    const word = romanDivision[3]!.replace(/e$/u, '');
+    return { formula: 'relabel', templates: [{ kind: 'relabel', context: flat(context), pairs: from.map((value, index) => [{ kind: fromKind, value }, { kind: toKind, value: to[index]! }] as [LocationStep, LocationStep]), labels: to.map((value) => ({ to: `${word} ${value}` })) }] };
+  }
 
   // Umnummerierung mit weiterem Befehl: „Der bisherige Satz 3 wird Satz 4 und nach der Angabe „Bei dem“ … eingefügt.“,
   // „Nr. 6 wird Nr. 5 und in Buchst. c wird die Angabe „Nrn.“ durch die Angabe „Nr.“ ersetzt.“
@@ -711,6 +752,8 @@ export interface RealizedStep {
   widened: string[];
   /** Toleriert Satzfehler der Quelle (Portal oder Verkündung), im Rezept vermerkt. */
   note?: string;
+  /** Lauf 12: Gestalt einer bisherigen Bezeichnung nach Reviewentscheidung (`decisions.ts`), im Rezept vermerkt. */
+  reviewDecision?: string;
 }
 
 export function singleTextField(body: readonly NormBodyBlock[], path: LocationPath, step: string): { field: FieldRef; resolved: string[]; widened: string[] } {
@@ -776,6 +819,7 @@ export const SAME_KIND: Readonly<Partial<Record<StepKind, RegExp>>> = {
   paragraph: /^§\s*\d+[a-z]?$/u,
   artikel: /^(?:Art\.|Artikel)\s*\d+[a-z]?$/u,
   teil: /^Teil\s+\S+$/u,
+  kapitel: /^Kapitel\s+\S+$/u,
   abschnitt: /^Abschnitt\s+\S+$/u,
   anlage: /^Anlage\s+\S+$/u,
 };
@@ -784,7 +828,7 @@ export const SAME_KIND: Readonly<Partial<Record<StepKind, RegExp>>> = {
  * Löst eine Vorlage im **Zustand unmittelbar nach dem Befehl** auf. Ergebnis: die konkreten Schritte in
  * Vorwärtsreihenfolge. `explicitNumbering`: Die Änderung enthält für diesen Ort „Der Wortlaut wird Satz 1“.
  */
-export function realize(body: readonly NormBodyBlock[], template: StructuralTemplate, step: string, explicitNumbering: boolean): RealizedStep[] {
+export function realize(body: readonly NormBodyBlock[], template: StructuralTemplate, step: string, explicitNumbering: boolean, labelForms?: ReadonlyMap<string, LabelFormDecision>): RealizedStep[] {
   switch (template.kind) {
     case 'insert-sentence': {
       const frame = template.after === 'end' ? listFrameOrUndefined(body, template.context, step) : undefined;
@@ -922,8 +966,11 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
     case 'relabel': {
       const up = template.pairs.every(([from, to]) => compareValues(to.value, from.value) > 0);
       const down = template.pairs.every(([from, to]) => compareValues(to.value, from.value) < 0);
-      if (!up && !down) throw new StructuralError('renumber-ambiguous', `${step}: Umnummerierung weder durchgehend auf- noch absteigend`);
-      const ordered = [...template.pairs].sort((left, right) => (up ? compareValues(right[0].value, left[0].value) : compareValues(left[0].value, right[0].value)));
+      // Lauf 12: gleiche Werte, andere Schreibweise oder Gliederungsart („Erster Teil“ → „Teil 1“, „Abschnitt I“ → „Kapitel 1“):
+      // keine Reihenfolge nötig.
+      const same = template.pairs.every(([from, to]) => compareValues(to.value, from.value) === 0);
+      if (!up && !down && !same) throw new StructuralError('renumber-ambiguous', `${step}: Umnummerierung weder durchgehend auf- noch absteigend`);
+      const ordered = same ? [...template.pairs] : [...template.pairs].sort((left, right) => (up ? compareValues(right[0].value, left[0].value) : compareValues(left[0].value, right[0].value)));
       // Aufgelöst wird rückwärts, also in umgekehrter Vorwärtsreihenfolge, jeweils im aktuellen Zustand.
       const working = structuredClone(body) as NormBodyBlock[];
       const realized: RealizedStep[] = [];
@@ -932,11 +979,18 @@ export function realize(body: readonly NormBodyBlock[], template: StructuralTemp
         const located = locateBlock(working, [...template.context, to]);
         if (!located.ok) throw new StructuralError('location-unresolved', `${step} ${formatPath([...template.context, to])}: ${located.reason}`);
         const block = blockAt(working, located.path)!;
-        const oldLabel = relabel(block.label, to, from.value);
+        const explicit = template.labels?.[template.pairs.indexOf(pair)];
+        if (explicit?.to !== undefined && normalizeLabelText(block.label) !== explicit.to) throw new StructuralError('target-not-found', `${step}: ${formatPath([...template.context, to])} trägt nicht die Bezeichnung „${explicit.to}“, sondern „${block.label ?? ''}“`);
+        const decided = explicit?.from === undefined ? labelForms?.get(normalizeLabelText(block.label)) : undefined;
+        const oldLabel = explicit?.from ?? decided?.from ?? relabel(block.label, to, from.value);
+        if (oldLabel === undefined && (from.kind !== to.kind || /[IVX]/u.test(from.value) || /[IVX]/u.test(to.value))) throw new StructuralError('relabel-form-ambiguous', `${step}: Gestalt der bisherigen Bezeichnung „${formatPath([from])}“ (vor „${block.label ?? ''}“) im Portal nicht belegt – Gliederungsteile stehen im Bestand als „Abschnitt I“, „I. Abschnitt“ oder „I.“; Review`);
         if (oldLabel === undefined || block.label === undefined) throw new StructuralError('renumber-ambiguous', `${step}: Bezeichnung „${block.label ?? ''}“ nicht eindeutig umzuschreiben`);
-        const operation: StructuralOperation = { kind: 'relabel', path: located.path, from: oldLabel, to: block.label };
+        // Wechsel der Gliederungsart: der Blocktyp folgt dem Gliederungswort (wie der Parser des Portals ihn setzt).
+        const typeOf: Readonly<Partial<Record<StepKind, NormBodyBlock['type']>>> = { teil: 'part', kapitel: 'chapter', abschnitt: 'section', unterabschnitt: 'subsection' };
+        const kindChange = from.kind !== to.kind && typeOf[from.kind] !== undefined && typeOf[to.kind] !== undefined;
+        const operation: StructuralOperation = { kind: 'relabel', path: located.path, from: oldLabel, to: block.label, ...(kindChange ? { fromType: typeOf[from.kind]!, toType: block.type } : {}) };
         structuralBackward(working, undefined, operation, step);
-        realized.unshift({ operation, pair: template.pairs.indexOf(pair), location: `${formatPath([...template.context, from])} → ${formatPath([to])}`, resolved: located.resolved, widened: located.widened });
+        realized.unshift({ operation, pair: template.pairs.indexOf(pair), location: `${formatPath([...template.context, from])} → ${formatPath([to])}`, resolved: located.resolved, widened: located.widened, ...(decided ? { reviewDecision: decided.note } : {}) });
       }
       return realized;
     }

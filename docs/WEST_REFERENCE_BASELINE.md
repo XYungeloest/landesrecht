@@ -132,7 +132,11 @@ dieses Referenzstands.
 1. konkreter Bugfix,
 2. neue amtliche Evidenz,
 3. redaktionell geprüfte Reviewentscheidung,
-4. bewusstes Schema-/Pipeline-Upgrade mit Migration.
+4. bewusstes Schema-/Pipeline-Upgrade mit Migration,
+5. additive Sim-Fortschreibung (`docs/SIMULATION_IMPORT.md`): zulässig, solange die eingefrorenen
+   Baseline-Fassungen (`versions/2023-12-01.json`) und ihre Realquellenprovenienz unverändert bleiben – neue
+   Fassungsdateien, Sim-Akte als eigene Normen und nur additive Änderungen an `meta.json`/`history.json`
+   (Gate G2 gegen den Freeze-Commit in `data/simulation/baseline-locks.json`, Gate G3 additiv).
 
 Keine allgemeine Experimentierphase mehr. Nächster Quelladapter: Niedersachsen-Holstein (`nsh`), nach
 `docs/NEW_JURISDICTION_IMPORT_CHECKLIST.md`.

@@ -5,18 +5,21 @@
  * Jede gelesene Zeile wird über die kanonischen Parser re-validiert (D1 ist abgeleitet).
  */
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { comparePublicationsNewestFirst } from '@landesrecht/legal-core/lib/publications.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import { expandNormTypeFilter } from '@landesrecht/legal-core/lib/schema.ts';
 import {
   parseNormHistory,
   parseNormMeta,
   parseNormVersion,
+  parsePublication,
   validateNormRecord,
   type NormBodyBlock,
   type NormRecord,
   type NormStatus,
   type NormType,
   type NormVersion,
+  type Publication,
 } from '@landesrecht/legal-core/lib/schema.ts';
 import {
   buildFtsAndMatch,
@@ -387,6 +390,19 @@ export function createD1NormStore(db: D1Database, jurisdiction: JurisdictionId):
     async getRuntimeMeta(key) {
       const row = await unlessUnprojected(() => db.prepare('SELECT value FROM law_runtime_meta WHERE key = ?').bind(key).first<{ value: string }>(), () => null);
       return row?.value ?? null;
+    },
+
+    async listPublications(query = {}) {
+      // Nur law_publications; der Normenbestand wird dafür nicht gelesen. Eine Datenbank ohne die Tabelle (Schema 0001,
+      // Migration 0002 noch nicht eingespielt) ist ein Leerzustand, kein Fehler.
+      const rows = await unlessUnprojected(() => db.prepare('SELECT slug, publication_json FROM law_publications WHERE jurisdiction = ? ORDER BY publication_date DESC, slug').bind(jurisdiction).all<{ slug: string; publication_json: string }>(), () => ({ results: [] as Array<{ slug: string; publication_json: string }> }));
+      const publications: Publication[] = rows.results.map((row) => parsePublication(JSON.parse(row.publication_json), `d1:${jurisdiction}/publications/${row.slug}`)).sort(comparePublicationsNewestFirst);
+      return query.limit === undefined ? publications : publications.slice(0, Math.max(0, query.limit));
+    },
+
+    async getPublication(slug) {
+      const row = await unlessUnprojected(() => db.prepare('SELECT publication_json FROM law_publications WHERE jurisdiction = ? AND slug = ?').bind(jurisdiction, slug).first<{ publication_json: string }>(), () => null);
+      return row ? parsePublication(JSON.parse(row.publication_json), `d1:${jurisdiction}/publications/${slug}`) : null;
     },
   };
 

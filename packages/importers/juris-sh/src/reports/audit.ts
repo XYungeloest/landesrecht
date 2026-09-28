@@ -71,13 +71,18 @@ export async function runAudit(root: string, snapshot: AdapterSnapshot, cacheDir
   const importedEntries = snapshot.manifest.entries.filter((entry) => entry.importStatus === 'imported' || entry.importStatus === 'imported-with-warnings');
   const importedSlugs = new Set(importedEntries.map((entry) => entry.targetSlug));
   const contentSlugs = new Set(snapshot.contentSlugs);
-  const orphan = [...contentSlugs].filter((slug) => !importedSlugs.has(slug));
+  // Sim-Normen (eigene Normen der Simulationsrechtsfortschreibung, ohne Manifesteintrag und ohne juris-Kennung) zählen
+  // getrennt; die Dateizahl des juris-Bestands wird ohne sie erwartet.
+  const simulationSlugs = new Set(snapshot.simulationSlugs ?? []);
+  const orphan = [...contentSlugs].filter((slug) => !importedSlugs.has(slug) && !simulationSlugs.has(slug));
   const missing = [...importedSlugs].filter((slug) => !contentSlugs.has(slug));
   const expectedFiles = importedEntries.length * 3;
+  const simulationFiles = snapshot.simulationFiles ?? 0;
+  const jurisFiles = snapshot.contentFiles - simulationFiles;
   checks.push({
     id: 'bestand',
-    ok: orphan.length === 0 && missing.length === 0 && snapshot.contentFiles === expectedFiles,
-    detail: `${importedEntries.length} übernommene Manifesteinträge, ${contentSlugs.size} Normverzeichnisse, ${snapshot.contentFiles} Dateien unter ${CONTENT_DIR} (erwartet ${expectedFiles})${orphan.length ? `; ohne Manifest: ${orphan.slice(0, 5).join(', ')}` : ''}${missing.length ? `; ohne Verzeichnis: ${missing.slice(0, 5).join(', ')}` : ''}`,
+    ok: orphan.length === 0 && missing.length === 0 && jurisFiles === expectedFiles,
+    detail: `${importedEntries.length} übernommene Manifesteinträge, ${contentSlugs.size - simulationSlugs.size} Normverzeichnisse, ${jurisFiles} Dateien unter ${CONTENT_DIR} (erwartet ${expectedFiles}); Sim-Normen ${simulationSlugs.size} (${simulationFiles} Dateien)${orphan.length ? `; ohne Manifest: ${orphan.slice(0, 5).join(', ')}` : ''}${missing.length ? `; ohne Verzeichnis: ${missing.slice(0, 5).join(', ')}` : ''}`,
   });
 
   // Rohquellen der übernommenen Normen: SHA-256 im Cache nachrechnen (Gesamtausgabe bzw. Einzelfassungen).

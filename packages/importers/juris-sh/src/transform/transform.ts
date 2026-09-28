@@ -68,6 +68,8 @@ export interface TransformOptions {
   sourceArea?: SourceArea;
   /** Kopfzeilen außerhalb des Normkörpers (z. B. Erlasskopf „Runderlass des Innenministeriums“). */
   headLines?: Array<{ path: string; text: string }>;
+  /** juris-Kopf „Normgeber“ (Verwaltungsvorschriften): entscheidet nur zwischen mehreren Formelorganen. */
+  normgeber?: string;
   sourceStatus?: VersionSourceStatus;
   /** Zusatz zum Änderungshinweis der Fassung (z. B. Rekonstruktionspfad). */
   provenanceNote?: string;
@@ -142,9 +144,11 @@ export function transformToNsh(law: SourceLaw, context: TransformContext, option
   if (context.baselineDate !== SIMULATION_BASELINE_DATE) throw new Error(`Ausgangsrechtsstand ${context.baselineDate} weicht von ${SIMULATION_BASELINE_DATE} ab`);
 
   // 1. Erlassorgan nur aus ausdrücklicher Formel.
-  const organs = extractSourceOrgans(options.headLines ? { blocks: law.body, headLines: options.headLines } : { blocks: law.body });
+  const organs = extractSourceOrgans({ blocks: law.body, ...(options.headLines ? { headLines: options.headLines } : {}), ...(options.normgeber ? { normgeber: options.normgeber } : {}) });
   const mapping = mapEnactingBody(organs.enactingBody?.name, { ...(options.institutions ? { institutions: options.institutions } : {}), transformation: ruleOptions });
   if (organs.conflict) findings.push({ severity: 'warning', code: 'organ-formula-conflict', message: `Widersprüchliche Erlassformeln (${[...new Set(organs.candidates.map((candidate) => candidate.name))].join(' / ')}); kein Erlassorgan übernommen` });
+  if (organs.resolution === 'joint-enactment') findings.push({ severity: 'info', code: 'organ-joint-enactment', message: `Gemeinsame Verordnung: Jede Erlassformel weist ihrem Organ Vorschriften zu; Erlassorgane „${organs.enactingBody?.name}“` });
+  if (organs.resolution === 'normgeber') findings.push({ severity: 'info', code: 'organ-normgeber', message: `Mehrere Erlassformeln (${[...new Set(organs.candidates.map((candidate) => candidate.name))].join(' / ')}); der juris-Kopf „Normgeber“ nennt „${options.normgeber}“ – Erlassorgan „${organs.enactingBody?.name}“` });
   if (mapping.decision === 'manual-review') findings.push({ severity: 'warning', code: 'enacting-body-mapping-required', message: `Erlassorgan der Quelle „${organs.enactingBody?.name}“ ohne sichere Entsprechung; Simulationsorgan bleibt leer (manuelle Entscheidung)` });
 
   // 2. Erkennung auf dem unveränderten Quelltext.

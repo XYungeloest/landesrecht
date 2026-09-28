@@ -51,12 +51,12 @@ Jede Norm hat **genau eine** Gruppe (Vorrang und Regeln: `src/reconstruction/gro
 | ---: | --- | ---: | ---: | ---: | --- |
 | 1 | genau 1 Änderung nach dem Stichtag (`single-amendment`) | 69 | 56 | 13 | `unsupported-formula/unrecognized` 3, `ambiguous-target/reverse-location-unresolved` 1, `ambiguous-target/reverse-target-ambiguous` 1, `command-unreadable/location-unreadable` 1 |
 | 2 | 2 Änderungen (`two-amendments`) | 16 | 13 | 3 | `ambiguous-target/reverse-location-unresolved` 1, `command-unreadable/location-unreadable` 1, `partial-chain/chain-ledger-unexplained` 1 |
-| 3 | 3 oder mehr Änderungen (`three-or-more-amendments`) | 5 | 1 | 4 | `missing-base/prior-source-unavailable` 1, `partial-chain/chain-ledger-unexplained` 1, `unsupported-formula/renumber` 1, `unsupported-formula/unrecognized` 1 |
+| 3 | 3 oder mehr Änderungen (`three-or-more-amendments`) | 5 | 1 | 4 | `ambiguous-target/reverse-relabel-form-ambiguous` 1, `missing-base/prior-source-unavailable` 1, `partial-chain/chain-ledger-unexplained` 1, `unsupported-formula/renumber` 1 |
 | 4 | vollständige Neufassung (`full-recast`) | 6 | 0 | 6 | `non-invertible-amendment/recast` 2, `ambiguous-target/reverse-location-unresolved` 1, `command-unreadable/chain-block-not-found` 1, `missing-base/prior-treaty-without-reference` 1 |
 | 5 | Anlagenersetzung (`annex-replacement`) | 81 | 0 | 81 | `asset-missing/annex-recast` 27, `non-invertible-amendment/restore-annex-attachment` 11, `command-unreadable/location-unreadable` 7, `command-unreadable/chain-block-not-found` 4 |
 | 6 | Tabellenersetzung (`table-replacement`) | 14 | 0 | 14 | `non-invertible-amendment/recast` 5, `partial-chain/chain-commencement-order` 2, `command-unreadable/chain-block-not-found` 1, `command-unreadable/location-unreadable` 1 |
 | 7 | Bildersetzung (`image-replacement`) | 5 | 0 | 5 | `non-invertible-amendment/recast` 2, `command-unreadable/location-unreadable` 1, `non-invertible-amendment/repeal-unit` 1, `non-invertible-amendment/restoration-disagrees` 1 |
-| 8 | fehlender Vorgängertext (`missing-predecessor-text`) | 281 | 0 | 281 | `non-invertible-amendment/recast` 69, `non-invertible-amendment/repeal-unit` 34, `non-invertible-amendment/delete-words` 27, `partial-chain/chain-commencement-order` 16 |
+| 8 | fehlender Vorgängertext (`missing-predecessor-text`) | 281 | 0 | 281 | `non-invertible-amendment/recast` 70, `non-invertible-amendment/repeal-unit` 34, `non-invertible-amendment/delete-words` 27, `partial-chain/chain-commencement-order` 16 |
 | 9 | baseline-only predecessor (`baseline-only-predecessor`) | 3 | 0 | 3 | `missing-base/no-post-baseline-event` 3 |
 | 10 | contradictory evidence (`contradictory-evidence`) | 33 | 0 | 33 | `contradictory/portal-in-force-mismatch` 16, `contradictory/chain-prior-history-mismatch` 6, `contradictory/chain-history-mismatch` 3, `contradictory/chain-no-post-baseline-amendment` 3 |
 
@@ -69,23 +69,23 @@ Jede Prüfung zählt nur Normen, die sie erreicht haben; „nicht erreicht“ he
 | alle genannten Verkündungen verfügbar (Cache, HTML oder PDF-Textlayer) | 492 | 19 | 2 |
 | Kette belegt: Vollzitat, Verweise, Register, Verlauf, Fortführungsnachweis, übrige Verkündungen | 391 | 105 | 17 |
 | Inkrafttreten je Änderung bestimmt, in Kettenreihenfolge, jüngstes = inkraft | 394 | 15 | 104 |
-| Befehlsblock und Orte lesbar | 374 | 20 | 119 |
-| jede Klausel mit unterstützter, eindeutig umkehrbarer Formel | 131 | 263 | 119 |
-| Orte aufgelöst, Wortlaut eindeutig, Vorwärtsprobe je Änderung exakt | 74 | 57 | 382 |
+| Befehlsblock und Orte lesbar | 375 | 19 | 119 |
+| jede Klausel mit unterstützter, eindeutig umkehrbarer Formel | 132 | 262 | 119 |
+| Orte aufgelöst, Wortlaut eindeutig, Vorwärtsprobe je Änderung exakt | 74 | 58 | 381 |
 | Beginn der Stichtagsfassung (≤ Stichtag) mit Kalenderdatum belegt | 70 | 1 | 442 |
 
 ## Zustände
 
 | Zustand | Normen | Bedeutung |
 | --- | ---: | --- |
-| `non-invertible-amendment` | 221 | Befehl nicht umkehrbar (Alttext fehlt) |
+| `non-invertible-amendment` | 223 | Befehl nicht umkehrbar (Alttext fehlt) |
 | `recipe-ready` | 70 | sicher zurückgerechnet (Rezept, Forward-Replay exakt) |
 | `partial-chain` | 46 | Kette nicht vollständig belegt |
 | `contradictory` | 33 | Belege widersprechen einander |
-| `command-unreadable` | 30 | Befehl nicht auffindbar oder nicht lesbar |
+| `command-unreadable` | 29 | Befehl nicht auffindbar oder nicht lesbar |
 | `asset-missing` | 27 | Anlage oder Abbildung ohne Alttext |
-| `unsupported-formula` | 25 | Formel nicht maschinell angewandt |
-| `ambiguous-target` | 22 | Ort oder Wortlaut nicht eindeutig |
+| `ambiguous-target` | 23 | Ort oder Wortlaut nicht eindeutig |
+| `unsupported-formula` | 23 | Formel nicht maschinell angewandt |
 | `missing-base` | 19 | Quelle fehlt |
 | `effective-date-undetermined` | 15 | Inkrafttreten nicht bestimmbar |
 | `round-trip-failed` | 5 | Rundlauf gescheitert |
@@ -96,25 +96,25 @@ Je Norm zählt der schwerste Befund (Widerspruch → Quelle fehlt → Befehl unl
 
 | Zustand / Grund | Normen |
 | --- | ---: |
-| `non-invertible-amendment/recast` | 82 |
+| `non-invertible-amendment/recast` | 83 |
 | `recipe-ready/reverse-amendment-verified` | 70 |
 | `non-invertible-amendment/repeal-unit` | 39 |
 | `non-invertible-amendment/delete-words` | 29 |
 | `asset-missing/annex-recast` | 27 |
 | `partial-chain/chain-commencement-order` | 21 |
-| `command-unreadable/location-unreadable` | 20 |
+| `command-unreadable/location-unreadable` | 19 |
 | `contradictory/portal-in-force-mismatch` | 16 |
 | `effective-date-undetermined/commencement-unreadable` | 15 |
 | `non-invertible-amendment/restoration-prior-reverse` | 15 |
 | `non-invertible-amendment/restoration-disagrees` | 14 |
-| `unsupported-formula/unrecognized` | 13 |
 | `non-invertible-amendment/restore-annex-attachment` | 12 |
 | `non-invertible-amendment/restore-not-found` | 12 |
+| `unsupported-formula/unrecognized` | 12 |
 | `ambiguous-target/reverse-location-unresolved` | 10 |
 | `command-unreadable/chain-block-not-found` | 10 |
 | `non-invertible-amendment/restore-shape` | 10 |
 | `partial-chain/chain-ledger-unexplained` | 10 |
-| `unsupported-formula/insert-unit` | 8 |
+| `unsupported-formula/insert-unit` | 7 |
 | `contradictory/chain-prior-history-mismatch` | 6 |
 | `missing-base/prior-source-not-on-platform` | 6 |
 | `missing-base/prior-treaty-without-reference` | 6 |
@@ -135,10 +135,12 @@ Je Norm zählt der schwerste Befund (Widerspruch → Quelle fehlt → Befehl unl
 | `non-invertible-amendment/location-unresolved` | 2 |
 | `partial-chain/chain-delayed-predecessor` | 2 |
 | `ambiguous-target/reverse-anchor-mismatch` | 1 |
+| `ambiguous-target/reverse-relabel-form-ambiguous` | 1 |
 | `ambiguous-target/reverse-sentence-ambiguous` | 1 |
 | `ambiguous-target/reverse-title-projection` | 1 |
 | `contradictory/chain-last-amendment` | 1 |
 | `non-invertible-amendment/restore-no-change` | 1 |
+| `non-invertible-amendment/restore-position` | 1 |
 | `partial-chain/baseline-text-in-force-unproven` | 1 |
 | `partial-chain/chain-parallel-order` | 1 |
 | `partial-chain/chain-split-commencement` | 1 |
@@ -151,18 +153,18 @@ Erhoben aus allen Befehlsblöcken der Ketten und des Registers; „Klauseln“ z
 
 | Formel | Wortlaut (Beispiel) | Klauseln | Normen | bestimmt Alttext | angewandt |
 | --- | --- | ---: | ---: | :---: | :---: |
-| `replace-words` | „… wird die Angabe „X“ durch die Angabe „Y“ ersetzt“ | 1793 | 267 | ja | ja |
+| `replace-words` | „… wird die Angabe „X“ durch die Angabe „Y“ ersetzt“ | 1799 | 267 | ja | ja |
 | `recast` | „… wird wie folgt gefasst:“ / „erhält folgende Fassung“ | 810 | 236 | nein | nein |
-| `relabel` | „Der bisherige Abs. 3 wird Abs. 4.“ / „Die bisherigen Nrn. 5 bis 7 werden die Nrn. 6 bis 8.“ (neu) | 604 | 138 | ja | ja |
+| `relabel` | „Der bisherige Abs. 3 wird Abs. 4.“ / „Die bisherigen Nrn. 5 bis 7 werden die Nrn. 6 bis 8.“ (neu) | 620 | 138 | ja | ja |
 | `repeal-unit` | „… wird aufgehoben“ / „Satz 5 wird gestrichen“ | 428 | 169 | nein | nein |
 | `insert-words` | „… wird nach/vor der Angabe „X“ die Angabe „Y“ eingefügt“ | 422 | 142 | ja | ja |
 | `delete-words` | „… wird die Angabe „X“ gestrichen“ (ohne Anker) | 391 | 145 | nein | nein |
-| `unrecognized` | nicht erkannt | 344 | 105 | ja | nein |
 | `insert-sentence` | „Folgender Satz 2 wird angefügt: „²…““ / „Nach Satz 1 wird folgender Satz 2 eingefügt“ (neu) | 335 | 135 | ja | ja |
-| `insert-block` | „Nach Nr. 4 wird folgende Nr. 5 eingefügt: „5. …““ / „Folgender Abs. 3 wird angefügt“ (neu) | 282 | 144 | ja | ja |
+| `unrecognized` | nicht erkannt | 328 | 103 | ja | nein |
+| `insert-block` | „Nach Nr. 4 wird folgende Nr. 5 eingefügt: „5. …““ / „Folgender Abs. 3 wird angefügt“ (neu) | 283 | 144 | ja | ja |
 | `renumber-sentence` | „Der bisherige Satz 2 wird Satz 3.“ (neu) | 224 | 86 | ja | ja |
-| `renumber` | Umnummerierung, die nicht eindeutig lesbar ist | 128 | 46 | ja | nein |
-| `insert-unit` | Einfügung eines Glieds, die nicht eindeutig zuzuordnen ist | 120 | 70 | ja | nein |
+| `renumber` | Umnummerierung, die nicht eindeutig lesbar ist | 123 | 45 | ja | nein |
+| `insert-unit` | Einfügung eines Glieds, die nicht eindeutig zuzuordnen ist | 119 | 69 | ja | nein |
 | `number-sentences` | „Der Wortlaut wird Satz 1.“ (neu) | 57 | 43 | ja | ja |
 | `insert-title` | „In § 5 wird folgende Überschrift eingefügt: „…““ (neu) | 45 | 9 | ja | ja |
 | `replace-final-punctuation` | „… wird der Punkt am Ende durch … ersetzt“ | 37 | 29 | ja | ja |
@@ -1362,8 +1364,8 @@ Ergebnis: **14** Fälle geprüft, **1** neu entschieden, 13 bleiben unbestimmt.
 | Norm | Änderungen | Zustand / Grund | Befund | weitere Gründe |
 | --- | ---: | --- | --- | --- |
 | `BayAAV` | 4 | `partial-chain/chain-ledger-unexplained` | Das Register führt GVBl. 2023 S. 659 (notice), GVBl. 2024 S. 163 (notice) für die Norm; die Kette der amtlichen Verweise enthält diese Veröffentlichungen nicht |  |
-| `BayGDVG` | 3 | `unsupported-formula/unrecognized` | GVBl. 2024 S. 630 (§ 1): 1. „Der Erste Teil wird Teil 1.“: Befehlsrest ohne Schlussverb: „der Erste Teil wird Teil 1“ | `renumber` |
 | `BayGGebO` | 3 | `unsupported-formula/renumber` | GVBl. 2026 S. 151 (§ 2): 1. a) „Der Wortlaut wird Buchst. a und die Angabe „ ; “ am Ende wird durch die Angabe „ , “ ersetzt.“: Umnummerierung: strukturelle Änderung, von diesem Modell nicht angewandt | `insert-unit` |
+| `BayGDVG` | 3 | `ambiguous-target/reverse-relabel-form-ambiguous` | GVBl. 2024 S. 630 (§ 1): 3.: Gestalt der bisherigen Bezeichnung „Abschnitt II“ (vor „Kapitel 2“) im Portal nicht belegt – Gliederungsteile stehen im Bestand als „Abschnitt I“, „I. Abschnitt“ oder „I.“ |  |
 | `BayVwV154422` | 3 | `missing-base/prior-source-unavailable` | Verkündung von „vom 19. März 2024 (BayMBl. Nr. 156)“ nicht verfügbar: keine Seite trägt das Ausfertigungsdatum 2024-03-19 (https://www.verkuendung-bayern.de/baymbl/2024-156/) |  |
 
 ### vollständige Neufassung (6)
@@ -1452,7 +1454,7 @@ Ergebnis: **14** Fälle geprüft, **1** neu entschieden, 13 bleiben unbestimmt.
 | `BayVwV265186` | 1 | `asset-missing/annex-recast` | BayMBl. 2025 Nr. 210 (Nr. 1): 1.6 „Die Anlage wird durch die dieser Bekanntmachung beigefügten Anlagen 1 und 2 ersetzt.“: Anlage oder Anhang in neuer Fassung aus einer beigefügten Datei; der Alttext s | `unrecognized`, `annex-replacement`, `missing-predecessor-text` |
 | `BayVwV274719` | 1 | `asset-missing/annex-recast` | BayMBl. 2024 Nr. 655 (Nr. 1): 1.5 „Die bisherige Anlage wird durch die folgende Anlage ersetzt.“: Anlage durch eine folgende Anlage ersetzt; der Alttext steht nicht im Befehl | `unrecognized`, `annex-replacement` |
 | `BayVwV96569` | 1 | `asset-missing/annex-recast` | BayMBl. 2025 Nr. 118 (Nr. 1): 1.13 „Anlage 2 erhält die aus dem Anhang zu dieser Bekanntmachung ersichtliche Fassung.“: Anlage oder Anhang in neuer Fassung aus einer beigefügten Datei; der Alttext ste | `recast`, `delete-words`, `unrecognized`, `annex-replacement`, `missing-predecessor-text` |
-| `BayBergVO` | 2 | `asset-missing/annex-recast` | GVBl. 2026 S. 282 (§ 1): 71. „Nach Anlage 2 werden die aus dem Anhang zu dieser Verordnung ersichtlichen Anlagen 3 bis 5 eingefügt.“: Anlage oder Anhang in neuer Fassung aus einer beigefügten Datei; d | `repeal-unit`, `recast`, `insert-unit`, `renumber`, `unrecognized`, `relabel`, `annex-replacement`, `missing-predecessor-text` |
+| `BayBergVO` | 2 | `asset-missing/annex-recast` | GVBl. 2026 S. 282 (§ 1): 71. „Nach Anlage 2 werden die aus dem Anhang zu dieser Verordnung ersichtlichen Anlagen 3 bis 5 eingefügt.“: Anlage oder Anhang in neuer Fassung aus einer beigefügten Datei; d | `repeal-unit`, `recast`, `insert-unit`, `unrecognized`, `relabel`, `renumber`, `annex-replacement`, `missing-predecessor-text` |
 | `BayFachVbtuD` | 2 | `asset-missing/annex-recast` | GVBl. 2025 S. 493 (§ 1): 18. „Die Anlagen 1 bis 3 erhalten jeweils die aus dem Anhang zu dieser Verordnung ersichtliche Fassung.“: Anlage oder Anhang in neuer Fassung aus einer beigefügten Datei; der  | `delete-words`, `recast`, `repeal-unit`, `renumber`, `unrecognized`, `annex-replacement`, `missing-predecessor-text` |
 | `BayVV_2034_3_1_F_13872` | 2 | `asset-missing/annex-recast` | BayMBl. 2025 Nr. 308 (§ 1): „Die Anlagen 1, 5 und 10 erhalten die aus dem Anhang zu dieser Bekanntmachung ersichtliche Fassung.“: Anlage oder Anhang in neuer Fassung aus einer beigefügten Datei; der A | `annex-replacement` |
 | `BayVV_2154_I_13077` | 2 | `asset-missing/annex-recast` | BayMBl. 2026 Nr. 255 (Nr. 1): 1.22 „Anlage 1 wird durch die aus dem Anhang zu dieser Bekanntmachung ersichtliche Anlage ersetzt.“: Anlage oder Anhang in neuer Fassung aus einer beigefügten Datei; der  | `repeal-unit`, `insert-unit`, `annex-replacement`, `missing-predecessor-text` |
@@ -1487,7 +1489,7 @@ Ergebnis: **14** Fälle geprüft, **1** neu entschieden, 13 bleiben unbestimmt.
 | Norm | Änderungen | Zustand / Grund | Befund | weitere Gründe |
 | --- | ---: | --- | --- | --- |
 | `BayVV_7801_L_10618` | 1 | `command-unreadable/location-unreadable` | BayMBl. 2026 Nr. 67 (Nr. 1): Ortsangabe „Titel“ nicht lesbar (1.1) | `unrecognized`, `image-replacement`, `missing-predecessor-text` |
-| `BayStrWG` | 2 | `non-invertible-amendment/recast` | GVBl. 2025 S. 699 (§ 1): 2. a) „Die Überschrift wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `delete-words`, `repeal-unit`, `unrecognized`, `image-replacement`, `missing-predecessor-text` |
+| `BayStrWG` | 2 | `non-invertible-amendment/recast` | GVBl. 2025 S. 699 (§ 1): 2. a) „Die Überschrift wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `delete-words`, `repeal-unit`, `image-replacement`, `missing-predecessor-text` |
 | `BayVV_2010_K_13179` | 2 | `non-invertible-amendment/restoration-disagrees` | Alttext aus der Stammverkündung: Stichtagskörper (Portal, zurückgerechnet) und Stand der Verkündungen (BayMBl. 2022 Nr. 436) weichen ab Zeichen 24159 ab: Portal „…iterführendeInformationenfindensichun | `image-replacement`, `missing-predecessor-text` |
 | `BayVV_2253_D_12831` | 2 | `non-invertible-amendment/recast` | BayMBl. 2026 Nr. 247 (§ 1): 21. c) „Die Sätze 4 und 5 werden die Nr. 5.2.4 Satz 1 und 2 und Satz 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl – aus der Verkündung nicht wi | `insert-unit`, `unrecognized`, `relabel`, `image-replacement`, `missing-predecessor-text` |
 | `BayVwVfG` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2024 S. 599 (§ 1): 1. a) „Abs. 2 Satz 4 und 5 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `delete-words`, `recast`, `insert-unit`, `image-replacement`, `missing-predecessor-text` |
@@ -1535,7 +1537,6 @@ Ergebnis: **14** Fälle geprüft, **1** neu entschieden, 13 bleiben unbestimmt.
 | `BayVV_2330_I_1190` | 2 | `unsupported-formula/insert-unit` | BayMBl. 2024 Nr. 6 (Nr. 1): 1.1 „Folgende Vorbemerkung wird vorangestellt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell nicht angewandt | `unrecognized`, `missing-predecessor-text` |
 | `BayKommZG` | 4 | `unsupported-formula/insert-unit` | GVBl. 2026 S. 374 (§ 8): 2. „Nach dem Sechsten Teil wird folgender Siebter Teil eingefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell | `renumber`, `missing-predecessor-text` |
 | `BayVV_7071_W_10524` | 4 | `unsupported-formula/unrecognized` | BayMBl. 2025 Nr. 278 (Nr. 1): 1.3 1.3.1 „In Satz 1 entfällt die Satzangabe und die Angabe „Konzernumsatz“ wird durch die Angabe „Gruppenumsatz“ ersetzt.“: Klausel nicht erkannt: „In Satz 1 entfällt di | `insert-unit`, `missing-predecessor-text` |
-| `BayDiG` | 5 | `unsupported-formula/insert-unit` | GVBl. 2024 S. 474 (§ 1): 5. „Nach Art. 49 wird folgendes Kapitel 4 eingefügt:“: Einfügung eines ganzen Glieds (Satz, Absatz, Nummer, Überschrift): strukturelle Änderung, von diesem Modell nicht angewa | `missing-predecessor-text` |
 | `BayGSG` | 1 | `ambiguous-target/reverse-location-unresolved` | GVBl. 2024 S. 254 (§ 1): 9. b) Art. 11: kein unbezeichneter Wortlaut vor den bezeichneten Absätzen | `missing-predecessor-text` |
 | `BayVV_2126_0_G_11762` | 1 | `ambiguous-target/reverse-sentence-ambiguous` | BayMBl. 2024 Nr. 512 (Nr. 1): 1.3 1.3.3: Satznummer ³ steht 2-mal im Feld (erwartet: genau einmal) | `missing-predecessor-text` |
 | `BayVV_2126_0_G_12665` | 1 | `ambiguous-target/reverse-target-ambiguous` | BayMBl. 2025 Nr. 528 (Nr. 1): 1.4 1.4.2 Nr. 7 Satz 4: Anker mit eingefügtem Wortlaut „schriftlich oder elektronisch“ kommt im Bereich 3-mal vor (erwartet: genau einmal) | `missing-predecessor-text` |
@@ -1574,7 +1575,6 @@ Ergebnis: **14** Fälle geprüft, **1** neu entschieden, 13 bleiben unbestimmt.
 | `BayVV_61_02_03_01_F_13270` | 1 | `command-unreadable/location-unreadable` | BayMBl. 2026 Nr. 296 (§ 1): Ortsangabe „Beispiel 1“ nicht lesbar (8. a)) | `repeal-unit`, `recast`, `unrecognized`, `insert-unit`, `missing-predecessor-text` |
 | `BayVwV159082` | 1 | `command-unreadable/location-unreadable` | BayMBl. 2026 Nr. 144 (Nr. 1): Ortsangabe „Abschnitt „Zu § 38 LPO I Didaktiken einer Fächergruppe der Hauptschule““ nicht lesbar (1.3) | `recast`, `unrecognized`, `insert-unit`, `missing-predecessor-text` |
 | `BayVwV252304` | 1 | `command-unreadable/location-unreadable` | BayMBl. 2024 Nr. 474 (Nr. 1): Ortsangabe „Strafvollstreckungsordnung“ nicht lesbar (1.2) | `unrecognized`, `missing-predecessor-text` |
-| `BayVFprF` | 2 | `command-unreadable/location-unreadable` | GVBl. 2025 S. 4 (§ 1): Ortsangabe „Zweite Teil“ nicht lesbar (3.) | `recast`, `missing-predecessor-text` |
 | `BayVV_787_L_14168` | 2 | `command-unreadable/location-unreadable` | BayMBl. 2026 Nr. 114: Ortsangabe „neue Satz 4 letzter Spiegelstrich“ nicht lesbar (3.) | `insert-unit`, `missing-predecessor-text` |
 | `BayALFV` | 3 | `command-unreadable/location-unreadable` | GVBl. 2026 S. 58 (§ 1): Ortsangabe „Lfd. Nr. 16“ nicht lesbar (2. d)) | `recast`, `insert-unit`, `unrecognized`, `missing-predecessor-text` |
 | `BayGSO` | 3 | `command-unreadable/chain-block-not-found` | GVBl. 2026 S. 425 (§ 11): kein eindeutig lesbarer Änderungsbefehl für die Norm (structure-unreadable: Ein Zitat wird bis zum Ende der Seite nicht geschlossen); die Änderung tritt nach dem Stichtag in  | `missing-predecessor-text` |
@@ -1723,6 +1723,7 @@ Ergebnis: **14** Fälle geprüft, **1** neu entschieden, 13 bleiben unbestimmt.
 | `BayRDG` | 2 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 75 (§ 37): 1. a) „Satz 3 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
 | `BayStatG` | 2 | `non-invertible-amendment/recast` | GVBl. 2026 S. 374 (§ 9): 2. „Abs. 2 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayUVollzG` | 2 | `non-invertible-amendment/restoration-prior-reverse` | Alttext aus der Stammverkündung: Änderung vor dem Stichtag GVBl. 2022 S. 642 (§ 2): 2. d) Art. 21 Abs. 3: Abs. 3 nicht gefunden | `missing-predecessor-text` |
+| `BayVFprF` | 2 | `non-invertible-amendment/recast` | GVBl. 2025 S. 4 (§ 1): 2. „§ 3 Abs. 1 Satz 1 Halbsatz 1 wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `repeal-unit`, `insert-unit`, `unrecognized`, `missing-predecessor-text` |
 | `BayVV_2030_2_2_U_13853` | 2 | `non-invertible-amendment/restore-not-found` | BayMBl. 2026 Nr. 301 (Nr. 1): Rückfall Nr. 3.1.2 Buchst. m: in der Verkündung (BayMBl. 2023 Nr. 311) nicht eindeutig gefunden | `missing-predecessor-text` |
 | `BayVV_2126_0_G_11619` | 2 | `non-invertible-amendment/restoration-disagrees` | Alttext aus der Stammverkündung: gegen den Stand am Stichtag (Stammverkündung und 1 Änderung(en) vorwärts): Stichtagskörper (Portal, zurückgerechnet) und Stand der Verkündungen (BayMBl. 2020 Nr. 729)  | `missing-predecessor-text` |
 | `BayVV_2236_4_K_10479` | 2 | `non-invertible-amendment/delete-words` | BayMBl. 2026 Nr. 194 (Nr. 1): 1.2 1.2.1 „Im ersten Spiegelstrich wird die Angabe „Altenpflege,“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `unrecognized`, `missing-predecessor-text` |
@@ -1774,6 +1775,7 @@ Ergebnis: **14** Fälle geprüft, **1** neu entschieden, 13 bleiben unbestimmt.
 | `BayWaldG` | 4 | `non-invertible-amendment/repeal-unit` | GVBl. 2026 S. 75 (§ 35): „Art. 25 wird aufgehoben.“: Aufhebung; der aufgehobene Wortlaut steht nicht im Befehl | `missing-predecessor-text` |
 | `BayZustWiG` | 4 | `non-invertible-amendment/recast` | GVBl. 2025 S. 663 (§ 1): 1. „Die Überschrift wird wie folgt gefasst:“: Neufassung; der Alttext steht nicht im Befehl | `missing-predecessor-text` |
 | `BayBauGBZustV` | 5 | `non-invertible-amendment/delete-words` | GVBl. 2026 S. 75 (§ 5): 1. „In Abs. 1 wird die Angabe „Nr. 1“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `recast`, `missing-predecessor-text` |
+| `BayDiG` | 5 | `non-invertible-amendment/restore-position` | GVBl. 2024 S. 474 (§ 1): 8. d) Art. 59 Abs. 4: Stelle des aufgehobenen Glieds im heutigen Text nicht bestimmt (kein gleichlautendes Nachbarglied) | `missing-predecessor-text` |
 | `BayMeldDV` | 6 | `non-invertible-amendment/restore-shape` | GVBl. 2025 S. 549 (§ 1): Rückfall § 10 Abs. 1: Gestalt im Portal nicht belegt – kein Geschwisterglied mit gleicher Darstellung oder gleicher Gestalt und gleichem Wortlaut; subparagraph>table\|\|{}\|\| | `missing-predecessor-text` |
 | `BayDBauV` | 20 | `non-invertible-amendment/restore-no-change` | GVBl. 2025 S. 607 (§ 1): Rückfall § 1 Abs. 2 Nr. 1: das Glied der Verkündung ist das heutige | `missing-predecessor-text` |
 | `BayZustV_Bezuege` | 11 | `non-invertible-amendment/delete-words` | GVBl. 2025 S. 578 (§ 1): 2. „In Nr. 1 wird die Angabe „mit Ausnahme der Regierung von Oberbayern“ gestrichen.“: Streichung ohne Anker: der Wortlaut ist bekannt, die Stelle nicht | `recast`, `missing-predecessor-text` |

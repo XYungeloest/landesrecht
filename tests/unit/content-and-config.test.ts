@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { JURISDICTION_IDS, SIMULATION_BASELINE_DATE } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { loadAllNorms, loadJurisdictionPublications, loadNorm } from '@landesrecht/legal-core/lib/loader.ts';
+import { isSimulationNorm } from '@landesrecht/legal-core/lib/provenance.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { isSyntheticFixtureNorm } from '@landesrecht/legal-core/lib/schema.ts';
 import { getApplicableVersion, resolveVersionAt } from '@landesrecht/legal-core/lib/versions.ts';
@@ -50,8 +51,19 @@ describe('Produktionsbestand (content/)', () => {
   it('enthält keine synthetischen Testfixtures, nur übernommene Normen mit Quellkennung', async () => {
     const norms = await loadAllNorms(root);
     expect(norms.filter((record) => isSyntheticFixtureNorm(record.meta)).map((record) => record.meta.slug)).toEqual([]);
-    for (const record of norms.filter((entry) => entry.meta.jurisdiction === 'west')) expect(record.meta.externalIdentifiers.some((identifier) => identifier.system === 'recht-nrw'), record.meta.slug).toBe(true);
-    for (const jurisdiction of JURISDICTION_IDS) expect(await loadJurisdictionPublications(jurisdiction, root)).toEqual([]);
+    // Übernommene West-Normen tragen die Portalkennung; eigene Normen der Simulation (ohne Ausgangsfassung) tragen keine reale Kennung.
+    for (const record of norms.filter((entry) => entry.meta.jurisdiction === 'west')) expect(record.meta.externalIdentifiers.some((identifier) => identifier.system === 'recht-nrw'), record.meta.slug).toBe(!isSimulationNorm(record));
+    // Verkündungen des Produktionsbestands sind Ausgaben der Simulation, nie Testfixtures, und nennen nur Normen des Bestands.
+    const slugs = new Set(norms.map((record) => `${record.meta.jurisdiction}:${record.meta.slug}`));
+    for (const jurisdiction of JURISDICTION_IDS) {
+      for (const publication of await loadJurisdictionPublications(jurisdiction, root)) {
+        expect(publication.slug.startsWith('testfixture-'), publication.slug).toBe(false);
+        for (const entry of publication.entries) {
+          expect(entry.normSlug.startsWith('testfixture-'), `${publication.slug}: ${entry.normSlug}`).toBe(false);
+          expect(slugs.has(`${jurisdiction}:${entry.normSlug}`), `${publication.slug}: ${entry.normSlug}`).toBe(true);
+        }
+      }
+    }
   });
 });
 

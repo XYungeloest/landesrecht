@@ -395,8 +395,10 @@ describe('Historische Einzelfassungen', () => {
     expect(selection.problems).toEqual([]);
     const overlap = selectBaselineUnits([unit(1, '§ 1', '2020-01-01'), unit(2, '§ 1', '2023-01-01')]);
     expect(overlap.problems[0]).toMatch(/2 Fassungen gelten zugleich/u);
+    // Fassungen nur vor und nach dem Stichtag: Die Einheit galt am Stichtag nicht (weggefallen und später neu entstanden) – kein Befund (Run 9).
     const gap = selectBaselineUnits([unit(1, '§ 1', '2020-01-01', '2023-06-30'), unit(2, '§ 1', '2024-01-01')]);
-    expect(gap.problems[0]).toMatch(/Lücke am Stichtag/u);
+    expect(gap.problems).toEqual([]);
+    expect(gap.omitted).toEqual([{ key: '§ 1', reason: 'am Stichtag nicht in Kraft (Fassungen 2020-01-01–2023-06-30, 2024-01-01–offen)' }]);
     expect(unitNumber('jlr-NNLSH00002BC4NN00000000009')).toBe(9);
   });
 

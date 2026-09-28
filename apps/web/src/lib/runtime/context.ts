@@ -32,13 +32,13 @@ export async function resolveWorkerEnv(): Promise<Record<string, unknown> | null
 
 function createFileRegistry(): Promise<StoreRegistry> {
   fileRegistryPromise ??= (async () => {
-    const [{ loadJurisdictionNorms }, { createFileNormStore }] = await Promise.all([
+    const [{ loadJurisdictionNorms, loadJurisdictionPublications }, { createFileNormStore }] = await Promise.all([
       import('@landesrecht/legal-core/lib/loader.ts'),
       import('@landesrecht/runtime/file-store.ts'),
     ]);
     const stores: Partial<Record<JurisdictionId, NormStore>> = {};
     for (const jurisdiction of JURISDICTION_IDS) {
-      stores[jurisdiction] = createFileNormStore(jurisdiction, await loadJurisdictionNorms(jurisdiction));
+      stores[jurisdiction] = createFileNormStore(jurisdiction, await loadJurisdictionNorms(jurisdiction), { publications: await loadJurisdictionPublications(jurisdiction) });
     }
     return createStoreRegistry(stores);
   })();

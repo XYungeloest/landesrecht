@@ -65,6 +65,7 @@ import { buildSourceRegister, RECONSTRUCTION_SOURCES_PATH, type SourceRegister }
 import { cachePlatform, loadPublicationBase, proveRestoration, type PriorAmendment, type UsedPriorAmendment } from './publication.ts';
 import { forwardPublicationBase } from './forward.ts';
 import { assessPdfBase, type PdfBaseState } from './pdfbase.ts';
+import { labelFormsFor, loadDecisions, type ReconstructionDecision } from './decisions.ts';
 import { formConventions, TYPOGRAPHY_NORMALIZATION, wordingAgreement, type FormConventions, type PublicationBase } from './restore.ts';
 import { packageUrl, parseCurrentNorm, readCached, type CurrentNorm } from './source.ts';
 import { commandLeaves, reverseAmendment } from './steps.ts';
@@ -436,7 +437,8 @@ async function reconstructNorm(ctx: RunContext, documentId: string): Promise<Nor
       const state = forwardPublicationBase(loadedBase.base, [...walk.steps.slice(index + 1).map(asPrior), ...(stammfassungAtBaseline ? [] : priorAmendments)]);
       if (state.ok) stepBase = { ...state.base, portal: norm.body, ...(ctx.conventions ? { conventions: ctx.conventions } : {}) };
     }
-    const reversal = reverseAmendment(body, step.block!, multi ? `a${index + 1}-` : '', title, stepBase ? { base: stepBase, fallback: true } : undefined);
+    const labelForms = labelFormsFor(ctx.decisions ?? [], documentId, step.citation);
+    const reversal = reverseAmendment(body, step.block!, multi ? `a${index + 1}-` : '', title, stepBase ? { base: stepBase, fallback: true, ...(labelForms.size > 0 ? { labelForms } : {}) } : labelForms.size > 0 ? { labelForms } : undefined);
     outcome.formulas.push(...reversal.formulas);
     if (reversal.failures.length > 0) {
       const structural = reversal.failures.some((failure) => failure.state === 'command-unreadable');
@@ -742,6 +744,8 @@ export interface ReconstructionOptions {
   evaluationDate?: string;
   /** Nur diese Normen (Probelauf); die Schlange enthält dann nur sie. */
   only?: readonly string[];
+  /** Lauf 12: Reviewentscheidungen; sonst aus `reconstruction-decisions.json`. */
+  decisions?: readonly ReconstructionDecision[];
 }
 
 /** Stand vor der mehrstufigen Rückrechnung: aus der Schlange v1 gelesen, danach fortgeführt. */
@@ -788,6 +792,7 @@ export async function portalConventions(ctx: RunContext): Promise<FormConvention
 export async function runReconstruction(root: string, options: ReconstructionOptions = {}): Promise<ReconstructionRun> {
   const ctx = await loadRunContext(root, options);
   ctx.conventions = await portalConventions(ctx);
+  ctx.decisions = options.decisions ?? await loadDecisions(root);
   const before = await readBefore(root);
   const changed = ctx.baseline.decisions.filter((decision) => decision.class === 'changed-after-baseline').filter((decision) => !options.only || options.only.includes(decision.documentId));
   const entries: QueueEntry[] = [];

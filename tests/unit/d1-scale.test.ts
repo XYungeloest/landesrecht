@@ -193,7 +193,7 @@ describe('Skalierung: Vollprojektion von 2 000 synthetischen Normen', () => {
     expect(countRows(scale.db, 'law_norm_history')).toBe(expected.versions);
     expect(countRows(scale.db, 'law_external_identifiers')).toBe(SCALE_NORMS);
     expect(countRows(scale.db, 'law_source_objects')).toBe(0);
-    expect(scale.plan.stats).toEqual({ norms: SCALE_NORMS, versions: expected.versions, blocks: expected.blocks, blockParts: expected.blocks, searchUnits: expected.searchUnits, statements: scale.executed });
+    expect(scale.plan.stats).toEqual({ norms: SCALE_NORMS, versions: expected.versions, blocks: expected.blocks, blockParts: expected.blocks, searchUnits: expected.searchUnits, publications: 0, statements: scale.executed });
     expect(scale.plan.groups.map((group) => group.key).filter((key) => key.startsWith('('))).toEqual(['(reset)', '(meta)']);
   });
 
@@ -336,6 +336,9 @@ describe('Skalierung: inkrementelle Projektion ist äquivalent zur Vollprojektio
       changedSearch: mutated.changedSearch,
       changedOther: mutated.changedOther,
       unchanged: SCALE_NORMS - 6 - 20 - 20 - 3 - 2 - 1,
+      addedPublications: [],
+      removedPublications: [],
+      changedPublications: [],
     });
     expect(incremental.state.corpusFingerprint).toBe(corpusFingerprint(mutated.records, EDITORIAL_REFERENCE_DATE));
   });
@@ -656,7 +659,7 @@ describe('Skalierung: Aufteilung in SQL-Dateien für Remote-D1', () => {
   it('Anweisungen über der D1-Grenze von 100 KB werden als Fehler gemeldet, nicht stillschweigend übergangen', () => {
     const statementFor = (value: string): PlanQuery => ({ sql: 'INSERT INTO law_runtime_meta (key, value) VALUES (?, ?)', params: ['gross', value] });
     const overhead = Buffer.byteLength(renderStatement(statementFor('')));
-    const planWith = (value: string): ProjectionPlan => ({ jurisdiction: JURISDICTION, full: false, groups: [{ key: '(meta)', queries: [statementFor(value)] }], stats: { norms: 0, versions: 0, blocks: 0, blockParts: 0, searchUnits: 0, statements: 1 } });
+    const planWith = (value: string): ProjectionPlan => ({ jurisdiction: JURISDICTION, full: false, groups: [{ key: '(meta)', queries: [statementFor(value)] }], stats: { norms: 0, versions: 0, blocks: 0, blockParts: 0, searchUnits: 0, publications: 0, statements: 1 } });
     // Gezählt wird die Anweisung samt Zeilenumbruch: genau 100 000 Bytes sind zulässig.
     expect(splitPlanIntoSqlFiles(planWith('x'.repeat(D1_MAX_STATEMENT_BYTES - 1 - overhead)), { database: DATABASE }).plan.errors).toEqual([]);
     const over = splitPlanIntoSqlFiles(planWith('x'.repeat(D1_MAX_STATEMENT_BYTES - overhead)), { database: DATABASE });

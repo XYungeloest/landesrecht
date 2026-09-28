@@ -8,7 +8,7 @@
 import { join } from 'node:path';
 
 import { JURISDICTION_IDS } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { loadJurisdictionNorms } from '@landesrecht/legal-core/lib/loader.ts';
+import { loadJurisdictionNorms, loadJurisdictionPublications } from '@landesrecht/legal-core/lib/loader.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { buildProjectionPlan } from '@landesrecht/runtime/projection.ts';
 import { checkSearchIndexIntegrity, executePlan, openSqliteD1 } from '@landesrecht/runtime/sqlite-d1.ts';
@@ -17,6 +17,7 @@ import { SEARCH_UNIT_COLUMNS } from '@landesrecht/search/schema.ts';
 const REQUIRED_TABLES = [
   'law_norms', 'law_versions', 'law_version_blocks', 'law_source_objects', 'law_norm_history',
   'law_norm_relations', 'law_norm_subjects', 'law_external_identifiers', 'law_search_units', 'law_search', 'law_runtime_meta',
+  'law_publications',
 ];
 
 const root = resolveRepositoryRoot();
@@ -37,9 +38,10 @@ if (searchColumns.join(',') !== SEARCH_UNIT_COLUMNS.join(',')) {
 let statements = 0;
 for (const jurisdiction of JURISDICTION_IDS) {
   const records = await loadJurisdictionNorms(jurisdiction, root);
-  statements += executePlan(db, buildProjectionPlan(records, { jurisdiction, full: false, now: '2026-01-01T00:00:00.000Z' }));
+  const publications = await loadJurisdictionPublications(jurisdiction, root);
+  statements += executePlan(db, buildProjectionPlan(records, { jurisdiction, full: false, now: '2026-01-01T00:00:00.000Z', publications }));
 }
 checkSearchIndexIntegrity(db);
-const counts = db.native.prepare('SELECT (SELECT count(*) FROM law_norms) AS norms, (SELECT count(*) FROM law_versions) AS versions, (SELECT count(*) FROM law_search_units) AS units').get() as { norms: number; versions: number; units: number };
+const counts = db.native.prepare('SELECT (SELECT count(*) FROM law_norms) AS norms, (SELECT count(*) FROM law_versions) AS versions, (SELECT count(*) FROM law_search_units) AS units, (SELECT count(*) FROM law_publications) AS publications').get() as { norms: number; versions: number; units: number; publications: number };
 db.close();
-console.log(`D1-Schema gültig: ${REQUIRED_TABLES.length} Tabellen, ${statements} Anweisungen, ${counts.norms} Normen, ${counts.versions} Fassungen, ${counts.units} Sucheinheiten, FTS5-Integrität geprüft.`);
+console.log(`D1-Schema gültig: ${REQUIRED_TABLES.length} Tabellen, ${statements} Anweisungen, ${counts.norms} Normen, ${counts.versions} Fassungen, ${counts.units} Sucheinheiten, ${counts.publications} Verkündungen, FTS5-Integrität geprüft.`);

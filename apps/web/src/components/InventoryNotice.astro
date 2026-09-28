@@ -1,10 +1,13 @@
 ---
 /**
- * Hinweis „Teilbestand“ für Länder, deren Stichtagsbestand noch nicht vollständig veröffentlicht ist. Die Zahlen
- * stammen aus `@landesrecht/legal-core/config/inventory-status.json` (vom Importer erzeugt); meldet der Importer den
- * Bestand als vollständig, verschwindet der Hinweis ohne Codeänderung.
+ * Hinweis zum Bestand eines Landes: „Teilbestand“, solange der Stichtagsbestand nicht vollständig veröffentlicht
+ * ist, und der Stand der Simulationsrechtsfortschreibung (Rechtsakte, Ausgaben, Prüfung, Quellensammlung). Die
+ * Zahlen stammen aus `@landesrecht/legal-core/config/inventory-status.json` (von Importer und
+ * `import-simulation completeness --write` erzeugt). Meldet die Datei den Stichtagsbestand als vollständig und den
+ * Simulationsstand als `SIM LEGAL STATE COMPLETE`, verschwindet der Hinweis ohne Codeänderung. Baseline-Normzahl
+ * (`published`) und Sim-Normzahl (`simulation.simulationNorms`) werden getrennt ausgewiesen.
  */
-import { getPartialInventory } from '@landesrecht/legal-core/config/inventory-status.ts';
+import { getInventoryNotice, type SimulationInventoryStatus } from '@landesrecht/legal-core/config/inventory-status.ts';
 import { formatBaselineDate, getJurisdiction, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 
 interface Props {
@@ -14,17 +17,36 @@ interface Props {
 }
 
 const { jurisdiction, variant = 'full' } = Astro.props;
-const status = getPartialInventory(jurisdiction);
+const notice = getInventoryNotice(jurisdiction);
+const status = notice?.entry;
+const simulation = status?.simulation;
 const number = new Intl.NumberFormat('de-DE');
 const outstanding = status ? status.pending.atBaseline + status.pending.baselineOnly : 0;
 const shortName = getJurisdiction(jurisdiction).shortName;
+const plural = (value: number, one: string, many: string): string => `${number.format(value)} ${value === 1 ? one : many}`;
+
+function sourcesText(entry: SimulationInventoryStatus): string {
+  if (entry.status === 'SIM SOURCES PARTIAL') return `Quellensammlung unvollständig: ${number.format(entry.presentIssues)} von ${number.format(entry.knownIssues)} bekannten Ausgaben liegen vor; der Rechtsstand nach dem Stichtag kann Lücken haben.`;
+  if (entry.status === 'SIM SOURCES COMPLETE FOR KNOWN INVENTORY') return `Quellensammlung vollständig für das bekannte Inventar (${plural(entry.presentIssues, 'Ausgabe', 'Ausgaben')}); der Rechtsstand wird noch geprüft.`;
+  return 'Simulationsrechtsstand vollständig belegt.';
+}
+const badgeTitle = notice?.baselinePartial ? `${shortName}: Teilbestand – weitere Normen zum Stichtag werden ergänzt` : `${shortName}: Simulationsrecht noch nicht vollständig belegt`;
 ---
-{status && variant === 'badge' && <span class="tag tag--partial" title={`${shortName}: Teilbestand – weitere Normen zum Stichtag werden ergänzt`}>Teilbestand</span>}
-{status && variant === 'full' && (
+{notice && variant === 'badge' && <span class="tag tag--partial" title={badgeTitle}>Teilbestand</span>}
+{notice && status && variant === 'full' && (
   <aside class="inventory-notice" aria-label={`Hinweis zum Bestand ${shortName}`}>
-    <p>
-      <strong>Teilbestand.</strong> Veröffentlicht sind {number.format(status.published)} Normen, deren Fassung vom {formatBaselineDate(status.baselineDate)} aus amtlichen Quellen belegt ist.
-      {outstanding > 0 && <> Für weitere {number.format(outstanding)} Normen, die an diesem Tag galten, wird die Stichtagsfassung noch nachgewiesen; sie werden danach ergänzt.</>}
-    </p>
+    {notice.baselinePartial ? (
+      <p>
+        <strong>Teilbestand.</strong> Veröffentlicht sind {number.format(status.published)} Normen, deren Fassung vom {formatBaselineDate(status.baselineDate)} aus amtlichen Quellen belegt ist.
+        {outstanding > 0 && <> Für weitere {number.format(outstanding)} Normen, die an diesem Tag galten, wird die Stichtagsfassung noch nachgewiesen; sie werden danach ergänzt.</>}
+      </p>
+    ) : (
+      <p><strong>Sicher belegter Rechtsstand zum {formatBaselineDate(status.baselineDate)}:</strong> {number.format(status.published)} Normen aus amtlichen Quellen.</p>
+    )}
+    {simulation && (
+      <p>
+        <strong>Simulationsrecht:</strong> {plural(simulation.secureActs, 'Rechtsakt', 'Rechtsakte')} aus {plural(simulation.presentIssues, 'Ausgabe', 'Ausgaben')} übernommen ({plural(simulation.simulationNorms, 'eigene Norm der Simulation', 'eigene Normen der Simulation')}), {number.format(simulation.review)} in Prüfung{simulation.draftsWithoutPromulgation > 0 && <>, {plural(simulation.draftsWithoutPromulgation, 'Entwurf ohne Verkündungsbeleg', 'Entwürfe ohne Verkündungsbeleg')}</>}; {sourcesText(simulation)} <span class="muted">Stand {simulation.updatedAt}.</span>
+      </p>
+    )}
   </aside>
 )}

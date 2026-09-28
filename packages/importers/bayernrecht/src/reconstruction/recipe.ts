@@ -72,6 +72,11 @@ export interface RecipeStep {
    * vor dem Befehl trägt (`restoration` im Rezept). Nur an Operationen `replace-text`/`replace-blocks`.
    */
   restoredFrom?: string;
+  /**
+   * Lauf 12: Die Gestalt der bisherigen Bezeichnung dieses Schritts (`relabel`) ist durch eine Reviewentscheidung bestimmt
+   * (`decisions.ts`: wer, wann, warum) – keine Quelle belegt sie.
+   */
+  reviewDecision?: string;
 }
 
 /**

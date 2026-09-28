@@ -7,14 +7,20 @@ interface Props {
 }
 
 const { sources, compact = false } = Astro.props;
-const KIND_LABELS: Record<SourceReference['kind'], string> = {
+/** Bezeichnungen je Quellenart; eine Art ohne Eintrag erscheint mit ihrer Kennung (nie ein Fehler). */
+const KIND_LABELS: Readonly<Record<string, string>> = {
   'official-portal-snapshot': 'Amtliche Portalfassung',
   'official-gazette': 'Verkündungsblatt',
   'structured-transcription': 'Strukturierte Transkription',
   'amendment-source': 'Änderungsquelle',
   'provider-record': 'Externer Datensatz',
   'primary-pdf': 'Amtliche PDF',
+  'simulation-gazette': 'Verkündungsblatt der Simulation',
+  'simulation-standalone-act': 'Einzelverkündung der Simulation',
+  'simulation-promulgation-evidence': 'Verkündungsnachweis der Simulation',
+  'simulation-amendment-source': 'Änderungsquelle der Simulation',
 };
+const kindLabel = (kind: SourceReference['kind']): string => KIND_LABELS[kind] ?? kind;
 ---
 {sources.length === 0 ? (
   <p class="muted">Keine Quellenangaben hinterlegt.</p>
@@ -25,7 +31,7 @@ const KIND_LABELS: Record<SourceReference['kind'], string> = {
         {source.url && source.availability === 'external' ? <a href={source.url} rel="noopener noreferrer">{source.label}</a> : source.label}
         {!compact && (
           <dl class="facts">
-            <dt>Art</dt><dd>{KIND_LABELS[source.kind]}{source.system && ` (${source.system})`}</dd>
+            <dt>Art</dt><dd>{kindLabel(source.kind)}{source.system && ` (${source.system})`}</dd>
             <dt>Verfügbarkeit</dt><dd>{source.availability}</dd>
             {source.externalId && <><dt>Kennung</dt><dd>{source.externalId}</dd></>}
             {(source.sourceValidFrom || source.sourceValidTo) && <><dt>Quellgültigkeit</dt><dd>{source.sourceValidFrom ?? '…'} – {source.sourceValidTo ?? 'offen'}</dd></>}

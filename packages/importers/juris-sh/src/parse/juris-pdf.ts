@@ -188,9 +188,10 @@ const CONTAINER_PATTERNS: ReadonlyArray<{ type: NormBodyBlock['type']; level: nu
   { type: 'subsection', level: 4, pattern: new RegExp(`^(?:${ORDINAL}\\s+Unterabschnitt|Unterabschnitt\\s+[\\dIVXLC]+[a-z]?)\\b`, 'u') },
 ];
 const UNIT_PATTERNS: ReadonlyArray<{ type: NormBodyBlock['type']; pattern: RegExp }> = [
-  { type: 'paragraph', pattern: /^§§\s*\d+\s*[a-z]?\s+(?:bis|und)\s+\d+\s*[a-z]?\b|^§\s*\d+\s*[a-z]?\b/u },
-  { type: 'article', pattern: /^(?:Artikel|Art\.)\s*\d+\s*[a-z]?\b/u },
-  { type: 'annex', pattern: /^(?:Anlage|Anhang)(?:\s+\d+[a-z]?|\s+[A-Z](?=\s|:|$))?(?=\s*[:(]|\s+zu\b|$)/u },
+  // Bereiche („§§ 2 u. 3“, „§ 16 bis 92“, „§§ 19 - 26“, „Artikel 1 -3“) und römisch gezählte Artikel („Artikel II“) sind Einheiten.
+  { type: 'paragraph', pattern: /^§§?\s*\d+\s*[a-z]?\s*(?:bis|und|u\.|[-–])\s*\d+\s*[a-z]?\b|^§\s*\d+\s*[a-z]?\b/u },
+  { type: 'article', pattern: /^(?:Artikel|Art\.)\s*(?:\d+\s*[a-z]?(?:\s*(?:bis|und|u\.|[-–])\s*\d+\s*[a-z]?)?|[IVXLC]+)\b/u },
+  { type: 'annex', pattern: /^(?:Anlage|Anhang)(?:\s*\d+[a-z]?|\s+[A-Z](?=\s|:|$))?(?=\s*[:(]|\s+zu\b|$)/u },
   { type: 'preamble', pattern: /^Präambel$/u },
 ];
 /**
@@ -431,10 +432,14 @@ export function parseJurisPdf(layout: PdfLayout, options: ParseOptions = {}): Pa
           }
           // „Bezeichnung - Überschrift“ nur, wenn links eine Bezeichnung steht (nicht im Titel der Norm,
           // der selbst „(Kurzbezeichnung - Abk.)“ enthalten kann).
-          const separator = leftText.indexOf(' - ');
+          // „§§ 19 - 26“ ist ein Bereich, keine Trennung „Bezeichnung - Überschrift“.
+          const dash = leftText.indexOf(' - ');
+          const wholeUnit = unitFor(leftText);
+          const rangeLabel = dash > 0 && wholeUnit !== undefined && UNIT_PATTERNS.find((entry) => entry.type === wholeUnit)!.pattern.exec(leftText)![0].trim() === leftText.replace(/\s*\*+\)?\s*$/u, '').trim();
+          const separator = rangeLabel ? -1 : dash;
           const labelPart = separator > 0 ? leftText.slice(0, separator).trim() : '';
           const labelLike = labelPart !== '' && (unitFor(labelPart) !== undefined || containerFor(labelPart) !== undefined || /^(?:[IVXLC]+\.|\d+(?:\.\d+)*\.?|[A-Z]\.|Anlage\b|Anhang\b|Abschnitt\b|Teil\b|Kapitel\b|Unterabschnitt\b|Titel\b|Buch\b)/u.test(labelPart) || (labelPart.length <= 30 && !labelPart.includes('(')));
-          current = labelLike ? { label: labelPart, title: leftText.slice(separator + 3).trim() } : unitFor(leftText) || containerFor(leftText) ? { label: leftText, title: '' } : { title: leftText };
+          current = labelLike ? { label: labelPart, title: leftText.slice(separator + 3).trim() } : unitFor(leftText) || containerFor(leftText) ? { label: leftText.replace(/\s*\*+\)?\s*$/u, ''), title: '' } : { title: leftText };
           const from = isoDate(right!.text);
           if (from) current.validFrom = from;
           pendingBis = /bis$/u.test(right!.text);
@@ -471,8 +476,22 @@ export function parseJurisPdf(layout: PdfLayout, options: ParseOptions = {}): Pa
   // juris-Satz, kein Normtext – benannt ausgenommen und getrennt festgehalten.
   const rest = all.slice(cursor);
   const trailer = rest.findIndex((line) => EDITORIAL_TRAILER.test(line.text.trim()));
-  const bodyLines = trailer >= 0 ? rest.slice(0, trailer) : rest;
+  let bodyLines = trailer >= 0 ? rest.slice(0, trailer) : rest;
   const editorialLines = trailer >= 0 ? rest.slice(trailer) : [];
+  // VwV: Das Verzeichnis kann hinter den Kopfzeilen des Erlasses stehen (Gl.Nr., Fundstelle, Erlasskopf mit Datum und
+  // Aktenzeichen). Es ist dann derselbe geschlossene Zeilenblock unter der Überschrift – redaktionell, kein Normtext.
+  if (isVwv && toc.length === 0) {
+    const headingAt = bodyLines.slice(0, 12).findIndex((line) => /^Nichtamtliches Inhaltsverzeichnis$/u.test(line.text.trim()));
+    const leadLine = (line: PdfLine, position: number): boolean => VWV_NUMBER_LINE.test(line.text) || /^Fundstelle[n]?\s*:/u.test(line.text) || /^(?:Gemeinsamer?\s+)?(?:Runderlass|Erlass|Bekanntmachung|Allgemeine\s+Verwaltungsvorschrift|Verwaltungsvorschrift|Richtlinie)\b/u.test(line.text) || (position > 0 && line.gapBefore < layout.paragraphGap);
+    if (headingAt > 0 && bodyLines.slice(0, headingAt).every((line, position) => leadLine(line, position))) {
+      let endAt = headingAt + 1;
+      while (endAt < bodyLines.length && bodyLines[endAt]!.gapBefore < layout.paragraphGap && !isCentered(bodyLines[endAt]!, layout)) {
+        toc.push({ title: bodyLines[endAt]!.text });
+        endAt += 1;
+      }
+      if (toc.length > 0) bodyLines = [...bodyLines.slice(0, headingAt), ...bodyLines.slice(endAt)];
+    }
+  }
   const otherVersions: string[] = [];
   const editorialNotes: string[] = [];
   let editorialSection = '';
@@ -543,7 +562,7 @@ function isMultiColumnLine(line: PdfLine): boolean {
 }
 
 /** Tabellen mit mehr Spalten sind im Textlayer nicht mehr sicher von Satzspiegel-Artefakten zu trennen. */
-const TABLE_MAX_COLUMNS = 12;
+const TABLE_MAX_COLUMNS = 16;
 
 /** Warum ein Block von Mehrspaltenzeilen kein sicheres Raster ist (Befundtext und Clusterung). */
 export type GridRejection = 'single-row' | 'too-many-columns' | 'columns-vary' | 'no-gutter' | 'hyphenated-cell' | 'empty-cell' | 'superscript-outside-cell';
@@ -601,134 +620,325 @@ export function leadingGrid(rows: readonly PdfLine[]): { table: NormBodyBlock; r
   return { rejection: first ?? 'single-row' };
 }
 
+/** Zelle einer Tabellenzeile im Aufbau; `null` = von einer Zelle links davon überdeckt (colspan). */
+type GridCell = { text: string; span: number } | undefined | null;
+
+/** Lage eines Segments im Spaltenraster: Startspalte und Zahl der überdeckten Spalten. */
+interface GridPlacement {
+  column: number;
+  span: number;
+}
+
+export interface WrappedGridResult {
+  table: NormBodyBlock;
+  /** Erste und (ausschließlich) letzte Zeile des Normkörpers, die die Tabelle bilden (`start` kann vor dem Aufrufpunkt liegen). */
+  start: number;
+  end: number;
+  reorder: RelocatedLine;
+  bands: Array<[number, number]>;
+}
+
+const BAND_TOLERANCE = 3;
+
 /**
- * Tabelle mit mehrzeiligen Zellen (Run 8). Das Raster ist nur dann belegt, wenn die Geometrie es trägt:
+ * Tabelle mit mehrzeiligen Zellen und Kopfzeilen (Run 8/9). Belegt ist das Raster nur, wenn die Geometrie es trägt:
  *
  *   Spalten   aus den vollständigen Zeilen (größte Spaltenzahl k, mindestens zwei solche Zeilen) mit durchgehendem
- *             Zwischenraum; jedes Segment jeder Zeile liegt in genau einem Spaltenkorridor (zwischen den Rändern der
- *             Nachbarspalten), sonst endet die Tabelle vor dieser Zeile.
- *   Zeilen    Eine Zeile mit Text in der ersten Spalte beginnt eine Tabellenzeile; Zeilen ohne Text in der ersten
- *             Spalte setzen die Zellen der laufenden Tabellenzeile fort (Worttrennung aufgelöst). Das ist nur belegt,
- *             wenn Fortsetzungen im Zeilenabstand des Absatzes stehen und jede neue Tabellenzeile – sofern die
- *             Tabelle überhaupt Fortsetzungen hat – deutlich abgesetzt beginnt (Abstand über dem Absatzabstand).
- *             Sonst wären eine Fortsetzung und eine Zeile mit leerer erster Zelle nicht zu unterscheiden: kein Raster.
- *             Eine abgesetzte Zeile ohne erste Zelle (Summen-, Zwischenzeile) ist eine eigene Tabellenzeile mit leerer
- *             erster Zelle; leere Zellen bleiben leer, nichts wird aufgefüllt oder zusammengelegt.
+ *             Zwischenraum. Jedes Segment jeder Zeile überdeckt genau eine Spalte oder – als Zelle über mehrere
+ *             Spalten (colspan) – mehrere benachbarte Spalten; vor der ersten vollständigen Zeile (Kopfbereich) muss
+ *             ein Segment in seiner Spalte liegen oder über ihr zentriert sein. Ein Segment, das keine Spalte
+ *             trifft, beendet das Raster (eine über mehrere Spalten geratene Überschrift wird nie zugeordnet).
+ *   Zeilen    Der Abstand zur Vorzeile entscheidet – nach dem Satz der juris-Ausgabe, in der Zeilen derselben
+ *             Tabellenzelle im Zeilenabstand des Absatzes stehen und jede neue Tabellenzeile durch den Zellenrand
+ *             abgesetzt beginnt: Zeilenabstand (bis `lineGap` + 1 pt) ⇒ Fortsetzung der laufenden Tabellenzeile,
+ *             deutlich mehr (ab `lineGap` + 2,5 pt) ⇒ neue Tabellenzeile (auch ohne Text in der ersten Spalte:
+ *             Summen-, Zwischen-, Kopfzeile mit leeren Zellen). Dazwischen ist der Abstand nicht beweiskräftig; dann
+ *             entscheidet allein die Worttrennung: Endet eine Zelle der laufenden Zeile getrennt („Zivil-“), setzt
+ *             die Zeile sie fort; sonst ist nur eine vollständige Zeile eine neue Tabellenzeile – alles andere kein
+ *             Raster. Über einen Seitenwechsel gilt dasselbe, zusätzlich muss eine neue Zeile die häufigste
+ *             Zellenbelegung der Tabelle tragen.
+ *   Anfang    Einzelzeilen unmittelbar vor der ersten Mehrspaltenzeile gehören zur Tabelle, wenn sie in einer Spalte
+ *             liegen, nicht am Satzspiegel beginnen, nicht mit Satzzeichen enden und der Abstand zur Tabelle klein ist
+ *             („sehr gut“ über „= 16 - 18 Punkte | …“, „Kurvenpunkt“ über „| X | Y“); ebenso Einzelzeilen innerhalb
+ *             der Tabelle, denen eine eng anschließende Mehrspaltenzeile folgt.
+ *   Wörter    Eine Zeile, deren Segment einen Spaltenzwischenraum überspannt, weil ein Fußnotenzeichen den Abstand
+ *             verkürzt („2130*“ neben „Festliegende …“), wird an den Zwischenräumen des Rasters neu aufgeteilt.
  *
- * Nicht belegt (kein Raster, Befund bleibt): eine Zelle, die mit Worttrennung endet (ihre Fortsetzung stünde in einer
- * anderen Tabellenzeile), eine eng anschließende Teilzeile mit erster Zelle (umbrochene erste Spalte oder senkrecht
- * zentrierte Zellen), eine Tabellenzeile über einen Seitenwechsel, Fortsetzungen in einer Tabelle ohne abgesetzte
- * Zeilen. Eine Kopfzeile wird nicht als solche gekennzeichnet (alle Zellen `tableCell`).
+ * Nicht belegt (kein Raster, Befund bleibt): eine Zelle, die nach dem Zusammenfügen getrennt endet, eine Zeile mit
+ * nicht beweiskräftigem Abstand ohne Worttrennung und ohne vollständige Belegung, ein Seitenwechsel innerhalb einer
+ * Zeile ohne diese Belege. Leere Zellen bleiben leer; nichts wird aufgefüllt. Eine Kopfzeile wird nicht als solche
+ * gekennzeichnet (alle Zellen `tableCell`).
  */
-export function wrappedGrid(lines: readonly PdfLine[], start: number, layout: PdfLayout): { table: NormBodyBlock; lines: number; reorder: RelocatedLine; bands: Array<[number, number]> } | undefined {
-  const tight = layout.paragraphGap;
-  // Kandidatenzone: Mehrspaltenzeilen und eng anschließende Einzelzeilen, bis zur ersten Überschrift oder Abstandslücke.
-  const zone: PdfLine[] = [];
-  for (let index = start; index < lines.length && zone.length < 5000; index += 1) {
-    const line = lines[index]!;
+export function wrappedGrid(lines: readonly PdfLine[], at: number, layout: PdfLayout, options: { lookbehind?: boolean } = {}): WrappedGridResult | { rejection: string; detail?: string } {
+  const continuationMax = layout.lineGap + 1;
+  const rowMin = layout.lineGap + 2.5;
+  const isContinuationGap = (gap: number): boolean => Number.isFinite(gap) && gap <= continuationMax;
+  const isRowGap = (gap: number): boolean => Number.isFinite(gap) && gap >= rowMin;
+  const nearGap = (gap: number): boolean => Number.isFinite(gap) && gap <= layout.bodyHeight * 1.5;
+  const isHeadingLine = (line: PdfLine): boolean => {
     const text = line.text.trim();
-    if (index > start && (unitFor(text) || containerFor(text) || /^Fußnoten$/u.test(text))) break;
-    if (index > start && line.segments.length < 2 && !(Number.isFinite(line.gapBefore) && line.gapBefore <= tight)) break;
-    zone.push(line);
-  }
-  const k = Math.max(...zone.map((line) => line.segments.length));
-  if (k < 2 || k > TABLE_MAX_COLUMNS) return undefined;
-  const full = zone.filter((line) => line.segments.length === k);
-  if (full.length < 2) return undefined;
-  const left = Array.from({ length: k }, (_, column) => Math.min(...full.map((line) => line.segments[column]!.x0)));
-  const right = Array.from({ length: k }, (_, column) => Math.max(...full.map((line) => line.segments[column]!.x1)));
-  for (let column = 0; column < k - 1; column += 1) if (!(right[column]! < left[column + 1]!)) return undefined;
-  // Spaltenkorridor: zwischen dem rechten Rand der Vorgängerspalte und dem linken Rand der Nachfolgerspalte.
-  const columnOf = (segment: LineSegment): number | undefined => {
-    for (let column = 0; column < k; column += 1) {
-      const lower = column === 0 ? Number.NEGATIVE_INFINITY : right[column - 1]!;
-      const upper = column === k - 1 ? Number.POSITIVE_INFINITY : left[column + 1]!;
-      // Die Mitte des Segments liegt in der Spalte selbst: Eine über mehrere Spalten gesetzte Überschrift („davon“ über
-      // „Hamburg“ und „Schleswig-Holstein“) trifft keine Spalte – dann kein Raster statt einer geratenen Zuordnung.
-      const center = (segment.x0 + segment.x1) / 2;
-      if (segment.x0 > lower && segment.x1 < upper) return center >= left[column]! && center <= right[column]! ? column : undefined;
-    }
-    return undefined;
+    return unitFor(text) !== undefined || containerFor(text) !== undefined || /^Fußnoten$/u.test(text);
   };
-  const placed: Array<{ line: PdfLine; cells: Map<number, string> }> = [];
-  for (const line of zone) {
-    const cells = new Map<number, string>();
-    let fits = true;
-    for (const segment of line.segments) {
-      const column = columnOf(segment);
-      if (column === undefined || cells.has(column)) {
-        fits = false;
+  /**
+   * Einzelzeile, die eine Tabellenzelle sein kann: kein Satzende, keine Überschrift. Ob sie in eine Spalte passt,
+   * entscheidet die Zuordnung (eine Absatzzeile über die ganze Breite trifft mehrere Spalten und fällt dort heraus).
+   */
+  const cellLike = (line: PdfLine): boolean => line.segments.length === 1 && !/[.:;]$/u.test(line.text.trim()) && !isHeadingLine(line) && !/^(?:\d+[a-z]?\.|\d+\)|[a-z]\)|[-–•])\s/u.test(line.text.trim());
+
+  // Anfang: Einzelzeilen vor der Mehrspaltenzeile bis zum Beginn ihrer Zeilengruppe (höchstens drei).
+  let start = at;
+  if (options.lookbehind !== false) {
+    let probe = at;
+    for (let back = 0; back < 3 && probe > 0; back += 1) {
+      const previous = lines[probe - 1]!;
+      if (!cellLike(previous) || previous.page !== lines[probe]!.page || !nearGap(lines[probe]!.gapBefore)) break;
+      probe -= 1;
+      if (!isContinuationGap(previous.gapBefore)) {
+        start = probe;
         break;
       }
-      cells.set(column, segment.text.trim());
     }
-    if (!fits) break;
-    placed.push({ line, cells });
   }
-  const join = (cells: Array<string | undefined>, add: Map<number, string>): void => {
-    for (const [column, text] of add) cells[column] = cells[column] === undefined ? text : joinLines(cells[column]!, text);
+
+  // Kandidatenzone: Mehrspaltenzeilen, eng anschließende Einzelzeilen und Einzelzeilen, denen eine eng anschließende
+  // Mehrspaltenzeile folgt – bis zur ersten Überschrift, Aufzählung oder abgesetzten Einzelzeile.
+  const zone: PdfLine[] = [];
+  const firstWidth = lines[start]!.segments.length;
+  for (let index = start; index < lines.length && zone.length < 5000; index += 1) {
+    const line = lines[index]!;
+    if (index > start && isHeadingLine(line)) break;
+    // Eine Zeile mit Aufzählungszeichen in der ersten Spalte ist eine Tabellenzeile, wenn die Tabelle mindestens drei
+    // Spalten hat und die Zeile mindestens drei Segmente trägt („1.1 | Erteilung einer Auskunft | bis 250“ im
+    // Kostentarif); eine Aufzählung hat nur Zeichen und Text.
+    const numberedRow = firstWidth >= 3 && line.segments.length >= 3 && ITEM_LABEL.test(line.segments[0]!.text) && /^\d/u.test(line.segments[0]!.text);
+    if (line.segments.length >= 2 && !isMultiColumnLine(line) && !numberedRow) break;
+    if (index > start && line.segments.length < 2 && !isContinuationGap(line.gapBefore)) {
+      const next = lines[index + 1];
+      const nextMultiColumn = next !== undefined && next.page === line.page && isMultiColumnLine(next);
+      // Abstände, in denen die Tabelle bisher ihre Zeilen setzt.
+      const rowGaps = zone.slice(1).map((entry) => entry.gapBefore).filter((gap) => Number.isFinite(gap) && !isContinuationGap(gap));
+      const knownGap = rowGaps.some((gap) => Math.abs(gap - line.gapBefore) <= 1.5);
+      // Erste Zeile einer umbrochenen Zelle: eng schließt die Mehrspaltenzeile an – oder eine Einzelzeile in einer
+      // anderen Spalte („Zusätzliche Einwendungsfrist (§ 10 Abs. 3 BImSchG)“ / „(2 Wochen)“ weit rechts).
+      const nextOtherColumn = next !== undefined && next.page === line.page && next.segments.length === 1 && next.x0 >= line.x0 + layout.bodyHeight * 3;
+      const startsWrappedRow = (nextMultiColumn || nextOtherColumn) && isContinuationGap(next!.gapBefore) && (nearGap(line.gapBefore) || knownGap);
+      // Zeile mit nur einer belegten Spalte im Zeilenraster der Tabelle („Kreisfreie Städte“ vor „01 | Flensburg | …“):
+      // die nächste Mehrspaltenzeile folgt im selben Abstand.
+      const singleCellRow = nextMultiColumn && isRowGap(line.gapBefore) && Number.isFinite(next!.gapBefore) && Math.abs(next!.gapBefore - line.gapBefore) <= 1.5;
+      const startsRow = cellLike(line) && (startsWrappedRow || singleCellRow);
+      if (!startsRow) break;
+    }
+    zone.push(line);
+  }
+  const k = Math.max(0, ...zone.map((line) => line.segments.length));
+  if (k < 2) return { rejection: 'single-row' };
+  if (k > TABLE_MAX_COLUMNS) return { rejection: 'too-many-columns' };
+
+  // Spaltenränder aus den vollständigen Zeilen; endet die Zone in Zeilen, die den Zwischenraum verletzen (etwa eine
+  // nummerierte Überschrift „2  Erhaltungsziele“ hinter der Tabelle), wird sie davor beendet.
+  let left: number[] = [];
+  let right: number[] = [];
+  let zoneLength = zone.length;
+  let gutters = false;
+  for (let attempt = 0; attempt < 60 && zoneLength >= 2 && !gutters; attempt += 1) {
+    const full = zone.slice(0, zoneLength).filter((line) => line.segments.length === k);
+    // Auch eine einzige vollständige Zeile (Kopfzeile über allen Spalten) trägt das Raster: Jede weitere Zelle muss in
+    // ihre Spalte passen, und die Tabelle braucht mindestens zwei Zeilen.
+    if (full.length < 1) break;
+    left = Array.from({ length: k }, (_, column) => Math.min(...full.map((line) => line.segments[column]!.x0)));
+    right = Array.from({ length: k }, (_, column) => Math.max(...full.map((line) => line.segments[column]!.x1)));
+    gutters = left.every((value, column) => column === 0 || right[column - 1]! < value);
+    if (!gutters) zoneLength -= 1;
+  }
+  if (!gutters) return { rejection: 'no-gutter' };
+  const bandWidth = (column: number): number => right[column]! - left[column]!;
+  const overlap = (segment: { x0: number; x1: number }, column: number): number => Math.min(segment.x1, right[column]!) - Math.max(segment.x0, left[column]!);
+
+  const place = (segment: { x0: number; x1: number }, strict: boolean): GridPlacement | undefined => {
+    const hit = Array.from({ length: k }, (_, column) => column).filter((column) => overlap(segment, column) > 0.5);
+    if (hit.length === 0) return undefined;
+    const first = hit[0]!;
+    const last = hit.at(-1)!;
+    if (hit.length > 1) {
+      if (last - first !== hit.length - 1) return undefined;
+      // Zelle über mehrere Spalten: im Kopfbereich über den Spalten zentriert, in Datenzeilen innerhalb ihrer Spalten.
+      const center = (segment.x0 + segment.x1) / 2;
+      const inUnion = strict
+        ? center >= left[first]! - BAND_TOLERANCE && center <= right[last]! + BAND_TOLERANCE
+        : segment.x0 >= left[first]! - BAND_TOLERANCE && segment.x1 <= right[last]! + BAND_TOLERANCE;
+      return inUnion ? { column: first, span: hit.length } : undefined;
+    }
+    const contained = segment.x0 >= left[first]! - BAND_TOLERANCE && segment.x1 <= right[first]! + BAND_TOLERANCE;
+    const centered = Math.abs((segment.x0 + segment.x1) / 2 - (left[first]! + right[first]!) / 2) <= 0.25 * Math.max(segment.x1 - segment.x0, bandWidth(first));
+    const between = (first === 0 || segment.x0 > right[first - 1]!) && (first === k - 1 || segment.x1 < left[first + 1]!);
+    if (strict ? contained || centered : between) return { column: first, span: 1 };
+    return undefined;
   };
-  const rows: Array<Array<string | undefined>> = [];
-  const startGaps: number[] = [];
-  let continuations = 0;
-  let tightStarts = 0;
-  let current: Array<string | undefined> | undefined;
-  let used = 0;
-  for (const entry of placed) {
-    const gap = entry.line.gapBefore;
-    const spaced = !current || !Number.isFinite(gap) || gap > tight;
-    if (!Number.isFinite(gap) && current && !entry.cells.has(0)) break; // Tabellenzeile über einen Seitenwechsel: nicht belegt
-    if (entry.cells.has(0) || spaced) {
-      if (!spaced && /\p{L}-$/u.test(current![0] ?? '') && entry.line.segments.length !== k) {
-        // Endet die erste Zelle mit Worttrennung („Kanada- und Nil-“), setzt die eng anschließende Teilzeile sie fort
-        // („gänse“): Eine neue Tabellenzeile begänne nie mitten im getrennten Wort.
-        join(current!, entry.cells);
-        continuations += 1;
-        used += 1;
+
+  /** Segmente einer Zeile, notfalls an den Zwischenräumen des Rasters neu aus den Wörtern gebildet. */
+  const segmentsOf = (line: PdfLine): LineSegment[] => {
+    if (!line.words || line.words.length === 0) return line.segments;
+    // Trennstelle: Das nächste Wort beginnt am linken Rand einer Spalte (rechtsbündige Zahl oder linksbündiger Text), das
+    // vorige endet davor – etwa „Klein Bennebek“ vor „117“, wenn der Abstand unter der Spaltenschwelle liegt.
+    const gutterBetween = (a: { x1: number }, b: { x0: number }): boolean => left.some((value, column) => column > 0 && a.x1 < value - 0.5 && b.x0 >= value - BAND_TOLERANCE && (column === k - 1 || b.x0 < left[column + 1]! - BAND_TOLERANCE));
+    const rebuilt: LineSegment[] = [];
+    let lastBase: { x1: number } | undefined;
+    for (const word of line.words) {
+      const current = rebuilt.at(-1);
+      if (word.superscript) {
+        if (current) {
+          current.text += word.text;
+          current.x1 = Math.max(current.x1, word.x1);
+        } else rebuilt.push({ x0: word.x0, x1: word.x1, text: word.text });
         continue;
       }
-      if (!spaced) {
-        // Eng anschließende Zeile mit erster Zelle: nur als vollständige Zeile eine neue Tabellenzeile (sonst wäre sie
-        // von einer umbrochenen ersten Zelle nicht zu unterscheiden – nicht belegt).
-        if (entry.line.segments.length !== k || /\p{L}-$/u.test(current![0] ?? '')) return undefined;
-        tightStarts += 1;
-      }
-      if (rows.length > 0 && Number.isFinite(gap)) startGaps.push(gap);
-      current = Array.from({ length: k }, () => undefined);
-      join(current, entry.cells);
-      rows.push(current);
-    } else {
-      join(current!, entry.cells);
-      continuations += 1;
+      if (current && lastBase && !gutterBetween(lastBase, word)) {
+        current.text += ` ${word.text}`;
+        current.x1 = Math.max(current.x1, word.x1);
+      } else rebuilt.push({ x0: word.x0, x1: word.x1, text: word.text });
+      lastBase = word;
     }
-    used += 1;
+    return rebuilt.length > line.segments.length ? rebuilt : line.segments;
+  };
+
+  /** Zeile → Zellen (Startspalte, Spannweite); `undefined`, wenn ein Segment keine Spalte trifft. */
+  const cellsOf = (line: PdfLine, strict: boolean): Map<number, { text: string; span: number }> | undefined => {
+    const tryWith = (segments: readonly LineSegment[]): Map<number, { text: string; span: number }> | undefined => {
+      const cells = new Map<number, { text: string; span: number }>();
+      const covered = new Set<number>();
+      for (const segment of segments) {
+        const placement = place(segment, strict);
+        if (!placement) return undefined;
+        for (let column = placement.column; column < placement.column + placement.span; column += 1) {
+          if (covered.has(column)) return undefined;
+          covered.add(column);
+        }
+        cells.set(placement.column, { text: segment.text.trim(), span: placement.span });
+      }
+      return cells;
+    };
+    // Eine feinere Aufteilung an Spaltenrändern hat Vorrang (verschmolzene Zellen); sonst die Segmente der Zeile.
+    const split = segmentsOf(line);
+    return (split.length > line.segments.length ? tryWith(split) : undefined) ?? tryWith(line.segments);
+  };
+
+  const rows: GridCell[][] = [];
+  /** Ablehnung mit der Zeile, an der sie entstand (für Befund und Analyse). */
+  const reject = (rejection: string, line?: PdfLine): { rejection: string; detail?: string } => ({ rejection, ...(line ? { detail: `Zeile „${line.text.trim().slice(0, 60)}“ (${line.segments.map((segment) => `${Math.round(segment.x0)}–${Math.round(segment.x1)}`).join(', ')}) gegen Spalten ${left.map((value, column) => `${Math.round(value)}–${Math.round(right[column]!)}`).join(', ')}` } : {}) });
+  /** Zellenbelegungen abgeschlossener, abgesetzt begonnener Tabellenzeilen (Summen-, Zwischenzeilen). */
+  const rowShapes = new Set<string>();
+  const shapeOf = (row: readonly GridCell[]): string => row.map((cell, column) => (cell ? column : -1)).filter((column) => column >= 0).join(',');
+  let current: GridCell[] | undefined;
+  let continuations = 0;
+  let spans = 0;
+  let fullSeen = false;
+  let end = start;
+  const newRow = (cells: Map<number, { text: string; span: number }>): void => {
+    current = Array.from({ length: k }, () => undefined);
+    for (const [column, cell] of cells) {
+      current[column] = cell;
+      if (cell.span > 1) spans += 1;
+      for (let covered = column + 1; covered < column + cell.span; covered += 1) current[covered] = null;
+    }
+    rows.push(current);
+  };
+  /** Fortsetzungszellen gehören in eine bestehende Zelle derselben Spalte(n); sonst nicht belegt. */
+  const continueRow = (cells: Map<number, { text: string; span: number }>): boolean => {
+    for (const [column, cell] of cells) {
+      let owner = column;
+      while (owner > 0 && current![owner] === null) owner -= 1;
+      const target = current![owner];
+      if (target === undefined) {
+        // Noch leere Spalte(n) der Zeile: Der Wert steht erst in der Folgezeile, weil die Zelle davor umbrochen ist
+        // („Zusätzliche Einwendungsfrist (§ 10 Abs. 3 BImSchG)“ / „(2 Wochen)“).
+        if (owner !== column) return false;
+        for (let covered = column; covered < column + cell.span; covered += 1) if (current![covered] !== undefined) return false;
+        current![column] = cell;
+        if (cell.span > 1) spans += 1;
+        for (let covered = column + 1; covered < column + cell.span; covered += 1) current![covered] = null;
+        continue;
+      }
+      if (!target || column + cell.span > owner + target.span) return false;
+      target.text = joinLines(target.text, cell.text);
+    }
+    continuations += 1;
+    return true;
+  };
+  const hyphenated = (): number[] => (current ?? []).map((cell, column) => (cell && /\p{L}-$/u.test(cell.text) ? column : -1)).filter((column) => column >= 0);
+  const filledColumns = (cells: Map<number, { text: string; span: number }>): number[] => [...cells.keys()].sort((a, b) => a - b);
+  const isFull = (cells: Map<number, { text: string; span: number }>): boolean => [...cells.values()].reduce((sum, cell) => sum + cell.span, 0) === k;
+
+  for (let index = 0; index < zoneLength; index += 1) {
+    const line = zone[index]!;
+    const cells = cellsOf(line, !fullSeen);
+    const gap = line.gapBefore;
+    if (!cells) {
+      // Eine eng anschließende Zeile, die in keine Spalte passt, ist eine nicht belegte Fortsetzung; eine abgesetzte
+      // Zeile beendet die Tabelle (sie gehört nicht mehr dazu).
+      if (rows.length === 0) return reject(fullSeen ? 'cell-unassigned' : 'header-unassigned', line);
+      if (isContinuationGap(gap)) return reject('cell-unassigned', line);
+      break;
+    }
+    if (!current) {
+      newRow(cells);
+    } else if (isContinuationGap(gap)) {
+      if (!continueRow(cells)) return reject('cell-unassigned', line);
+    } else {
+      const open = hyphenated();
+      const columns = filledColumns(cells);
+      const continuesOpen = open.length > 0 && open.every((column) => columns.includes(column));
+      if (isRowGap(gap)) {
+        // Deutlich abgesetzt nach einer getrennt endenden Zelle: widersprüchlich.
+        if (open.length > 0) return reject('hyphenated-cell', line);
+        rowShapes.add(shapeOf(current));
+        newRow(cells);
+      } else if (!Number.isFinite(gap)) {
+        // Seitenwechsel: Fortsetzung nur mit Worttrennung; neue Zeile nur vollständig oder in einer Belegung, die die
+        // Tabelle schon als abgesetzte Zeile gezeigt hat (Summenzeile ohne erste Spalte).
+        if (open.length > 0) {
+          if (!continuesOpen || !continueRow(cells)) return reject('page-break-in-table', line);
+        } else if (isFull(cells) || rowShapes.has(columns.join(','))) {
+          rowShapes.add(shapeOf(current));
+          newRow(cells);
+        } else return reject('page-break-in-table', line);
+      } else if (open.length > 0) {
+        if (!continuesOpen || !continueRow(cells)) return reject('ambiguous-row-gap', line);
+      } else if (isFull(cells)) {
+        rowShapes.add(shapeOf(current));
+        newRow(cells);
+      } else return reject('ambiguous-row-gap', line);
+    }
+    if (line.segments.length === k) fullSeen = true;
+    end = start + index + 1;
   }
-  if (rows.length < 2) return undefined;
-  // Fortsetzungen sind nur belegt, wenn Tabellenzeilen abgesetzt beginnen – und zwar gleichmäßig: Ein deutlich
-  // kleinerer Abstand (zweizeilige Kopfzelle „Teil des“ / „Ausbildungsberufsbildes“) ist keine belegte Zeilengrenze.
-  if (continuations > 0 && tightStarts > 0) return undefined;
-  const spacedGaps = startGaps.filter((gap) => gap > tight).sort((a, b) => a - b);
-  const median = spacedGaps[Math.floor(spacedGaps.length / 2)];
-  if (median !== undefined && spacedGaps.some((gap) => gap < median * 0.5)) return undefined;
-  // Keine Zelle einer Tabellenzeile darf getrennt enden (umbrochene Zelle ohne belegte Fortsetzung).
-  if (rows.some((row) => row.some((text) => /\p{L}-$/u.test(text ?? '')))) return undefined;
-  if (continuations === 0 && rows.every((row) => row.every((text) => text !== undefined))) return undefined; // einfaches Raster: `leadingGrid`
+  if (rows.length < 2) return { rejection: 'single-row' };
+  // Eine Tabelle zeigt ihre Spalten in mindestens zwei Zeilen: Eine Zeile über alle Spalten und eine einzige mehrzellige
+  // Zeile („als Arbeitnehmer/in“ / „wird in Ergänzung zum Arbeitsvertrag vom … geschlossen: … Zusatzvereinbarung“) sind
+  // ein Formularsatz mit Lücken, kein Raster.
+  if (rows.filter((row) => row.filter((cell) => cell).length >= 2).length < 2) return { rejection: 'single-row' };
+  // Keine Zelle darf getrennt enden (umbrochene Zelle ohne belegte Fortsetzung).
+  if (rows.some((row) => row.some((cell) => cell && /\p{L}-$/u.test(cell.text)))) return { rejection: 'hyphenated-cell' };
+  if (continuations === 0 && spans === 0 && rows.every((row) => row.every((cell) => cell !== undefined))) return { rejection: 'single-row' }; // einfaches Raster: `leadingGrid`
   // Kein Zeichen verloren oder hinzugekommen: dieselben Buchstaben und Ziffern in Quelle und Zellen (nur die Folge ändert
   // sich, weil Zellen über mehrere Zeilen laufen).
-  const sourceText = placed.slice(0, used).map((entry) => entry.line.text).join('\n');
-  // Leere Zellen nur in Zeilen, die abgesetzt stehen (Summen-, Zwischenzeilen); sie bleiben leer, nichts wird aufgefüllt.
-  const cellText = rows.map((row) => row.filter((text) => text !== undefined).join('\n')).join('\n');
+  const consumed = lines.slice(start, end);
+  const sourceText = consumed.map((line) => line.text).join('\n');
+  const cellText = rows.map((row) => row.filter((cell): cell is { text: string; span: number } => Boolean(cell)).map((cell) => cell.text).join('\n')).join('\n');
   const sorted = (text: string): string => [...characterStream(text)].sort().join('');
-  if (sorted(sourceText) !== sorted(cellText)) return undefined;
+  if (sorted(sourceText) !== sorted(cellText)) return { rejection: 'cell-unassigned' };
   return {
     reorder: { reason: 'Tabelle mit mehrzeiligen Zellen (Quelle zeilenweise, Normkörper zellenweise)', text: sourceText, replacement: cellText },
     bands: left.map((value, column) => [value, right[column]!] as [number, number]),
     table: {
       type: 'table',
       columns: k,
-      children: rows.map((row) => ({ type: 'tableRow', children: row.map((text) => ({ type: 'tableCell', text: text ?? '' })) })),
+      children: rows.map((row) => ({
+        type: 'tableRow',
+        children: row.flatMap((cell): NormBodyBlock[] => (cell === null ? [] : [{ type: 'tableCell', text: cell?.text ?? '', ...(cell && cell.span > 1 ? { colspan: cell.span } : {}) }])),
+      })),
     },
-    lines: used,
+    start,
+    end,
   };
 }
 
@@ -827,6 +1037,8 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
   let tableRun = 0;
   /** Erste Zeile nach der zuletzt übernommenen Tabelle. */
   let tableEnd = -1;
+  /** Mehrspaltige Zeilen, die als Fortsetzung des Fließtexts erkannt wurden (keine Tabellenzeilen). */
+  const textContinuations = new Set<number>();
   /** Grund, aus dem der zuletzt begonnene Block kein sicheres Raster ist (Befundtext). */
   let tableRejection: string = 'single-row';
   let previousCentered = false;
@@ -947,7 +1159,11 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
       }
       return true;
     })();
-    const centered: boolean = !tableRow && isCentered(line, layout) && (previousCentered || (breakBefore && !continuesSentence) || (newPage && !continuesSentence));
+    // Eine Einheitenbezeichnung allein auf einer zentrierten Zeile am Seitenanfang („Artikel 3“ nach „(Änderungsanweisungen)“
+    // oder „Gliederungsnummer: …“ der Vorseite) ist eine Überschrift, auch wenn die Vorseite ohne Satzzeichen endet.
+    const labelOnly = unitType !== undefined && line.segments.length === 1 && UNIT_PATTERNS.find((entry) => entry.type === unitType)!.pattern.exec(text)![0].trim() === text;
+    const centered: boolean = !tableRow && isCentered(line, layout) && (previousCentered || (breakBefore && !continuesSentence) || (newPage && (!continuesSentence || labelOnly)));
+    const previousLineCentered = previousCentered;
     previousCentered = centered;
     const standaloneAnnex = unitType === 'annex' && line.segments.length === 1 && text.length < 40 && (breakBefore || newPage);
     if (centered || standaloneAnnex) {
@@ -958,6 +1174,19 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
       if (unitType && (centered || standaloneAnnex)) {
         const match = UNIT_PATTERNS.find((entry) => entry.type === unitType)!.pattern.exec(text)!;
         const label = match[0].trim();
+        // Zentrierte Fortsetzung einer Überschrift, die mit einem Anschlusswort endet („… Abgaben nach“ / „§ 9 KAG, der …“):
+        // Titelzeile, keine Einheit.
+        const openHeading = unit ?? containers.at(-1)?.block;
+        if (openHeading?.title && !open && (openHeading.children?.length ?? 0) === 0 && previousLineCentered && gap <= layout.lineGap + 1 && TITLE_CONTINUATION.test(openHeading.title)) {
+          appendTitle(text);
+          continue;
+        }
+        // Anlagenkennung als Seitenmarke (rechts oben, auf jeder Seite einer mehrseitigen Anlage wiederholt): keine neue Anlage.
+        if (unitType === 'annex' && unit?.type === 'annex' && unit.label === normalizeLabel(label) && (newPage || line.x0 > (layout.left + layout.right) / 2)) {
+          closeText();
+          target().push({ type: 'heading', text });
+          continue;
+        }
         pushUnit(unitType, label);
         const rest = text.slice(match[0].length).trim();
         if (rest) appendTitle(rest);
@@ -984,54 +1213,77 @@ export function buildBody(lines: PdfLine[], layout: PdfLayout, findings: ParseFi
 
     // Tabellenlayout: mehrere Spalten, erste Spalte keine Aufzählungsnummer.
     // Einheitenbezeichnung mit abgesetzter Überschrift („§ 3   Zweck“, „Artikel 2   Finanzkorrekturen“) ist keine Tabellenzeile.
-    const multiColumn = isMultiColumnLine(line);
+    // Mehrspaltige Zeile, die den Satz der Zeile davor fortsetzt (eng anschließend an eine Textzeile ohne Satzende, erste
+    // Spalte klein geschrieben oder Zeile davor mit Worttrennung): Fließtext mit rechtsbündiger Zahl („… Pflicht-“ /
+    // „stundenzahl   25,5.“), keine Tabellenzeile.
+    const previousLine = index > 0 && index - 1 >= tableEnd ? lines[index - 1] : undefined;
+    // Nur eine mit Kleinbuchstaben beginnende erste Spalte setzt einen Satz fort; eine Zahlenzeile unter einer umbrochenen
+    // Zellenbezeichnung („Wohngebäude mit Ge-“ / „83   97,28   101,59“) ist eine Tabellenzeile.
+    const continuesText = previousLine !== undefined && previousLine.page === line.page && previousLine.segments.length === 1 && Number.isFinite(line.gapBefore) && line.gapBefore <= layout.lineGap + 1 && !/[.:;]$/u.test(previousLine.text.trim()) && !isCentered(previousLine, layout) && /^\p{Ll}/u.test(line.segments[0]!.text.trim());
+    const multiColumn = isMultiColumnLine(line) && !continuesText;
+    if (isMultiColumnLine(line) && continuesText) {
+      textContinuations.add(index);
+      findings.push({ severity: 'info', code: 'table-text-continuation', message: `Mehrspaltige Zeile „${text.slice(0, 60)}“ setzt den Satz der Zeile davor fort – Fließtext, keine Tabellenzeile`, page: line.page });
+    }
     // Beginnt hier ein sicher rekonstruierbares Raster (siehe `gridTable`), wird es als Tabelle übernommen.
     if (multiColumn && tableRun === 0) {
       let end = index + 1;
       while (end < lines.length && isMultiColumnLine(lines[end]!) && !unitFor(lines[end]!.text.trim()) && !containerFor(lines[end]!.text.trim())) end += 1;
       const figureInside = pendingFigures.some((figure) => figure.beforeLine > index && figure.beforeLine < end);
       const simple = end - index >= 2 && !figureInside ? leadingGrid(lines.slice(index, end)) : undefined;
-      // Mehrzeilige Zellen oder Kopfzeile: nur, wenn das Raster weiter trägt als das einfache (Run 8).
-      const wrapped = !figureInside ? wrappedGrid(lines, index, layout) : undefined;
-      const wrappedFree = wrapped && !pendingFigures.some((figure) => figure.beforeLine > index && figure.beforeLine < index + wrapped.lines);
-      const useWrapped = Boolean(wrappedFree && (!simple || !('table' in simple) || wrapped!.lines > simple.rows));
-      const grid = useWrapped ? { table: wrapped!.table, rows: wrapped!.lines } : simple;
-      if (useWrapped) reorders.push(wrapped!.reorder);
+      // Mehrzeilige Zellen, Kopfzeilen, Zellen über mehrere Spalten: nur, wenn das Raster weiter trägt als das einfache.
+      // Zeilen vor dem Aufrufpunkt (Anfang der ersten Tabellenzeile) sind schon als Block ausgegeben; sie werden nur
+      // übernommen, wenn genau dieser Block zurückgenommen werden kann – sonst ohne sie.
+      let wrapped = figureInside ? undefined : wrappedGrid(lines, index, layout);
+      const emitted = (from: number): NormBodyBlock[] | undefined => {
+        const texts = lines.slice(from, index).map((entry) => entry.text.trim());
+        const blocks = target();
+        const last = blocks.at(-1);
+        if (last && (last.type === 'paragraphText' || last.type === 'heading') && !last.children?.length && last.text === texts.reduce((joined, part) => joinLines(joined, part), '')) return [last];
+        const tail = blocks.slice(-texts.length);
+        if (tail.length === texts.length && tail.every((block, offset) => block.type === 'heading' && !block.children?.length && block.text === texts[offset])) return tail;
+        return undefined;
+      };
+      let removable: NormBodyBlock[] | undefined;
+      if (wrapped && 'table' in wrapped && wrapped.start < index) {
+        removable = index - wrapped.start <= 3 && wrapped.start >= tableEnd ? emitted(wrapped.start) : undefined;
+        if (!removable) wrapped = wrappedGrid(lines, index, layout, { lookbehind: false });
+      } else if (wrapped && 'rejection' in wrapped && index > 0) {
+        // Die vorgezogene Zeile (etwa ein zentrierter Titel) trägt das Raster nicht: ohne sie versuchen.
+        const retry = wrappedGrid(lines, index, layout, { lookbehind: false });
+        if ('table' in retry) wrapped = retry;
+      }
+      const wrappedFree = wrapped && 'table' in wrapped && !pendingFigures.some((figure) => figure.beforeLine > index && figure.beforeLine < wrapped.end);
+      const useWrapped = Boolean(wrappedFree && (!simple || !('table' in simple) || (wrapped as WrappedGridResult).end > index + simple.rows));
+      const grid = useWrapped ? { table: (wrapped as WrappedGridResult).table, rows: (wrapped as WrappedGridResult).end - index } : simple;
       if (grid && 'table' in grid) {
         const table = grid.table;
-        // Kopf außerhalb des Rasters: Steht unmittelbar davor eine weitere Mehrspaltenzeile (etwa eine über mehrere
-        // Spalten gesetzte Überschrift) oder eine Zeile, die in einer in der ersten Tabellenzeile leeren Spalte liegt
-        // („Kurvenpunkt“ über „Ostwert | Nordwert“), ist der Tabellenkopf nicht sicher zugeordnet: Befund.
-        const previous = lines[index - 1];
-        const beforePrevious = lines[index - 2];
-        const near = (candidate: PdfLine | undefined, after: PdfLine): boolean => candidate !== undefined && candidate.page === after.page && Number.isFinite(after.gapBefore) && after.gapBefore <= layout.bodyHeight * 2;
-        const firstRow = (table.children![0]!.children ?? []).map((cell) => cell.text ?? '');
-        const bands = useWrapped ? wrapped!.bands : [];
-        // Ein Satz am Textrand („… gelten folgende Sätze:“) ist Einleitung, kein Tabellenkopf.
-        const inEmptyBand = (candidate: PdfLine): boolean => candidate.segments.length === 1 && !/[.:;]$/u.test(candidate.text.trim()) && candidate.x0 > layout.left + 2 && bands.some(([bandLeft, bandRight], column) => firstRow[column] === '' && (candidate.x0 + candidate.x1) / 2 >= bandLeft && (candidate.x0 + candidate.x1) / 2 <= bandRight);
-        // Zeilen einer unmittelbar vorangehenden, bereits übernommenen Tabelle sind kein Kopf dieser Tabelle.
-        const inTable = (position: number): boolean => position < tableEnd;
-        // Kopfzelle über der ersten Zeile („Kurvenpunkt“ über „| X | Y“): genau eine leere Zelle der ersten Tabellenzeile,
-        // deren Spalte die Zeile trifft, eng darüber (Abstand unter dem Zeilenabstand der Tabelle) und als eigener Absatz
-        // unmittelbar zuvor ausgegeben – dann gehört sie in diese Zelle (Reihenfolge der Quelle bleibt erhalten).
-        const emptyColumns = previous && previous.segments.length === 1 ? bands.map(([bandLeft, bandRight], column) => ({ column, hit: firstRow[column] === '' && (previous.x0 + previous.x1) / 2 >= bandLeft && (previous.x0 + previous.x1) / 2 <= bandRight })).filter((entry) => entry.hit) : [];
-        const lastBlock = target().at(-1);
-        if (emptyColumns.length === 1 && near(previous, line) && !inTable(index - 1) && !/[.:;]$/u.test(previous!.text.trim()) && line.gapBefore < layout.bodyHeight * 1.5 && lastBlock?.type === 'paragraphText' && !lastBlock.children?.length && lastBlock.text === previous!.text.trim()) {
-          target().pop();
-          table.children![0]!.children![emptyColumns[0]!.column]!.text = previous!.text.trim();
+        const tableStart = useWrapped ? (wrapped as WrappedGridResult).start : index;
+        if (useWrapped) {
+          reorders.push((wrapped as WrappedGridResult).reorder);
+          if (tableStart < index && removable) for (const _block of removable) target().pop();
         }
-        const firstRowNow = (table.children![0]!.children ?? []).map((cell) => cell.text ?? '');
-        const headerOutside = near(previous, line) && !inTable(index - 1) && (isMultiColumnLine(previous!) || (inEmptyBand(previous!) && firstRowNow.some((cell) => cell === '') && target().at(-1)?.text === previous!.text.trim()) || (previous!.segments.length === 1 && previous!.gapBefore <= layout.paragraphGap && near(beforePrevious, previous!) && !inTable(index - 2) && isMultiColumnLine(beforePrevious!)));
-        if (headerOutside) findings.push({ severity: 'warning', code: 'table-layout', message: `Tabellenlayout ab „${text.slice(0, 60)}“: die Zeile unmittelbar davor gehört dem Satz nach zur Tabelle (Kopf oder Zeile), ist aber keiner Spalte sicher zuzuordnen [row-before-table]`, page: line.page });
+        // Zeile unmittelbar vor der Tabelle, die dem Satz nach zu ihr gehört (eng anschließend oder selbst mehrspaltig),
+        // aber keiner Spalte sicher zuzuordnen ist: Befund.
+        const previous = tableStart > 0 ? lines[tableStart - 1] : undefined;
+        const first = lines[tableStart]!;
+        const near = previous !== undefined && previous.page === first.page && Number.isFinite(first.gapBefore) && first.gapBefore <= layout.bodyHeight * 2;
+        const inTable = (position: number): boolean => position < tableEnd;
+        // Überschriften („Sechster Teil“) und Linien („______“) vor einer Tabelle sind keine Tabellenzeilen.
+        const previousText = previous?.text.trim() ?? '';
+        const ruleLine = /^[\s_\-–—=]+$/u.test(previousText);
+        const headingBefore = unitFor(previousText) !== undefined || containerFor(previousText) !== undefined || /^Nichtamtliches Inhaltsverzeichnis$/u.test(previousText);
+        const headerOutside = near && !inTable(tableStart - 1) && !ruleLine && !headingBefore && !textContinuations.has(tableStart - 1) && (isMultiColumnLine(previous!) || (previous!.segments.length === 1 && first.gapBefore <= layout.lineGap + 1 && !/[.:;]$/u.test(previousText)));
+        if (headerOutside) findings.push({ severity: 'warning', code: 'table-layout', message: `Tabellenlayout ab „${first.text.trim().slice(0, 60)}“: die Zeile unmittelbar davor gehört dem Satz nach zur Tabelle (Kopf oder Zeile), ist aber keiner Spalte sicher zuzuordnen [row-before-table]`, page: first.page });
         closeText();
         target().push(table);
-        findings.push({ severity: 'info', code: 'table-structured', message: `Tabelle (${table.columns} Spalten, ${table.children!.length} Zeilen) ab „${text.slice(0, 60)}“ aus dem Spaltenraster übernommen${useWrapped ? ' (mehrzeilige Zellen bzw. Kopfzeile)' : ''}`, page: line.page });
+        findings.push({ severity: 'info', code: 'table-structured', message: `Tabelle (${table.columns} Spalten, ${table.children!.length} Zeilen) ab „${first.text.trim().slice(0, 60)}“ aus dem Spaltenraster übernommen${useWrapped ? ' (mehrzeilige Zellen bzw. Kopfzeile)' : ''}`, page: first.page });
         previousCentered = false;
         index += grid.rows - 1;
         tableEnd = index + 1;
         continue;
       }
-      tableRejection = figureInside ? 'figure-inside' : grid ? grid.rejection : 'single-row';
+      tableRejection = figureInside ? 'figure-inside' : wrapped && 'rejection' in wrapped && wrapped.rejection !== 'single-row' ? wrapped.rejection : grid ? grid.rejection : 'single-row';
     }
     if (multiColumn) {
       tableRun += 1;
@@ -1183,20 +1435,49 @@ function dropEmptyFootnotes(blocks: NormBodyBlock[], findings: ParseFinding[]): 
 
 function checkTocAgainstBody(toc: TocEntry[], body: NormBodyBlock[], findings: ParseFinding[], isVwv: boolean): void {
   if (isVwv) return;
+  // Vergleichsform: ohne Fußnotenzeichen („Artikel 2 *)“), Anlagenzählung ohne Satzvarianten („Anlage3“, „Anlage 1 a“),
+  // Bereiche mit einheitlichem Trenner („Artikel 1 -3“ / „Artikel 1 - 3“).
+  const comparable = (label: string): string => normalizeLabel(label).replace(/\s*\*+\)?\s*$/u, '').replace(/^(Anlage|Anhang)(\d)/u, '$1 $2').replace(/^((?:Anlage|Anhang)\s+\d+)\s+([a-z])\b/u, '$1$2').replace(/(\d)\s*[-–]\s*(\d)/gu, '$1 - $2').replace(/\s+/gu, ' ').trim();
   const bodyLabels: string[] = [];
+  // Einheiten innerhalb von Anlagen (Satzung, Staatsvertrag als Anlage) bilden eigene Nummernräume, die das Verzeichnis
+  // in der Regel nicht führt.
+  const annexInternal: string[] = [];
   const annexHeadings: string[] = [];
-  const walk = (blocks: NormBodyBlock[]): void => {
+  // Anlagen stehen auf oberster Ebene; ihre Einheiten folgen ihnen als Geschwister (siehe `pushUnit`).
+  let afterAnnex = false;
+  const walk = (blocks: NormBodyBlock[], insideAnnex: boolean, top: boolean): void => {
     for (const block of blocks) {
-      if (block.type === 'annex' && block.label) annexHeadings.push(normalizeLabel(`${block.label} ${block.title ?? ''}`));
-      if ((block.type === 'paragraph' || block.type === 'article' || block.type === 'annex') && block.label) bodyLabels.push(normalizeLabel(block.label));
-      if (block.children) walk(block.children);
+      if (block.type === 'annex' && block.label) annexHeadings.push(comparable(`${block.label} ${block.title ?? ''}`));
+      if (top && block.type === 'annex') afterAnnex = true;
+      const internal = block.type !== 'annex' && (insideAnnex || (top && afterAnnex));
+      if ((block.type === 'paragraph' || block.type === 'article' || block.type === 'annex') && block.label) (internal ? annexInternal : bodyLabels).push(comparable(block.label));
+      if (block.children) walk(block.children, insideAnnex || block.type === 'annex' || internal, false);
     }
   };
-  walk(body);
-  const tocLabels = toc.map((entry) => entry.label).filter((label): label is string => label !== undefined && /^(?:§|Art|Artikel|Anlage|Anhang)/u.test(label)).map(normalizeLabel);
-  const missing = tocLabels.filter((label) => !bodyLabels.includes(label) && !(/^(?:Anlage|Anhang)/u.test(label) && annexHeadings.some((heading) => heading.startsWith(label) || label.startsWith(heading))));
+  walk(body, false, true);
+  const tocEntries = toc.filter((entry): entry is TocEntry & { label: string } => entry.label !== undefined && /^(?:§|Art|Artikel|Anlage|Anhang)/u.test(entry.label));
+  const tocLabels = tocEntries.map((entry) => comparable(entry.label));
+  // Verzeichniseintrag, dessen Überschrift selbst nur eine Bezeichnung ist („Artikel IV  § 10“): auch sie ist eine Einheit.
+  for (const entry of toc) {
+    const type = unitFor(entry.title.trim());
+    if (!type) continue;
+    const match = UNIT_PATTERNS.find((candidate) => candidate.type === type)!.pattern.exec(entry.title.trim())!;
+    if (/^(?:\*+\)?)?$/u.test(entry.title.trim().slice(match[0].length).trim())) tocLabels.push(comparable(match[0]));
+  }
+  const tocAnnexHeadings = tocEntries.filter((entry) => /^(?:Anlage|Anhang)/u.test(entry.label)).map((entry) => comparable(`${entry.label} ${entry.title}`));
+  const hasTocAnnexes = tocAnnexHeadings.length > 0;
+  const missing = tocLabels.filter((label) => !bodyLabels.includes(label) && !annexInternal.includes(label) && !(/^(?:Anlage|Anhang)/u.test(label) && annexHeadings.some((heading) => heading.startsWith(label) || label.startsWith(heading))));
   if (missing.length > 0) findings.push({ severity: 'warning', code: 'toc-unit-missing', message: `${missing.length} Einheit(en) des Verzeichnisses ohne Überschrift im Normtext: ${missing.slice(0, 5).join(', ')}` });
-  const extra = bodyLabels.filter((label) => !tocLabels.includes(label));
+  const extra = bodyLabels.filter((label) => {
+    if (tocLabels.includes(label)) return false;
+    if (/^(?:Anlage|Anhang)/u.test(label)) {
+      // Verzeichnisse führen Anlagen uneinheitlich: ohne Anlageneinträge, als bloße „Anlage“ (Zwischenüberschrift,
+      // Kartenanlage) oder mit der Überschrift als Bezeichnung („Anlage 2 zu § 3“) ist eine Anlage im Normtext kein Befund.
+      if (!hasTocAnnexes || /^(?:Anlage|Anhang)$/u.test(label)) return false;
+      if (tocAnnexHeadings.some((heading) => heading.startsWith(label) || label.startsWith(heading))) return false;
+    }
+    return true;
+  });
   if (tocLabels.length > 0 && extra.length > 0) findings.push({ severity: 'warning', code: 'body-unit-not-in-toc', message: `${extra.length} Überschrift(en) im Normtext ohne Eintrag im Verzeichnis: ${extra.slice(0, 5).join(', ')}` });
   let position = 0;
   for (const label of tocLabels) {

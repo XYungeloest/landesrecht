@@ -19,6 +19,9 @@ describe('D1-Store gegen eine nicht projizierte Datenbank', () => {
     expect(await store.getStats()).toEqual({ normCount: 0, versionCount: 0, projectedAt: null, projectionFingerprint: null });
     expect(await store.getRuntimeMeta('projection_state')).toBeNull();
     expect(await store.search(createSearchState({ q: 'Gesetz', jurisdictions: ['nsh'] }))).toMatchObject({ total: 0, hits: [] });
+    // Auch ohne die Tabelle law_publications (Schema 0001, Migration 0002 noch nicht eingespielt): leer, kein Fehler.
+    expect(await store.listPublications()).toEqual([]);
+    expect(await store.getPublication('gibt-es-nicht')).toBeNull();
   });
 
   it('kennt nur fehlende law_*-Tabellen als Leerzustand; andere Fehler bleiben Fehler', async () => {

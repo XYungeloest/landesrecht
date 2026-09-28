@@ -121,10 +121,20 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
     expect((await readManifest(root)).entries).toHaveLength(1);
     await mkdir(join(root, 'content', 'norms', 'west', 'testg-west', 'versions'), { recursive: true });
     await writeFile(join(root, 'content', 'norms', 'west', 'testg-west', 'versions', '2026-01-01.json'), '{}');
+    // Baseline-Lock: Mit fremder Fassung und identischer Ausgangsfassung ist die Norm unverändert – nichts wird geschrieben.
+    const locked = await importRechtNrwNorm({ url: BASELINE_URL, root, fetcher: fakeFetcher(files), write: true, now });
+    expect(locked.status).toBe('imported-with-warnings');
+    expect(locked.findings.map((finding) => finding.code)).not.toContain('existing-versions');
+    expect(await readFile(join(root, 'content', 'norms', 'west', 'testg-west', 'versions', '2026-01-01.json'), 'utf8')).toBe('{}');
+    // Weicht die gespeicherte Ausgangsfassung vom Importergebnis ab, bleibt die gesperrte Norm unangetastet: Befund.
+    const baselinePath = join(root, 'content', 'norms', 'west', 'testg-west', 'versions', '2023-12-01.json');
+    const storedBaseline = await readFile(baselinePath, 'utf8');
+    await writeFile(baselinePath, storedBaseline.replace('"changeNote": "', '"changeNote": "Redaktionell verändert. '));
     const blocked = await importRechtNrwNorm({ url: BASELINE_URL, root, fetcher: fakeFetcher(files), write: true, now });
     expect(blocked.status).toBe('failed');
     expect(blocked.findings.map((finding) => finding.code)).toContain('existing-versions');
-    expect(await readFile(join(root, 'content', 'norms', 'west', 'testg-west', 'versions', '2026-01-01.json'), 'utf8')).toBe('{}');
+    expect(await readFile(baselinePath, 'utf8')).not.toBe(storedBaseline);
+    await writeFile(baselinePath, storedBaseline);
     await rm(join(root, 'content', 'norms', 'west', 'testg-west', 'versions', '2026-01-01.json'));
   });
 

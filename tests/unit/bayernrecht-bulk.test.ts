@@ -18,7 +18,7 @@
  * mit eigenem Cache, eigener Enumeration, eigenem Scope und eigener Stichtagsklassifikation.
  */
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'vitest';
@@ -588,6 +588,33 @@ describe('Unveränderlichkeit: ein zweiter Lauf ändert nichts still', () => {
     expect(manifest?.targetSlug).toBe(slug);
     expect(manifest?.importStatus === 'imported' || manifest?.importStatus === 'imported-with-warnings').toBe(true);
     expect(manifest?.reviewStatus).toBe('open');
+  });
+});
+
+describe('Baseline-Lock: Normen mit Sim-Fortschreibung schreibt der Bulk nie neu', () => {
+  it('Folgefassung oder Aufhebung sperren die Norm; identische Ausgangsfassung gilt als unverändert, abweichende als Befund', async () => {
+    const root = await fixtureRoot([{ id: 'BayAbmG', bytes: abmarkungsgesetz() }]);
+    const slug = resultFor(await run(root, { write: true }), 'BayAbmG')!.targetSlug!;
+    const normDir = join(root, 'content', 'norms', 'baywue', slug);
+    const baseline = await readFile(join(normDir, 'versions', `${BASELINE}.json`), 'utf8');
+    const meta = await readFile(join(normDir, 'meta.json'), 'utf8');
+    // Sim-Folgefassung neben der Ausgangsfassung.
+    await writeFile(join(normDir, 'versions', '2026-03-01.json'), '{"versionId":"2026-03-01"}');
+    const locked = await run(root, { write: true });
+    expect(resultFor(locked, 'BayAbmG')?.result).toBe('unchanged');
+    expect(resultFor(locked, 'BayAbmG')?.reviewCategories ?? []).not.toContain('import-regression');
+    expect(await readFile(join(normDir, 'versions', `${BASELINE}.json`), 'utf8')).toBe(baseline);
+    expect(await readFile(join(normDir, 'meta.json'), 'utf8')).toBe(meta);
+    // Reine Aufhebung: keine Folgefassung, aber Historie nach dem Stichtag – ebenfalls gesperrt.
+    await rm(join(normDir, 'versions', '2026-03-01.json'));
+    const history = JSON.parse(await readFile(join(normDir, 'history.json'), 'utf8')) as { entries: unknown[] };
+    await writeFile(join(normDir, 'history.json'), `${JSON.stringify({ ...history, entries: [...history.entries, { date: '2026-04-01', type: 'repeal', title: 'Aufgehoben.', citation: 'Gesetz vom 1. April 2026 (GVBl. BayWü 2026 Nr. 1)', affectingVersionId: null }] }, null, 2)}\n`);
+    expect(resultFor(await run(root, { write: true }), 'BayAbmG')?.result).toBe('unchanged');
+    // Abweichende Ausgangsfassung (Parserlauf mit anderem Ergebnis) bei gesperrter Norm: Befund, nichts geschrieben.
+    await seedCache(root, zipUrl('BayAbmG'), unknownStructure());
+    const blocked = await run(root, { write: true });
+    expect(resultFor(blocked, 'BayAbmG')?.result).toBe('kept-existing');
+    expect(await readFile(join(normDir, 'versions', `${BASELINE}.json`), 'utf8')).toBe(baseline);
   });
 });
 

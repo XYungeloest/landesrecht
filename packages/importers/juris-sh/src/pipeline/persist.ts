@@ -17,8 +17,9 @@ import { join } from 'node:path';
 import { jsonText, writeFileAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
 import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 import type { NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
+import { inspectBaselineLock, readStoredBaseline } from '@landesrecht/importer-common/baseline-lock.ts';
 
-import { SOURCE_SYSTEM, TARGET_JURISDICTION } from '../common/constants.ts';
+import { BASELINE_DATE, SOURCE_SYSTEM, TARGET_JURISDICTION } from '../common/constants.ts';
 
 export const NORM_TEMP_PREFIX = '.tmp-norm-';
 export const NORM_BACKUP_PREFIX = '.old-norm-';
@@ -106,15 +107,21 @@ export async function writeNormRecord(options: { root: string; record: NormRecor
   if (owner === 'foreign') {
     return { files: [], changed: false, finding: { severity: 'error', code: 'foreign-norm-directory', message: `${relative} gehört nicht zu ${sourceIdentity}; es wird nichts überschrieben` } };
   }
-  const existingVersions = await readdir(join(normDir, 'versions')).catch(() => [] as string[]);
-  const foreignVersions = existingVersions.filter((file) => file !== `${baselineDate}.json`);
-  if (foreignVersions.length > 0) {
-    return { files: [], changed: false, finding: { severity: 'error', code: 'existing-versions', message: `Für ${slug} liegen bereits weitere Fassungen vor (${foreignVersions.join(', ')}); die Ausgangsfassung überschreibt nichts` } };
-  }
-
   const version = record.versions[0];
   if (!version || record.versions.length !== 1) throw new Error(`${slug}: Ausgangsbestand braucht genau eine Fassung (${record.versions.length})`);
   if (version.simulationValidFrom !== baselineDate) throw new Error(`${slug}: Fassung beginnt ${version.simulationValidFrom}, erwartet Stichtag ${baselineDate}`);
+  // Baseline-Lock (gemeinsamer Helfer aller Adapter): Hat die Simulation die Norm fortgeschrieben – Folgefassungen,
+  // Historieneinträge oder Beziehungen mit Datum nach dem Stichtag (eine reine Aufhebung erzeugt keine Fassungsdatei) –,
+  // ist ihre Ausgangsfassung eingefroren. Ergibt der Import byteidentisch dieselbe Ausgangsfassung, ist die Norm
+  // unverändert (kein Befund, nichts geschrieben – auch meta.json/history.json nicht, dort stehen additive
+  // Sim-Ergänzungen). Sonst ist es ein Befund, nie eine Überschreibung.
+  const lock = await inspectBaselineLock(normDir, baselineDate);
+  if (lock.locked) {
+    const stored = await readStoredBaseline(normDir, baselineDate);
+    if (stored !== undefined && stored === jsonText(version)) return { files, changed: false };
+    return { files: [], changed: false, finding: { severity: 'error', code: 'existing-versions', message: `Für ${slug} liegt eine Sim-Fortschreibung vor (${lock.reasons.join('; ')}); die Ausgangsfassung ${stored === undefined ? 'fehlt' : 'weicht von der gespeicherten ab'} und wird nicht geschrieben (Baseline-Lock)` } };
+  }
+
   const wanted: Array<[string, unknown]> = [
     [join(normDir, 'meta.json'), record.meta],
     [join(normDir, 'history.json'), record.history],
@@ -143,11 +150,14 @@ export async function writeNormRecord(options: { root: string; record: NormRecor
 }
 
 /** Entfernt das Verzeichnis einer Norm, die nicht mehr übernommen wird – nur, wenn es nachweislich ihr gehört. */
-export async function removeOwnNormDirectory(options: { root: string; slug: string; sourceIdentity: string; write: boolean }): Promise<string | undefined> {
+export async function removeOwnNormDirectory(options: { root: string; slug: string; sourceIdentity: string; write: boolean; baselineDate?: string }): Promise<string | undefined> {
   const normDir = join(normsDirectory(options.root), options.slug);
   const owner = await ownership(normDir, options.sourceIdentity);
   if (owner === 'absent') return undefined;
   if (owner === 'foreign') throw new Error(`content/norms/${TARGET_JURISDICTION}/${options.slug} gehört nicht zu ${options.sourceIdentity}; es wird nicht entfernt`);
+  // Baseline-Lock: Eine von der Simulation fortgeschriebene Norm wird nie zurückgenommen (der Bulk prüft das vorher).
+  const lock = await inspectBaselineLock(normDir, options.baselineDate ?? BASELINE_DATE);
+  if (lock.locked) throw new Error(`content/norms/${TARGET_JURISDICTION}/${options.slug} ist durch die Simulation fortgeschrieben (${lock.reasons.join('; ')}); es wird nicht entfernt`);
   if (options.write) await rm(normDir, { recursive: true, force: true });
   return ['content', 'norms', TARGET_JURISDICTION, options.slug].join('/');
 }

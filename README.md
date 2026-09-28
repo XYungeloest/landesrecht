@@ -47,9 +47,11 @@ packages/legal-core/      Jurisdiktionsregister, Normdatenmodell, Zeitmodell, Ro
 packages/search/          Sucheinheiten, Abfrageplan, FTS5-Vertrag, Ranking, Zusammenführung
 packages/runtime/         D1-Projektionsplan, D1-Store, Dateistore, Store-Registry, SQLite-Adapter, Bindings
 packages/providers/       LegalProvider-Schnittstelle, Content-, OstRecht-, Bundesrechts-Provider, Resolver
-packages/importers/       Pipeline-Schnittstellen (common), RECHT.NRW-Importer (recht-nrw), Platzhalter je weiterem Quellportal
+packages/importers/       Pipeline-Schnittstellen (common), RECHT.NRW-Importer (recht-nrw), juris-sh, bayernrecht, Sim-Rechtsfortschreibung (simulation: Inventar, Konsolidierungsengine, Ledger, R2-Archiv, Vollständigkeit)
 content/norms/<jur>/      kanonische Normen (west: 12 LRGV- und 8 LRMB-Stichtagsfassungen aus RECHT.NRW; keine Testfixtures)
-content/publications/     Verkündungsblatt-Ausgaben je Jurisdiktion
+content/publications/     Verkündungsblatt-Ausgaben je Jurisdiktion (Simulation; Web /<land>/verkuendungen/, D1 law_publications)
+data/simulation/          Sim-Quelleninventar, je Land sources.json (Evidenz), ledger.json (Ereignisse), acts/ und amendments/ (Rezepte), Konsolidierungsmanifest, completeness.json, Baseline-Locks
+imports/                  vom Nutzer abgelegte Sim-Rechtsquellen (Original, nicht versioniert; Archiv in R2 unter <land>/simulation/)
 data/d1/                  D1-Migrationen (Schema)
 data/runtime/             lokale SQLite-Projektionen, SQL-Pläne und -Batches, Projektionszustand (generiert, nicht eingecheckt)
 data/audits/recht-nrw/    Importberichte je Norm, Belege nicht übernommener Dokumente (lrgv/, lrmb/), coverage.json + COVERAGE.md, runs/, d1-scale.json, bulk-simulation.json

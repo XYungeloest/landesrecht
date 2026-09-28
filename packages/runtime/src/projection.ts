@@ -8,7 +8,7 @@ import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editori
 import { SIMULATION_BASELINE_DATE, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { anchorSlug } from '@landesrecht/legal-core/lib/body.ts';
 import { getIndexLetter, getNormAliases, getNormSortKey, getNormVersionIdentity, getPublicNormSummary } from '@landesrecht/legal-core/lib/identity.ts';
-import type { NormRecord, NormVersion, SourceReference } from '@landesrecht/legal-core/lib/schema.ts';
+import type { NormRecord, NormVersion, Publication, SourceReference } from '@landesrecht/legal-core/lib/schema.ts';
 import { classifyNormVersion, getApplicableVersion, getNormLastActivityDate, getNormLastChangeDate } from '@landesrecht/legal-core/lib/versions.ts';
 import { buildSearchDocument, SEARCH_UNIT_COLUMNS, searchIndexResetStatements, type SearchDocument } from '@landesrecht/search/index.ts';
 
@@ -32,6 +32,8 @@ export interface ProjectionPlan {
     blocks: number;
     blockParts: number;
     searchUnits: number;
+    /** Verkündungsblatt-Ausgaben der Jurisdiktion (law_publications). */
+    publications: number;
     statements: number;
   };
 }
@@ -46,6 +48,8 @@ export interface ProjectionOptions {
   now?: string;
   /** Sucheinheiten für alle Fassungen (Standard) oder nur die maßgebliche Fassung. */
   indexHistoricalVersions?: boolean;
+  /** Verkündungsblatt-Ausgaben (content/publications/<jurisdiction>/); fremde Jurisdiktionen werden übergangen. */
+  publications?: readonly Publication[];
 }
 
 /** D1 begrenzt die Länge einer Anweisung; große Blöcke werden zeichenweise geteilt. */
@@ -93,6 +97,7 @@ function fullResetQueries(): PlanQuery[] {
   return [
     ...searchIndexResetStatements().map((sql) => ({ sql, params: [] })),
     ...TABLES_IN_DELETE_ORDER.filter((table) => table !== 'law_search_units').map((table) => ({ sql: `DELETE FROM ${table}`, params: [] })),
+    { sql: 'DELETE FROM law_publications', params: [] },
     { sql: 'DELETE FROM law_runtime_meta', params: [] },
   ];
 }
@@ -100,6 +105,44 @@ function fullResetQueries(): PlanQuery[] {
 export function deleteNormQueries(id: string): PlanQuery[] {
   return TABLES_IN_DELETE_ORDER.map((table) => ({ sql: `DELETE FROM ${table} WHERE norm_id = ?`, params: [id] }))
     .map((query) => (query.sql.includes('law_norms WHERE') ? { sql: 'DELETE FROM law_norms WHERE id = ?', params: [id] } : query));
+}
+
+/**
+ * Plangruppen der Verkündungen beginnen mit einer Klammer, damit die Batch-Aufteilung (sql-batches.ts) sie nicht
+ * als Normgruppe behandelt; der Slug folgt nach dem Präfix.
+ */
+export const PUBLICATION_GROUP_PREFIX = '(verkündung) ';
+export const REMOVED_PUBLICATION_GROUP_PREFIX = '(verkündung entfernt) ';
+
+export function publicationGroupKey(slug: string): string {
+  return `${PUBLICATION_GROUP_PREFIX}${slug}`;
+}
+
+export function deletePublicationQueries(jurisdiction: JurisdictionId, slug: string): PlanQuery[] {
+  return [{ sql: 'DELETE FROM law_publications WHERE jurisdiction = ? AND slug = ?', params: [jurisdiction, slug] }];
+}
+
+/**
+ * Eine Ausgabe: Löschen und Neuschreiben in derselben Gruppe (idempotent, auch nach einem abgebrochenen
+ * Batch). `publication_json` ist die vollständige Ausgabe – Einträge und Quellenbelege mit SHA-256, nie Bilddaten.
+ */
+export function publicationQueries(publication: Publication, now: string): PlanQuery[] {
+  return [
+    ...deletePublicationQueries(publication.jurisdiction, publication.slug),
+    {
+      sql: `INSERT INTO law_publications (slug, jurisdiction, publication_date, gazette, series_title, year, issue, title, entry_count, publication_json, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      params: [
+        publication.slug, publication.jurisdiction, publication.date, publication.gazette, publication.seriesTitle ?? null, publication.year,
+        publication.issue, publication.title, publication.entries.length, JSON.stringify(publication), now,
+      ],
+    },
+  ];
+}
+
+/** Ausgaben der Jurisdiktion in stabiler Reihenfolge (Slug). */
+export function jurisdictionPublications(publications: readonly Publication[] | undefined, jurisdiction: JurisdictionId): Publication[] {
+  return (publications ?? []).filter((publication) => publication.jurisdiction === jurisdiction).sort((left, right) => left.slug.localeCompare(right.slug));
 }
 
 function stripBody(version: NormVersion): Omit<NormVersion, 'body'> {
@@ -220,8 +263,12 @@ export function runtimeMetaQueries(entries: Record<string, string>): PlanQuery[]
   }));
 }
 
-/** Deterministischer Fingerabdruck des Bestands (FNV-1a über die kanonische JSON-Form). */
-export function corpusFingerprint(records: readonly NormRecord[], asOf: string): string {
+/**
+ * Deterministischer Fingerabdruck des Bestands (FNV-1a über die kanonische JSON-Form). Verkündungen fließen erst
+ * ein, wenn es welche gibt: Ein Bestand ohne Verkündungen behält den Fingerabdruck, den er vor der Tabelle
+ * `law_publications` hatte (Remote-D1s mit Schema 0001 bleiben ohne Neuprojektion gültig).
+ */
+export function corpusFingerprint(records: readonly NormRecord[], asOf: string, publications: readonly Publication[] = []): string {
   let hash = 0x811c9dc5;
   const feed = (text: string): void => {
     for (let index = 0; index < text.length; index += 1) {
@@ -233,6 +280,9 @@ export function corpusFingerprint(records: readonly NormRecord[], asOf: string):
   for (const record of [...records].sort((left, right) => left.meta.slug.localeCompare(right.meta.slug))) {
     feed(JSON.stringify(record));
   }
+  for (const publication of [...publications].sort((left, right) => left.slug.localeCompare(right.slug))) {
+    feed(`publication:${JSON.stringify(publication)}`);
+  }
   return hash.toString(16).padStart(8, '0');
 }
 
@@ -243,6 +293,7 @@ export function buildProjectionPlan(records: readonly NormRecord[], options: Pro
   const indexHistoricalVersions = options.indexHistoricalVersions ?? true;
   const jurisdictionRecords = records.filter((record) => record.meta.jurisdiction === options.jurisdiction)
     .sort((left, right) => left.meta.slug.localeCompare(right.meta.slug));
+  const publications = jurisdictionPublications(options.publications, options.jurisdiction);
   const foreign = records.find((record) => record.meta.jurisdiction !== options.jurisdiction);
   if (foreign && records.length !== jurisdictionRecords.length && options.full === undefined) {
     // Stillschweigend ignorieren wäre gefährlich: der Aufrufer muss den Bestand je Jurisdiktion trennen.
@@ -252,7 +303,7 @@ export function buildProjectionPlan(records: readonly NormRecord[], options: Pro
   if (full) groups.push({ key: '(reset)', queries: fullResetQueries() });
   else groups.push({ key: '(identität entwerten)', queries: runtimeMetaQueries({ [RUNTIME_META_KEYS.projectionState]: `incremental-in-progress:${now}` }) });
 
-  const stats = { norms: 0, versions: 0, blocks: 0, blockParts: 0, searchUnits: 0, statements: 0 };
+  const stats = { norms: 0, versions: 0, blocks: 0, blockParts: 0, searchUnits: 0, publications: 0, statements: 0 };
   for (const record of jurisdictionRecords) {
     const result = normQueries(record, { asOf, now, indexHistoricalVersions, full });
     stats.norms += 1;
@@ -262,12 +313,16 @@ export function buildProjectionPlan(records: readonly NormRecord[], options: Pro
     stats.searchUnits += result.searchUnits;
     groups.push({ key: record.meta.slug, queries: result.queries });
   }
+  for (const publication of publications) {
+    stats.publications += 1;
+    groups.push({ key: publicationGroupKey(publication.slug), queries: publicationQueries(publication, now) });
+  }
 
   groups.push({
     key: '(meta)',
     queries: runtimeMetaQueries({
       [RUNTIME_META_KEYS.lastProjectedAt]: now,
-      [RUNTIME_META_KEYS.projectionFingerprint]: corpusFingerprint(jurisdictionRecords, asOf),
+      [RUNTIME_META_KEYS.projectionFingerprint]: corpusFingerprint(jurisdictionRecords, asOf, publications),
       [RUNTIME_META_KEYS.projectionState]: 'complete',
       [RUNTIME_META_KEYS.jurisdiction]: options.jurisdiction,
       [RUNTIME_META_KEYS.baselineDate]: SIMULATION_BASELINE_DATE,

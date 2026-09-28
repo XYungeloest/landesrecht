@@ -5,7 +5,9 @@
  *
  * OstRecht bleibt fachliche Source of Truth für den Freistaat Ostdeutschland; dieses Portal
  * pflegt ostdeutsche Normen nicht selbst. Der Adapter ist reine Übersetzung:
- *  - `validFrom`/`validTo` → `simulationValidFrom`/`simulationValidTo`
+ *  - `validFrom`/`validTo` → `simulationValidFrom`/`simulationValidTo`; die am Ausgangsrechtsstand
+ *    (2023-12-01) geltende OstRecht-Fassung beginnt hier am Ausgangsrechtsstand (`alignOstRechtVersionsToBaseline`),
+ *    frühere Fassungen entfallen, alle späteren Ost-Sim-Fassungen bleiben unverändert
  *  - `sourceValidFrom`/`sourceValidTo` der REVOSax-Quelle → Quellachse der Fassung
  *  - `revosax-snapshot` + `lawId` → generische Quelle (system `revosax`) + ExternalIdentifier
  *  - `predecessorSlug`/`successorSlug`/`affectedNorms`/… → typisierte NormRelation
@@ -14,8 +16,9 @@
  * Die OstRecht-Quelldateien sind hier nur als Rohobjekte typisiert; das Repository von OstRecht
  * wird nicht importiert.
  */
-import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { SIMULATION_BASELINE_DATE, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import {
+  ContentValidationError,
   parseNormHistory,
   parseNormMeta,
   parseNormVersion,
@@ -26,6 +29,7 @@ import {
   type NormRelationType,
   type SourceReference,
 } from '@landesrecht/legal-core/lib/schema.ts';
+import { assertBaselineConsistency } from '@landesrecht/legal-core/lib/versions.ts';
 
 export const OSTRECHT_SYSTEM = 'ostrecht';
 export const OSTRECHT_TARGET_JURISDICTION: JurisdictionId = 'ost';
@@ -223,15 +227,43 @@ export function adaptOstRechtHistory(raw: Record<string, unknown>): Record<strin
   };
 }
 
+/**
+ * Baseline-Regel für landesrecht: OstRecht führt seine Ausgangsfassungen mit dem eigenen Stichtag 2023-11-01,
+ * landesrecht beginnt am Ausgangsrechtsstand `SIMULATION_BASELINE_DATE` (2023-12-01). Maßgeblich ist die
+ * OstRecht-Fassung, die am Ausgangsrechtsstand galt (beginnt davor, endet nicht davor): Sie beginnt hier am
+ * Ausgangsrechtsstand; ihre `versionId` bleibt (OstRecht-Identität und Fassungsadresse). Fassungen, die schon vor
+ * dem Ausgangsrechtsstand endeten, gehören nicht zum Bestand; sämtliche späteren Ost-Sim-Fassungen bleiben
+ * unverändert. Beginnen alle Fassungen erst nach dem Ausgangsrechtsstand (eigene Norm der Simulation), ändert sich
+ * nichts. OstRecht selbst wird nie verändert – dies ist reine Übersetzung beim Lesen.
+ */
+export function alignOstRechtVersionsToBaseline(versions: readonly Record<string, unknown>[], context: string): Record<string, unknown>[] {
+  const sorted = [...versions].sort((left, right) => String(left.simulationValidFrom).localeCompare(String(right.simulationValidFrom)));
+  const from = (version: Record<string, unknown>): string => String(version.simulationValidFrom ?? '');
+  const to = (version: Record<string, unknown>): string | null => (typeof version.simulationValidTo === 'string' ? version.simulationValidTo : null);
+  const baselineIndex = sorted.findIndex((version) => from(version) <= SIMULATION_BASELINE_DATE && (to(version) === null || to(version)! >= SIMULATION_BASELINE_DATE));
+  if (baselineIndex >= 0) {
+    const baseline = { ...sorted[baselineIndex]!, simulationValidFrom: SIMULATION_BASELINE_DATE };
+    return [baseline, ...sorted.slice(baselineIndex + 1)];
+  }
+  const later = sorted.filter((version) => from(version) > SIMULATION_BASELINE_DATE);
+  if (later.length === 0 && sorted.length > 0) {
+    throw new ContentValidationError(`${context}: keine Fassung gilt am Ausgangsrechtsstand ${SIMULATION_BASELINE_DATE} (letzte endet ${to(sorted[sorted.length - 1]!) ?? 'offen'}); die Norm ist nicht übernehmbar`);
+  }
+  return later;
+}
+
 /** Vollständige Übersetzung eines OstRecht-Datensatzes in einen validierten NormRecord. */
 export function adaptOstRechtRecord(raw: OstRechtRawRecord): NormRecord {
   const slug = String(raw.meta.slug);
   const { meta, sourceValidity } = adaptOstRechtMeta(raw.meta);
   const context = `ostrecht/${slug}`;
+  const adaptedVersions = alignOstRechtVersionsToBaseline(raw.versions.map((version) => adaptOstRechtVersion(version, sourceValidity)), context);
   const record: NormRecord = {
     meta: parseNormMeta(meta, `${context}/meta.json`),
     history: parseNormHistory(adaptOstRechtHistory(raw.history), `${context}/history.json`),
-    versions: raw.versions.map((version) => parseNormVersion(adaptOstRechtVersion(version, sourceValidity), `${context}/versions/${String(version.versionId)}.json`)),
+    versions: adaptedVersions.map((version) => parseNormVersion(version, `${context}/versions/${String(version.versionId)}.json`)),
   };
-  return validateNormRecord(record, context);
+  const validated = validateNormRecord(record, context);
+  assertBaselineConsistency(validated);
+  return validated;
 }

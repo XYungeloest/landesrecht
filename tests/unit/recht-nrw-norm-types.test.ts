@@ -40,7 +40,13 @@ describe('Normtypen des RECHT.NRW-Imports', () => {
     const counts: Record<string, number> = {};
     const unknown: string[] = [];
     for (const slug of slugs) {
-      const meta = JSON.parse(await readFile(join(directory, slug, 'meta.json'), 'utf8')) as { type: string; jurisdiction: string; slug: string };
+      const meta = JSON.parse(await readFile(join(directory, slug, 'meta.json'), 'utf8')) as { type: string; jurisdiction: string; slug: string; externalIdentifiers?: Array<{ system?: string }> };
+      // Eigene Normen der Simulation (ohne Ausgangsfassung, ohne Portalkennung) unterliegen nicht den Importtypen.
+      const versions = await readdir(join(directory, slug, 'versions')).catch(() => [] as string[]);
+      if (!versions.includes('2023-12-01.json') && !(meta.externalIdentifiers ?? []).some((identifier) => identifier.system === 'recht-nrw')) {
+        expect(meta.jurisdiction, slug).toBe('west');
+        continue;
+      }
       counts[meta.type] = (counts[meta.type] ?? 0) + 1;
       if (!(IMPORTED_NORM_TYPES as readonly string[]).includes(meta.type)) unknown.push(`${slug}: ${meta.type}`);
       expect(meta.jurisdiction, slug).toBe('west');

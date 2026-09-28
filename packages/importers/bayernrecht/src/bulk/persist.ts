@@ -25,6 +25,7 @@ import { join } from 'node:path';
 
 import { jsonText, writeFileAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
 import type { NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
+import { inspectBaselineLock, storedBaselineEquals } from '@landesrecht/importer-common/baseline-lock.ts';
 import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 
 import { TARGET_JURISDICTION } from '../common/constants.ts';
@@ -99,22 +100,25 @@ export async function writeNormRecord(options: { root: string; record: NormRecor
   const relative = ['content', 'norms', TARGET_JURISDICTION, slug].join('/');
   const files = [`${relative}/meta.json`, `${relative}/history.json`, `${relative}/versions/${baselineDate}.json`];
 
-  const existingVersions = await readdir(join(normDir, 'versions')).catch(() => [] as string[]);
-  const foreignVersions = existingVersions.filter((file) => file !== `${baselineDate}.json`);
-  if (foreignVersions.length > 0) {
+  const version = record.versions[0];
+  if (!version) throw new Error(`${slug}: Normrecord ohne Fassung – der Bestand bekommt keine leere Norm`);
+  const lock = await inspectBaselineLock(normDir, baselineDate);
+  if (lock.locked) {
+    // Baseline-Lock: Hat die Simulation die Norm fortgeschrieben (Folgefassungen, Aufhebung, Beziehungen), ist ihre
+    // Ausgangsfassung eingefroren. Ergibt der Bulk byteidentisch dieselbe Ausgangsfassung, ist die Norm unverändert
+    // (kein Befund, nichts geschrieben – auch meta.json/history.json nicht, dort stehen additive Sim-Ergänzungen).
+    if (await storedBaselineEquals(normDir, baselineDate, version)) return { files, changed: false };
     return {
       files: [],
       changed: false,
       finding: {
         severity: 'error',
         code: 'existing-versions',
-        message: `Für ${slug} liegen bereits weitere Fassungen vor (${foreignVersions.join(', ')}); die Ausgangsfassung überschreibt nichts`,
+        message: `Für ${slug} liegt eine Sim-Fortschreibung vor (${lock.reasons.join('; ')}); die Ausgangsfassung überschreibt nichts`,
       },
     };
   }
 
-  const version = record.versions[0];
-  if (!version) throw new Error(`${slug}: Normrecord ohne Fassung – der Bestand bekommt keine leere Norm`);
   const wanted: Array<[string, unknown]> = [
     [join(normDir, 'meta.json'), record.meta],
     [join(normDir, 'history.json'), record.history],

@@ -15,10 +15,10 @@ import { createHash } from 'node:crypto';
 
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { SIMULATION_BASELINE_DATE, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import type { NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
+import type { NormRecord, Publication } from '@landesrecht/legal-core/lib/schema.ts';
 import { buildSearchDocument } from '@landesrecht/search/index.ts';
 
-import { buildProjectionPlan, corpusFingerprint, deleteNormQueries, normId, normQueries, PROJECTION_SCHEMA_VERSION, RUNTIME_META_KEYS, runtimeMetaQueries, type PlanGroup, type PlanQuery, type ProjectionPlan } from './projection.ts';
+import { buildProjectionPlan, corpusFingerprint, deleteNormQueries, deletePublicationQueries, jurisdictionPublications, normId, normQueries, PROJECTION_SCHEMA_VERSION, publicationGroupKey, publicationQueries, REMOVED_PUBLICATION_GROUP_PREFIX, RUNTIME_META_KEYS, runtimeMetaQueries, type PlanGroup, type PlanQuery, type ProjectionPlan } from './projection.ts';
 
 export const PROJECTION_STATE_SCHEMA = 'landesrecht-projection-state/1' as const;
 
@@ -40,6 +40,11 @@ export interface ProjectionState {
   projectionSchemaVersion: string;
   corpusFingerprint: string;
   norms: Record<string, NormProjectionFingerprint>;
+  /**
+   * Verkündungen je Slug (SHA-256 der kanonischen JSON-Form). Fehlt das Feld (Zustände vor der Tabelle
+   * `law_publications`), gilt: keine Verkündungen projiziert – ein Bestand ohne Verkündungen bleibt damit „noop“.
+   */
+  publications?: Record<string, string>;
 }
 
 export interface ProjectionDiff {
@@ -52,6 +57,18 @@ export interface ProjectionDiff {
   changedSearch: string[];
   changedOther: string[];
   unchanged: number;
+  /** Verkündungen (Slugs): neu, entfernt, geändert. */
+  addedPublications: string[];
+  removedPublications: string[];
+  changedPublications: string[];
+}
+
+export function emptyProjectionDiff(): ProjectionDiff {
+  return { requiresFull: false, reasons: [], added: [], removed: [], changedVersions: [], changedMeta: [], changedSearch: [], changedOther: [], unchanged: 0, addedPublications: [], removedPublications: [], changedPublications: [] };
+}
+
+export function publicationProjectionFingerprint(publication: Publication): string {
+  return sha256(JSON.stringify(publication));
 }
 
 export function normProjectionFingerprint(record: NormRecord, asOf: string): NormProjectionFingerprint {
@@ -64,16 +81,19 @@ export function normProjectionFingerprint(record: NormRecord, asOf: string): Nor
   };
 }
 
-export function projectionStateFor(records: readonly NormRecord[], options: { jurisdiction: JurisdictionId; asOf?: string }): ProjectionState {
+export function projectionStateFor(records: readonly NormRecord[], options: { jurisdiction: JurisdictionId; asOf?: string; publications?: readonly Publication[] }): ProjectionState {
   const asOf = options.asOf ?? EDITORIAL_REFERENCE_DATE;
   const own = records.filter((record) => record.meta.jurisdiction === options.jurisdiction);
+  const ownPublications = jurisdictionPublications(options.publications, options.jurisdiction);
   const norms: Record<string, NormProjectionFingerprint> = {};
   for (const record of [...own].sort((left, right) => left.meta.slug.localeCompare(right.meta.slug))) norms[normId(options.jurisdiction, record.meta.slug)] = normProjectionFingerprint(record, asOf);
-  return { schemaVersion: PROJECTION_STATE_SCHEMA, jurisdiction: options.jurisdiction, asOf, baselineDate: SIMULATION_BASELINE_DATE, projectionSchemaVersion: PROJECTION_SCHEMA_VERSION, corpusFingerprint: corpusFingerprint(own, asOf), norms };
+  const publications: Record<string, string> = {};
+  for (const publication of ownPublications) publications[publication.slug] = publicationProjectionFingerprint(publication);
+  return { schemaVersion: PROJECTION_STATE_SCHEMA, jurisdiction: options.jurisdiction, asOf, baselineDate: SIMULATION_BASELINE_DATE, projectionSchemaVersion: PROJECTION_SCHEMA_VERSION, corpusFingerprint: corpusFingerprint(own, asOf, ownPublications), norms, publications };
 }
 
 export function diffProjection(previous: ProjectionState | undefined, current: ProjectionState): ProjectionDiff {
-  const diff: ProjectionDiff = { requiresFull: false, reasons: [], added: [], removed: [], changedVersions: [], changedMeta: [], changedSearch: [], changedOther: [], unchanged: 0 };
+  const diff = emptyProjectionDiff();
   if (!previous) {
     diff.requiresFull = true;
     diff.reasons.push('kein Projektionszustand vorhanden');
@@ -104,7 +124,15 @@ export function diffProjection(previous: ProjectionState | undefined, current: P
     else diff.changedOther.push(id);
   }
   for (const id of Object.keys(before)) if (!current.norms[id]) diff.removed.push(id);
-  for (const list of [diff.added, diff.removed, diff.changedVersions, diff.changedMeta, diff.changedSearch, diff.changedOther]) list.sort();
+  const beforePublications = previous?.publications ?? {};
+  const currentPublications = current.publications ?? {};
+  for (const [slug, fingerprint] of Object.entries(currentPublications)) {
+    const old = beforePublications[slug];
+    if (old === undefined) diff.addedPublications.push(slug);
+    else if (old !== fingerprint) diff.changedPublications.push(slug);
+  }
+  for (const slug of Object.keys(beforePublications)) if (currentPublications[slug] === undefined) diff.removedPublications.push(slug);
+  for (const list of [diff.added, diff.removed, diff.changedVersions, diff.changedMeta, diff.changedSearch, diff.changedOther, diff.addedPublications, diff.removedPublications, diff.changedPublications]) list.sort();
   return diff;
 }
 
@@ -123,22 +151,25 @@ export interface IncrementalProjection {
   mode: 'full' | 'incremental' | 'noop';
 }
 
-export function buildIncrementalProjectionPlan(records: readonly NormRecord[], previous: ProjectionState | undefined, options: { jurisdiction: JurisdictionId; asOf?: string; now?: string; allowFullFallback?: boolean }): IncrementalProjection {
+export function buildIncrementalProjectionPlan(records: readonly NormRecord[], previous: ProjectionState | undefined, options: { jurisdiction: JurisdictionId; asOf?: string; now?: string; allowFullFallback?: boolean; publications?: readonly Publication[] }): IncrementalProjection {
   const asOf = options.asOf ?? EDITORIAL_REFERENCE_DATE;
   const now = options.now ?? new Date().toISOString();
-  const state = projectionStateFor(records, { jurisdiction: options.jurisdiction, asOf });
+  const publications = jurisdictionPublications(options.publications, options.jurisdiction);
+  const state = projectionStateFor(records, { jurisdiction: options.jurisdiction, asOf, publications });
   const diff = diffProjection(previous, state);
   if (diff.requiresFull) {
     if (options.allowFullFallback === false) throw new Error(`Inkrementelle Projektion nicht möglich: ${diff.reasons.join('; ')}`);
-    return { plan: buildProjectionPlan(records, { jurisdiction: options.jurisdiction, full: true, asOf, now }), diff, state, mode: 'full' };
+    return { plan: buildProjectionPlan(records, { jurisdiction: options.jurisdiction, full: true, asOf, now, publications }), diff, state, mode: 'full' };
   }
   const byId = new Map(records.filter((record) => record.meta.jurisdiction === options.jurisdiction).map((record) => [normId(options.jurisdiction, record.meta.slug), record]));
+  const publicationBySlug = new Map(publications.map((publication) => [publication.slug, publication]));
   const touched = [...diff.added, ...diff.changedVersions, ...diff.changedMeta, ...diff.changedSearch, ...diff.changedOther].sort();
+  const touchedPublications = [...diff.addedPublications, ...diff.changedPublications].sort();
   const groups: PlanGroup[] = [
     { key: '(basis prüfen)', queries: [baseGuardQuery(previous!.corpusFingerprint)] },
     { key: '(identität entwerten)', queries: [{ sql: 'DELETE FROM law_runtime_meta WHERE key = ?', params: [RUNTIME_META_KEYS.projectionFingerprint] }, ...runtimeMetaQueries({ [RUNTIME_META_KEYS.projectionState]: `incremental-in-progress:${now}` })] },
   ];
-  const stats = { norms: 0, versions: 0, blocks: 0, blockParts: 0, searchUnits: 0, statements: 0 };
+  const stats = { norms: 0, versions: 0, blocks: 0, blockParts: 0, searchUnits: 0, publications: 0, statements: 0 };
   for (const id of touched) {
     const record = byId.get(id)!;
     const result = normQueries(record, { asOf, now, indexHistoricalVersions: true, full: false });
@@ -150,6 +181,11 @@ export function buildIncrementalProjectionPlan(records: readonly NormRecord[], p
     groups.push({ key: record.meta.slug, queries: result.queries });
   }
   for (const id of diff.removed) groups.push({ key: `(entfernt) ${id}`, queries: deleteNormQueries(id) });
+  for (const slug of touchedPublications) {
+    stats.publications += 1;
+    groups.push({ key: publicationGroupKey(slug), queries: publicationQueries(publicationBySlug.get(slug)!, now) });
+  }
+  for (const slug of diff.removedPublications) groups.push({ key: `${REMOVED_PUBLICATION_GROUP_PREFIX}${slug}`, queries: deletePublicationQueries(options.jurisdiction, slug) });
   const all = [...byId.values()];
   groups.push({
     key: '(meta)',
@@ -166,6 +202,6 @@ export function buildIncrementalProjectionPlan(records: readonly NormRecord[], p
     }),
   });
   stats.statements = groups.reduce((sum, group) => sum + group.queries.length, 0);
-  const mode = touched.length === 0 && diff.removed.length === 0 ? 'noop' : 'incremental';
+  const mode = touched.length === 0 && diff.removed.length === 0 && touchedPublications.length === 0 && diff.removedPublications.length === 0 ? 'noop' : 'incremental';
   return { plan: { jurisdiction: options.jurisdiction, full: false, groups, stats }, diff, state, mode };
 }

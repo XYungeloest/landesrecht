@@ -9,10 +9,11 @@ import { join, resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { SIMULATION_BASELINE_DATE } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { countBlockTypes } from '@landesrecht/legal-core/lib/body.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { importOstRechtNorm } from '@landesrecht/importer-ostrecht/index.ts';
-import { adaptOstRechtRecord, adaptOstRechtSource } from '@landesrecht/providers/ostrecht.ts';
+import { adaptOstRechtRecord, adaptOstRechtSource, alignOstRechtVersionsToBaseline } from '@landesrecht/providers/ostrecht.ts';
 import { createOstRechtProvider } from '@landesrecht/providers/ostrecht-provider.ts';
 import { createLegalReference } from '@landesrecht/legal-core/lib/references.ts';
 import { buildProjectionPlan } from '@landesrecht/runtime/projection.ts';
@@ -128,8 +129,12 @@ describe('OstRecht-Kompatibilität (synthetisch)', () => {
     expect(snapshot.note).toContain('data/recht/sources/revosax');
 
     const [baseline, next] = record.versions;
-    expect(baseline!.simulationValidFrom).toBe('2023-11-01');
+    // Baseline-Regel: die am 2023-12-01 geltende OstRecht-Fassung (Ost-Stichtag 2023-11-01) beginnt hier am
+    // Ausgangsrechtsstand; ihre Kennung bleibt, die Folgefassung bleibt unverändert.
+    expect(baseline!.versionId).toBe('2023-11-01');
+    expect(baseline!.simulationValidFrom).toBe(SIMULATION_BASELINE_DATE);
     expect(baseline!.simulationValidTo).toBe('2026-07-20');
+    expect(next!.simulationValidFrom).toBe('2026-07-21');
     expect(baseline!.sourceValidFrom).toBe('2023-08-01');
     expect(baseline!.sourceValidTo).toBe('2023-12-31');
     expect(next!.simulationValidTo).toBeNull();
@@ -151,6 +156,27 @@ describe('OstRecht-Kompatibilität (synthetisch)', () => {
     expect(resolved?.url).toBe('https://recht.freistaat-ostdeutschland.de/norm/synthetisches-schulgesetz/#paragraph-1');
   });
 
+  it('Baseline-Regel: geltende Ost-Fassung am 2023-12-01 wird zur Baseline, frühere entfallen, Sim-Fassungen bleiben', () => {
+    const version = (versionId: string, validFrom: string, validTo: string | null): Record<string, unknown> => ({ versionId, validFrom, validTo, isCurrent: validTo === null, citation: 'Zitat', changeNote: 'Fassung', body: [{ type: 'paragraph', label: '§ 1', title: 'Titel', children: [{ type: 'subparagraph', label: '(1)', text: `Fassung ${versionId}.`, children: [] }] }] });
+    const raw = (versions: Record<string, unknown>[], initialVersionId: string) => ({
+      meta: { ...SYNTHETIC_OSTRECHT_RECORD.meta, sourceReferences: [REVOSAX_SOURCE] },
+      history: { initialVersionId, entries: [{ date: initialVersionId, type: 'initial', title: 'Ausgangsfassung', citation: 'Zitat', affectingVersionId: initialVersionId }] },
+      versions,
+    });
+    // Ost-Fassung 2023-11-01 endete am 2023-11-19 (Ost-Sim-Änderung vor dem Stichtag): Baseline ist die Fassung 2023-11-20.
+    const shifted = adaptOstRechtRecord(raw([version('2023-11-01', '2023-11-01', '2023-11-19'), version('2023-11-20', '2023-11-20', '2026-03-31'), version('2026-04-01', '2026-04-01', null)], '2023-11-20'));
+    expect(shifted.versions.map((entry) => [entry.versionId, entry.simulationValidFrom, entry.simulationValidTo])).toEqual([
+      ['2023-11-20', SIMULATION_BASELINE_DATE, '2026-03-31'],
+      ['2026-04-01', '2026-04-01', null],
+    ]);
+    expect(alignOstRechtVersionsToBaseline([{ versionId: '2023-11-01', simulationValidFrom: '2023-11-01', simulationValidTo: null }], 'test')).toEqual([{ versionId: '2023-11-01', simulationValidFrom: SIMULATION_BASELINE_DATE, simulationValidTo: null }]);
+    // Eigene Ost-Sim-Norm: alle Fassungen nach dem Stichtag bleiben, wie sie sind.
+    const own = adaptOstRechtRecord(raw([version('2026-01-27', '2026-01-27', null)], '2026-01-27'));
+    expect(own.versions.map((entry) => entry.simulationValidFrom)).toEqual(['2026-01-27']);
+    // Vor dem Stichtag aufgehobene Norm ohne Folgefassung: nicht übernehmbar.
+    expect(() => adaptOstRechtRecord(raw([version('2023-11-01', '2023-11-01', '2023-11-30')], '2023-11-01'))).toThrow(/Ausgangsrechtsstand/u);
+  });
+
   it('bildet die Quellenarten von OstRecht auf generische Quellen ab', () => {
     expect(adaptOstRechtSource({ kind: 'structured-html-transcription', label: 'HTML', availability: 'versioned', localSource: 'Gesetze/x.html' }).source).toMatchObject({ kind: 'structured-transcription', system: 'ostrecht', availability: 'external' });
     expect(adaptOstRechtSource({ kind: 'primary-pdf', label: 'PDF', availability: 'versioned', localSource: 'Gesetze/x.pdf', mediaType: 'application/pdf' }).source).toMatchObject({ kind: 'primary-pdf', mediaType: 'application/pdf' });
@@ -167,6 +193,8 @@ describe.skipIf(!existsSync(join(sisterNorm, 'meta.json')))('OstRecht-Kompatibil
     expect(record.versions.length).toBeGreaterThanOrEqual(2);
     expect(record.meta.externalIdentifiers.some((identifier) => identifier.system === 'revosax')).toBe(true);
     const baseline = record.versions[0]!;
+    expect(baseline.simulationValidFrom).toBe(SIMULATION_BASELINE_DATE);
+    expect(record.versions.slice(1).every((version) => version.simulationValidFrom > SIMULATION_BASELINE_DATE)).toBe(true);
     expect(baseline.sourceValidFrom).toBeDefined();
     const counts = countBlockTypes(baseline.body);
     expect(counts.paragraph).toBeGreaterThan(50);

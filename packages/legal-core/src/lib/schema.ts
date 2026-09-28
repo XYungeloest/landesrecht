@@ -125,13 +125,30 @@ export const SOURCE_KINDS = [
   'official-gazette',
   /** Strukturtragende redaktionelle Transkription (HTML/Markdown/DOCX im Repository). */
   'structured-transcription',
-  /** Quelle einer Änderungsvorschrift, aus der eine Folgefassung konsolidiert wurde. */
+  /** Quelle einer realen Änderungsvorschrift, aus der eine Folgefassung konsolidiert wurde (nie Simulation). */
   'amendment-source',
   /** Datensatz eines externen Providers (z. B. OstRecht), der fachlich Source of Truth bleibt. */
   'provider-record',
   /** Amtliche PDF zur visuellen Gegenprüfung. */
   'primary-pdf',
+  /** Ausgabe eines Verkündungsblatts der Simulation (`content/publications/<jurisdiction>/<slug>.json`). */
+  'simulation-gazette',
+  /** Einzeln verkündeter Rechtsakt der Simulation ohne Blattausgabe (Einzelverordnung, Erlass). */
+  'simulation-standalone-act',
+  /** Verkündungsmitteilung oder anderer Beleg der Rechtswirkung eines Sim-Akts; nie selbst Stammnorm. */
+  'simulation-promulgation-evidence',
+  /** Quelle eines Sim-Änderungsakts, aus der ein Rezept eine Folgefassung konsolidiert. */
+  'simulation-amendment-source',
 ] as const;
+
+/**
+ * Sim-Belege: die Provenienz von Fassungen, die durch Rechtsakte der Simulation entstehen. Sie tragen
+ * `system: "simulation"`, nie eine reale Portalkennung (`externalId`) und nie eine Quellgültigkeit
+ * (`sourceValidFrom`/`sourceValidTo`). Reale Belegarten (auch `amendment-source`) bleiben realen Quellen
+ * vorbehalten; die Trennung prüft `lib/provenance.ts`.
+ */
+export const SIMULATION_SOURCE_KINDS = ['simulation-gazette', 'simulation-standalone-act', 'simulation-promulgation-evidence', 'simulation-amendment-source'] as const;
+export const SIMULATION_SOURCE_SYSTEM = 'simulation' as const;
 
 export const SOURCE_AVAILABILITIES = ['versioned', 'r2-archived', 'external'] as const;
 
@@ -205,6 +222,7 @@ export type HistoryEntryType = (typeof HISTORY_ENTRY_TYPES)[number];
 export type StructureType = (typeof STRUCTURE_TYPES)[number];
 export type TableHeaderScope = (typeof TABLE_HEADER_SCOPES)[number];
 export type SourceKind = (typeof SOURCE_KINDS)[number];
+export type SimulationSourceKind = (typeof SIMULATION_SOURCE_KINDS)[number];
 export type SourceAvailability = (typeof SOURCE_AVAILABILITIES)[number];
 export type SourceRole = (typeof SOURCE_ROLES)[number];
 export type MediaType = (typeof MEDIA_TYPES)[number];
@@ -260,6 +278,8 @@ export interface SourceReference {
   /** Amtliche Fundstellen-/Gliederungsnummer der Quelle, soweit das Herkunftssystem eine führt. */
   sourceNumber?: string;
   note?: string;
+  /** Slug der Sim-Verkündung (`content/publications/<jurisdiction>/<slug>.json`), nur bei Sim-Belegen. */
+  publicationSlug?: string;
 }
 
 export interface NormSourceNote {
@@ -406,18 +426,34 @@ export interface NormRecord {
 
 export interface PublicationEntry {
   title: string;
+  /** Normtyp des verkündeten Akts (`NORM_TYPES`). */
+  type?: NormType;
   citation: string;
   normSlug: string;
   versionId?: string;
   pages?: string;
+  /** Erste Seite des Akts in der Ausgabe. */
+  startPage?: number;
+  /** Ausfertigungsdatum des Akts. */
+  documentDate?: string;
 }
 
-/** Verkündungsblatt-Ausgabe einer Jurisdiktion (content/publications/<jurisdiction>/<slug>.json). */
+/**
+ * Verkündungsblatt-Ausgabe einer Jurisdiktion (content/publications/<jurisdiction>/<slug>.json).
+ * `gazette` ist das Blattkürzel wie gedruckt bzw. historisch (z. B. „GV. West“, „GVBl. Süd“); die
+ * heutige Jurisdiktion steht in `jurisdiction`. Historische Bezeichnungen werden nicht umbenannt.
+ */
 export interface Publication {
   slug: string;
   jurisdiction: JurisdictionId;
   title: string;
   gazette: string;
+  /** Historischer Blatt-/Serientitel wie gedruckt. */
+  seriesTitle?: string;
+  /** Vorgängerbezeichnung/Regime der Ausgabe (Kontinuitätshinweis). */
+  regime?: string;
+  /** Ausgabeort. */
+  place?: string;
   year: number;
   issue: string;
   date: string;
@@ -537,6 +573,11 @@ export function parseExternalIdentifier(value: unknown, path: string): ExternalI
   };
 }
 
+/** Sim-Belegart (Provenienz der Simulationsrechtsfortschreibung). */
+export function isSimulationSourceKind(kind: string): kind is SimulationSourceKind {
+  return (SIMULATION_SOURCE_KINDS as readonly string[]).includes(kind);
+}
+
 export function parseSourceReference(value: unknown, path: string): SourceReference {
   const object = expectObject(value, path);
   const kind = expectEnumValue(object.kind, `${path}.kind`, SOURCE_KINDS);
@@ -546,9 +587,18 @@ export function parseSourceReference(value: unknown, path: string): SourceRefere
   const url = expectOptionalString(object.url, `${path}.url`);
   const sha256 = expectOptionalString(object.sha256, `${path}.sha256`);
   const system = expectOptionalString(object.system, `${path}.system`);
+  const simulation = isSimulationSourceKind(kind);
 
   if (system !== undefined && !EXTERNAL_SYSTEM_PATTERN.test(system)) fail(`${path}.system`, 'muss eine technische Systemkennung sein');
   if (sha256 !== undefined && !SHA256_PATTERN.test(sha256)) fail(`${path}.sha256`, 'muss ein SHA-256-Hexwert mit 64 Zeichen sein');
+  // Sim-Belege sind an ihrem Herkunftssystem erkennbar und tragen keine reale Provenienz.
+  if (simulation) {
+    if (system !== SIMULATION_SOURCE_SYSTEM) fail(`${path}.system`, `muss für einen Sim-Beleg (${kind}) „${SIMULATION_SOURCE_SYSTEM}“ sein`);
+    if (object.externalId !== undefined) fail(`${path}.externalId`, 'ein Sim-Beleg trägt keine Kennung eines realen Herkunftssystems');
+    if (object.sourceValidFrom !== undefined || object.sourceValidTo !== undefined) fail(path, 'ein Sim-Beleg trägt keine Quellgültigkeit (sourceValidFrom/sourceValidTo)');
+  } else if (system === SIMULATION_SOURCE_SYSTEM) {
+    fail(`${path}.system`, `„${SIMULATION_SOURCE_SYSTEM}“ ist Sim-Belegen vorbehalten (${SIMULATION_SOURCE_KINDS.join(', ')})`);
+  }
 
   if (availability === 'versioned') {
     if (!localSource) fail(`${path}.localSource`, 'ist für eine versionierte Quelle erforderlich');
@@ -558,8 +608,9 @@ export function parseSourceReference(value: unknown, path: string): SourceRefere
     if (!objectKey) fail(`${path}.objectKey`, 'ist für eine in R2 archivierte Quelle erforderlich');
     if (!R2_OBJECT_KEY_PATTERN.test(objectKey)) fail(`${path}.objectKey`, 'muss ein R2-Objektschlüssel mit Präfixpfad sein');
     if (!sha256) fail(`${path}.sha256`, 'ist für eine in R2 archivierte Quelle erforderlich');
-    if (!url) fail(`${path}.url`, 'muss die amtliche URL einer in R2 archivierten Quelle nennen');
-    if (object.retrievedAt === undefined) fail(`${path}.retrievedAt`, 'ist für eine in R2 archivierte Quelle erforderlich');
+    // Sim-Quellen stammen aus dem Archiv des Nutzers: sie haben weder amtliche URL noch Abrufdatum.
+    if (!simulation && !url) fail(`${path}.url`, 'muss die amtliche URL einer in R2 archivierten Quelle nennen');
+    if (!simulation && object.retrievedAt === undefined) fail(`${path}.retrievedAt`, 'ist für eine in R2 archivierte Quelle erforderlich');
   } else {
     if (!url) fail(`${path}.url`, 'ist für eine externe Quelle erforderlich');
     if (localSource !== undefined || objectKey !== undefined) fail(path, 'eine externe Quelle hat weder localSource noch objectKey');
@@ -568,6 +619,7 @@ export function parseSourceReference(value: unknown, path: string): SourceRefere
   const sourceValidFrom = expectOptionalIsoDate(object.sourceValidFrom, `${path}.sourceValidFrom`);
   const sourceValidTo = expectOptionalIsoDate(object.sourceValidTo, `${path}.sourceValidTo`);
   if (sourceValidFrom && sourceValidTo && sourceValidTo < sourceValidFrom) fail(`${path}.sourceValidTo`, 'liegt vor sourceValidFrom');
+  const publicationSlug = object.publicationSlug === undefined ? undefined : expectSlug(object.publicationSlug, `${path}.publicationSlug`);
 
   return {
     kind,
@@ -591,6 +643,7 @@ export function parseSourceReference(value: unknown, path: string): SourceRefere
     derivedSource: expectOptionalString(object.derivedSource, `${path}.derivedSource`),
     sourceNumber: expectOptionalString(object.sourceNumber, `${path}.sourceNumber`),
     note: expectOptionalString(object.note, `${path}.note`),
+    publicationSlug,
   };
 }
 
@@ -887,11 +940,30 @@ export function parseNormHistory(value: unknown, path = 'history.json'): NormHis
   };
 }
 
+export function parsePublicationEntry(value: unknown, path: string): PublicationEntry {
+  const item = expectObject(value, path);
+  const result: PublicationEntry = {
+    title: expectString(item.title, `${path}.title`),
+    citation: expectString(item.citation, `${path}.citation`),
+    normSlug: expectSlug(item.normSlug, `${path}.normSlug`),
+  };
+  if (item.type !== undefined) result.type = expectEnumValue(item.type, `${path}.type`, NORM_TYPES);
+  const versionId = expectOptionalString(item.versionId, `${path}.versionId`);
+  if (versionId !== undefined) result.versionId = versionId;
+  const pages = expectOptionalString(item.pages, `${path}.pages`);
+  if (pages !== undefined) result.pages = pages;
+  const startPage = expectOptionalInteger(item.startPage, `${path}.startPage`, { minimum: 1 });
+  if (startPage !== undefined) result.startPage = startPage;
+  const documentDate = expectOptionalIsoDate(item.documentDate, `${path}.documentDate`);
+  if (documentDate !== undefined) result.documentDate = documentDate;
+  return result;
+}
+
 export function parsePublication(value: unknown, path = 'publication.json'): Publication {
   const object = expectObject(value, path);
   const year = object.year;
   if (!Number.isInteger(year) || (year as number) < 1900) fail(`${path}.year`, 'muss ein Jahr sein');
-  return {
+  const publication: Publication = {
     slug: expectSlug(object.slug, `${path}.slug`),
     jurisdiction: expectJurisdiction(object.jurisdiction, `${path}.jurisdiction`),
     title: expectString(object.title, `${path}.title`),
@@ -900,23 +972,24 @@ export function parsePublication(value: unknown, path = 'publication.json'): Pub
     issue: expectString(object.issue, `${path}.issue`),
     date: expectIsoDate(object.date, `${path}.date`),
     sourceReferences: parseSourceReferences(object.sourceReferences, `${path}.sourceReferences`),
-    entries: expectArray(object.entries, `${path}.entries`).map((entry, index) => {
-      const item = expectObject(entry, `${path}.entries[${index}]`);
-      const result: PublicationEntry = {
-        title: expectString(item.title, `${path}.entries[${index}].title`),
-        citation: expectString(item.citation, `${path}.entries[${index}].citation`),
-        normSlug: expectSlug(item.normSlug, `${path}.entries[${index}].normSlug`),
-      };
-      const versionId = expectOptionalString(item.versionId, `${path}.entries[${index}].versionId`);
-      if (versionId !== undefined) result.versionId = versionId;
-      const pages = expectOptionalString(item.pages, `${path}.entries[${index}].pages`);
-      if (pages !== undefined) result.pages = pages;
-      return result;
-    }),
+    entries: expectArray(object.entries, `${path}.entries`).map((entry, index) => parsePublicationEntry(entry, `${path}.entries[${index}]`)),
   };
+  const seriesTitle = expectOptionalString(object.seriesTitle, `${path}.seriesTitle`);
+  if (seriesTitle !== undefined) publication.seriesTitle = seriesTitle;
+  // `regime: null` (keine Vorgängerbezeichnung) ist zulässig und bedeutet „nicht gesetzt“.
+  const regime = object.regime === null ? undefined : expectOptionalString(object.regime, `${path}.regime`);
+  if (regime !== undefined) publication.regime = regime;
+  const place = expectOptionalString(object.place, `${path}.place`);
+  if (place !== undefined) publication.place = place;
+  return publication;
 }
 
-/** Prüft die Konsistenz von Meta, Historie und Fassungen und sortiert deterministisch. */
+/**
+ * Prüft die Konsistenz von Meta, Historie und Fassungen und sortiert deterministisch. Die
+ * zurückgegebenen Fassungen tragen das **abgeleitete** Simulationsgeltungsende (`deriveVersionIntervals`):
+ * gespeicherte Fassungsdateien bleiben unveränderlich (`simulationValidTo: null`), das wirksame Ende
+ * folgt aus der Folgefassung bzw. aus `meta.expiryDate`.
+ */
 export function validateNormRecord(record: NormRecord, context = `${record.meta.jurisdiction}/${record.meta.slug}`): NormRecord {
   if (record.versions.length === 0) fail(`${context}/versions`, 'muss mindestens eine Fassung enthalten');
 
@@ -941,8 +1014,8 @@ export function validateNormRecord(record: NormRecord, context = `${record.meta.
     }
   }
 
-  const versions = [...record.versions].sort((left, right) => left.simulationValidFrom.localeCompare(right.simulationValidFrom));
-  validateVersionIntervals(versions, context);
+  const sorted = [...record.versions].sort((left, right) => left.simulationValidFrom.localeCompare(right.simulationValidFrom));
+  const versions = deriveVersionIntervals(sorted, record.meta, context);
 
   return {
     ...record,
@@ -954,19 +1027,52 @@ export function validateNormRecord(record: NormRecord, context = `${record.meta.
   };
 }
 
-/** Simulationsintervalle müssen lückenlos und überschneidungsfrei aufeinander folgen. */
-export function validateVersionIntervals(sortedVersions: readonly NormVersion[], context: string): void {
-  for (let index = 0; index < sortedVersions.length; index += 1) {
-    const version = sortedVersions[index]!;
+/**
+ * Abgeleitetes Fassungsende (Schema S1). Simulationsintervalle folgen lückenlos und überschneidungsfrei
+ * aufeinander; das Ende einer Fassung wird nicht in ihrer Datei fortgeschrieben, sondern beim Laden
+ * abgeleitet:
+ *   - jede Nicht-letzte Fassung endet am Vortag des Beginns der Folgefassung;
+ *   - die letzte Fassung endet an `meta.expiryDate` (Außerkrafttreten: der letzte Geltungstag, bei einer
+ *     Aufhebung der Vortag ihres Wirkdatums), sonst offen (`null`).
+ * Ein gespeichertes `simulationValidTo` bleibt zulässig, muss aber dem abgeleiteten Wert entsprechen.
+ * Liefert die Fassungen mit gesetztem wirksamen Ende (Reihenfolge und Objekte im Übrigen unverändert).
+ */
+export function deriveVersionIntervals(sortedVersions: readonly NormVersion[], meta: Pick<NormMeta, 'expiryDate'>, context: string): NormVersion[] {
+  return sortedVersions.map((version, index) => {
     const next = sortedVersions[index + 1];
-    if (!next) continue;
-    if (version.simulationValidTo === null || version.simulationValidTo >= next.simulationValidFrom) {
-      fail(`${context}/versions`, `Simulationsintervalle ${version.versionId} und ${next.versionId} überlappen`);
+    let derived: string | null;
+    if (next) {
+      if (next.simulationValidFrom <= version.simulationValidFrom) {
+        fail(`${context}/versions`, `Simulationsintervalle ${version.versionId} und ${next.versionId} überlappen`);
+      }
+      derived = previousDay(next.simulationValidFrom);
+      if (version.simulationValidTo !== null && version.simulationValidTo >= next.simulationValidFrom) {
+        fail(`${context}/versions`, `Simulationsintervalle ${version.versionId} und ${next.versionId} überlappen`);
+      }
+      if (version.simulationValidTo !== null && version.simulationValidTo !== derived) {
+        fail(`${context}/versions`, `zwischen ${version.versionId} und ${next.versionId} besteht eine Gültigkeitslücke`);
+      }
+    } else if (meta.expiryDate !== undefined) {
+      if (meta.expiryDate < version.simulationValidFrom) {
+        fail(`${context}/meta.json.expiryDate`, `Außerkrafttreten ${meta.expiryDate} liegt vor dem Beginn der letzten Fassung ${version.versionId} (${version.simulationValidFrom})`);
+      }
+      derived = meta.expiryDate;
+      if (version.simulationValidTo !== null && version.simulationValidTo !== derived) {
+        fail(`${context}/versions/${version.versionId}.json.simulationValidTo`, `${version.simulationValidTo} entspricht nicht dem Außerkrafttreten meta.expiryDate ${meta.expiryDate}`);
+      }
+    } else {
+      derived = null;
+      if (version.simulationValidTo !== null) {
+        fail(`${context}/versions/${version.versionId}.json.simulationValidTo`, 'die letzte Fassung trägt ein Geltungsende, aber meta.json nennt kein expiryDate (Außerkrafttreten)');
+      }
     }
-    if (version.simulationValidTo !== previousDay(next.simulationValidFrom)) {
-      fail(`${context}/versions`, `zwischen ${version.versionId} und ${next.versionId} besteht eine Gültigkeitslücke`);
-    }
-  }
+    return version.simulationValidTo === derived ? version : { ...version, simulationValidTo: derived };
+  });
+}
+
+/** Rückwärtskompatible Prüfung der Simulationsintervalle ohne `meta.expiryDate` (siehe `deriveVersionIntervals`). */
+export function validateVersionIntervals(sortedVersions: readonly NormVersion[], context: string): void {
+  deriveVersionIntervals(sortedVersions, {}, context);
 }
 
 export function previousDay(isoDate: string): string {

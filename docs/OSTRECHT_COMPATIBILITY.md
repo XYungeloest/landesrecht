@@ -27,6 +27,7 @@ kopiert den OstRecht-Bestand nicht; es definiert eine Übernahme-/Synchronisatio
 | `availability = versioned` + `localSource` (Datei im OstRecht-Repo) | `availability = external` mit `note: OstRecht-Repository: <pfad>` (die Datei liegt nicht hier) |
 | `availability = r2-archived` | unverändert (`objectKey`, `sha256`, `url`, `retrievedAt`) |
 | `validFrom`/`validTo` | `simulationValidFrom`/`simulationValidTo` |
+| OstRecht-Stichtag `2023-11-01` (Ausgangsfassungen) | Baseline-Regel: Die OstRecht-Fassung, die am Ausgangsrechtsstand `2023-12-01` gilt (beginnt davor, endet nicht davor), beginnt hier am `2023-12-01`; ihre `versionId` bleibt. Fassungen, die schon vor dem `2023-12-01` endeten, entfallen; alle späteren Ost-Sim-Fassungen bleiben unverändert (`alignOstRechtVersionsToBaseline`). Eigene Ost-Sim-Normen (alle Fassungen nach dem Stichtag) bleiben unverändert; eine Norm ohne Fassung am Stichtag ist nicht übernehmbar |
 | `sourceValidFrom/To` der REVOSax-Quelle | `sourceValidFrom/To` der Fassung |
 | `isCurrent` | entfällt (abgeleitet) |
 | `ministry`/`responsibleMinistry` | `responsibleBody` |

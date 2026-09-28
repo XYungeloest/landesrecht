@@ -11,11 +11,13 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
+import { SIMULATION_BASELINE_DATE } from '@landesrecht/legal-core/config/jurisdictions.ts';
+
 import { readInstitutionRegistry, type InstitutionRegistry } from '../transform/institution-registry.ts';
 import { writeFileAtomic, writeJsonAtomic } from './atomic.ts';
 import { readEnumeration, type EnumerationCrosscheck, type EnumerationFile } from './enumeration.ts';
 import { AUDIT_DIR, isImportedStatus, readManifest, type ImportManifest, type ManifestEntry, type SourceArea } from './manifest.ts';
-import { listExistingSlugs } from './persist.ts';
+import { listExistingSlugs, listSimulationSlugs } from './persist.ts';
 import { readReviewQueue, type ReviewQueue } from './review-queue.ts';
 import { readSlugRegistry, type SlugRegistry } from './slug-registry.ts';
 import { isStaleEntry, regenerationCommand } from './staleness.ts';
@@ -253,7 +255,8 @@ export async function collectCoverageInput(root: string, now: string): Promise<C
     manifest: await readManifest(root),
     queue: await readReviewQueue(root),
     enumerations,
-    contentSlugs: await listExistingSlugs(root),
+    // Sim-Normen (ohne Portalkennung, ohne Ausgangsfassung) haben keinen Manifesteintrag – kein „Inhalt ohne Manifest“.
+    contentSlugs: await (async () => { const all = await listExistingSlugs(root); for (const slug of await listSimulationSlugs(root, SIMULATION_BASELINE_DATE)) all.delete(slug); return all; })(),
     slugRegistry: await readSlugRegistry(root),
     institutionRegistry: (await readInstitutionRegistry(root)).registry,
     recipes,

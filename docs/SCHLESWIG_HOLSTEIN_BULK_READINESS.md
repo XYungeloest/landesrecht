@@ -159,6 +159,81 @@ mit nicht belegter Tabellenstruktur, Befund `withdrawn-after-import`, Freigaben 
   West + BayWü + NSH 12/12. D1-Batches inkrementell (neu 77, entfernt 10, geändert 97; 6 Dateien, Fingerabdruck
   `6cf5aa27`). R2-Staging 8 339 Objekte, davon 774 neu.
 
+## 8b Sim-Normen und Baseline-Lock (Run 9, Vorbereitung der Sim-Rechtsfortschreibung)
+
+- **Sim-Normen im Bestand.** Unter `content/norms/nsh/` liegen künftig auch eigene Normen der
+  Simulationsrechtsfortschreibung. Eine Sim-Norm hat keinen Manifesteintrag, in `meta.json` keine externe Kennung
+  `juris-sh`, und alle Belege (`sourceReferences` der Metadaten und jeder Fassung) sind Sim-Belege (`simulation-…`).
+  `reports/status.ts` (`classifyContentDirectories`) zählt sie getrennt (`simulationSlugs`, `simulationFiles`);
+  Audit (`bestand`) und Readiness (`bestand-konsistent`) werten sie nicht als „ohne Manifest“ und erwarten die
+  Dateizahl `3 × übernommene Manifesteinträge` nur für den juris-Bestand („Sim-Normen n“ im Befundtext).
+- **Baseline-Lock** (gemeinsamer Helfer `@landesrecht/importer-common/baseline-lock.ts`, wie `recht-nrw` und
+  `bayernrecht`). Eine Norm ist gesperrt, sobald die Simulation sie fortgeschrieben hat: Folgefassungen
+  `versions/<Datum>.json`, Historieneinträge nach dem Stichtag oder Beziehungen mit Wirkdatum nach dem Stichtag – auch
+  eine **reine Aufhebung** (`meta.status: repealed`, additive `relations`/`history`, keine neue Fassungsdatei) sperrt.
+  `pipeline/persist.ts` schreibt dann nichts: Ist die zu schreibende Ausgangsfassung `versions/2023-12-01.json`
+  byteidentisch mit der gespeicherten, gilt die Norm als unverändert (kein Befund, kein Review); wiche sie ab, ist es
+  der Befund `existing-versions` mit den Sperrgründen. `meta.json` und `history.json` gesperrter Normen werden nie
+  überschrieben (dort stehen additive Sim-Ergänzungen); gesperrte Normverzeichnisse werden nie zurückgenommen.
+- **Bulk bei gesperrten Normen** (`pipeline/bulk.ts`): Manifeststatus und Slug bleiben; nichts wird geschrieben oder
+  entfernt. Wäre die Norm im Wiederholungslauf nicht mehr übernahmefähig oder ergäbe der Lauf eine andere
+  Ausgangsfassung, entstehen der Befund `baseline-locked` im Manifesteintrag und ein blockierender Review-Fall
+  (`import-regression`, Schlüssel `baseline-locked`) – die Entscheidung fällt außerhalb des Bulks.
+
+## 8c Run 9 (2026-09-28): Regeln umgesetzt, Schreiblauf noch offen
+
+Alle Regeln sind im Adapter mit Tests (`tests/unit/juris-sh-run9.test.ts`) umgesetzt und im Dry-run geprüft; der
+Schreiblauf (`bulk --write` und die Kette aus Abschnitt 8) wurde in Run 9 **nicht** ausgeführt – der Bestand unter
+`content/norms/nsh` und die Review-Shards entsprechen weiter Run 8 (2 450 Normen, 613 offene Fälle). Projektion aus
+den Dry-runs der betroffenen Dokumente: 613 → rund 420 offene Fälle (180 Dokumente werden übernahmefähig oder sind
+am Stichtag nicht in Kraft; 4 Dokumente bleiben mit anderem Grund im Review), darunter historical-gap 34 → 17,
+institution-mapping 108 → 76, unknown-structure 308 → rund 188, validity 17 → 5, contradictory-evidence 3 → 0,
+import-regression 10 → 2. Von den 222 veröffentlichten Normen mit Tabellen bleiben alle übernahmefähig
+(Regressionsprüfung Dry-run 222/222); rund 40 davon erhalten beim Schreiblauf korrigierte Tabellen (Freigaben je
+Fassung nach `data/content-immutability-exceptions.json`, Basis `cdf352630`, Erzeugung aus dem Diff). Die durch die
+Simulation fortgeschriebenen Normen (`sftg-nsh`, `gdg-nsh`, `laplag-nsh`, `lbo-nsh`, `pog-nsh`) sind gesperrt
+(Abschnitt 8b) und werden vom Schreiblauf nie neu geschrieben.
+
+- **Tabellen** (`parse/juris-pdf.ts`, `wrappedGrid`): Spaltenraster auch aus einer einzigen vollständigen Zeile
+  (Kopfzeile); Fortsetzungszeilen füllen noch leere Spalten (Wert erst in der Folgezeile); Einzelzeile in einer
+  anderen Spalte als Zeilenbeginn; Zeile mit nur einer belegten Spalte im Zeilenraster der Tabelle
+  („Kreisfreie Städte“); Einzelzeilen im Abstand der bisherigen Tabellenzeilen; nummerierte Zeilen („1.1 | … | bis
+  250“) in Tabellen mit mindestens drei Spalten; Wiederholung ohne vorgezogene Zeile, wenn der Vorzug (Titelzeile)
+  das Raster bricht; Ablehnung nennt die auslösende Zeile. Kein Raster: Formularsatz mit Lücken (eine Zeile über
+  alle Spalten und nur eine mehrzellige Zeile). Fließtext mit rechtsbündiger Zahl („… Pflicht-“ / „stundenzahl
+  25,5.“: erste Spalte klein geschrieben, eng an eine Textzeile ohne Satzende anschließend) ist keine
+  Tabellenzeile (Info `table-text-continuation`); Gliederungsüberschriften und Linien vor einer Tabelle sind kein
+  `row-before-table`. VwV-Verzeichnis auch hinter dem Erlasskopf (Gl.Nr., Fundstelle, Erlass).
+- **Einheiten und Verzeichnis:** römisch gezählte Artikel („Artikel II“), Bereiche („§§ 2 u. 3“, „§ 16 bis 92“,
+  „§§ 19 - 26“, „Artikel 1 -3“), Anlagenzählung ohne Leerzeichen; Einheitenbezeichnung allein am Seitenanfang ist
+  eine Überschrift, auch wenn die Vorseite ohne Satzzeichen endet („(Änderungsanweisungen)“); zentrierte
+  Fortsetzung einer mit Anschlusswort endenden Überschrift („… nach“ / „§ 9 KAG, der …“) ist Titel; die
+  Anlagenkennung als Seitenmarke eröffnet keine neue Anlage. Verzeichnisabgleich: Fußnotenzeichen, Bereiche und
+  Anlagenzählung in Vergleichsform; Einheiten in Anlagen (eigene Nummernräume) und bloße „Anlage“-Zwischenüberschriften
+  sind kein Befund; ein Verzeichnis ohne Anlageneinträge führt keine Anlagen.
+- **Erlassorgane:** Transformer 1.3.0 (`SCHLESWIG_HOLSTEIN_TRANSFORMATION.md`, Abschnitt Erlassorgan): gemeinsame
+  Verordnungen, Namensvarianten, Normgeber des juris-Kopfs.
+- **Registerbelege** (`pipeline/baseline-evidence.ts`): Ein Beendigungsereignis, dem das Register für dieselbe Norm
+  eine spätere starke inhaltliche Änderung zuordnet (nicht: Ressortbezeichnungen, kollektive Weitergeltung), oder das
+  nicht nach der vorliegenden Fassung liegt („Fassung vom“ bzw. Ausfertigung), trägt nur stützend. Eine Änderung nach
+  dem Stichtag widerspricht einer VwV-Ausgabe nicht, deren „Fassung vom“, „Gültig ab“ und Stand-Vermerk vor der
+  Änderung liegen – sie belegt den Fortbestand.
+- **Einzelfassungen** (`pipeline/historical.ts`): Anlagen tragen ihren Bezug im Schlüssel („Anlage (zu § 28 …)“)
+  und eröffnen eigene Nummernräume (Eindeutigkeit und Reihenfolge je Abschnitt; ein § hinter der Anlage, der die
+  Hauptzählung fortsetzt, gehört zum Hauptteil); dieselbe Bezeichnung in zwei Ketten: die jüngere Fassung löst eine
+  ohne Ende weitergeführte ab; Ressort-Zwillinge (Unterschied nur in Ressortbezeichnungen): die datierte Fassung
+  zählt; zwei offene Zwillinge: die in der heutigen Ausgabe enthaltene; unter gleichzeitig beginnenden Fassungen die
+  am Stichtag verkündete statt der rückwirkenden; undatierte Fassung, die älter als die datierte Stichtagsfassung ist,
+  ist überholt; Fassungen nur vor und nach dem Stichtag heißen „am Stichtag nicht in Kraft“ (kein Befund);
+  Titelvergleich mit angehängter Einheitenüberschrift; Gegenprobe der Reihenfolge gegen das Verzeichnis der heutigen
+  Ausgabe. Die Zusammensetzung nutzt die Satzspiegelmaße des Rahmendokuments (kleine Einzelfassungen schätzen den
+  Zeilenabstand aus Tabellenzeilen); Tabellenbefunde der Einzelparses zählen nicht, die Zusammensetzung prüft neu.
+  „Gültig ab: zukünftig“ heißt: am Stichtag nicht in Kraft. Entscheidungen erscheinen als Info
+  `historical-selection`.
+- **Weiter Review (kein Beleg):** 94 juris-PDF-Anlagen und Ausgaben ohne Normtext, rückwirkende einzige Fassungen
+  (Fassung vom nach dem Stichtag), textlich verschiedene Doppelfassungen, Landeskürzel ohne Einführung, Tabellen
+  ohne sicheres Raster (`columns-vary`, `header-unassigned`, `no-gutter`).
+
 ## 9 Offen
 
 1. **Quellenrechte** (TDM-Vorbehalt, Weiterveröffentlichung der juris-Konsolidierung): menschliche Entscheidung;

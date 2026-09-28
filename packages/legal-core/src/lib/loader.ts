@@ -21,6 +21,7 @@ import {
   type NormRecord,
   type Publication,
 } from './schema.ts';
+import { assertSimulationProvenance } from './provenance.ts';
 import { assertBaselineConsistency } from './versions.ts';
 
 export const NORM_CONTENT_DIR = 'norms';
@@ -88,6 +89,7 @@ export async function loadNorm(jurisdiction: JurisdictionId, slug: string, root 
 
   const record = validateNormRecord({ meta, history, versions }, relative);
   assertBaselineConsistency(record);
+  assertSimulationProvenance(record, relative);
   return record;
 }
 

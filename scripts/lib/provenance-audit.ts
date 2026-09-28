@@ -12,6 +12,8 @@ import { join } from 'node:path';
 import { readManifest, type ManifestEntry } from '@landesrecht/importer-recht-nrw/common/manifest.ts';
 import type { NormRecord, SourceReference } from '@landesrecht/legal-core/lib/schema.ts';
 
+import { getBaselineVersion } from '@landesrecht/legal-core/lib/versions.ts';
+
 import { currentVersion } from './corpus-stats.ts';
 
 export const R2_BUCKET = 'landesrecht-quellen';
@@ -106,7 +108,8 @@ export async function auditProvenance(norms: readonly NormRecord[], root: string
     }
     if (!record.meta.sourceCitation?.trim()) report('error', 'source-citation-missing', 'meta.sourceCitation fehlt');
 
-    const version = currentVersion(record);
+    // Geprüft wird die übernommene Ausgangsfassung; spätere Sim-Fassungen tragen ausschließlich Sim-Belege.
+    const version = getBaselineVersion(record) ?? currentVersion(record);
     const references: Array<{ reference: SourceReference; origin: string }> = [
       ...record.meta.sourceReferences.map((reference) => ({ reference, origin: 'meta' })),
       ...(version.sourceReferences ?? []).map((reference) => ({ reference, origin: `version:${version.versionId}` })),

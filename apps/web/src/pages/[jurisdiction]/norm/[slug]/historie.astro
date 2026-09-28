@@ -2,7 +2,8 @@
 export const prerender = false;
 
 import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
-import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import { getPublicationLabel, publicationSlugsByVersion } from '@landesrecht/legal-core/lib/publications.ts';
+import { getNormUrl, getPublicationUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import NormPageShell from '../../../../components/NormPageShell.astro';
 import { buildNormView, jurisdictionFromParam } from '../../../../lib/norm-view.ts';
 import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../../../lib/runtime/context.ts';
@@ -11,11 +12,20 @@ const resolved = jurisdictionFromParam(Astro.params.jurisdiction);
 if (!resolved || !Astro.params.slug) return Astro.rewrite('/404');
 const registry = await getStoreRegistry();
 if (!registry.has(resolved.id)) return Astro.rewrite('/404');
-const record = await registry.get(resolved.id).getNorm(Astro.params.slug, 'none');
+const store = registry.get(resolved.id);
+const record = await store.getNorm(Astro.params.slug, 'none');
 const view = record ? buildNormView(record) : null;
 if (!record || !view) return Astro.rewrite('/404');
 Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
 const entries = [...record.history.entries].sort((left, right) => right.date.localeCompare(left.date));
+// Verkündung je Fassung über `sourceReferences[].publicationSlug`; verlinkt wird nur eine Ausgabe, die der Store kennt.
+const publicationSlugs = publicationSlugsByVersion(record.versions);
+const publications = new Map((await Promise.all([...new Set(publicationSlugs.values())].map(async (slug) => [slug, await store.getPublication(slug)] as const))).filter(([, publication]) => publication !== null));
+const publicationFor = (versionId: string | null | undefined) => {
+  const slug = versionId ? publicationSlugs.get(versionId) : undefined;
+  const publication = slug ? publications.get(slug) : undefined;
+  return publication ? { url: getPublicationUrl(resolved.id, publication.slug), label: getPublicationLabel(publication) } : undefined;
+};
 ---
 <NormPageShell view={view} section="historie" title={`${VOCABULARY.sections.history}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
   <section aria-labelledby="fassungen-heading">
@@ -27,6 +37,7 @@ const entries = [...record.history.entries].sort((left, right) => right.date.loc
           <span class={`tag tag--${entry.kind}`}>{entry.kindLabel}</span>
           <a href={entry.url}>Fassung {entry.versionId}</a>
           <span class="muted"> – gültig in der Simulation {entry.simulationValidTo ? `bis ${formatDate(entry.simulationValidTo)}` : 'bis auf Weiteres'}</span>
+          {publicationFor(entry.versionId) && <span class="muted"> · verkündet in <a href={publicationFor(entry.versionId)!.url}>{publicationFor(entry.versionId)!.label}</a></span>}
         </li>
       ))}
     </ul>
@@ -39,7 +50,7 @@ const entries = [...record.history.entries].sort((left, right) => right.date.loc
           <time datetime={entry.date}>{formatDate(entry.date)}</time>
           <span class="tag">{VOCABULARY.history[entry.type]}</span>
           <p>{entry.title}</p>
-          <p class="muted">{entry.citation}{entry.note && ` – ${entry.note}`}</p>
+          <p class="muted">{publicationFor(entry.affectingVersionId) ? <a href={publicationFor(entry.affectingVersionId)!.url} title={`Verkündung: ${publicationFor(entry.affectingVersionId)!.label}`}>{entry.citation}</a> : entry.citation}{entry.note && ` – ${entry.note}`}</p>
           {entry.relatedNorm && <p><a href={getNormUrl(entry.relatedNorm.jurisdiction ?? record.meta.jurisdiction, entry.relatedNorm.slug)}>{entry.relatedNorm.slug}</a></p>}
           {entry.affectingVersionId && <p class="muted">Betroffene Fassung: {entry.affectingVersionId}</p>}
         </li>

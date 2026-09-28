@@ -7,7 +7,7 @@ import { join } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'vitest';
 
-import { INVENTORY_STATUS_SCHEMA, parseInventoryStatusFile } from '@landesrecht/legal-core/config/inventory-status.ts';
+import { describeInventoryNotice, INVENTORY_STATUS_SCHEMA, parseInventoryStatusFile } from '@landesrecht/legal-core/config/inventory-status.ts';
 import { baselineOnlyOpen, buildInventoryStatus, INVENTORY_STATUS_PATH, writeInventoryStatus } from '@landesrecht/importer-bayernrecht/audit/inventory-status.ts';
 
 import { cleanupTempRoots, tempRoot } from '../helpers/bayernrecht-state.ts';
@@ -31,7 +31,9 @@ describe('Statusdatei inventory-status.json', () => {
 
   it('die ausgelieferte Datei ist gültig und führt West nicht als Teilbestand', async () => {
     const shipped = parseInventoryStatusFile(JSON.parse(await readFile(join(process.cwd(), INVENTORY_STATUS_PATH), 'utf8')));
-    expect(shipped.get('west')).toBeUndefined();
+    // West ist eingefroren und vollständig; ein Eintrag entsteht nur durch den Simulationsblock (complete bleibt true).
+    expect(shipped.get('west')?.complete ?? true).toBe(true);
+    expect(describeInventoryNotice(shipped.get('west'))?.baselinePartial ?? false).toBe(false);
   });
 });
 

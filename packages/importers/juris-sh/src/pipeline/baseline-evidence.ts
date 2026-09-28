@@ -131,6 +131,15 @@ export function baselineEvidence(result: DocumentResult, matches: readonly Ledge
 
   const contradictions: string[] = [];
   let postBaselineEvents = 0;
+  // Inhaltliche Änderung oder Neufassung; kollektive Ersetzungen von Ressortbezeichnungen und kollektive Weitergeltungen
+  // sagen über den Bestand der einzelnen Norm nichts aus.
+  const isSubstantiveChange = (event: LedgerEvent): boolean => (event.eventType === 'amend' || event.eventType === 'recast') && !['ressortbezeichnung', 'kollektive-weitergeltung'].includes(event.subtype ?? '') && !/Ressortbezeichn|Zuständigkeiten\s+und\s+Ressort/iu.test(event.excerpt ?? '');
+  // Beendigungsereignis, dem das Register für dieselbe Norm eine spätere starke inhaltliche Änderung zuordnet: Das Register
+  // selbst führt die Norm danach weiter (Teilaufhebung, Weitergeltung, verlängerte Befristung) – das Ende trägt nicht allein.
+  const laterChange = (end: LedgerEvent): LedgerEvent | undefined => matches.map((match) => match.event).find((other) => other !== end && isSubstantiveChange(other) && other.evidenceStrength === 'strong' && other.eventDate !== undefined && end.eventDate !== undefined && other.eventDate > end.eventDate);
+  // Datum der vorliegenden Fassung: „Fassung vom“ (VwV) bzw. Ausfertigung/Neufassung (Landesrecht). Ein Ende davor kann
+  // diese Fassung nicht beendet haben; es betrifft eine frühere Fassung oder Vorschrift derselben Gliederungsnummer.
+  const issued = isVwv ? source.versionDate : [...source.documentDates].sort()[0];
   for (const { event, basis } of matches) {
     const statement = `Register (${event.sourceId}, S. ${event.sourcePage}): ${event.eventType}${event.subtype ? `/${event.subtype}` : ''} ${event.eventDate ?? 'ohne Datum'} – ${event.targetTitle.slice(0, 120)} [Zuordnung: ${basis}]`;
     const common = { sourceUrl: event.sourceUrl, sha256: event.sourceSha256, ...(event.citation ? { citation: event.citation } : {}), excerpt: event.excerpt };
@@ -142,13 +151,28 @@ export function baselineEvidence(result: DocumentResult, matches: readonly Ledge
     if (post) postBaselineEvents += 1;
     // Widerspruch: heutige Ausgabe als Stichtagsfassung, Register belegt eine spätere Änderung.
     if (post && isChange && !result.historical && baselineClass === 'unchanged-since-baseline' && event.evidenceStrength === 'strong') {
+      // VwV-Ausgabe, deren „Fassung vom“ und „Gültig ab“ vor der Änderung liegen (und kein Stand-Vermerk danach): Sie enthält
+      // die spätere Änderung nicht und ist damit die Stichtagsfassung; das Ereignis belegt den Fortbestand.
+      const editionBefore = isVwv && source.versionDate !== undefined && source.versionDate < date && (source.headerValidFrom === undefined || source.headerValidFrom < date) && (source.standDate === undefined || source.standDate < date);
+      if (editionBefore) {
+        evidence.push({ kind: 'gazette-amendment', dimension: 'amendment', strength: 'strong', date, statement: `${statement}; die Ausgabe (Fassung vom ${source.versionDate}) liegt vor dieser Änderung und enthält sie nicht – Stichtagsfassung`, ...common });
+        continue;
+      }
       evidence.push({ kind: 'gazette-amendment', dimension: 'amendment', strength: 'contradictory', date, statement: `${statement}; die Ausgabe zeigt keine Einheit mit Beginn nach dem Stichtag`, ...common });
       contradictions.push(`${event.eventType} ${date} (${event.citation || event.sourceId})`);
       continue;
     }
     const strength = event.evidenceStrength === 'strong' ? 'strong' : 'supporting';
     if (terminates) {
-      evidence.push({ kind: event.eventType === 'expire' ? 'text-expiry-clause' : 'successor-repeal', dimension: 'end', strength, date, statement, ...common });
+      const kind = event.eventType === 'expire' ? 'text-expiry-clause' : 'successor-repeal';
+      const later = strength === 'strong' ? laterChange(event) : undefined;
+      if (later) {
+        evidence.push({ kind, dimension: 'end', strength: 'supporting', date, statement: `${statement}; kein vollständiges Ende: das Register ordnet derselben Norm eine spätere Änderung zu (${later.eventType} ${later.eventDate})`, ...common });
+      } else if (strength === 'strong' && issued !== undefined && date <= issued) {
+        evidence.push({ kind, dimension: 'end', strength: 'supporting', date, statement: `${statement}; liegt nicht nach der vorliegenden Fassung (${isVwv ? 'Fassung vom' : 'Ausfertigung'} ${issued}) – betrifft eine frühere Fassung derselben Gliederungsnummer`, ...common });
+      } else {
+        evidence.push({ kind, dimension: 'end', strength, date, statement, ...common });
+      }
     } else {
       evidence.push({ kind: 'gazette-amendment', dimension: 'amendment', strength: post ? strength : 'supporting', date, statement, ...common });
     }

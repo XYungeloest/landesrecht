@@ -48,6 +48,11 @@ Prioritäten:
   als dokumentierter Override in `data/imports/recht-nrw/overrides.json`, nie im Code.
 - Synthetische Testfixtures liegen nur unter `tests/fixtures/content/` (`"dataset": "synthetic-fixture"`);
   `content/` enthält ausschließlich übernommene oder redaktionelle Normen.
+- Sim-Fassungen und Sim-Akte entstehen nur über `npm run import:simulation:consolidate -- --jurisdiction <j>
+  --write` aus `data/simulation/<j>/{acts,amendments}` (Dry-run Standard, `docs/SIMULATION_IMPORT.md`), nie von
+  Hand unter `content/norms/`. Baseline-Fassungen bleiben byteidentisch gegen `data/simulation/baseline-locks.json`,
+  `meta.json`/`history.json` werden nur additiv geändert, Sim-Belege (`simulation-*`) bleiben von realen getrennt;
+  das Fassungsende wird abgeleitet, nie in ältere Dateien geschrieben (`npm run content:simulation-gates`).
 - Öffentliche Texte auf Deutsch mit echten Umlauten; der Simulationshinweis bleibt sichtbar
   (Hinweisleiste, Startseite, Fußzeile, Impressum).
 

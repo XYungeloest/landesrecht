@@ -4,7 +4,7 @@
  * Suchen zusammen. Die Anwendung nimmt nie an, dass alle Normen in einer Datenbank liegen.
  */
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import type { NormRecord, NormStatus, NormType } from '@landesrecht/legal-core/lib/schema.ts';
+import type { NormRecord, NormStatus, NormType, Publication } from '@landesrecht/legal-core/lib/schema.ts';
 import type { SearchResultPage, SearchState } from '@landesrecht/search/index.ts';
 
 export type BodySelection = 'none' | 'current' | 'all' | string[];
@@ -45,6 +45,11 @@ export interface StoreStats {
   projectionFingerprint: string | null;
 }
 
+export interface PublicationQuery {
+  /** Höchstens so viele Ausgaben (jüngste zuerst). */
+  limit?: number;
+}
+
 export interface NormStore {
   readonly kind: 'd1' | 'files';
   readonly jurisdiction: JurisdictionId;
@@ -57,6 +62,9 @@ export interface NormStore {
   search(state: SearchState): Promise<SearchResultPage>;
   getStats(): Promise<StoreStats>;
   getRuntimeMeta(key: string): Promise<string | null>;
+  /** Verkündungsblatt-Ausgaben der Jurisdiktion, jüngste zuerst (nur law_publications; lädt keine Normen). */
+  listPublications(query?: PublicationQuery): Promise<Publication[]>;
+  getPublication(slug: string): Promise<Publication | null>;
 }
 
 /** Bestimmt anhand von `bodies`, welche Fassungen mit Körper geladen werden. */

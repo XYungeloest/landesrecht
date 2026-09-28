@@ -33,12 +33,20 @@ function query(target: 'local' | 'remote', sql: string): Row[] {
   return parsed[0]?.results ?? [];
 }
 
+/**
+ * Verkündungen (Migration 0002): Fehlt die Tabelle am Ziel, wird das als Befund gemeldet, statt den Lauf mit
+ * `no such table` abzubrechen – die übrigen Prüfungen bleiben aussagekräftig.
+ */
+const PUBLICATIONS_CHECK = `SELECT CASE WHEN EXISTS (SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'law_publications')
+  THEN (SELECT COUNT(*) FROM law_publications) ELSE 'Tabelle fehlt (Migration 0002_publications.sql nicht eingespielt)' END AS n`;
+
 const CHECKS: Array<{ name: string; sql: string }> = [
   { name: 'law_norms', sql: 'SELECT COUNT(*) AS n FROM law_norms' },
   { name: 'law_versions', sql: 'SELECT COUNT(*) AS n FROM law_versions' },
   { name: 'law_version_blocks', sql: 'SELECT COUNT(*) AS n FROM law_version_blocks' },
   { name: 'law_search_units', sql: 'SELECT COUNT(*) AS n FROM law_search_units' },
   { name: 'law_search (FTS)', sql: 'SELECT COUNT(*) AS n FROM law_search' },
+  { name: 'law_publications', sql: PUBLICATIONS_CHECK },
   { name: 'Typverteilung', sql: 'SELECT type, COUNT(*) AS n FROM law_norms GROUP BY type ORDER BY type' },
   { name: 'Jurisdiktionen', sql: 'SELECT jurisdiction, COUNT(*) AS n FROM law_norms GROUP BY jurisdiction ORDER BY jurisdiction' },
   { name: 'Laufzeitmetadaten', sql: "SELECT key, value FROM law_runtime_meta WHERE key NOT IN ('last_projected_at') ORDER BY key" },

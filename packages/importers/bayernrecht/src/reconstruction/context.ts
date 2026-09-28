@@ -13,6 +13,7 @@ import { readCached } from './source.ts';
 import { amendingCitations, type NormCitation } from './structure.ts';
 import type { Platform } from '../baseline-only/platform.ts';
 import type { FormConventions } from './restore.ts';
+import type { ReconstructionDecision } from './decisions.ts';
 import type { WalkLedgerEvent } from './walk.ts';
 
 /** Ereignis des Registers, soweit die Rückrechnung es braucht. */
@@ -43,6 +44,8 @@ export interface RunContext {
   platform?: Platform;
   /** Darstellungskonventionen des Portals je Amtsblatt (Lauf 7, `portalConventions`). */
   conventions?: FormConventions;
+  /** Lauf 12: Reviewentscheidungen (`decisions.ts`). */
+  decisions?: readonly ReconstructionDecision[];
 }
 
 const DETAIL_URL = /^https:\/\/www\.verkuendung-bayern\.de\/(gvbl|baymbl)\/(\d{4})-(\d+)\/$/u;

@@ -8,6 +8,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { loadJurisdictionNorms } from '@landesrecht/legal-core/lib/loader.ts';
+import { isSimulationNorm } from '@landesrecht/legal-core/lib/provenance.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import type { NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
 
@@ -101,8 +102,9 @@ export async function writeAuditReport(report: AuditReport, root = repositoryRoo
 }
 
 /** West-Bestand, nach Slug sortiert (deterministische Reihenfolge für alle Audits). */
+/** Der übernommene West-Ausgangsbestand: eigene Normen der Simulation (ohne Ausgangsfassung) gehören nicht dazu. */
 export async function loadWestCorpus(root = repositoryRoot()): Promise<NormRecord[]> {
-  const norms = await loadJurisdictionNorms('west', root);
+  const norms = (await loadJurisdictionNorms('west', root)).filter((record) => !isSimulationNorm(record));
   return norms.sort((left, right) => left.meta.slug.localeCompare(right.meta.slug));
 }
 

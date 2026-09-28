@@ -88,7 +88,8 @@ export function quoteBlocks(units: readonly GazetteUnit[], organ: ForwardOrgan):
     return { type: 'paragraphText', text } as NormBodyBlock;
   });
   if (organ === 'GVBl') {
-    const unitHeading = flat[0]!.type === 'heading' || (flat[0]!.type === 'paragraphText' && /^(?:§\s*\d+[a-z]?|Art\.\s*\d+[a-z]?)$/u.test(String(flat[0]!.text)));
+    // Lauf 12: auch ein ganzer Gliederungsteil („Teil 4“ – „Landtierarztquote“ – „Art. 27“ …, GVBl. 2024 S. 630).
+    const unitHeading = flat[0]!.type === 'heading' || (flat[0]!.type === 'paragraphText' && /^(?:§\s*\d+[a-z]?|Art\.\s*\d+[a-z]?|(?:Teil|Kapitel|Abschnitt|Unterabschnitt)\s+\S+)$/u.test(String(flat[0]!.text)));
     if (unitHeading) return nestLaw(flat);
     // Absätze und Aufzählungen ohne eigene Paragraphenzeile: unter einem Hilfsglied gliedern, das danach entfällt.
     const nested = nestLaw([{ type: 'heading', title: '§ 0' } as NormBodyBlock, ...flat]);
@@ -378,7 +379,22 @@ function applyTemplate(body: NormBodyBlock[], template: StructuralTemplate, quot
       let parent: number[];
       let index: number;
       if (template.anchor) {
-        const anchor = locateUnique(body, [...template.context, template.anchor.step], step);
+        let anchor = locateUnique(body, [...template.context, template.anchor.step], step);
+        // Lauf 12: Ein Gliederungsteil hinter einem Glied am Rand seines Teils („Nach Art. 26 wird folgender Teil 4
+        // eingefügt“, Art. 26 ist der letzte Artikel von Teil 3): Stelle ist neben dem Teil, nicht in ihm.
+        const rank: Readonly<Record<string, number>> = { teil: 0, kapitel: 1, abschnitt: 2, unterabschnitt: 3 };
+        const typeRank: Readonly<Record<string, number>> = { part: 0, chapter: 1, section: 2, subsection: 3 };
+        const insertedRank = rank[template.targets[0]!.kind];
+        if (insertedRank !== undefined) {
+          while (anchor.length > 1) {
+            const owner = blockAt(body, anchor.slice(0, -1))!;
+            const ownerRank = typeRank[owner.type as string];
+            if (ownerRank !== undefined && ownerRank < insertedRank) break;
+            const siblings = childrenAt(body, anchor.slice(0, -1));
+            if (template.anchor.side === 'after' ? anchor.at(-1)! !== siblings.length - 1 : anchor.at(-1)! !== 0) throw new ForwardError('anchor-mismatch', `${step}: ${formatPath([template.anchor.step])} steht nicht am Rand von ${owner.label ?? owner.type}; die Stelle des eingefügten ${formatPath([template.targets[0]!])} ist nicht bestimmt`);
+            anchor = anchor.slice(0, -1);
+          }
+        }
         parent = anchor.slice(0, -1);
         index = anchor.at(-1)! + (template.anchor.side === 'after' ? 1 : 0);
       } else {
@@ -447,13 +463,16 @@ function previousValue(value: string): string | undefined {
 
 /** Umnummerierungen einer Gruppe gleichzeitig: alle Glieder nach der bisherigen Zählung, dann alle neu bezeichnet. */
 function relabelForward(body: NormBodyBlock[], templates: ReadonlyArray<Extract<StructuralTemplate, { kind: 'relabel' }>>, step: string): void {
-  const targets: Array<{ path: number[]; from: LocationStep; to: LocationStep }> = [];
-  for (const template of templates) for (const [from, to] of template.pairs) targets.push({ path: locateUnique(body, [...template.context, from], step), from, to });
-  for (const { path, from, to } of targets) {
+  const targets: Array<{ path: number[]; from: LocationStep; to: LocationStep; label?: string }> = [];
+  for (const template of templates) template.pairs.forEach((pair, index) => { const [from, to] = pair; targets.push({ path: locateUnique(body, [...template.context, from], step), from, to, ...(template.labels?.[index]?.to !== undefined ? { label: template.labels[index]!.to } : {}) }); });
+  const typeOf: Readonly<Partial<Record<LocationStep['kind'], NormBodyBlock['type']>>> = { teil: 'part', kapitel: 'chapter', abschnitt: 'section', unterabschnitt: 'subsection' };
+  for (const { path, from, to, label } of targets) {
     const block = blockAt(body, path)!;
-    const next = relabel(block.label, from, to.value);
+    const next = label ?? relabel(block.label, from, to.value);
     if (next === undefined) throw new ForwardError('relabel-unreadable', `${step}: Bezeichnung „${block.label ?? ''}“ nicht übertragbar`);
     block.label = next;
+    // Wechsel der Gliederungsart („Abschnitt I“ → „Kapitel 1“): der Blocktyp folgt dem Gliederungswort.
+    if (from.kind !== to.kind && typeOf[from.kind] !== undefined && typeOf[to.kind] !== undefined) block.type = typeOf[to.kind]!;
     numbering?.touched.add(block);
   }
 }

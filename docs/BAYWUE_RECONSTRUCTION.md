@@ -1,6 +1,6 @@
 # Rückrechnung von Änderungen – BayWü (`reverse-amendment`, ein- und mehrstufig)
 
-Stand 2026-09-19 (Lauf 11). Stichtag **2023-12-01**. Kennzahlen, Gruppen und alle offenen Fälle: `data/audits/bayernrecht/RECONSTRUCTION.md`
+Stand 2026-09-28 (Lauf 12). Stichtag **2023-12-01**. Kennzahlen, Gruppen und alle offenen Fälle: `data/audits/bayernrecht/RECONSTRUCTION.md`
 (vom Lauf erzeugt). Maschinenlesbar: Schlange `data/imports/bayernrecht/reconstruction-queue.json`, Rezepte
 `data/imports/bayernrecht/reconstruction/<documentId>.json`, Quellenregister `data/imports/bayernrecht/reconstruction-sources.json`,
 Audit `data/audits/bayernrecht/reconstruction-audit.json`, Abrufprüfpunkt `data/imports/bayernrecht/reconstruction-fetch.json`.
@@ -18,7 +18,7 @@ Code: `packages/importers/bayernrecht/src/reconstruction/` – `walk.ts` (Kette)
 `structural.ts` (Satz-, Glied- und Nummernbefehle), `formulas.ts`, `location.ts`, `commencement.ts`, `chain.ts`, `structure.ts`,
 `gazette.ts`, `apply.ts`, `recipe.ts`, `title.ts` (Überschrift der Norm, Lauf 6), `groups.ts`, `undetermined.ts`, `register.ts`,
 `audit.ts`, `report.ts`, `context.ts`, `run.ts`; seit Lauf 9 `forward.ts` (Stand am Stichtag vorwärts) und `pdfbase.ts`
-(Befund zum PDF-Textlayer der Stammverkündung).
+(Befund zum PDF-Textlayer der Stammverkündung); seit Lauf 12 `decisions.ts` (Reviewentscheidungen).
 Tests: `tests/unit/bayernrecht-reconstruction.test.ts`, (Lauf 5, Gruppen 1–3) `tests/unit/bayernrecht-reconstruction-groups13.test.ts`
 und (Lauf 6) `tests/unit/bayernrecht-reconstruction-run6.test.ts` mit echten, gekürzten Verkündungsausschnitten und echtem Portaltext
 (`tests/fixtures/bayernrecht/verkuendung-*-excerpt.html`, `portal-*-excerpt.json` – seit Lauf 6 mit den Kopffeldern `law.title`/
@@ -41,16 +41,17 @@ an (Abschnitt 11).
 
 ## 2 Ergebnis (Stand dieses Laufs)
 
-| | vor Lauf 4 | nach Lauf 4 | nach Lauf 5 | nach Lauf 6 | nach Lauf 7 | nach Lauf 8 | nach Lauf 9 | nach Lauf 10 | nach Lauf 11 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| sicher zurückgerechnet | 13 (alle einstufig) | 33 (28 einstufig, 5 mehrstufig) | 44 (37 einstufig, 7 mehrstufig) | 48 (39 einstufig, 9 mehrstufig) | 61 (50 einstufig, 11 mehrstufig) | 63 (52 einstufig, 11 mehrstufig) | 66 | 70 | **70** |
+| | vor Lauf 4 | nach Lauf 4 | nach Lauf 5 | nach Lauf 6 | nach Lauf 7 | nach Lauf 8 | nach Lauf 9 | nach Lauf 10 | nach Lauf 11 | nach Lauf 12 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| sicher zurückgerechnet | 13 (alle einstufig) | 33 (28 einstufig, 5 mehrstufig) | 44 (37 einstufig, 7 mehrstufig) | 48 (39 einstufig, 9 mehrstufig) | 61 (50 einstufig, 11 mehrstufig) | 63 (52 einstufig, 11 mehrstufig) | 66 | 70 | 70 | **70** |
 | davon mit Stammverkündung (`restoration`) | – | – | – | – | 13 | 15 | 17 | 21 | **21** |
 | davon Stand am Stichtag vorwärts (`restoration.derivation: "forward"`) | – | – | – | – | – | – | 5 | 7 | **7** |
-| `reconstruction-required` | 506 | 486 | 475 | 464 | 451 | 449 | 446 | 442 | **443** |
+| `reconstruction-required` | 506 | 486 | 475 | 464 | 451 | 449 | 446 | 442 | 443 | **443** |
 
 Lauf 7 (Alttext aus der Stammverkündung, `forward-from-publication`): Abschnitt 19; Lauf 8 (Reichweite): Abschnitt 20; Lauf 9
 (Stand am Stichtag vorwärts, PDF-Textlayer): Abschnitt 21; Lauf 10 (Änderungen vor dem Stichtag, Alttext je Änderung):
-Abschnitt 22; Lauf 11 (Berichtigungen, Umbau von Gliederungen, Satzfehler in Befehlen): Abschnitt 23. Nach Lauf 11: 443, weil die
+Abschnitt 22; Lauf 11 (Berichtigungen, Umbau von Gliederungen, Satzfehler in Befehlen): Abschnitt 23; Lauf 12 (Zielnormen der Sim-Rechtsakte,
+Reviewentscheidungen): Abschnitt 24. Nach Lauf 11: 443, weil die
 Stichtagsklassifikation die AGZ-Richtlinie `BayVV_787_L_14168` neu als am Stichtag geltend führt (513 statt 512 `changed-after-baseline`).
 
 Von 475 auf 464: 4 neue Rezepte, 7 Normen nicht mehr `changed-after-baseline` (die Stichtagsklassifikation stuft Normen mit eigener
@@ -1189,4 +1190,84 @@ Tests: `tests/unit/bayernrecht-reconstruction-run11.test.ts` (10 Fälle; Fixture
 
 Bulk-Schnittstelle: unverändert; keine neue Operation. Neu im Schritt der Kette (Quellenregister, `chain`) nur der Beleg einer
 Berichtigung („Berichtigung … der Fassung nach …; gilt mit dieser Fassung“).
+
+## 24 Lauf 12: Zielnormen der Sim-Rechtsakte, Reviewentscheidungen
+
+Ausgangspunkt (Commit `cdf352630`): 70 Rezepte, 443 `reconstruction-required`. Auftrag: zuerst die 14 Normen, auf die 23
+Änderungsereignisse der Sim-Fortschreibung warten (`data/simulation/baywue/ledger.json`, Status `blocked`), dann die übrigen.
+
+Ergebnis: **70 Rezepte**, **443** `reconstruction-required` – keine der 14 Zielnormen ist ohne Reviewentscheidung sicher
+rekonstruierbar; eine (BayGDVG) ist es **mit** einer Entscheidung zur Gestalt zweier Gliederungsbezeichnungen (Abschnitt 24.2).
+
+### 24.1 Die 14 Zielnormen
+
+Alle 14 haben ihre Stammverkündung nur als PDF-Ausgabe (OCR, nicht dekodierbar oder mehrdeutig) oder gar nicht (Neubekanntmachung).
+Ohne sie gelingt die Rückrechnung nur, wenn jeder Befehl nach dem Stichtag seinen Alttext selbst trägt. Das ist bei 13 nicht so:
+
+| Norm (Sim-Slug) | Kette nach dem Stichtag | Stammverkündung | Befund |
+| --- | --- | --- | --- |
+| BayEUG (`bayeug-baywue`) | 8 Änderungen | GVBl. 1982 S. 743, PDF nicht dekodierbar | 209 Befehle ohne Alttext; Reihenfolge des Inkrafttretens (GVBl. 2024 S. 263 § 1/§ 2) |
+| BaySchFG (`bayschfg-baywue`) | 13 Änderungen | GVBl. 1986 S. 169, OCR | 33 Befehle ohne Alttext, Tabellen neu gefasst; GVBl. 2023 S. 495 (§ 5) ohne lesbaren Befehlsblock |
+| BayPAG (`pag-baywue`) | 5 Änderungen | GVBl. 1978 S. 561, OCR | 16 Befehle ohne Alttext; GVBl. 2026 S. 139 (§ 5): Zitat bis zum Seitenende nicht geschlossen |
+| BayPOG (`pog-baywue`) | 3 Änderungen | keine (Fundstelle fehlt) | 6 Neufassungen ohne Alttext |
+| BayGO (`gemeindeordnung-baywue`) | 5 Änderungen | GVBl. 1952 S. 19, OCR | 8 Befehle ohne Alttext; GVBl. 2023 S. 385 (§ 2) tritt erst 2024-01-01 in Kraft (Reihenfolge) |
+| BayAbgG (`abgeordnetengesetz-baywue`) | 2 (GVBl. 2024 S. 78 § 1, § 2) | GVBl. 1977 S. 369, PDF nicht dekodierbar | „Art. 25 wird aufgehoben.“ und 9 weitere Befehle ohne Alttext |
+| BayFAG (`bayfag-baywue`) | 4 Änderungen | GVBl. 1983 S. 669, OCR | 14 Befehle ohne Alttext („Art. 6 Satz 3 wird aufgehoben.“ …) |
+| BayStrWG (`baystrwg-baywue`) | 2 Änderungen | GVBl. 1958 S. 147, OCR | Neufassungen, Aufhebungen, Streichung ohne Anker (GVBl. 2025 S. 699) |
+| BayAGO (`ago-baywue`) | 2 Änderungen | GVBl. 2000 S. 873, Inhaltsstrom nicht lesbar | 4 Neufassungen ohne Alttext (GVBl. 2026 S. 259) |
+| BayOePNVG (`bayoepnvg-baywue`) | 3 Änderungen | GVBl. 1993 S. 1052, OCR | 11 Befehle ohne Alttext („Art. 17 wird aufgehoben.“, Streichungen ohne Anker) |
+| GrSO = BayVSO (`grso-baywue`) | 4 Änderungen | GVBl. 2008 S. 684, PDF nicht dekodierbar | 10 Befehle ohne Alttext, Anlage aus Anhang (GVBl. 2025 S. 272 u. a.) |
+| BayGSO (`gso-baywue`) | 3 Änderungen | GVBl. 2007 S. 68, Textlayer mehrdeutig | 5 Befehle ohne Alttext; GVBl. 2026 S. 425 (§ 11): Zitat nicht geschlossen |
+| BayKiBiG (`baykibig-baywue`) | 6 Änderungen | GVBl. 2005 S. 236, Textlayer mehrdeutig | 63 Befehle ohne Alttext; Reihenfolge des Inkrafttretens (GVBl. 2026 S. 75 § 30 / S. 139 § 4) |
+| **BayGDVG** (`gdg-baywue`) | 3 (GVBl. 2026 S. 108, 2024 S. 630, 2024 S. 98) | GVBl. 2003 S. 452, OCR | **alle 19 Schritte umkehrbar; offen allein die Gestalt der Bezeichnungen „Abschnitt I/II“ vor GVBl. 2024 S. 630** (`relabel-form-ambiguous`) |
+
+Der Sim-Slug `gdg-baywue` gehört zum Dokument `BayGDVG` (GVVG, BayRS 2120-1-U/G); `grso-baywue` zum Dokument `BayVSO`.
+
+### 24.2 BayGDVG: Gliederungsteile umbenannt, eine Frage der Gestalt
+
+GVBl. 2024 S. 630 (Landtierarztquote) benennt die Teile um („Der Erste Teil wird Teil 1.“ … „Der bisherige Vierte Teil wird
+Teil 5.“), macht aus den Abschnitten Kapitel („Der Zweite Teil wird Teil 2 und die Abschnitte I. und II. werden die Kapitel 1
+und 2.“), fügt Teil 4 mit Art. 27 bis 30 ein und nummeriert Art. 27 bis 31 um. Neu (`location.ts`, `structural.ts`, `steps.ts`,
+`forward.ts`):
+
+- Gliederungsart `kapitel`; Orte mit Ordnungswort („des ersten Teils“, „im Zweiten Abschnitt“); Schreibweisen des Bestands
+  werden gefunden („Erster Teil“, „1. Teil“, „Teil I“, „I. Abschnitt“, „Abschnitt I“).
+- Umbenennung mit Ordnungswort: Die bisherige Bezeichnung ist die genannte („Erster Teil“ – im Bestand führen 40 Normen ihre
+  Teile so, 2 als „1. Teil“), die neue die genannte („Teil 1“); beides steht ausdrücklich am Rezeptschritt (`labels`).
+- Umbenennung mit Wechsel der Gliederungsart oder römischer Zählung („die Abschnitte I. und II. werden die Kapitel 1 und 2“):
+  Die neue Bezeichnung ist genannt; die **Gestalt** der bisherigen ist es nicht – der Bestand führt Gliederungsteile als
+  „Abschnitt I“ (24 Normen, davon 4 Gesetze), „I. Abschnitt“ (11 Normen, davon 4 Gesetze) und „I.“ (64 Verwaltungsvorschriften).
+  Ohne Beleg bleibt die Norm mit `relabel-form-ambiguous` offen; der Blocktyp folgt dem Gliederungswort (`fromType`/`toType`
+  am Schritt: section → chapter).
+- Ein ganzer Gliederungsteil als Zitat („Nach Art. 26 wird folgender Teil 4 eingefügt:“) wird vorwärts gegliedert und **neben**
+  dem Teil eingefügt, an dessen Rand der Anker steht (Art. 26 ist der letzte Artikel von Teil 3).
+
+**Reviewentscheidung** (`decisions.ts`): Was keine Quelle belegt und nur die Schreibweise betrifft, entscheidet ein Mensch – in
+`data/imports/bayernrecht/reconstruction-decisions.json` (Schema `bayernrecht-reconstruction-decisions/v1`), je Norm und
+Verkündung, mit Namen, Datum und Begründung; der Rezeptschritt trägt die Entscheidung (`reviewDecision`), die Vorwärtsprobe und
+der Rundlauf gelten unverändert. Für BayGDVG:
+
+```json
+{ "schema": "bayernrecht-reconstruction-decisions/v1",
+  "decisions": [
+    { "documentId": "BayGDVG", "kind": "relabel-form", "citation": "GVBl. 2024 S. 630", "to": "Kapitel 1", "from": "Abschnitt I",
+      "decidedBy": "…", "decidedAt": "2026-…", "reason": "…" },
+    { "documentId": "BayGDVG", "kind": "relabel-form", "citation": "GVBl. 2024 S. 630", "to": "Kapitel 2", "from": "Abschnitt II",
+      "decidedBy": "…", "decidedAt": "2026-…", "reason": "…" }
+  ] }
+```
+
+Mit diesen beiden Entscheidungen (Probelauf, nichts geschrieben) entsteht das Rezept: 19 Schritte aus GVBl. 2026 S. 108 ←
+2024 S. 630 ← 2024 S. 98, Rundlauf exakt, Audit bestanden. Welche Gestalt richtig ist, belegt keine verfügbare Quelle (die
+Stammverkündung 2003 ist ein Scan); die Entscheidung ist eine redaktionelle.
+
+### 24.3 Sonst
+
+Die Änderungen dieses Laufs bringen `BayVFprF` und `BayDiG` je einen Befehl weiter (ohne Rezept). Tests:
+`tests/unit/bayernrecht-reconstruction-run12.test.ts` (11 Fälle; Fixtures `verkuendung-gvbl-2024-630.html` (vollständig),
+`portal-BayGDVG-full.json`).
+
+Bulk-Schnittstelle: unverändert im Verfahren. Neu und optional am Rezeptschritt: `operation.fromType`/`operation.toType` an
+`relabel` (nur bei Wechsel der Gliederungsart; `apply.ts` setzt den Blocktyp mit um) und `reviewDecision` (Beleg). Eine
+Entscheidungsdatei liest nur die Rückrechnung; der Bulk sieht das fertige Rezept.
 

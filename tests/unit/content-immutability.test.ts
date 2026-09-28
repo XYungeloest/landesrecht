@@ -137,6 +137,49 @@ describe('Importpfad: Bulkimport setzt Simulationsänderungen nicht zurück', ()
     }
   });
 
+  it('Baseline-Lock: bei fremder Fassung und byteidentischer Ausgangsfassung ist die Norm unverändert (nichts geschrieben, kein Befund); eine reine Aufhebung sperrt ebenso', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'landesrecht-initial-norm-lock-'));
+    try {
+      const normDir = join(base, 'content', 'norms', 'west', SLUG);
+      await cp(fixtureNorm, normDir, { recursive: true });
+      const before = await Promise.all((await listFiles(normDir)).map(async (file) => [file, await readFile(join(normDir, file), 'utf8')] as const));
+      const record = await loadNorm('west', SLUG, base);
+      // Der Loader leitet das Fassungsende ab; geschrieben wird die Rohfassung – hier identisch mit der Datei.
+      const stored = JSON.parse(await readFile(join(normDir, 'versions', '2023-12-01.json'), 'utf8')) as typeof record.versions[0];
+      const writer = new FileWriter(base);
+      expect(await writeInitialNorm(writer, { ...record, versions: [stored] }, '2023-12-01', { protectVersionedSources: true })).toBeNull();
+      expect(writer.written).toEqual([]);
+      const after = await Promise.all((await listFiles(normDir)).map(async (file) => [file, await readFile(join(normDir, file), 'utf8')] as const));
+      expect(after).toEqual(before);
+      // Reine Aufhebung: keine Folgefassung, aber ein Historieneintrag nach dem Stichtag – ebenfalls gesperrt.
+      await rm(join(normDir, 'versions', '2026-05-01.json'));
+      const history = JSON.parse(await readFile(join(normDir, 'history.json'), 'utf8')) as { entries: unknown[] };
+      history.entries = [history.entries[0], { date: '2026-06-01', type: 'repeal', title: 'Aufgehoben.', citation: 'Gesetz vom 1. Juni 2026 (GV. West 2026 Nr. 20)', affectingVersionId: null }];
+      await writeFile(join(normDir, 'history.json'), `${JSON.stringify(history, null, 2)}\n`);
+      const changed = await writeInitialNorm(writer, { ...record, versions: [{ ...stored, changeNote: 'Parser neu' }] }, '2023-12-01', { protectVersionedSources: true });
+      expect(changed).toMatchObject({ severity: 'error', code: 'existing-versions' });
+      expect(changed?.message).toContain('repeal 2026-06-01');
+      expect(writer.written).toEqual([]);
+    } finally {
+      await rm(base, { recursive: true, force: true });
+    }
+  });
+
+  it('listSimulationSlugs erkennt Sim-Normen (ohne Portalkennung, ohne Ausgangsfassung) und lässt Baseline-Normen stehen', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'landesrecht-sim-slugs-'));
+    try {
+      await cp(fixtureNorm, join(base, 'content', 'norms', 'west', SLUG), { recursive: true });
+      const simDir = join(base, 'content', 'norms', 'west', 'landessolargesetz-west');
+      await mkdir(join(simDir, 'versions'), { recursive: true });
+      await writeFile(join(simDir, 'meta.json'), JSON.stringify({ externalIdentifiers: [], relations: [] }));
+      await writeFile(join(simDir, 'versions', '2026-05-18.json'), '{}');
+      const { listSimulationSlugs } = await import('@landesrecht/importer-recht-nrw/common/persist.ts');
+      expect([...(await listSimulationSlugs(base, '2023-12-01'))]).toEqual(['landessolargesetz-west']);
+    } finally {
+      await rm(base, { recursive: true, force: true });
+    }
+  });
+
   it('ohne fremde Fassungen schreibt writeInitialNorm genau die Ausgangsfassung und lässt eine unabhängige spätere Fassung beim Wiederholen unberührt', async () => {
     const base = await mkdtemp(join(tmpdir(), 'landesrecht-initial-norm-2-'));
     try {
@@ -149,8 +192,10 @@ describe('Importpfad: Bulkimport setzt Simulationsänderungen nicht zurück', ()
       // Redaktionelle Simulationsfassung kommt hinzu; ein erneuter Initialimport darf sie weder überschreiben noch entfernen.
       const later = join(base, 'content', 'norms', 'west', SLUG, 'versions', '2026-05-01.json');
       await writeFile(later, '{"simulation":true}');
-      const again = await writeInitialNorm(new FileWriter(base), initial, '2023-12-01', { protectVersionedSources: true });
-      expect(again?.code).toBe('existing-versions');
+      // Baseline-Lock: identische Ausgangsfassung ⇒ unverändert (kein Befund, nichts geschrieben); die Sim-Fassung bleibt.
+      const repeatWriter = new FileWriter(base);
+      expect(await writeInitialNorm(repeatWriter, initial, '2023-12-01', { protectVersionedSources: true })).toBeNull();
+      expect(repeatWriter.written).toEqual([]);
       expect(await readFile(later, 'utf8')).toBe('{"simulation":true}');
       expect(JSON.parse(await readFile(join(base, 'content', 'norms', 'west', SLUG, 'versions', '2023-12-01.json'), 'utf8'))).toEqual(JSON.parse(JSON.stringify(record.versions[0])));
     } finally {

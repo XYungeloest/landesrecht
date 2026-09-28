@@ -2,8 +2,9 @@
 export const prerender = false;
 
 import { formatBaselineDate, jurisdictionGenitive } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { statusLabel, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
-import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { formatDate, statusLabel, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { getPublicationLabel } from '@landesrecht/legal-core/lib/publications.ts';
+import { getPublicationsUrl, getPublicationUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import { ADMINISTRATIVE_REGULATION_TYPES, expandNormTypeFilter, isNormType, NORM_TYPES, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import InventoryNotice from '../../components/InventoryNotice.astro';
 import SearchForm from '../../components/SearchForm.astro';
@@ -18,7 +19,8 @@ const registry = await getStoreRegistry();
 if (!registry.has(id)) return Astro.rewrite('/404');
 const store = registry.get(id);
 // Typzähler aus einer aggregierten Abfrage über den gesamten Bestand – nie aus der begrenzten Liste.
-const [typeCountRows, stats] = await Promise.all([store.countNormsByType(), store.getStats()]);
+const [typeCountRows, stats, publications] = await Promise.all([store.countNormsByType(), store.getStats(), store.listPublications()]);
+const LATEST_PUBLICATIONS = 5;
 const totalCount = typeCountRows.reduce((sum, entry) => sum + entry.count, 0);
 const typeParam = Astro.url.searchParams.get('type') ?? '';
 const selectedType: NormType | undefined = isNormType(typeParam) ? typeParam : undefined;
@@ -46,6 +48,21 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
   )}
   <InventoryNotice jurisdiction={id} />
   <SearchForm state={{ jurisdictions: [id] }} />
+  <section aria-labelledby="verkuendungen-heading">
+    <h2 id="verkuendungen-heading"><a href={getPublicationsUrl(id)}>Verkündungen</a> ({publications.length})</h2>
+    {publications.length === 0 ? (
+      <p class="muted">Noch keine Ausgaben der Verkündungsblätter der Simulation übernommen.</p>
+    ) : (
+      <>
+        <ul class="publication-series">
+          {publications.slice(0, LATEST_PUBLICATIONS).map((publication) => (
+            <li><a href={getPublicationUrl(id, publication.slug)}>{getPublicationLabel(publication)}</a> <span class="muted">· {formatDate(publication.date)} · {publication.entries.length} {publication.entries.length === 1 ? 'Eintrag' : 'Einträge'}</span></li>
+          ))}
+        </ul>
+        <p class="muted"><a href={getPublicationsUrl(id)}>Alle Ausgaben</a>{publications.length > LATEST_PUBLICATIONS && ` (${publications.length})`}</p>
+      </>
+    )}
+  </section>
   <section aria-labelledby="normen-heading">
     <h2 id="normen-heading">Vorhandene Normen ({stats.normCount})</h2>
     {totalCount > 0 && (

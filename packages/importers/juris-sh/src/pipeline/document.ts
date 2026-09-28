@@ -23,7 +23,7 @@ import { transformToNsh } from '../transform/transform.ts';
 import { compareIntegrity, type IntegrityResult } from '../parse/integrity.ts';
 import { bodyText, isoDate, joinLines, parseJurisPdf, type ParsedJurisPdf } from '../parse/juris-pdf.ts';
 import { readFigureImages, withoutBytes } from '../parse/pdf-figures.ts';
-import { layoutFromPdf } from '../parse/pdf-layout.ts';
+import { layoutFromPdf, type PdfLayout } from '../parse/pdf-layout.ts';
 import { classifyEdition, standAmendmentDate, toSourceLaw, SYSTEM, type EditionBaseline, type GazetteVolume, type SourceDocument } from '../parse/source-law.ts';
 import { permaUrl } from '../access/policy.ts';
 import { retrievalDate } from '@landesrecht/importer-common/pipeline.ts';
@@ -223,9 +223,10 @@ export function processDocument(bytes: Uint8Array, document: SourceDocument, opt
   const raw = { url: document.url, sha256: document.sha256, byteLength: document.byteLength, retrievedAt: document.retrievedAt };
   const base = { documentId: document.documentId, area: document.area, raw };
   let parsed: ParsedJurisPdf;
+  let frameLayout: PdfLayout | undefined;
   try {
-    const layout = layoutFromPdf(bytes);
-    parsed = parseJurisPdf(layout, { images: readFigureImages(bytes)?.map(withoutBytes) ?? null });
+    frameLayout = layoutFromPdf(bytes);
+    parsed = parseJurisPdf(frameLayout, { images: readFigureImages(bytes)?.map(withoutBytes) ?? null });
   } catch (error) {
     return { ...base, outcome: 'failed', reasons: [`Parser: ${(error as Error).message}`], blockers: [{ kind: 'schema', code: 'parser-error', detail: (error as Error).message.slice(0, 300) }], warnings: [], findings: [] };
   }
@@ -264,12 +265,13 @@ export function processDocument(bytes: Uint8Array, document: SourceDocument, opt
   if (baseline.class === 'changed-after-baseline' || baseline.class === 'repealed-after-baseline' || (standUndetermined && options.units && options.units.length > 0)) {
     if (!options.units || options.units.length === 0) return { ...result, outcome: 'reconstruction', reasons: [`${baseline.class}: ${baseline.basis}; Einzelfassungen noch nicht geladen`], blockers: [{ kind: 'units-missing', code: baseline.class, detail: baseline.basis }] };
     // Stichtagsfassung aus den am Stichtag geltenden Einzelfassungen – nie der heutige Text.
-    const rawSelection = selectBaselineUnits(options.units);
+    const rawSelection = selectBaselineUnits(options.units, undefined, { frameText: bodyText(parsed.body).replace(/\s+/gu, ' ').trim(), frameToc: parsed.toc });
+    for (const note of rawSelection.notes) findings.push({ severity: 'info', code: 'historical-selection', message: note });
     const selection = { ...rawSelection, problems: [...rawSelection.problems, ...consistencyProblems(rawSelection.selected, { title: parsed.title, ...(parsed.header['Gliederungs-Nr'] ? { gliederungsnummer: parsed.header['Gliederungs-Nr'] } : {}) })] };
     // Parserfehler zählen nur in den gewählten Einzelfassungen – nur sie bilden die Stichtagsfassung (Run 8).
     const selectedIds = new Set(selection.selected.map((unit) => unit.documentId));
     const unitErrors = options.units.filter((unit) => selectedIds.has(unit.documentId) && unit.parsed.findings.some((finding) => finding.severity === 'error')).map((unit) => `${unit.documentId}: ${unit.parsed.findings.filter((finding) => finding.severity === 'error').map((finding) => finding.code).join(', ')}`);
-    const assembly = assembleBaseline(selection.selected, isVwv);
+    const assembly = assembleBaseline(selection.selected, isVwv, frameLayout ? { layout: frameLayout } : {});
     result.historical = { units: options.units.length, selected: selection.selected.length, omitted: selection.omitted.length, problems: [...selection.problems, ...unitErrors], ...(assembly.validFrom ? { validFrom: assembly.validFrom } : {}), ...(assembly.validTo ? { validTo: assembly.validTo } : {}), integrity: assembly.integrity.class, selectedUnitIds: selection.selected.map((unit) => unit.documentId) };
     result.integrity = assembly.integrity;
     if (selection.problems.length > 0 || unitErrors.length > 0) return { ...result, outcome: 'reconstruction', reasons: [`${baseline.class}: Einzelfassungen nicht eindeutig: ${[...selection.problems, ...unitErrors].slice(0, 3).join('; ')}`], blockers: [...selection.problems, ...unitErrors].map((problem) => ({ kind: 'historical' as const, code: 'unit-selection', detail: problem })) };
@@ -312,7 +314,7 @@ export function processDocument(bytes: Uint8Array, document: SourceDocument, opt
   }
 
   try {
-    const transformed = transformToNsh(law, options.context, { sourceArea: document.area, institutions: options.institutions, sourceStatus, ...(provenanceNote ? { provenanceNote } : {}), ...(options.knownStateAbbreviations ? { transformation: { knownStateLawAbbreviations: options.knownStateAbbreviations } } : {}) });
+    const transformed = transformToNsh(law, options.context, { sourceArea: document.area, institutions: options.institutions, sourceStatus, ...(provenanceNote ? { provenanceNote } : {}), ...(parsed.header.Normgeber ? { normgeber: parsed.header.Normgeber } : {}), ...(options.knownStateAbbreviations ? { transformation: { knownStateLawAbbreviations: options.knownStateAbbreviations } } : {}) });
     const audit = auditRecord(transformed.record);
     result.findings.push(...transformed.findings, ...audit);
     result.record = transformed.record;

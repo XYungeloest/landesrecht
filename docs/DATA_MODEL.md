@@ -10,8 +10,8 @@ Quelle der Wahrheit für Typen und Parser: `packages/legal-core/src/lib/schema.t
 | Norm | `NormMeta` (`meta.json`) |
 | NormVersion | `NormVersion` (`versions/<versionId>.json`) mit zwei Zeitachsen |
 | NormBodyBlock / Provision | `NormBodyBlock` (rekursiv); Provisionen = `paragraph|article|section|subsection|annex|preamble` |
-| SourceReference | `SourceReference` an Norm und Fassung |
-| Publication | `Publication` (`content/publications/<jur>/<slug>.json`) |
+| SourceReference | `SourceReference` an Norm und Fassung; `kind` aus `SOURCE_KINDS` – reale Belege (`official-portal-snapshot`, `official-gazette`, `structured-transcription`, `amendment-source`, `provider-record`, `primary-pdf`) und Sim-Belege `SIMULATION_SOURCE_KINDS` (`simulation-gazette`, `simulation-standalone-act`, `simulation-promulgation-evidence`, `simulation-amendment-source`; `system: "simulation"`, kein `externalId`, keine Quellgültigkeit, bei `r2-archived` ohne `url`/`retrievedAt`, optional `publicationSlug` auf `content/publications/<jur>/<slug>.json`) |
+| Publication | `Publication` (`content/publications/<jur>/<slug>.json`): `slug`, `jurisdiction`, `title`, `gazette` (Blattkürzel wie gedruckt/historisch), `seriesTitle?`, `regime?`, `place?`, `year`, `issue`, `date`, `sourceReferences`, `entries[]` (`title`, `type?` Normtyp, `citation`, `normSlug`, `versionId?`, `pages?`, `startPage?`, `documentDate?`) |
 | NormHistoryEntry | `NormHistoryEntry` in `history.json` |
 | NormRelation | `NormRelation` (`meta.relations[]`) mit typisiertem Ziel `{ jurisdiction?, slug }` |
 | ExternalIdentifier | `{ system, value, url? }` (`meta.externalIdentifiers[]`) |
@@ -38,6 +38,20 @@ sourceNotes (`{ label, text }[]`, Quellhinweise/Fußnoten der amtlichen Fassung)
 
 `validFrom`/`validTo` ohne Präfix werden abgewiesen. Ein `isCurrent`-Flag gibt es nicht; die
 Fassungsart ergibt sich aus Intervall und Stichtag (`lib/versions.ts`).
+
+**Abgeleitetes Fassungsende (S1).** Gespeicherte Fassungsdateien tragen `simulationValidTo: null`; sie werden
+nie fortgeschrieben (Baseline-Unveränderlichkeit). `validateNormRecord` (`deriveVersionIntervals`) setzt beim
+Laden das wirksame Ende: Vortag des Beginns der Folgefassung, bei der letzten Fassung `meta.expiryDate`
+(Außerkrafttreten = letzter Geltungstag, bei einer Aufhebung der Vortag ihres Wirkdatums), sonst offen. Ein
+explizit gespeicherter Wert bleibt zulässig, muss aber dem abgeleiteten entsprechen. Loader, D1-Store,
+Projektion (`law_versions.simulation_valid_to`), Web und API arbeiten auf dem abgeleiteten Wert.
+
+**Provenienztrennung (S3, `lib/provenance.ts`).** Eine Sim-Fassung (`simulationValidFrom` nach dem
+Ausgangsrechtsstand) trägt weder `sourceValidFrom`/`sourceValidTo`, `sourceStatus` noch `sourceCitation` und
+ausschließlich Sim-Belege (mindestens einen); die Baseline-Fassung trägt keinen Sim-Beleg. Eine eigene Sim-Norm
+(ohne Baseline-Fassung) hat `externalIdentifiers: []`, keine `sourceCitation`, kein `originEnactingBody` und in
+`meta.sourceReferences` nur Sim-Belege. Extern gepflegte Jurisdiktionen (`externalSourceOfTruth`, Ost) sind
+ausgenommen. Der Loader (`loadNorm`) erzwingt die Regel (Gate G5).
 
 ### Zeitmodell
 
