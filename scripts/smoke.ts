@@ -51,6 +51,11 @@ const checks: Check[] = [
   { path: '/nsh/norm/gzalkhg-nsh/', status: 200, expect: 'Notfallversorgung' },
   { path: '/nsh/norm/lfswg-nsh/', status: 200, expect: 'sozialen Wohnungsbau' },
   { path: '/api/v1/norms/nsh/lfdgg-nsh/versions', status: 200, expect: version('2024-07-09', { from: '2024-07-09', kind: 'current' }) },
+  { path: '/api/v1/norms/nsh/lkhg-nsh/versions', status: 200, expect: json((payload) => {
+    const ids = (payload.versions ?? []).map((entry: any) => entry.versionId).join(',');
+    return ids === '2023-12-01,2024-07-09' && payload.currentVersionId === '2024-07-09' ? null : `Fassungen ${ids}, aktuell ${payload.currentVersionId}`;
+  }) },
+  { path: '/nsh/norm/lkhg-nsh/', status: 200, expect: 'ausreichend mit digitaler Technik auszustatten' },
   { path: '/api/v1/norms/nsh/lbo-nsh/versions', status: 200, expect: version('2026-09-03', { kind: 'current' }) },
   { path: '/api/v1/norms/nsh/inklusions-und-teilhabegesetz-kita-nsh', status: 200, expect: json((payload) => (payload.meta?.status === 'future-effective' ? null : `status ${payload.meta?.status}`)) },
   // BayWü
@@ -62,7 +67,10 @@ const checks: Check[] = [
   { path: '/bayern-wuerttemberg/norm/staatsverfassung-2025-baywue/version/2025-01-12/', status: 200, expect: 'Hauptstadt ist München' },
   { path: '/bayern-wuerttemberg/norm/staatsverfassung-2025-baywue/historie/', status: 200, expect: '2026-08-29' },
   { path: '/bayern-wuerttemberg/norm/verfassung-des-freistaates-bayern-wuerttemberg/', status: 200, expect: 'außer Kraft' },
-  { path: '/bayern-wuerttemberg/norm/baywuewolfv-baywue/', status: 200, expect: 'Wolfsverordnung' },
+  // Evidenzregel: Verordnungen, deren Verkündung nur ein Verzeichnis behauptet, sind nicht im Bestand.
+  { path: '/bayern-wuerttemberg/norm/baywuewolfv-baywue/', status: 404, expect: null },
+  { path: '/bayern-wuerttemberg/norm/staatsverfassung-2025-baywue/daten/', status: 200, expect: 'Original-Verkündungsblatt fehlt' },
+  { path: '/bayern-wuerttemberg/norm/erstes-gesetz-zur-aenderung-der-staatsverfassung-baywue/daten/', status: 200, expect: (body: string) => (body.includes('maßgeblich ist das angewandte Konsolidierungsrezept') && /<s>[^<]*Rezept gesperrt<\/s>/u.test(body) ? null : 'überholte Notiz nicht als überholt gekennzeichnet') },
   { path: '/api/v1/norms/baywue/staatsverfassung-2025-baywue/versions', status: 200, expect: json((payload) => {
     const ids = (payload.versions ?? []).map((entry: any) => entry.versionId).join(',');
     if (ids !== '2025-01-12,2026-05-29,2026-06-26,2026-06-27,2026-08-29') return `Fassungen ${ids}`;

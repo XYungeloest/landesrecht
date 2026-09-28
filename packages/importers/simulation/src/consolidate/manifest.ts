@@ -21,6 +21,8 @@ export const BLOCKED_TARGET_CODES = [
   'recipe-failed',
   /** Ein früheres Rezept derselben Zielnorm ist gesperrt; spätere Rezepte werden nicht angewandt. */
   'blocked-by-earlier-recipe',
+  /** Ausgangsfassung ohne akzeptierten Baseline-Seed oder mit abweichendem Inhalt (data/simulation/baseline-locks.json). */
+  'seed-unaccepted',
 ] as const;
 export type BlockedTargetCode = (typeof BLOCKED_TARGET_CODES)[number];
 

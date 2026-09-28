@@ -100,6 +100,27 @@ Datei und **benennt ihre Belege**.
   `aenderungsvorschrift`, `bekanntmachung`, …). `acts[].status` wie `promulgationStatus`.
 - `publication.slug` ist die Identität der Ausgabe (Abschnitt 4).
 
+### 2.1 Evidenzhierarchie
+
+Jede Quelle hat eine Evidenzebene (`sources[].evidenceLevel`; ohne Angabe aus `documentType`):
+
+| Ebene | Quelle | `documentType` (Standard) |
+| ---: | --- | --- |
+| 1 | Original-Verkündungsblatt, amtliche Primärveröffentlichung | `gazette`, `ministerial-gazette` |
+| 2 | amtlicher Einzelakt, amtliche Verkündungsmitteilung, verkündete Drucksache | `standalone-official-act`, `promulgation-notice`, `repeal-notice`, `legislative-document`, `annex` |
+| 3 | spätere amtliche Wiederveröffentlichung oder amtliche Rückreferenz (Zitat in einem verkündeten Akt) | als `evidenceLevel: 3` gesetzt |
+| 4 | technische oder verzeichnisartige Sekundärquelle (z. B. `gvbl.wiki`-Blattverzeichnis) | `informational`, `unknown`, `draft` |
+| 5 | Presse und sonstige Information | `press-release` |
+
+- **Ebene 4/5 darf:** bekannte Ausgabenfolge, Nummern, Daten und die Existenz einer Veröffentlichung belegen, Lücken
+  erkennen und eine anderweitig (Ebene 1–3) belegte Verkündung plausibilisieren (Relation `evidence-for`).
+- **Ebene 4/5 darf nicht:** Normwortlaut liefern (`provenance.transcribedFrom`, `sourceRole: structure-bearing`),
+  Inkrafttreten bestimmen, eine sonst unbelegte Norm als `promulgated` qualifizieren (`promulgated-by`,
+  `simulation-promulgation-evidence`) oder alleinige Grundlage einer Rechtswirkung sein (angewandtes Ledger-Ereignis
+  nur mit Ebene-4/5-Belegen). Hängt die Rechtswirkung eines vorhandenen Originals an einer solchen Behauptung, bleibt
+  der Akt `review` (`promulgation-unclear`). Gate G11 prüft das.
+- Datum oder Inhalt wird nie aus einem Dateinamen abgeleitet (auch nicht bei Ebene-2-Mitteilungen ohne Datum im Text).
+
 ## 3 Ereignisstrom: `data/simulation/<land>/ledger.json`
 
 Chronologisch nach Rechtswirkung (`effectiveDate`, dann `eventDate`), nie nach Dateiname.
@@ -308,6 +329,14 @@ Wirkdatum** (Baseline-Datei oder vorige Sim-Fassung), nie auf die reale Quelle. 
 derselben Norm → `replaceBody`; aufgehobene alte Norm plus neue Norm → Akt der neuen Norm mit `replaces`, alte Norm
 `replaced-by` und Aufhebungsrezept.
 
+**Redaktionelle Auflösungen** (`meta.editorialResolutions[]`, je Eintrag `id`): additive, datierte Entscheidungen über
+nichtnormative Metadaten eines Akts – nie Normtext, nie Umschreiben gespeicherter Einträge. Ein bereits materialisierter
+Akt nimmt neue ids additiv auf; eine gespeicherte id ist unveränderlich. Ausgewertet werden
+`kind: superseded-technical-note` (frühere technische Notiz an einer Beziehung ist überholt: `relation { type, target }`,
+`supersededNote` = exakter bisheriger Wortlaut, `statement` = aktuelle Aussage; die Oberfläche zeigt `statement` und die
+alte Notiz nur als überholt) und `kind: source-status` (Quellenlage, z. B. „Verkündung mittelbar amtlich belegt,
+Original-Verkündungsblatt fehlt“). Helfer: `packages/legal-core/src/lib/editorial-resolutions.ts`.
+
 Regeln des Parsers und der Konsolidierung:
 
 - `schemaVersion` ist Pflicht; `versionId` fehlt → `effectiveDate`; `sourceReferences` mindestens ein Sim-Beleg
@@ -382,17 +411,40 @@ sind Fehler (Exit 1); gesperrte Ziele sind dokumentierter Zustand (Exit 0).
 | Gate | Prüfung | Befehl |
 | --- | --- | --- |
 | G1 | Fassungen write-once gegen HEAD | `npm run content:immutability` |
-| G2 | Baseline-Lock: `versions/2023-12-01.json` jeder Norm byteidentisch gegen den Referenz-Commit des Landes aus `data/simulation/baseline-locks.json` (`{ "west": "ff1b1f43…", "nsh": "21bab36e…", "baywue": "21bab36e…" }`; West = Freeze-Commit, NSH/BayWü = letzter Commit, dessen Baseline-Fassungen unverändert gelten – wird nach einem Baseline-Schreiblauf mit dokumentierten Freigaben auf den Commit gesetzt, gegen den `content:immutability` prüft, sofern beide Bestände byteidentisch sind). Normen, die im Referenz-Commit fehlen, sind ausgenommen; für Normen mit Sim-Fassungen gilt keine Freigabe aus `data/content-immutability-exceptions.json` (auch nicht dokumentiert), für Normen ohne Sim-Fassungen nur mit `baseCommit` = Referenz-Commit | `npm run content:simulation-gates` |
+| G2 | Baseline-Lock (Lock-Datei Schema 2, s. u.): jede fortgeschriebene Norm (Sim-Fassung neben der Baseline oder Rezept auf die Baseline) hat einen akzeptierten Seed, dessen SHA-256 der gespeicherten Datei `versions/2023-12-01.json` entspricht (und dem `sourceCommit`; im Freeze-Land zusätzlich dem Freeze-Commit); die Konsolidierung sperrt Rezepte auf eine Baseline ohne passenden Seed (`seed-unaccepted`). Für Normen ohne Seed gilt weiter der Referenz-Commit: `versions/2023-12-01.json` jeder Norm byteidentisch gegen den Referenz-Commit des Landes aus `data/simulation/baseline-locks.json` (`{ "west": "ff1b1f43…", "nsh": "21bab36e…", "baywue": "21bab36e…" }`; West = Freeze-Commit, NSH/BayWü = letzter Commit, dessen Baseline-Fassungen unverändert gelten – wird nach einem Baseline-Schreiblauf mit dokumentierten Freigaben auf den Commit gesetzt, gegen den `content:immutability` prüft, sofern beide Bestände byteidentisch sind). Normen, die im Referenz-Commit fehlen, sind ausgenommen; für Normen mit Sim-Fassungen gilt keine Freigabe aus `data/content-immutability-exceptions.json` (auch nicht dokumentiert), für Normen ohne Sim-Fassungen nur mit `baseCommit` = Referenz-Commit | `npm run content:simulation-gates` |
 | G3 | `meta.json`/`history.json` von Normen mit Sim-Fassungen nur additiv gegenüber dem Referenz-Commit: alle alten Historieneinträge (in alter Reihenfolge), Beziehungen und Schlagworte unverändert enthalten, `initialVersionId` gleich, alle übrigen Meta-Felder gleich außer `status`, `expiryDate`, `successor`, `successorTarget`, `relations`, `keywords` | `npm run content:simulation-gates` |
 | G4 | Konsolidierung reproduzierbar (`consolidate --check` je Land, s. o.) | `npm run content:simulation-gates` |
 | G5 | Provenienztrennung (Sim-Fassung nur Sim-Belege, keine reale Quellprovenienz; Baseline nie Sim-Belege; eigene Sim-Norm ohne reale Kennung) – im Loader (`assertSimulationProvenance`) | `npm run content:validate` |
 | G6 | Verkündungsbezüge: jede Sim-Fassung aus einer Blattausgabe (Beleg `simulation-gazette` oder `publicationSlug`) in genau einer Verkündung, ein eigenständig verkündeter Akt (`simulation-standalone-act`) in höchstens einer – kein Sim-Akt muss in einem Blatt stehen; jeder Eintrag auf vorhandene Norm/Fassung, jeder `publicationSlug` auf eine vorhandene Verkündung, kein Verkündungs-Slug doppelt (auch über Länder) | `npm run content:validate` |
 | G7 | Projektion: `law_publications`, `current_version_id` folgt `getApplicableVersion`, historische Fassung bleibt abrufbar, `law_versions.simulation_valid_to` abgeleitet | `npm run test` (`d1-projection`), `npm run d1:schema:check` |
 | G8 | Engine: je Operation Treffer 0/1/2, Hash-/Alttext-/Wirkdatumsabweichung | `npm run test` (`simulation-engine`, `simulation-recipes`, `simulation-consolidate`, `simulation-gates`) |
+| G11 | Evidenzhierarchie (2.1): keine Wortlautquelle, kein Blatt-, Einzelakt-, Verkündungs- oder Änderungsbeleg und keine strukturtragende Rolle aus Ebene 4/5; jeder Akt hat einen Beleg der Ebene 1–3; kein angewandtes Ereignis nur mit Ebene-4/5-Belegen | `npm run content:simulation-gates` |
 | G9 | Inventar reproduzierbar: `inventory` erneut gerechnet entspricht `data/simulation/source-inventory.json` ohne `scannedAt` (nur mit vorhandenem `imports/`; `--skip-inventory` überspringt) | `npm run content:simulation-gates` |
 | G10 | R2/D1 konsistent, West-Fingerabdruck unverändert | `npm run audit:r2`, `npm run audit:d1-remote` |
 
 `npm run content:check` führt `content:validate`, `content:immutability` und `content:simulation-gates` aus.
+
+**Lock-Datei `data/simulation/baseline-locks.json` (Schema `landesrecht-simulation-baseline-locks/2`,
+`packages/importers/simulation/src/common/baseline-locks.ts`):**
+
+```json
+{
+  "schemaVersion": "landesrecht-simulation-baseline-locks/2",
+  "jurisdictions": { "west": { "commit": "ff1b1f43…", "freeze": true }, "nsh": { "commit": "21bab36e…", "freeze": false } },
+  "seeds": [
+    { "jurisdiction": "nsh", "slug": "lkhg-nsh", "baselineVersionId": "2023-12-01", "sha256": "<SHA-256 der Datei>",
+      "acceptedAt": "2026-09-29", "decision": "<Freigabe/Entscheidungsreferenz>", "sourceCommit": "<Commit mit diesem Inhalt>" }
+  ]
+}
+```
+
+Eine Sim-Konsolidierung ist an den fachlich akzeptierten Inhalt ihrer konkreten Ausgangsfassung gebunden, nicht an einen
+globalen Commit des Landes: Nach einem freigegebenen Baseline-Hardening einzelner Normen wird nur für die betroffene
+Norm ein neuer Seed registriert (ausdrückliche Entscheidung, `decision`); der Referenz-Commit des Landes und alle übrigen
+Normen bleiben unberührt. G3 prüft die Normidentität (`meta.json`/`history.json`) gegen `sourceCommit` des Seeds, im
+Freeze-Land (West) gegen den Freeze-Commit. Die frühere flache Form `{ "<land>": "<commit>" }` wird gelesen, kennt aber
+keine Seeds. Weitere Freigaben in `data/content-immutability-exceptions.json` stehen als eigene Blöcke in `releases[]`
+(je `baseCommit`, dieselbe Regel wie der Hauptblock).
 
 ## 7 Vollständigkeit
 

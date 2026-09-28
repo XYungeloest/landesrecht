@@ -38,6 +38,7 @@ import { parseSimulationAct, parseSimulationRecipe, type SimulationAct, type Sim
 import { actsDir, amendmentsDir, isBaselineVersionFile, jsonText, listDirectories, listJsonFiles, manifestPath, normRelativeDir, parseJsonText, readRawNorm, readTextIfExists, sha256Text, type RawObject } from './files.ts';
 import { comparableManifest, CONSOLIDATION_MANIFEST_SCHEMA, type BlockedTarget, type BlockedTargetCode, type ConsolidationManifest, type ManifestAct, type ManifestRecipe, type ManifestTextCheck } from './manifest.ts';
 import { checkWording, type TextCheckResult } from './text-check.ts';
+import { BASELINE_LOCKS_PATH, readBaselineLockFile, seedsFor, type BaselineSeed } from '../common/baseline-locks.ts';
 
 export type ConsolidationMode = 'dry-run' | 'write' | 'check';
 
@@ -150,6 +151,11 @@ interface RunContext {
   blocked: BlockedTarget[];
   recipeOutcomes: RecipeOutcome[];
   manifestRecipes: ManifestRecipe[];
+  /**
+   * Akzeptierte Baseline-Seeds des Landes (Lock-Datei Schema 2); `null` ohne Seed-Lock (Schema 1 oder keine Datei):
+   * dann bindet nur der Hash im Rezept.
+   */
+  baselineSeeds: Map<string, BaselineSeed> | null;
 }
 
 const RECIPE_FILE_PATTERN = /^([a-z0-9]+(?:-[a-z0-9]+)*)(?:\.(\d{4}-\d{2}-\d{2}))?\.json$/u;
@@ -434,7 +440,13 @@ async function materializeAct(context: RunContext, loaded: LoadedAct): Promise<{
       const missingEntries = (history.entries as unknown[]).filter((entry) => !diskEntries.has(JSON.stringify(canonicalJson(entry))));
       const earlyForeign = (disk.history.entries as Array<{ date?: unknown }>).filter((entry) => !(history.entries as unknown[]).some((own) => JSON.stringify(canonicalJson(own)) === JSON.stringify(canonicalJson(entry))) && String(entry.date) <= act.version.versionId);
       if (missingEntries.length > 0 || earlyForeign.length > 0 || disk.history.initialVersionId !== history.initialVersionId) problems.push(`${file}: ${relative}/history.json existiert und weicht vom Akt ab (Historieneinträge des Akts fehlen oder fremde Einträge vor seinem Inkrafttreten)`);
-      const additiveKeys = new Set(['relations', 'status', 'expiryDate', 'successor', 'successorTarget', 'keywords']);
+      const additiveKeys = new Set(['relations', 'status', 'expiryDate', 'successor', 'successorTarget', 'keywords', 'editorialResolutions']);
+      const diskResolutions = new Map(((disk.meta.editorialResolutions as Array<{ id: string }> | undefined) ?? []).map((entry) => [entry.id, entry]));
+      for (const resolution of act.meta.editorialResolutions ?? []) {
+        const stored = diskResolutions.get(resolution.id);
+        if (stored && JSON.stringify(canonicalJson(stored)) !== JSON.stringify(canonicalJson(resolution))) problems.push(`${file}: editorialResolutions ${resolution.id} weicht vom gespeicherten Eintrag ab (Einträge sind unveränderlich, nur neue ids werden ergänzt)`);
+      }
+      for (const id of diskResolutions.keys()) if (!(act.meta.editorialResolutions ?? []).some((entry) => entry.id === id)) problems.push(`${file}: editorialResolutions ${id} steht in meta.json, fehlt aber im Akt`);
       const differing = Object.keys({ ...disk.meta, ...meta }).filter((key) => !additiveKeys.has(key) && JSON.stringify(canonicalJson(disk.meta[key])) !== JSON.stringify(canonicalJson(meta[key])));
       if (differing.length > 0) problems.push(`${file}: ${relative}/meta.json existiert und weicht vom Akt ab (${differing.join(', ')}); Sim-Akte werden nicht umgeschrieben`);
     }
@@ -463,6 +475,10 @@ async function materializeAct(context: RunContext, loaded: LoadedAct): Promise<{
       historyChanged: false,
     };
     for (const relation of act.meta.relations) ensureRelation(norm, relation);
+    // Redaktionelle Auflösungen (z. B. überholte technische Notizen) werden additiv nach id ergänzt.
+    const storedResolutions = (norm.meta.editorialResolutions as Array<{ id: string }> | undefined) ?? [];
+    const added = (act.meta.editorialResolutions ?? []).filter((entry) => !storedResolutions.some((stored) => stored.id === entry.id));
+    if (added.length > 0) setMetaField(norm, 'editorialResolutions', [...storedResolutions, ...added]);
     // Stichtagsfortschreibung: Ein künftiges Inkrafttreten wird mit dem Stichtag zu `in-force` (und umgekehrt), additiv.
     const status = effectiveStatus(String(disk.meta.status), act.version.simulationValidFrom, context.referenceDate);
     if (status !== disk.meta.status) setMetaField(norm, 'status', status);
@@ -685,6 +701,20 @@ async function consolidateTarget(context: RunContext, target: string, loadedReci
       for (const loaded of group) block(context, loaded, 'seed-missing', `keine gespeicherte Fassung vor dem Wirkdatum ${effectiveDate}`);
       continue;
     }
+    // Bindung an den akzeptierten Inhalt der Ausgangsfassung: Rezepte auf die Baseline nur mit registriertem Seed,
+    // dessen SHA-256 der gespeicherten Datei entspricht.
+    if (context.baselineSeeds && isBaselineVersionFile(`${seed.versionId}.json`)) {
+      const accepted = context.baselineSeeds.get(target);
+      const actual = sha256Text(seed.text);
+      if (!accepted || accepted.sha256 !== actual) {
+        blockedFrom = effectiveDate;
+        const reason = accepted
+          ? `Ausgangsfassung ${seed.versionId} weicht vom akzeptierten Seed ab (SHA-256 ${actual} statt ${accepted.sha256}, ${BASELINE_LOCKS_PATH})`
+          : `für die Ausgangsfassung ${seed.versionId} ist kein akzeptierter Baseline-Seed registriert (${BASELINE_LOCKS_PATH}, seeds[])`;
+        for (const loaded of group) block(context, loaded, 'seed-unaccepted', reason);
+        continue;
+      }
+    }
     let state: ConsolidationState = {
       title: typeof seed.raw.title === 'string' ? seed.raw.title : String(norm.meta.title),
       ...(typeof seed.raw.shortTitle === 'string' ? { shortTitle: seed.raw.shortTitle } : {}),
@@ -866,7 +896,9 @@ async function reverseScan(context: RunContext, files: readonly PlannedFile[], a
 export async function runConsolidation(options: ConsolidationOptions): Promise<ConsolidationResult> {
   const { root, jurisdiction, mode } = options;
   const referenceDate = options.referenceDate ?? EDITORIAL_REFERENCE_DATE;
-  const context: RunContext = { root, jurisdiction, mode, referenceDate, planned: new Map(), diskMissing: new Set(), errors: [], blocked: [], recipeOutcomes: [], manifestRecipes: [] };
+  const lockFile = await readBaselineLockFile(root);
+  const baselineSeeds = lockFile && lockFile.schemaVersion === 2 && lockFile.jurisdictions[jurisdiction] ? seedsFor(lockFile, jurisdiction) : null;
+  const context: RunContext = { root, jurisdiction, mode, referenceDate, planned: new Map(), diskMissing: new Set(), errors: [], blocked: [], recipeOutcomes: [], manifestRecipes: [], baselineSeeds };
   const only = mode === 'check' ? undefined : options.only;
 
   let acts = await loadActs(root, jurisdiction, context.errors);

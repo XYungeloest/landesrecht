@@ -59,6 +59,12 @@ Prioritäten:
   Hand unter `content/norms/`. Baseline-Fassungen bleiben byteidentisch gegen `data/simulation/baseline-locks.json`,
   `meta.json`/`history.json` werden nur additiv geändert, Sim-Belege (`simulation-*`) bleiben von realen getrennt;
   das Fassungsende wird abgeleitet, nie in ältere Dateien geschrieben (`npm run content:simulation-gates`).
+  Fortschreibungen sind an einen akzeptierten Baseline-Seed je Norm gebunden (`data/simulation/baseline-locks.json`,
+  Schema 2: SHA-256 der Ausgangsfassung, `decision`); neue Seeds nur mit ausdrücklicher Freigabe, West-Freeze bleibt.
+  Evidenzhierarchie (`docs/SIMULATION_IMPORT.md` 2.1): Sekundärquellen (Wiki-Verzeichnisse, Presse) nie als Wortlaut-,
+  Verkündungs- oder alleinige Rechtswirkungsgrundlage (Gate G11); nichts aus Dateinamen ableiten.
+- Bundesrecht (`gesetze-sim-internet.de`) wird nicht importiert; Anbindungsplan und Mapping in
+  `docs/BUNDESRECHT_COMPATIBILITY.md` (bevorzugt read-only-Quelle statt Kopie, keine Bund-Sonderstrukturen im Kern).
 - Öffentliche Texte auf Deutsch mit echten Umlauten; der Simulationshinweis bleibt sichtbar
   (Hinweisleiste, Startseite, Fußzeile, Impressum).
 

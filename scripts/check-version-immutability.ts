@@ -8,7 +8,9 @@
  *   --allow <jurisdiction>/<slug>/<versionId>        einzelne bewusste Korrektur (z. B. Berichtigung)
  *   data/content-immutability-exceptions.json        dokumentierte, an einen Basis-Commit gebundene Freigaben
  *                                                    (z. B. kontrollierte Neuerzeugung von Ausgangsfassungen);
- *                                                    sie gelten nur, solange genau dieser Commit die Basis ist
+ *                                                    sie gelten nur, solange genau dieser Commit die Basis ist.
+ *                                                    Weitere Freigabeblöcke (`releases[]`, je eigener baseCommit)
+ *                                                    folgen derselben Regel.
  * Verschobene synthetische Testfixtures (byteidentisch unter tests/fixtures/content/) gelten nicht als entfernt.
  *
  *   node scripts/check-version-immutability.ts [--base <ref>] [--allow west/<slug>/2023-12-01]
@@ -19,11 +21,15 @@ import { join } from 'node:path';
 
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 
-interface ExceptionFile {
-  schemaVersion: 'landesrecht-immutability-exceptions/1';
+interface ExceptionBlock {
   baseCommit: string;
   description: string;
   entries: Array<{ key: string; kind: 'regenerated' | 'removed'; reason: string }>;
+}
+
+interface ExceptionFile extends ExceptionBlock {
+  schemaVersion: 'landesrecht-immutability-exceptions/1';
+  releases?: ExceptionBlock[];
 }
 
 const root = resolveRepositoryRoot();
@@ -48,14 +54,16 @@ try {
 try {
   const exceptions = JSON.parse(await readFile(join(root, 'data', 'content-immutability-exceptions.json'), 'utf8')) as ExceptionFile;
   if (exceptions.schemaVersion !== 'landesrecht-immutability-exceptions/1') throw new Error(`unbekannte Schemaversion ${exceptions.schemaVersion}`);
-  if (exceptions.baseCommit && baseCommit.startsWith(exceptions.baseCommit)) {
-    for (const entry of exceptions.entries) {
-      if (!entry.reason?.trim()) throw new Error(`Freigabe ${entry.key} ohne Begründung`);
-      allowed.set(entry.key, `${entry.kind}: ${entry.reason}`);
+  for (const block of [exceptions, ...(exceptions.releases ?? [])]) {
+    if (block.baseCommit && baseCommit.startsWith(block.baseCommit)) {
+      for (const entry of block.entries) {
+        if (!entry.reason?.trim()) throw new Error(`Freigabe ${entry.key} ohne Begründung`);
+        allowed.set(entry.key, `${entry.kind}: ${entry.reason}`);
+      }
+      console.log(`Dokumentierte Freigaben für Basis ${block.baseCommit}: ${block.entries.length}`);
+    } else {
+      console.log(`Hinweis: Freigabeblock in data/content-immutability-exceptions.json gilt für Basis ${block.baseCommit}, aktuelle Basis ${baseCommit.slice(0, 12)} – nicht angewandt.`);
     }
-    console.log(`Dokumentierte Freigaben für Basis ${exceptions.baseCommit}: ${exceptions.entries.length}`);
-  } else {
-    console.log(`Hinweis: data/content-immutability-exceptions.json gilt für Basis ${exceptions.baseCommit}, aktuelle Basis ${baseCommit.slice(0, 12)} – nicht angewandt.`);
   }
 } catch (error) {
   if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {

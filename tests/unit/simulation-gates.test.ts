@@ -3,6 +3,7 @@
  * Lock-Datei `data/simulation/baseline-locks.json` des echten Repositorys.
  */
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -11,7 +12,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 
-import { additiveHistoryProblems, additiveMetaProblems, checkAdditiveIdentity, checkBaselineLock, gitBlobSha1, readBaselineLocks } from '../../scripts/lib/simulation-gates.ts';
+import { parseBaselineLockFile } from '@landesrecht/importer-simulation/common/baseline-locks.ts';
+
+import { additiveHistoryProblems, additiveMetaProblems, checkAdditiveIdentity, checkBaselineLock, checkBaselineSeeds, checkEvidenceHierarchy, evidenceLevel, gitBlobSha1, readBaselineLocks } from '../../scripts/lib/simulation-gates.ts';
 
 const GIT_ENV = { ...process.env, GIT_AUTHOR_NAME: 'Test', GIT_AUTHOR_EMAIL: 'test@example.invalid', GIT_COMMITTER_NAME: 'Test', GIT_COMMITTER_EMAIL: 'test@example.invalid', GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null' };
 const jsonText = (value: unknown): string => `${JSON.stringify(value, null, 2)}\n`;
@@ -157,6 +160,81 @@ describe('Lock-Datei des Repositorys', () => {
     await expect(readBaselineLocks(root)).rejects.toThrow(/unbekannter Schlüssel/u);
     await write('data/simulation/baseline-locks.json', { west: 'nicht-hex' });
     await expect(readBaselineLocks(root)).rejects.toThrow(/Commit-Hash/u);
+    await restore();
+  });
+});
+
+describe('Baseline-Seeds (Lock-Schema 2)', () => {
+  const seed = (slug: string, sha: string, extra: Record<string, unknown> = {}) => ({ jurisdiction: 'nsh', slug, baselineVersionId: '2023-12-01', sha256: sha, acceptedAt: '2026-09-29', decision: 'Test', ...extra });
+  const sha256File = async (relative: string) => createHash('sha256').update(await readFile(file(relative))).digest('hex');
+  const simVersion = { versionId: '2026-05-18', simulationValidFrom: '2026-05-18', simulationValidTo: null, citation: 'Z', changeNote: 'Sim', body: [] };
+
+  it('liest Schema 1 und 2 und lehnt unvollständige Seeds ab', () => {
+    expect(parseBaselineLockFile({ west: 'ff1b1f43e209' })).toMatchObject({ schemaVersion: 1, jurisdictions: { west: { commit: 'ff1b1f43e209', freeze: false } }, seeds: [] });
+    const v2 = parseBaselineLockFile({ schemaVersion: 'landesrecht-simulation-baseline-locks/2', jurisdictions: { nsh: { commit: 'abcdef1' } }, seeds: [seed('a-nsh', 'a'.repeat(64))] });
+    expect(v2.seeds[0]).toMatchObject({ slug: 'a-nsh', sha256: 'a'.repeat(64) });
+    expect(() => parseBaselineLockFile({ schemaVersion: 'landesrecht-simulation-baseline-locks/2', jurisdictions: {}, seeds: [{ ...seed('a-nsh', 'a'.repeat(64)), decision: ' ' }] })).toThrow(/Entscheidungsreferenz/u);
+    expect(() => parseBaselineLockFile({ schemaVersion: 'landesrecht-simulation-baseline-locks/2', jurisdictions: {}, seeds: [seed('a-nsh', 'a'.repeat(64)), seed('a-nsh', 'b'.repeat(64))] })).toThrow(/doppelt/u);
+    expect(() => parseBaselineLockFile({ schemaVersion: 'landesrecht-simulation-baseline-locks/2', jurisdictions: {}, seeds: [seed('a-nsh', 'kurz')] })).toThrow(/SHA-256/u);
+  });
+
+  it('verlangt für fortgeschriebene Normen einen Seed, ersetzt mit ihm den Commit-Vergleich und prüft Hash und sourceCommit', async () => {
+    await write('content/norms/nsh/a-nsh/versions/2026-05-18.json', simVersion);
+    expect((await checkBaselineSeeds(root, 'nsh', lockCommit, new Map())).problems).toEqual([expect.stringMatching(/nsh\/a-nsh ohne akzeptierten Baseline-Seed/u)]);
+    // Freigegebene Neuerzeugung der Baseline einer fortgeschriebenen Norm: nur mit neuem Seed zulässig.
+    const baseline = 'content/norms/nsh/a-nsh/versions/2023-12-01.json';
+    await write(baseline, (await readFile(file(baseline), 'utf8')).replace('Ausgangsfassung', 'neu geparst'));
+    const seeds = new Map([['a-nsh', seed('a-nsh', await sha256File(baseline)) as never]]);
+    expect((await checkBaselineLock(root, 'nsh', lockCommit)).problems).toEqual([expect.stringMatching(/Norm mit Sim-Fassungen wurde .* verändert/u)]);
+    expect((await checkBaselineLock(root, 'nsh', lockCommit, { seeds })).problems).toEqual([]);
+    expect((await checkBaselineSeeds(root, 'nsh', lockCommit, seeds)).problems).toEqual([]);
+    // Freeze: der Commit gilt auch für Normen mit Seed; der Seed muss dem Freeze-Commit entsprechen.
+    expect((await checkBaselineLock(root, 'nsh', lockCommit, { seeds, freeze: true })).problems).toHaveLength(1);
+    expect((await checkBaselineSeeds(root, 'nsh', lockCommit, seeds, { freeze: true })).problems).toEqual([expect.stringMatching(/Freeze-Commit .* weicht vom Seed ab/u)]);
+    // sourceCommit muss denselben Inhalt enthalten.
+    const withSource = new Map([['a-nsh', seed('a-nsh', await sha256File(baseline), { sourceCommit: lockCommit }) as never]]);
+    expect((await checkBaselineSeeds(root, 'nsh', lockCommit, withSource)).problems).toEqual([expect.stringMatching(/sourceCommit .* weicht vom Seed ab/u)]);
+    // Abweichender Inhalt gegenüber dem Seed.
+    await write(baseline, (await readFile(file(baseline), 'utf8')).replace('neu geparst', 'nochmals'));
+    expect((await checkBaselineSeeds(root, 'nsh', lockCommit, seeds)).problems).toEqual([expect.stringMatching(/weicht vom akzeptierten Seed .* ab/u)]);
+    await restore();
+  });
+
+  it('wendet zusätzliche Freigabeblöcke (releases) mit eigenem baseCommit an', async () => {
+    const baseline = 'content/norms/nsh/b-nsh/versions/2023-12-01.json';
+    await write(baseline, (await readFile(file(baseline), 'utf8')).replace('Ausgangsfassung', 'neu geparst'));
+    await write('data/content-immutability-exceptions.json', { schemaVersion: 'landesrecht-immutability-exceptions/1', baseCommit: '0123456789ab', description: 'alt', entries: [], releases: [{ baseCommit: lockCommit.slice(0, 12), description: 'Test', entries: [{ key: 'nsh/b-nsh/2023-12-01', kind: 'regenerated', reason: 'Test' }] }] });
+    expect((await checkBaselineLock(root, 'nsh', lockCommit)).problems).toEqual([]);
+    await restore();
+  });
+});
+
+describe('G11 Evidenzhierarchie', () => {
+  const WIKI = 'e'.repeat(64);
+  const ORIGINAL = 'f'.repeat(64);
+  const reference = (kind: string, sha: string, sourceRole?: string) => ({ kind, system: 'simulation', label: 'x', availability: 'r2-archived', bucket: 'landesrecht-quellen', objectKey: `nsh/simulation/${sha}.pdf`, sha256: sha, ...(sourceRole ? { sourceRole } : {}) });
+  const act = (references: unknown[], transcribedFrom = ORIGINAL) => ({ schemaVersion: 'landesrecht-simulation-act/1', slug: 'vo-nsh', jurisdiction: 'nsh', meta: {}, version: { sourceReferences: references }, provenance: { transcribedFrom } });
+
+  it('lässt ein Verzeichnis nur ergänzend zu und meldet es als Verkündungs-, Wortlaut- oder alleinige Rechtswirkungsgrundlage', async () => {
+    await write('data/simulation/nsh/sources.json', { sources: [{ sha256: WIKI, documentType: 'informational' }, { sha256: ORIGINAL, documentType: 'standalone-official-act' }] });
+    await write('data/simulation/nsh/acts/vo-nsh.json', act([reference('simulation-standalone-act', ORIGINAL, 'structure-bearing')]));
+    await write('data/simulation/nsh/ledger.json', { events: [{ id: 'e1', status: 'applied', evidence: [ORIGINAL, WIKI] }] });
+    expect((await checkEvidenceHierarchy(root, 'nsh')).problems).toEqual([]);
+    expect(evidenceLevel({ documentType: 'informational' })).toBe(4);
+    expect(evidenceLevel({ documentType: 'gazette', evidenceLevel: 3 })).toBe(3);
+
+    await write('data/simulation/nsh/acts/vo-nsh.json', act([reference('simulation-standalone-act', ORIGINAL, 'structure-bearing'), reference('simulation-promulgation-evidence', WIKI, 'amendment-evidence')]));
+    await write('data/simulation/nsh/ledger.json', { events: [{ id: 'e1', status: 'applied', evidence: [WIKI] }] });
+    const report = await checkEvidenceHierarchy(root, 'nsh');
+    expect(report.problems).toEqual([
+      expect.stringMatching(/acts\/vo-nsh\.json\.version: Sekundärquelle eeeeeeeeeeee \(Ebene 4\) als simulation-promulgation-evidence/u),
+      expect.stringMatching(/ledger\.json e1: angewandt, aber nur mit Sekundärquellen belegt/u),
+    ]);
+    await write('data/simulation/nsh/acts/vo-nsh.json', act([reference('simulation-promulgation-evidence', WIKI)], WIKI));
+    expect((await checkEvidenceHierarchy(root, 'nsh')).problems).toEqual(expect.arrayContaining([
+      expect.stringMatching(/Wortlautquelle eeeeeeeeeeee ist Sekundärquelle/u),
+      expect.stringMatching(/kein amtlicher Beleg der Ebene 1–3/u),
+    ]));
     await restore();
   });
 });

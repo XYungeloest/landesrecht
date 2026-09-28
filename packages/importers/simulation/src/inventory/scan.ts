@@ -9,7 +9,7 @@ import { basename, extname, join, relative } from 'node:path';
 
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 
-import { ARCHIVE_CONTAINER, ARCHIVE_DIR, ARCHIVE_FOLDERS, CACHE_ARCHIVE_DIR, CACHE_TEXT_DIR, IGNORED_ARCHIVE_DIRECTORIES, IGNORED_ARCHIVE_ENTRIES } from '../common/paths.ts';
+import { ARCHIVE_CONTAINER, ARCHIVE_DIR, ARCHIVE_FOLDERS, CACHE_ARCHIVE_DIR, CACHE_TEXT_DIR, IGNORED_ARCHIVE_DIRECTORIES, IGNORED_ARCHIVE_ENTRIES, NON_SIMULATION_ARCHIVE_FOLDERS } from '../common/paths.ts';
 import { detectFacts, type DetectedFacts } from './detect.ts';
 import { extractDocx, extractPdf, extractPlainText, mediaTypeFor, type ExtractedText, type TextLayerStatus } from './extract.ts';
 import { listZipEntries } from './zip.ts';
@@ -62,7 +62,7 @@ async function walkArchive(root: string): Promise<ArchiveFile[]> {
   const archiveRoot = join(root, ARCHIVE_DIR);
   const files: ArchiveFile[] = [];
   for (const folder of await readdir(archiveRoot, { withFileTypes: true })) {
-    if (!folder.isDirectory() || IGNORED_ARCHIVE_DIRECTORIES.has(folder.name)) continue;
+    if (!folder.isDirectory() || IGNORED_ARCHIVE_DIRECTORIES.has(folder.name) || NON_SIMULATION_ARCHIVE_FOLDERS.has(folder.name)) continue;
     const jurisdiction = ARCHIVE_FOLDERS[folder.name.normalize('NFC')] ?? ARCHIVE_FOLDERS[folder.name];
     if (!jurisdiction) throw new Error(`Archivordner ${folder.name} ist keiner Jurisdiktion zugeordnet (ARCHIVE_FOLDERS)`);
     const walk = async (directory: string): Promise<void> => {

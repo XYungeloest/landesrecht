@@ -6,16 +6,16 @@ Die Tabellen zeigen die **Vorsortierung** aus Textauszug und Dokumentkopf. Sie i
 
 ## Kennzahlen
 
-- Dateien im Archiv: **132**, davon hashidentische Dubletten 1 → **131 Quellen**
-- Je Land: BayWü 41 · NSH 56 · West 34
-- Medienart: application/octet-stream 2 · application/pdf 118 · application/vnd.openxmlformats-officedocument.wordprocessingml.document 1 · text/plain 10
-- Textebene: none 2 · not-applicable 11 · text 118 (`none`/`sparse` = Scan oder Deckblatt, keine OCR)
-- Vorsortierte Dokumentart: gazette 32 · informational 4 · legislative-document 26 · ministerial-gazette 5 · press-release 1 · promulgation-notice 2 · standalone-official-act 55 · unknown 6
+- Dateien im Archiv: **133**, davon hashidentische Dubletten 1 → **132 Quellen**
+- Je Land: BayWü 42 · NSH 56 · West 34
+- Medienart: application/octet-stream 2 · application/pdf 118 · application/vnd.openxmlformats-officedocument.wordprocessingml.document 1 · text/plain 11
+- Textebene: none 2 · not-applicable 12 · text 118 (`none`/`sparse` = Scan oder Deckblatt, keine OCR)
+- Vorsortierte Dokumentart: gazette 32 · informational 4 · legislative-document 26 · ministerial-gazette 5 · press-release 1 · promulgation-notice 3 · standalone-official-act 55 · unknown 6
 - Werkzeuge: pdftotext version 26.07.0; utf-8; keine Extraktion; unzip word/document.xml
 
 ## Container-Abgleich
 
-`imports/Archiv.zip`: 123 Einträge (ohne `__MACOSX`/`.DS_Store`). Nur im Zip: keine. Nur im Ordner: `Landesverfassung_Bayern-Württemberg (2).pdf`, `Staatsverfassung_Bayern_Württemberg.pdf`, `ds_2_10.pdf`, `ds_2_11.pdf`, `ds_2_12.pdf`, `ds_2_13.pdf`, `ds_2_9.pdf`, `gvbl.wiki`. Der Zip-Inhalt wird nicht gesondert inventarisiert.
+`imports/Archiv.zip`: 123 Einträge (ohne `__MACOSX`/`.DS_Store`). Nur im Zip: keine. Nur im Ordner: `Landesverfassung_Bayern-Württemberg (2).pdf`, `Staatsverfassung_Bayern_Württemberg.pdf`, `ds_2_10.pdf`, `ds_2_11.pdf`, `ds_2_12.pdf`, `ds_2_13.pdf`, `ds_2_9.pdf`, `gvbl.wiki`, `verkündung120125.txt`. Der Zip-Inhalt wird nicht gesondert inventarisiert.
 
 ## Land Westdeutschland (34 Quellen)
 
@@ -117,7 +117,7 @@ Die Tabellen zeigen die **Vorsortierung** aus Textauszug und Dokumentkopf. Sie i
 | nsh/Verordnung_zur_einheitlichen_Regelung_des_Verfassungsschutzwesens_im_Lande.pdf | `fd20ed2b847a` | pdf | 24 | text | NIEDERSÄCHSISCH-HOLSTEINISCHE STAATSKANZLEI | 2024-02-26 | – | Ministerpräsident | – | – | standalone-official-act |
 | nsh/WGFV.docx.pdf | `c5a69b933353` | pdf | 3 | text | Die Landesregierung | 2026-02-08 | – | Landesregierung | – | – | standalone-official-act |
 
-## Freistaat Bayern-Württemberg (41 Quellen)
+## Freistaat Bayern-Württemberg (42 Quellen)
 
 | Datei | SHA-256 | Typ | S. | Textebene | Titel (erkannt) | Dokumentdatum | Ausgabedatum | Organ | Blatt/Serie | Nummer | Dokumentart (vorsortiert) |
 | --- | --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -152,6 +152,7 @@ Die Tabellen zeigen die **Vorsortierung** aus Textauszug und Dokumentkopf. Sie i
 | baywü/Organisationserlass_02.pdf | `f20493427726` | pdf | 1 | text | Die Staatsregierung Geschäftszahl: 25-MP-04-OE-02 | 2025-03-16 | – | Ministerpräsident | – | – | standalone-official-act |
 | baywü/OrganisationserlassStReg.pdf | `a1487f499833` | pdf | 12 | text | Der Ministerpräsident Geschäftszahl: 26-MP-07-V-02 | 2026-04-05 | – | Ministerpräsident | – | Nr. 6 | standalone-official-act |
 | baywü/Stiftung des Rainer-Winkler Ordens.pdf | `18fcd6211fae` | pdf | 4 | text | Amtsblatt bekannt gemacht.‬ | 2026-06-05 | – | Ministerpräsident | Amtsblatt bekannt gemacht.‬ | Nr. 1 | ministerial-gazette |
+| baywü/verkündung120125.txt | `d4711c710d8c` | text/plain | – | not-applicable | <:Wappen_SD:1261784851548471368> \| **Mitteilung des Bayerisch-Württembergischen Justizmini | – | – | gez. Christian Lehrmann* | – | – | promulgation-notice |
 | baywü/Verordnung Geschäftsverteilung BayWü StReg.pdf | `808c468edf51` | pdf | 13 | text | Die Ministerpräsidentin Geschäftszahl: 25-MP-04-Ri-01 | 2025-01-12 | – | Ministerpräsidentin | – | Nr. 6 | standalone-official-act |
 | baywü/Verordnung Pflichtfächer PuG, Wirtschaft.pdf | `cc0a376d5d46` | pdf | 6 | text | Staatsministerium Geschäftszahl: 26-StBFJF-07-V-01 | 2025-01-12 | – | Staatsministerium für Bildung | – | – | standalone-official-act |
 | baywü/Verordnung zu Regelung des Unterrichtbeginns.pdf | `25e6c4a2cc63` | pdf | 2 | text | Die Staatsregierung | 2025-01-23 | – | Staatsministerium für Unterricht und Kultus | – | – | standalone-official-act |

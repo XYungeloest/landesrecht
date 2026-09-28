@@ -53,12 +53,26 @@ Jeder Änderungsbefehl trifft im Text vom 12. Januar 2025 genau die adressierte 
 Die Fassungen `2025-01-12`, `2026-05-29`, `2026-06-26`, `2026-06-27` und `2026-08-29` sind aus Akt und Rezepten
 reproduzierbar (`npm run import:simulation:consolidate -- --jurisdiction baywue --check`).
 
-## 4 Offene Punkte
+## 4 Wirkdatum und Quellenstatus (Entscheidung 2026-09-29)
 
-- Das Verkündungsblatt der Verfassung selbst liegt nicht vor; das Wirkdatum 12. Januar 2025 beruht auf der in späteren
-  Blattausgaben genannten Bekanntmachung.
-- Das Änderungsgesetz zu Artikel 24 nennt eine Änderung „am 07. Mai 2026“. Das Blattverzeichnis (`gvbl.wiki`) führt für
-  2026 genau die fünf vorliegenden Änderungsgesetze; die Alttexte schließen lückenlos an. Ein weiterer Akt ist nicht belegt.
-- Die Beziehungsnotizen der fünf Änderungsakte (`meta.json`, „Slug vorläufig, Rezept gesperrt“) stammen aus dem Stand vor
-  dieser Entscheidung und bleiben nach der Additivitätsregel (G3) unverändert; maßgeblich sind die Rezepte und die
-  Beziehungen `amended-by` der Staatsverfassung.
+**Verbindlich: `staatsverfassung-2025-baywue` gilt ab 12. Januar 2025** (Nutzerentscheidung). Gründe: Artikel 92
+Absatz 2 knüpft das Inkrafttreten an den Tag der Verkündung; spätere amtliche Sim-Veröffentlichungen bezeichnen die
+Verfassung durchgehend als Bekanntmachung vom 12. Januar 2025; keine widersprechende Evidenz liegt vor. Der
+Rechtsstand wird nicht blockiert, die fünf Folgeänderungen bleiben angewandt.
+
+Quellenstatus (in `meta.editorialResolutions`, `kind: source-status`): Wortlaut nach dem ausgefertigten Einzeldokument
+(Ebene 2); Verkündung durch die **Mitteilung des Bayerisch-Württembergischen Justizministeriums „Verkündung der
+Verfassung“** belegt (`baywü/verkündung120125.txt`, `d4711c710d8c…`, gez. Justizminister Christian Lehrmann; Ebene 2,
+seit Lauf 15 im Archiv). Die Mitteilung trägt kein Datum; die Ziffern im Dateinamen werden nicht verwendet. Das Datum
+12. Januar 2025 ist mittelbar amtlich belegt (Ebene 3: GVBl. BayWü 2025 Nr. 3 S. 10). **Das Original-Verkündungsblatt
+im Sinne von Artikel 92 Absatz 1 fehlt weiterhin** und bleibt im Publikationsinventar als fehlende Primärquelle.
+
+## 5 Offene Punkte
+
+- Original-Verkündungsblatt der Verfassung (siehe 4).
+- Das Änderungsgesetz zu Artikel 24 nennt eine Änderung „am 07. Mai 2026“. Das Blattverzeichnis (`gvbl.wiki`,
+  Sekundärquelle) führt für 2026 genau die fünf vorliegenden Änderungsgesetze; die Alttexte schließen lückenlos an. Ein
+  weiterer Akt ist nicht belegt.
+- Die Beziehungsnotizen der fünf Änderungsakte („Slug vorläufig, Rezept gesperrt“) bleiben gespeichert (Additivität);
+  seit 2026-09-29 sind sie durch `editorialResolutions` (`superseded-technical-note`) als überholt gekennzeichnet –
+  maßgeblich ist das angewandte Rezept.

@@ -6,6 +6,7 @@
  *   G3 meta.json/history.json von Normen mit Sim-Fassungen nur additiv gegenüber dem Referenz-Commit
  *   G4 Konsolidierung reproduzierbar (`import-simulation consolidate --check` je Land)
  *   G9 Inventar reproduzierbar (nur mit vorhandenem imports/-Archiv)
+ *   G11 Evidenzhierarchie: keine Wortlaut-, Verkündungs- oder Rechtswirkungsgrundlage aus Sekundärquellen (Ebene 4/5)
  *
  * G1 (`content:immutability`), G5/G6 (`content:validate`) und G8 (Unit-Tests) laufen getrennt.
  *
@@ -16,7 +17,9 @@ import { isExternallyMaintained } from '@landesrecht/legal-core/lib/provenance.t
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { runConsolidation } from '@landesrecht/importer-simulation/consolidate/run.ts';
 
-import { BASELINE_LOCKS_PATH, checkAdditiveIdentity, checkBaselineLock, checkInventoryReproducible, readBaselineLocks, type GateReport } from './lib/simulation-gates.ts';
+import { readBaselineLockFile, seedsFor } from '@landesrecht/importer-simulation/common/baseline-locks.ts';
+
+import { BASELINE_LOCKS_PATH, checkAdditiveIdentity, checkBaselineLock, checkBaselineSeeds, checkEvidenceHierarchy, checkInventoryReproducible, type GateReport } from './lib/simulation-gates.ts';
 
 const args = process.argv.slice(2);
 const quiet = args.includes('--quiet');
@@ -31,15 +34,17 @@ const root = resolveRepositoryRoot();
 const jurisdictions: JurisdictionId[] = (requested ? [requested as JurisdictionId] : [...JURISDICTION_IDS]).filter((jurisdiction) => !isExternallyMaintained(jurisdiction));
 const reports: GateReport[] = [];
 
-const locks = await readBaselineLocks(root);
+const lockFile = await readBaselineLockFile(root);
 for (const jurisdiction of jurisdictions) {
-  const commit = locks[jurisdiction];
-  if (!commit) {
+  const lock = lockFile?.jurisdictions[jurisdiction];
+  if (!lockFile || !lock) {
     reports.push({ gate: 'G2', jurisdiction, problems: [], notes: [`${jurisdiction}: kein Referenz-Commit in ${BASELINE_LOCKS_PATH} – Baseline-Lock nicht geprüft`] });
     continue;
   }
-  reports.push(await checkBaselineLock(root, jurisdiction, commit));
-  reports.push(await checkAdditiveIdentity(root, jurisdiction, commit));
+  const options = lockFile.schemaVersion === 2 ? { seeds: seedsFor(lockFile, jurisdiction), freeze: lock.freeze } : {};
+  reports.push(await checkBaselineLock(root, jurisdiction, lock.commit, options));
+  if (lockFile.schemaVersion === 2) reports.push(await checkBaselineSeeds(root, jurisdiction, lock.commit, options.seeds!, { freeze: lock.freeze }));
+  reports.push(await checkAdditiveIdentity(root, jurisdiction, lock.commit, options));
 }
 
 for (const jurisdiction of jurisdictions) {
@@ -51,6 +56,8 @@ for (const jurisdiction of jurisdictions) {
     notes: [`${jurisdiction}: Konsolidierung reproduzierbar geprüft – ${result.acts.length} Akt(e), ${result.recipes.length} Rezept(e), ${result.blockedTargets.length} gesperrte Ziel(e)`],
   });
 }
+
+for (const jurisdiction of jurisdictions) reports.push(await checkEvidenceHierarchy(root, jurisdiction));
 
 if (!skipInventory && !requested) reports.push(await checkInventoryReproducible(root));
 

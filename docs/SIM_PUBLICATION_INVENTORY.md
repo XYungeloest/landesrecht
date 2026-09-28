@@ -5,7 +5,7 @@ Ausgabe gilt als bekannt, wenn Nummernfolge, Querverweis oder Verkündungsmittei
 konkrete Suchliste. Eine bislang fehlende Quelle, die im Archiv `imports/` auftaucht, wird über das Inventar und die
 Bewertung nachgetragen (Status je Land bleibt `SIM SOURCES PARTIAL`, bis alle bekannten Lücken geschlossen sind).
 
-## Land Westdeutschland (`west`) – SIM SOURCES PARTIAL, Stand 2026-09-28
+## Land Westdeutschland (`west`) – SIM SOURCES PARTIAL, Stand 2026-09-29
 
 | Blattreihe | bekannt | vorhanden | fehlend | verdächtig |
 | --- | ---: | ---: | --- | --- |
@@ -24,9 +24,9 @@ Ungeklärte Zeiträume (Suchliste):
 Hinweise zu fehlenden Quellen:
 
 - Rechtsstand nicht vollständig belegbar: Lücken in den Nummernfolgen, dreifache Nummer 3 im Jahrgang 2026, fehlendes Ministerialblatt 2026 Nr. 2, Ausgaben mit Platzhaltern.
-- Blattverzeichnis (gvbl.wiki): Gesetzblätter 2024 Nr. 01–06, 2025 Nr. 07–10, 2026 Nr. 11–12 (17.05.2026) und Ministerialblätter 2025 Nr. 1–2 – alle im Archiv; keine neue Ausgabe. Das Verzeichnis endet am 17.05.2026 und führt GV. West 2025 Nr. 05, MBl. WD 2025 Nr. 3 und die Ausgaben ab Juni 2026 nicht; die dreifache „Nr. 3“ 2026, die Nummern 4 ff. und das fehlende MBl. WD 2026 Nr. 2 bleiben ungeklärt.
+- Blattverzeichnis (gvbl.wiki): Gesetzblätter 2024 Nr. 01–06, 2025 Nr. 07–10, 2026 Nr. 11–12 (17.05.2026) und Ministerialblätter 2025 Nr. 1–2 – alle im Archiv; keine neue Ausgabe. Sekundärquelle (Ebene 4): nur Ausgabenfolge und Lückenerkennung. Das Verzeichnis endet am 17.05.2026 und führt GV. West 2025 Nr. 05, MBl. WD 2025 Nr. 3 und die Ausgaben ab Juni 2026 nicht; die dreifache „Nr. 3“ 2026, die Nummern 4 ff. und das fehlende MBl. WD 2026 Nr. 2 bleiben ungeklärt.
 
-## Land Niedersachsen-Holstein (`nsh`) – SIM SOURCES PARTIAL, Stand 2026-09-28
+## Land Niedersachsen-Holstein (`nsh`) – SIM SOURCES PARTIAL, Stand 2026-09-29
 
 | Blattreihe | bekannt | vorhanden | fehlend | verdächtig |
 | --- | ---: | ---: | --- | --- |
@@ -46,14 +46,14 @@ Hinweise zu fehlenden Quellen:
 - Verdächtig: MAL-I Teil 1/2024 enthält nur die Landesverfassung (S. 4–26), das Inhaltsverzeichnis nennt sieben weitere Gesetze („Fehler! Textmarke nicht definiert.“), die fehlen.
 - Fehlende Quellen: das für den 08.07.2024 angekündigte Gesetzblatt; Staatsvertrag zum Gesetz vom 09.12.2025 (im Blatt nicht abgedruckt); die sieben im Inhaltsverzeichnis von MAL-I Teil 1/2024 genannten Gesetze.
 
-## Freistaat Bayern-Württemberg (`baywue`) – SIM SOURCES PARTIAL, Stand 2026-09-28
+## Freistaat Bayern-Württemberg (`baywue`) – SIM SOURCES PARTIAL, Stand 2026-09-29
 
 | Blattreihe | bekannt | vorhanden | fehlend | verdächtig |
 | --- | ---: | ---: | --- | --- |
 | GVBl. Süd – Gesetzes- und Verordnungsblatt des Freistaates Süddeutschland | 1 | 1 | – | – |
 | GVBl. BayWü – Gesetzes- und Verordnungsblatt des Freistaates Bayern-Württemberg (2025) / Gesetz- und Verordnungsblatt für den Freistaat Bayern-Württemberg (2026) | 7 | 7 | – | 2025 Nr. 3; 2026 Nr. 3 |
 
-Einzelakte ohne Blattausgabe: 28 vorhanden, 2 nur als Verkündungsbeleg.
+Einzelakte ohne Blattausgabe: 28 vorhanden, 3 nur als Verkündungsbeleg.
 
 Ungeklärte Zeiträume (Suchliste):
 
@@ -62,7 +62,7 @@ Ungeklärte Zeiträume (Suchliste):
 
 Hinweise zu fehlenden Quellen:
 
-- Fehlende Quellen: Verkündungsblatt oder Bekanntmachung der Staatsverfassung vom 12. Januar 2025 (der Text liegt vor, die Bekanntmachung ist nur durch Zitate belegt); Organisationserlass vom 14. Februar 2025; Erdbebenhilfegesetz vom 14. Mai 2026 (nur Entwurf, durch Gesetz vom 26. Juni 2026 aufgehoben); „Bekanntmachung vom 31. Mai 2026“ der AGO-Änderungsverordnung; weitere „Verordnungen betreffend des Grenzschutzes“ 2024 (Plural; das Blattverzeichnis nennt eine „Verordnung zur Verstärkung der Polizeipräsenz an den Süddeutschen Auslandsgrenzen“ vom 16. August 2024); Bekanntmachung des Außerkrafttretens des Handlungsfähigkeitsgesetzes; Anlage (Haushaltsplan) zum Haushaltsgesetz 2026; Einzelmitteilungen, auf die das Blattverzeichnis für Verordnungen ohne Blatt verweist.
+- Fehlende Quellen: Original-Verkündungsblatt der Staatsverfassung vom 12. Januar 2025 (Artikel 92 Absatz 1; der Text liegt vor, die Verkündung belegt eine undatierte Mitteilung des Justizministeriums, das Datum spätere Blattausgaben – Quellenstatus „mittelbar amtlich belegt“); Organisationserlass vom 14. Februar 2025; Erdbebenhilfegesetz vom 14. Mai 2026 (nur Entwurf, durch Gesetz vom 26. Juni 2026 aufgehoben); „Bekanntmachung vom 31. Mai 2026“ der AGO-Änderungsverordnung; weitere „Verordnungen betreffend des Grenzschutzes“ 2024 (Plural; das Blattverzeichnis nennt eine „Verordnung zur Verstärkung der Polizeipräsenz an den Süddeutschen Auslandsgrenzen“ vom 16. August 2024); Bekanntmachung des Außerkrafttretens des Handlungsfähigkeitsgesetzes; Anlage (Haushaltsplan) zum Haushaltsgesetz 2026; amtliche Verkündungsbelege der Einzelverordnungen vom Januar 2025, die nur das Blattverzeichnis (Sekundärquelle) als veröffentlicht führt.
 - Druckmängel: GVBl. BayWü 2025 Nr. 2 – Seite 6 fehlt in der Zählung, Seite 11 ist ein Duplikat von Seite 10 (SzFdPBbJG unvollständig prüfbar); GVBl. Süd 2024 Nr. 1 – § 7 Abs. 2 des Landarzt-Stipendiengesetzes im Satz zerlegt; GVBl. BayWü 2025 Nr. 1 – SchuSprG mit verrutschten §-Bezeichnungen.
 - Blockierte Zielnorm (Baseline fehlt): abgeordnetengesetz-baywue – Bayerisches Abgeordnetengesetz (BayAbgG, BayRS 1100-1-I); benötigt von: gesetz-zur-aenderung-des-sueddeutschen-abgeordnetengesetzes-2024-baywue.
 - Blockierte Zielnorm (Baseline fehlt): pog-baywue – Gesetz über die Organisation der Bayerischen Polizei (Polizeiorganisationsgesetz) (POG, BayRS 2012-2-1-I); benötigt von: BayWueLEXG (GVBl. BayWü 2025 Nr. 2 S. 4, Review); Erlass zur Aufwertung des Grenzschutzes 25-StMIFIKJ-04-E-02 (Review, aufgehoben 13.04.2025).

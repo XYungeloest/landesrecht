@@ -2,6 +2,7 @@
 /** Vorschriftendaten: alle Metadaten der Norm und der gewählten Fassung. */
 import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { resolveRelationNote, sourceStatusResolutions } from '@landesrecht/legal-core/lib/editorial-resolutions.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import type { NormView } from '../lib/norm-view.ts';
 import NormPageShell from './NormPageShell.astro';
@@ -55,6 +56,12 @@ const RELATION_LABELS: Record<string, string> = {
       <dt>Änderungshinweis</dt><dd>{view.version.changeNote}</dd>
     </dl>
   </div>
+  {sourceStatusResolutions(meta).length > 0 && (
+    <div class="card">
+      <h2>Quellenlage</h2>
+      <ul>{sourceStatusResolutions(meta).map((entry) => <li>{entry.statement}{entry.date && <span class="muted"> (Stand {formatDate(entry.date)})</span>}</li>)}</ul>
+    </div>
+  )}
   <div class="card">
     <h2>Beziehungen</h2>
     {meta.relations.length === 0 ? <p class="muted">Keine Beziehungen hinterlegt.</p> : (
@@ -64,7 +71,8 @@ const RELATION_LABELS: Record<string, string> = {
           return (
             <li>
               {RELATION_LABELS[relation.type] ?? relation.type}: <a href={getNormUrl(jurisdiction, relation.target.slug)}>{relation.target.slug}</a>
-              <span class="muted"> ({getJurisdiction(jurisdiction).shortName}{relation.note ? `, ${relation.note}` : ''}{relation.date ? `, ${formatDate(relation.date)}` : ''})</span>
+              <span class="muted"> ({getJurisdiction(jurisdiction).shortName}{resolveRelationNote(meta, relation).note ? `, ${resolveRelationNote(meta, relation).note}` : ''}{relation.date ? `, ${formatDate(relation.date)}` : ''})</span>
+              {resolveRelationNote(meta, relation).superseded && <span class="muted"><br />Überholte technische Notiz{resolveRelationNote(meta, relation).superseded!.date ? ` (aufgelöst am ${formatDate(resolveRelationNote(meta, relation).superseded!.date!)})` : ''}: <s>{resolveRelationNote(meta, relation).superseded!.note}</s></span>}
             </li>
           );
         })}

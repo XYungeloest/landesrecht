@@ -7,6 +7,9 @@
  *      Baseline-Importe), sind ausgenommen. Für Normen **mit** Sim-Fassungen gilt keine Freigabe aus
  *      `data/content-immutability-exceptions.json`; für Normen ohne Sim-Fassungen gelten dokumentierte
  *      Freigaben nur, wenn ihr `baseCommit` der Referenz-Commit ist.
+ *      Lock-Datei Schema 2: Jede fortgeschriebene Norm (Sim-Fassung oder Rezept auf die Baseline) braucht einen
+ *      akzeptierten Baseline-Seed (SHA-256 der Datei); für Normen mit Seed ersetzt der Seed den Commit-Vergleich –
+ *      außer im Freeze-Land (West), wo beides gilt. G3 vergleicht dann gegen `sourceCommit` des Seeds.
  *   G3 Normidentität additiv: `meta.json`/`history.json` von Normen mit Sim-Fassungen enthalten gegenüber dem
  *      Referenz-Commit alle alten Historieneinträge, Beziehungen und Schlagworte unverändert; alle übrigen
  *      Meta-Felder sind gleich – außer `status`, `expiryDate`, `successor`, `successorTarget`, `relations`,
@@ -26,11 +29,12 @@ import { isJurisdictionId, JURISDICTION_IDS, SIMULATION_BASELINE_DATE, type Juri
 import { INVENTORY_PATH } from '@landesrecht/importer-simulation/common/paths.ts';
 import { scanArchive, type SourceInventory } from '@landesrecht/importer-simulation/inventory/scan.ts';
 
-export const BASELINE_LOCKS_PATH = 'data/simulation/baseline-locks.json';
+export { BASELINE_LOCKS_PATH } from '@landesrecht/importer-simulation/common/baseline-locks.ts';
+import { BASELINE_LOCKS_PATH, parseBaselineLockFile, type BaselineSeed } from '@landesrecht/importer-simulation/common/baseline-locks.ts';
 export const IMMUTABILITY_EXCEPTIONS_PATH = 'data/content-immutability-exceptions.json';
 
 /** Meta-Felder, die eine Sim-Fortschreibung ändern darf (Aufhebung, Nachfolge, additive Beziehungen/Schlagworte). */
-export const ADDITIVE_META_FIELDS = ['status', 'expiryDate', 'successor', 'successorTarget', 'relations', 'keywords'] as const;
+export const ADDITIVE_META_FIELDS = ['status', 'expiryDate', 'successor', 'successorTarget', 'relations', 'keywords', 'editorialResolutions'] as const;
 
 export type BaselineLocks = Partial<Record<JurisdictionId, string>>;
 
@@ -41,9 +45,14 @@ export interface GateReport {
   notes: string[];
 }
 
-interface ImmutabilityExceptions {
+interface ImmutabilityExceptionBlock {
   baseCommit?: string;
   entries?: Array<{ key: string; kind: string; reason?: string }>;
+}
+
+interface ImmutabilityExceptions extends ImmutabilityExceptionBlock {
+  /** Weitere Freigabeblöcke mit eigenem baseCommit (dieselbe Regel). */
+  releases?: ImmutabilityExceptionBlock[];
 }
 
 export interface NormVersionFiles {
@@ -64,7 +73,7 @@ export function gitBlobSha1(content: Buffer): string {
   return createHash('sha1').update(`blob ${content.byteLength}\0`).update(content).digest('hex');
 }
 
-/** `data/simulation/baseline-locks.json`: `{ "<jurisdiction>": "<commit>" }` – flach, nur Jurisdiktionen. */
+/** Referenz-Commits je Land aus `data/simulation/baseline-locks.json` (Schema 1 flach oder Schema 2). */
 export async function readBaselineLocks(root: string): Promise<BaselineLocks> {
   let raw: string;
   try {
@@ -73,15 +82,73 @@ export async function readBaselineLocks(root: string): Promise<BaselineLocks> {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') return {};
     throw error;
   }
-  const parsed = JSON.parse(raw) as unknown;
-  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) throw new Error(`${BASELINE_LOCKS_PATH}: muss ein Objekt { "<jurisdiction>": "<commit>" } sein`);
-  const locks: BaselineLocks = {};
-  for (const [key, value] of Object.entries(parsed as Record<string, unknown>)) {
-    if (!isJurisdictionId(key)) throw new Error(`${BASELINE_LOCKS_PATH}: unbekannter Schlüssel „${key}“ (zulässig: ${JURISDICTION_IDS.join(', ')})`);
-    if (typeof value !== 'string' || !COMMIT_PATTERN.test(value)) throw new Error(`${BASELINE_LOCKS_PATH}.${key}: muss ein Commit-Hash sein`);
-    locks[key] = value;
+  const file = parseBaselineLockFile(JSON.parse(raw) as unknown);
+  return Object.fromEntries(Object.entries(file.jurisdictions).map(([key, lock]) => [key, lock!.commit])) as BaselineLocks;
+}
+
+export interface SeedOptions {
+  /** Akzeptierte Seeds des Landes (Slug → Seed); Schema 2. */
+  seeds?: ReadonlyMap<string, BaselineSeed>;
+  /** Freeze-Land: Commit-Vergleich gilt auch für Normen mit Seed. */
+  freeze?: boolean;
+}
+
+/** Slugs, die eine Sim-Fortschreibung auf ihre Ausgangsfassung stützen: Sim-Fassung neben der Baseline oder Rezept mit Baseline-Seed. */
+export async function fortgeschriebeneBaselines(root: string, jurisdiction: JurisdictionId): Promise<Set<string>> {
+  const slugs = new Set((await scanNormVersions(root, jurisdiction)).filter((norm) => norm.hasBaseline && norm.simVersions.length > 0).map((norm) => norm.slug));
+  try {
+    const manifest = JSON.parse(await readFile(join(root, 'data', 'simulation', jurisdiction, 'consolidation-manifest.json'), 'utf8')) as { recipes?: Array<{ target: string; seedVersionId?: string }> };
+    for (const recipe of manifest.recipes ?? []) if (recipe.seedVersionId === SIMULATION_BASELINE_DATE) slugs.add(recipe.target);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
   }
-  return locks;
+  return slugs;
+}
+
+function sha256Hex(content: Buffer): string {
+  return createHash('sha256').update(content).digest('hex');
+}
+
+/**
+ * G2 (Seeds): jeder Seed des Landes zeigt auf eine vorhandene Ausgangsfassung mit genau diesem SHA-256; ein
+ * `sourceCommit` enthält denselben Inhalt; im Freeze-Land entspricht der Seed dem Freeze-Commit; jede fortgeschriebene
+ * Baseline hat einen Seed.
+ */
+export async function checkBaselineSeeds(root: string, jurisdiction: JurisdictionId, commit: string, seeds: ReadonlyMap<string, BaselineSeed>, options: { freeze?: boolean } = {}): Promise<GateReport> {
+  const report: GateReport = { gate: 'G2', jurisdiction, problems: [], notes: [] };
+  const required = await fortgeschriebeneBaselines(root, jurisdiction);
+  for (const slug of [...required].sort()) {
+    if (!seeds.has(slug)) report.problems.push(`${BASELINE_LOCKS_PATH}: fortgeschriebene Norm ${jurisdiction}/${slug} ohne akzeptierten Baseline-Seed (seeds[])`);
+  }
+  let verified = 0;
+  for (const seed of [...seeds.values()].sort((left, right) => left.slug.localeCompare(right.slug))) {
+    const path = `content/norms/${jurisdiction}/${seed.slug}/versions/${seed.baselineVersionId}.json`;
+    let content: Buffer;
+    try {
+      content = await readFile(join(root, path));
+    } catch {
+      report.problems.push(`${BASELINE_LOCKS_PATH}: Seed ${jurisdiction}/${seed.slug} – ${path} fehlt`);
+      continue;
+    }
+    if (sha256Hex(content) !== seed.sha256) {
+      report.problems.push(`${path}: SHA-256 ${sha256Hex(content)} weicht vom akzeptierten Seed ${seed.sha256} ab (${seed.decision})`);
+      continue;
+    }
+    for (const [label, reference] of [['sourceCommit', seed.sourceCommit], ...(options.freeze ? [['Freeze-Commit', commit]] : [])] as Array<[string, string | undefined]>) {
+      if (!reference) continue;
+      let blob: Buffer;
+      try {
+        blob = execFileSync('git', ['show', `${reference}:${path}`], { cwd: root, stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 512 * 1024 * 1024 });
+      } catch {
+        report.problems.push(`${BASELINE_LOCKS_PATH}: Seed ${jurisdiction}/${seed.slug} – ${label} ${reference.slice(0, 12)} enthält ${path} nicht`);
+        continue;
+      }
+      if (sha256Hex(blob) !== seed.sha256) report.problems.push(`${BASELINE_LOCKS_PATH}: Seed ${jurisdiction}/${seed.slug} – Inhalt im ${label} ${reference.slice(0, 12)} weicht vom Seed ab`);
+    }
+    verified += 1;
+  }
+  report.notes.push(`${jurisdiction}: ${verified} Baseline-Seed(s) geprüft, ${required.size} fortgeschriebene Ausgangsfassung(en)`);
+  return report;
 }
 
 async function readImmutabilityExceptions(root: string): Promise<ImmutabilityExceptions | undefined> {
@@ -129,7 +196,8 @@ export async function scanNormVersions(root: string, jurisdiction: JurisdictionI
 }
 
 /** G2 Baseline-Lock eines Landes gegen seinen Referenz-Commit. */
-export async function checkBaselineLock(root: string, jurisdiction: JurisdictionId, commit: string): Promise<GateReport> {
+export async function checkBaselineLock(root: string, jurisdiction: JurisdictionId, commit: string, options: SeedOptions = {}): Promise<GateReport> {
+  const seeded = (slug: string): boolean => !options.freeze && (options.seeds?.has(slug) ?? false);
   const report: GateReport = { gate: 'G2', jurisdiction, problems: [], notes: [] };
   let tree: Map<string, string>;
   try {
@@ -141,11 +209,12 @@ export async function checkBaselineLock(root: string, jurisdiction: Jurisdiction
   const norms = await scanNormVersions(root, jurisdiction);
   const withSimVersions = new Set(norms.filter((norm) => norm.simVersions.length > 0).map((norm) => norm.slug));
   const exceptions = await readImmutabilityExceptions(root);
-  const exceptionsApply = exceptions?.baseCommit !== undefined && exceptions.baseCommit !== '' && (commit.startsWith(exceptions.baseCommit) || exceptions.baseCommit.startsWith(commit));
-  const released = new Set((exceptionsApply ? exceptions?.entries ?? [] : []).map((entry) => entry.key));
-  for (const entry of exceptions?.entries ?? []) {
+  const blocks: ImmutabilityExceptionBlock[] = exceptions ? [exceptions, ...(exceptions.releases ?? [])] : [];
+  const applies = (block: ImmutabilityExceptionBlock): boolean => block.baseCommit !== undefined && block.baseCommit !== '' && (commit.startsWith(block.baseCommit) || block.baseCommit.startsWith(commit));
+  const released = new Set(blocks.filter(applies).flatMap((block) => block.entries ?? []).map((entry) => entry.key));
+  for (const entry of blocks.flatMap((block) => block.entries ?? [])) {
     const match = /^([^/]+)\/(.+)\/([^/]+)$/u.exec(entry.key);
-    if (match && match[1] === jurisdiction && withSimVersions.has(match[2]!)) {
+    if (match && match[1] === jurisdiction && withSimVersions.has(match[2]!) && !seeded(match[2]!)) {
       report.problems.push(`${IMMUTABILITY_EXCEPTIONS_PATH}: Freigabe ${entry.key} (${entry.kind}) für eine Norm mit Sim-Fassungen ist unzulässig`);
     }
   }
@@ -159,6 +228,7 @@ export async function checkBaselineLock(root: string, jurisdiction: Jurisdiction
     if (!match) continue;
     const slug = match[1]!;
     known.add(slug);
+    if (seeded(slug)) continue; // Seed ersetzt den Commit-Vergleich (checkBaselineSeeds)
     checked += 1;
     let status: 'unchanged' | 'changed' | 'removed';
     try {
@@ -222,7 +292,7 @@ export function additiveMetaProblems(oldMeta: Record<string, unknown>, newMeta: 
   for (const key of Object.keys(newMeta)) {
     if (!(key in oldMeta) && !additive.has(key)) problems.push(`${context}.${key}: neues Feld ist keine zulässige Sim-Fortschreibung (${ADDITIVE_META_FIELDS.join(', ')})`);
   }
-  for (const key of ['relations', 'keywords'] as const) {
+  for (const key of ['relations', 'keywords', 'editorialResolutions'] as const) {
     const oldItems = Array.isArray(oldMeta[key]) ? (oldMeta[key] as unknown[]) : [];
     const newKeys = new Set((Array.isArray(newMeta[key]) ? (newMeta[key] as unknown[]) : []).map(canonical));
     oldItems.forEach((item, index) => {
@@ -233,18 +303,28 @@ export function additiveMetaProblems(oldMeta: Record<string, unknown>, newMeta: 
 }
 
 /** G3: meta.json/history.json der Normen mit Sim-Fassungen nur additiv gegenüber dem Referenz-Commit. */
-export async function checkAdditiveIdentity(root: string, jurisdiction: JurisdictionId, commit: string): Promise<GateReport> {
+export async function checkAdditiveIdentity(root: string, jurisdiction: JurisdictionId, commit: string, options: SeedOptions = {}): Promise<GateReport> {
   const report: GateReport = { gate: 'G3', jurisdiction, problems: [], notes: [] };
-  let tree: Map<string, string>;
-  try {
-    tree = readReferenceTree(root, commit, jurisdiction);
-  } catch {
-    report.problems.push(`${BASELINE_LOCKS_PATH}.${jurisdiction}: Referenz-Commit ${commit} ist im Repository nicht auflösbar`);
-    return report;
-  }
+  const trees = new Map<string, Map<string, string>>();
+  const treeFor = (reference: string): Map<string, string> | undefined => {
+    if (!trees.has(reference)) {
+      try {
+        trees.set(reference, readReferenceTree(root, reference, jurisdiction));
+      } catch {
+        report.problems.push(`${BASELINE_LOCKS_PATH}.${jurisdiction}: Referenz-Commit ${reference} ist im Repository nicht auflösbar`);
+        return undefined;
+      }
+    }
+    return trees.get(reference);
+  };
+  if (!treeFor(commit)) return report;
   let checked = 0;
   for (const norm of await scanNormVersions(root, jurisdiction)) {
     if (norm.simVersions.length === 0) continue;
+    // Referenz der Normidentität: Freeze-Commit, sonst der Commit, in dem der akzeptierte Seed vorlag.
+    const reference = options.freeze ? commit : (options.seeds?.get(norm.slug)?.sourceCommit ?? commit);
+    const tree = treeFor(reference);
+    if (!tree) continue;
     const relative = `content/norms/${jurisdiction}/${norm.slug}`;
     if (!tree.has(`${relative}/meta.json`)) continue; // eigene Sim-Norm oder Baseline nach dem Referenz-Commit
     checked += 1;
@@ -252,7 +332,7 @@ export async function checkAdditiveIdentity(root: string, jurisdiction: Jurisdic
       const path = `${relative}/${file}`;
       const sha = tree.get(path);
       if (!sha) {
-        report.problems.push(`${path}: fehlt im Referenz-Commit ${commit.slice(0, 12)}`);
+        report.problems.push(`${path}: fehlt im Referenz-Commit ${reference.slice(0, 12)}`);
         continue;
       }
       let current: Buffer;
@@ -263,7 +343,7 @@ export async function checkAdditiveIdentity(root: string, jurisdiction: Jurisdic
         continue;
       }
       if (gitBlobSha1(current) === sha) continue;
-      const before = JSON.parse(git(root, 'show', `${commit}:${path}`)) as Record<string, unknown>;
+      const before = JSON.parse(git(root, 'show', `${reference}:${path}`)) as Record<string, unknown>;
       const after = JSON.parse(current.toString('utf8')) as Record<string, unknown>;
       report.problems.push(...(file === 'meta.json' ? additiveMetaProblems(before, after, path) : additiveHistoryProblems(before, after, path)));
     }
@@ -303,5 +383,98 @@ export async function checkInventoryReproducible(root: string): Promise<GateRepo
     if (added || removed) details.push(`Quellen neu ${added}, fehlend ${removed}`);
     report.problems.push(`${INVENTORY_PATH}: entspricht nicht dem neu gerechneten Inventar (${details.join('; ') || 'Details oder Werkzeugversion abweichend'}); npm run import:simulation:inventory -- --write`);
   } else report.notes.push(`Inventar reproduzierbar: ${current.totals.sources} Quellen aus ${current.totals.files} Dateien`);
+  return report;
+}
+
+/**
+ * Evidenzhierarchie der Sim-Quellen (docs/SIMULATION_IMPORT.md 2.1):
+ *   1 Original-Verkündungsblatt / amtliche Primärveröffentlichung
+ *   2 amtlicher Einzelakt oder amtliche Verkündungsmitteilung (auch verkündete Drucksache)
+ *   3 spätere amtliche Wiederveröffentlichung / amtliche Rückreferenz
+ *   4 technische oder verzeichnisartige Sekundärquelle (z. B. Wiki-Blattverzeichnis)
+ *   5 Presse und sonstige Information
+ * `sources[].evidenceLevel` setzt die Ebene ausdrücklich; sonst folgt sie aus `documentType`.
+ */
+export const EVIDENCE_LEVEL_BY_DOCUMENT_TYPE: Readonly<Record<string, number>> = {
+  gazette: 1,
+  'ministerial-gazette': 1,
+  'standalone-official-act': 2,
+  'promulgation-notice': 2,
+  'repeal-notice': 2,
+  'legislative-document': 2,
+  annex: 2,
+  draft: 4,
+  informational: 4,
+  unknown: 4,
+  'press-release': 5,
+};
+
+/** Rollen und Belegarten, die eine Quelle der Ebene 4/5 nie tragen darf (Wortlaut, Verkündung, Rechtswirkung). */
+const PRIMARY_KINDS = new Set(['simulation-gazette', 'simulation-standalone-act', 'simulation-promulgation-evidence', 'simulation-amendment-source']);
+
+export function evidenceLevel(entry: { documentType?: string; evidenceLevel?: number } | undefined): number | undefined {
+  if (!entry) return undefined;
+  if (typeof entry.evidenceLevel === 'number') return entry.evidenceLevel;
+  return EVIDENCE_LEVEL_BY_DOCUMENT_TYPE[entry.documentType ?? 'unknown'] ?? 4;
+}
+
+/** G11: Keine Wortlaut-, Verkündungs- oder Rechtswirkungsgrundlage aus Sekundärquellen (Ebene 4/5). */
+export async function checkEvidenceHierarchy(root: string, jurisdiction: JurisdictionId): Promise<GateReport> {
+  const report: GateReport = { gate: 'G11', jurisdiction, problems: [], notes: [] };
+  const dir = join(root, 'data', 'simulation', jurisdiction);
+  const readJson = async (path: string): Promise<any> => JSON.parse(await readFile(path, 'utf8'));
+  let sources: Array<{ sha256: string; documentType?: string; evidenceLevel?: number }>;
+  try {
+    sources = (await readJson(join(dir, 'sources.json'))).sources ?? [];
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return report;
+    throw error;
+  }
+  const bySha = new Map(sources.map((entry) => [entry.sha256, entry]));
+  for (const entry of sources) {
+    if (entry.evidenceLevel !== undefined && ![1, 2, 3, 4, 5].includes(entry.evidenceLevel)) report.problems.push(`sources.json ${entry.sha256.slice(0, 12)}: evidenceLevel ${String(entry.evidenceLevel)} unzulässig (1–5)`);
+  }
+  const secondary = (sha: string | undefined): boolean => (evidenceLevel(sha ? bySha.get(sha) : undefined) ?? 1) >= 4;
+  const checkReferences = (references: Array<{ kind?: string; sha256?: string; sourceRole?: string }> | undefined, context: string): void => {
+    for (const reference of references ?? []) {
+      if (!reference.sha256 || !secondary(reference.sha256)) continue;
+      if (PRIMARY_KINDS.has(String(reference.kind)) || reference.sourceRole === 'structure-bearing' || reference.sourceRole === 'amendment-evidence') {
+        report.problems.push(`${context}: Sekundärquelle ${reference.sha256.slice(0, 12)} (Ebene ${evidenceLevel(bySha.get(reference.sha256))}) als ${reference.kind}${reference.sourceRole ? `/${reference.sourceRole}` : ''} – Ebene 4/5 darf weder Wortlaut noch Verkündung noch Rechtswirkung tragen`);
+      }
+    }
+  };
+  let acts = 0;
+  const actFiles = await readdir(join(dir, 'acts')).catch(() => [] as string[]);
+  for (const name of actFiles.filter((file) => file.endsWith('.json')).sort()) {
+    const act = await readJson(join(dir, 'acts', name));
+    acts += 1;
+    const context = `acts/${name}`;
+    if (secondary(act.provenance?.transcribedFrom)) report.problems.push(`${context}: Wortlautquelle ${String(act.provenance.transcribedFrom).slice(0, 12)} ist Sekundärquelle (Ebene 4/5)`);
+    checkReferences(act.version?.sourceReferences, `${context}.version`);
+    checkReferences(act.meta?.sourceReferences, `${context}.meta`);
+    const references = [...(act.version?.sourceReferences ?? []), ...(act.meta?.sourceReferences ?? [])];
+    if (!references.some((reference: { kind?: string; sha256?: string }) => PRIMARY_KINDS.has(String(reference.kind)) && reference.sha256 && !secondary(reference.sha256))) {
+      report.problems.push(`${context}: kein amtlicher Beleg der Ebene 1–3 (Blatt, Einzelakt oder Verkündungsmitteilung)`);
+    }
+  }
+  let recipes = 0;
+  for (const actDir of await readdir(join(dir, 'amendments')).catch(() => [] as string[])) {
+    for (const name of (await readdir(join(dir, 'amendments', actDir)).catch(() => [] as string[])).filter((file) => file.endsWith('.json'))) {
+      recipes += 1;
+      checkReferences((await readJson(join(dir, 'amendments', actDir, name))).sourceReferences, `amendments/${actDir}/${name}`);
+    }
+  }
+  let applied = 0;
+  try {
+    for (const event of (await readJson(join(dir, 'ledger.json'))).events ?? []) {
+      if (event.status !== 'applied') continue;
+      applied += 1;
+      const evidence: string[] = [...(event.evidence ?? []), ...(event.publication?.sha256 ? [event.publication.sha256] : [])];
+      if (evidence.length > 0 && evidence.every((sha) => secondary(sha))) report.problems.push(`ledger.json ${event.id}: angewandt, aber nur mit Sekundärquellen belegt`);
+    }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+  }
+  report.notes.push(`${jurisdiction}: Evidenzhierarchie geprüft – ${acts} Akt(e), ${recipes} Rezept(e), ${applied} angewandte Ereignisse, ${sources.filter((entry) => (evidenceLevel(entry) ?? 1) >= 4).length} Sekundärquelle(n)`);
   return report;
 }

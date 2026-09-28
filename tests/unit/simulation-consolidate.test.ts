@@ -2,6 +2,7 @@
  * Konsolidierung der Simulationsrechtsfortschreibung gegen ein temporäres Repository: Sim-Akt materialisieren,
  * Rezept anwenden, Aufhebung, Wortlautprobe, gesperrte Ziele, Unveränderlichkeit und `--check` (Gate G4).
  */
+import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -441,5 +442,49 @@ describe('Konsolidierung: Geltungsstatus relativ zum Stichtag', () => {
     expect(after.versions.map((version) => version.versionId)).toEqual(before.versions.map((version) => version.versionId));
     expect(await fixture.run('check', { referenceDate: '2026-09-01' })).toMatchObject({ ok: true });
     expect((await fixture.run('dry-run', { referenceDate: '2026-09-01' })).acts.map((act) => act.status)).toEqual(['unchanged']);
+  });
+});
+
+describe('Konsolidierung: Bindung an den akzeptierten Baseline-Seed (Lock-Schema 2)', () => {
+  let fixture: Root;
+  beforeAll(async () => {
+    fixture = await createRoot();
+  });
+  afterAll(async () => {
+    await rm(fixture.root, { recursive: true, force: true });
+  });
+
+  const lockFile = (seeds: unknown[]) => ({ schemaVersion: 'landesrecht-simulation-baseline-locks/2', jurisdictions: { west: { commit: 'ff1b1f43e209', freeze: true } }, seeds });
+
+  it('sperrt Rezepte auf eine Baseline ohne Seed oder mit abweichendem Seed-Hash und wendet sie mit passendem Seed an', async () => {
+    const baselineText = await fixture.read(`${fixture.normDir}/versions/2023-12-01.json`);
+    const actual = createHash('sha256').update(baselineText, 'utf8').digest('hex');
+    await fixture.write('data/simulation/baseline-locks.json', lockFile([]));
+    const missing = await fixture.run('dry-run');
+    expect(missing.blockedTargets).toEqual([expect.objectContaining({ target: TARGET, code: 'seed-unaccepted', reason: expect.stringMatching(/kein akzeptierter Baseline-Seed/u) })]);
+    await fixture.write('data/simulation/baseline-locks.json', lockFile([{ jurisdiction: 'west', slug: TARGET, baselineVersionId: '2023-12-01', sha256: '0'.repeat(64), acceptedAt: '2026-09-29', decision: 'Test' }]));
+    const mismatch = await fixture.run('dry-run');
+    expect(mismatch.blockedTargets).toEqual([expect.objectContaining({ code: 'seed-unaccepted', reason: expect.stringMatching(new RegExp(`SHA-256 ${actual}`, 'u')) })]);
+    await fixture.write('data/simulation/baseline-locks.json', lockFile([{ jurisdiction: 'west', slug: TARGET, baselineVersionId: '2023-12-01', sha256: actual, acceptedAt: '2026-09-29', decision: 'Test' }]));
+    const accepted = await fixture.run('write');
+    expect(accepted.blockedTargets).toEqual([]);
+    expect(accepted.recipes[0]).toMatchObject({ status: 'new', versionId: '2026-05-18' });
+    expect((await fixture.run('check')).ok).toBe(true);
+  });
+
+  it('ergänzt redaktionelle Auflösungen eines materialisierten Akts additiv und lehnt geänderte ids ab', async () => {
+    const actPath = `data/simulation/west/acts/${ACT}.json`;
+    const act = JSON.parse(await fixture.read(actPath)) as { meta: Record<string, unknown> };
+    const resolution = { id: 'relation-note', kind: 'superseded-technical-note', date: '2026-09-29', relation: { type: 'amends', target: TARGET }, supersededNote: 'alt', statement: 'neu' };
+    act.meta.editorialResolutions = [resolution];
+    await fixture.write(actPath, act);
+    const added = await fixture.run('write');
+    expect(added.errors).toEqual([]);
+    expect(added.acts.find((entry) => entry.slug === ACT)?.status).toBe('updated');
+    expect(JSON.parse(await fixture.read(`content/norms/west/${ACT}/meta.json`)).editorialResolutions).toEqual([resolution]);
+    expect((await fixture.run('check')).ok).toBe(true);
+    act.meta.editorialResolutions = [{ ...resolution, statement: 'anders' }];
+    await fixture.write(actPath, act);
+    expect((await fixture.run('dry-run')).errors).toEqual([expect.stringMatching(/editorialResolutions relation-note weicht vom gespeicherten Eintrag ab/u)]);
   });
 });
