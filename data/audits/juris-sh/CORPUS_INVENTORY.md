@@ -2,7 +2,7 @@
 
 Erzeugt von `node scripts/import-juris-sh.ts inventory --write`. Stichtag **2023-12-01**. Quelle: Bürgerservice Schleswig-Holstein (juris), Simulationsland Niedersachsen-Holstein (`nsh`).
 
-Netzfrei aus dem Cache von `fetch-corpus` (öffentliche PDF-Ausgabe). Je Dokument der Vollweg der Stichprobe: Parser → SH-Modell → Stichtag (bei späteren Änderungen die am Stichtag geltenden Einzelfassungen) → Überleitung SH → NSH → `validateNormRecord` → Textintegrität, dazu Stichtagsbelege mit dem bestehenden Ereignisregister (Regeln A/B/C). Parser `juris-sh-parser/1.0.0`, Überleitung `juris-sh-transformer/1.3.0`.
+Netzfrei aus dem Cache von `fetch-corpus` (öffentliche PDF-Ausgabe). Je Dokument der Vollweg der Stichprobe: Parser → SH-Modell → Stichtag (bei späteren Änderungen die am Stichtag geltenden Einzelfassungen) → Überleitung SH → NSH → `validateNormRecord` → Textintegrität, dazu Stichtagsbelege mit dem bestehenden Ereignisregister (Regeln A/B/C). Parser `juris-sh-parser/1.0.0`, Überleitung `juris-sh-transformer/1.4.0`.
 
 ## 1 Ausgänge
 
@@ -10,37 +10,34 @@ Netzfrei aus dem Cache von `fetch-corpus` (öffentliche PDF-Ausgabe). Je Dokumen
 | --- | --- |
 | Enumeriert | 5197 |
 | Verarbeitet | 5197 |
-| Ausgänge | import-ready 2591 · not-at-baseline 1722 · part-of-main 476 · review 377 · reconstruction 25 · failed 4 · not-cached 2 |
-| Landesrecht | import-ready 1467 · not-at-baseline 1117 · review 209 · reconstruction 13 · not-cached 2 |
-| Verwaltungsvorschriften | import-ready 1124 · not-at-baseline 605 · part-of-main 476 · review 168 · reconstruction 12 · failed 4 |
-| Manifeststatus | imported-with-warnings 2046 · not-at-baseline 1722 · imported 546 · excluded 476 · needs-review 401 · failed 4 |
-| Stichtagseinordnung der Ausgabe | unchanged-since-baseline 3049 · repealed-before-baseline 962 · enacted-after-baseline 763 · changed-after-baseline 262 · repealed-after-baseline 88 · undetermined 71 |
-| Stichtagsregel (A/B/C) | B-strong-begin-and-continuity 3446 · A-strong-end-before-baseline 962 · C-undetermined 783 |
-| Textintegrität | exact 2916 · explained-difference 2272 · mismatch 3 · review 3 · normalized-equivalent 1 |
+| Ausgänge | import-ready 2610 · not-at-baseline 1739 · part-of-main 476 · review 357 · reconstruction 13 · not-cached 2 |
+| Landesrecht | import-ready 1476 · not-at-baseline 1119 · review 198 · reconstruction 13 · not-cached 2 |
+| Verwaltungsvorschriften | import-ready 1134 · not-at-baseline 620 · part-of-main 476 · review 159 |
+| Manifeststatus | imported-with-warnings 2065 · not-at-baseline 1739 · imported 546 · excluded 476 · needs-review 369 |
+| Stichtagseinordnung der Ausgabe | unchanged-since-baseline 3047 · repealed-before-baseline 962 · enacted-after-baseline 777 · changed-after-baseline 250 · repealed-after-baseline 88 · undetermined 71 |
+| Stichtagsregel (A/B/C) | B-strong-begin-and-continuity 3445 · A-strong-end-before-baseline 962 · C-undetermined 788 |
+| Textintegrität | exact 2898 · explained-difference 2291 · mismatch 3 · review 3 |
 | Normtyp | verwaltungsvorschrift 2389 · verordnung 2025 · gesetz 728 · zustimmungsgesetz 51 · verfassung 2 |
 
 ## 2 Sperrgründe (Dokumente je Grund)
 
 | Grund | Dokumente |
 | --- | --- |
-| `parse:table-layout` | 148 |
+| `parse:table-layout` | 135 |
 | `parse:incomplete-source-text` | 86 |
-| `transform:undecidable-source-state-abbreviation` | 65 |
-| `parse-units:table-layout` | 51 |
+| `transform:undecidable-source-state-abbreviation` | 64 |
+| `parse-units:table-layout` | 44 |
 | `historical:unit-selection` | 13 |
-| `transform:residual-source-state-reference` | 12 |
 | `parse:figure` | 12 |
-| `units-missing:changed-after-baseline` | 12 |
+| `transform:residual-source-state-reference` | 11 |
 | `parse-units:incomplete-source-text` | 10 |
 | `parse:vwv-annex-document` | 8 |
 | `baseline:undetermined` | 4 |
-| `schema:title-missing` | 4 |
 | `parse:annex-separate-document` | 4 |
 | `integrity:mismatch` | 3 |
 | `parse:empty-footnote` | 3 |
 | `parse-units:figure` | 2 |
 | `integrity:review` | 2 |
-| `parse:toc-unit-missing` | 1 |
 
 `parse:table-layout` und `pdf-only`-Abbildungen gehen in den Review, weil der Textlayer Tabellen- und Bildinhalte nicht sicher trägt; `units-missing` heißt: Am Stichtag galt eine andere Fassung, die Einzelfassungen sind noch nicht (vollständig) im Cache (`npm run import:juris-sh:fetch-corpus -- --phase units`); `baseline:ledger-contradiction`: Das Ereignisregister belegt eine Änderung nach dem Stichtag, die Ausgabe nicht.
 
@@ -409,12 +406,12 @@ Zählbasis sind die Köpfe des vollen amtlichen Registers (Audit „NSH-Audit“
 
 ## 4 baseline-only-Kandidaten des Ereignisregisters
 
-54 Kandidaten (Vorschrift endete nach dem Stichtag), 49 einem juris-Dokument zugeordnet (Gliederungsnummer + Ausfertigungsdatum bzw. eindeutige Gliederungsnummer). Ausgänge: import-ready 34 · review 8 · not-matched 5 · reconstruction 5 · not-at-baseline 2.
+54 Kandidaten (Vorschrift endete nach dem Stichtag), 49 einem juris-Dokument zugeordnet (Gliederungsnummer + Ausfertigungsdatum bzw. eindeutige Gliederungsnummer). Ausgänge: import-ready 36 · review 6 · not-matched 5 · reconstruction 5 · not-at-baseline 2.
 
 | Ereignis | Datum | Gl.Nr. | Titel | juris | Ausgang |
 | --- | --- | --- | --- | --- | --- |
 | gvobl-systematische-uebersicht-p0052-l02 | 2023-12-19 | 2020-3-36 | Landesverordnung über die Aufstellung und Ausführung des Haushaltsplan | jlr-NNLSH00002AFF | import-ready |
-| gvobl-systematische-uebersicht-p0050-l02 | 2023-12-31 | 2013-2-63 | Landesverordnung über Verwaltungsgebühren für Pflanzenschutzangelegenh | jlr-NNLSH00002FCD | review |
+| gvobl-systematische-uebersicht-p0050-l02 | 2023-12-31 | 2013-2-63 | Landesverordnung über Verwaltungsgebühren für Pflanzenschutzangelegenh | jlr-NNLSH00002FCD | import-ready |
 | gvobl-systematische-uebersicht-p0052-l03 | 2023-12-31 | 2020-3-37 | Landesverordnung über die Kassenführung der Gemeinden mit einer Hausha | – | nicht zugeordnet |
 | gvobl-systematische-uebersicht-p0052-l05 | 2023-12-31 | 2020-3-41 | Landesverordnung über die Aufstellung und Ausführung eines kameralen H | jlr-NNLSH00002DE1 | import-ready |
 | gvobl-systematische-uebersicht-p0083-l04 | 2023-12-31 | 2120-22-1 | Landesverordnung zur Durchführung des Schleswig-Holsteinischen Rettung | jlr-NNLSH00003088 | review |
@@ -450,7 +447,7 @@ Zählbasis sind die Köpfe des vollen amtlichen Registers (Audit „NSH-Audit“
 | gvobl-systematische-uebersicht-p0101-l01 | 2025-02-28 | 2130-14-25 | Landesverordnung über das Übereinstimmungszeichen (Übereinstimmungszei | jlr-NNLSH00003046 | import-ready |
 | gvobl-systematische-uebersicht-p0175-l05 | 2025-05-07 | 630-2-1 | Landesverordnung über das Verfahren zur Bestimmung der Konjunkturkompo | jlr-NNLSH00003047 | import-ready |
 | gvobl-systematische-uebersicht-p0045-l02 | 2025-05-30 | 2011-0-21 | Landesverordnung zur Abwehr von Gefahren für die öffentliche Sicherhei | jlr-NNLSH00002B66 | import-ready |
-| gvobl-systematische-uebersicht-p0186-l04 | 2025-06-25 | 7220-4-3 | Landesverordnung zur Feststellung der repräsentativen Tarifverträge im | jlr-NNLSH00002B95 | review |
+| gvobl-systematische-uebersicht-p0186-l04 | 2025-06-25 | 7220-4-3 | Landesverordnung zur Feststellung der repräsentativen Tarifverträge im | jlr-NNLSH00002B95 | import-ready |
 | gvobl-systematische-uebersicht-p0139-l01 | 2025-06-29 | 224-11-1 | Landesverordnung über den Denkmalrat (Denkmalratsverordnung) | jlr-NNLSH00002B51 | import-ready |
 | gvobl-systematische-uebersicht-p0139-l02 | 2025-06-29 | 224-11-2 | Landesverordnung über die Vertrauensleute für Kulturdenkmale | jlr-NNLSH00002B4A | import-ready |
 | gvobl-systematische-uebersicht-p0139-l03 | 2025-06-29 | 224-11-3 | Landesverordnung über die Einführung des Zustimmungsvorbehalts bei Gen | jlr-NNLSH00002B4C | import-ready |

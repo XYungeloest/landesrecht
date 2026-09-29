@@ -32,7 +32,7 @@ import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts
 import { TARGET_JURISDICTION } from '../common/constants.ts';
 
 /** Version der Transformationsregeln; der Bulk-Runner erkennt daran veraltete Übernahmen. */
-export const TRANSFORMER_VERSION = 'juris-sh-transformer/1.3.0';
+export const TRANSFORMER_VERSION = 'juris-sh-transformer/1.4.0';
 
 export interface TransformationRule {
   id: string;
@@ -295,6 +295,13 @@ export const PROTECTED_PATTERNS: readonly ProtectedPattern[] = [
     // („(Schl.-H. S. 31)“, „Schl.-H. 2010 S. 415“) ist das Kürzel ebenfalls Teil einer Fundstelle.
     pattern: new RegExp(String.raw`(?:\b(?:GVOB[lIL]|GOVBl|GVBl|Amtsbl|Amtsblatt|ABl|NB[lL]|MBl|SchlHA|GS|StPOGS|OBl)\.?\s*-?\s*(?:[A-ZÄÖÜ]{2,8}\.?\s*){0,2}${DOTTED_ABBREVIATION}(?:\s*(?:\d{4}\s*)?S\.\s*\d+[a-z]?)?|(?<![\p{L}])${DOTTED_ABBREVIATION}\s*(?:\d{4}\s*,?\s*)?S\.\s*\d+[a-z]?)`, 'gu'),
     reason: 'Amtliche Fundstelle des Herkunftslandes (Verkündungs-, Amts- oder Nachrichtenblatt) bleibt unverändert',
+  },
+  {
+    id: 'gazette-title-short',
+    category: 'source-citation',
+    // 1.4.0 (Run 16): ausgeschriebener Blattname mit Landeskürzel („Amtsblatt SH“, „Amtsblatt für Schl.-H.“) ohne Seitenangabe.
+    pattern: /\b(?:Amtsblatt|Gesetz-\s*und\s+Verordnungsblatt)\s+(?:für\s+(?:das\s+Land\s+)?)?(?:Schl\.-H\.|SH)(?![\p{L}-])/gu,
+    reason: 'Amtlicher Name eines Verkündungs- oder Amtsblatts des Herkunftslandes (Kurzform) bleibt unverändert',
   },
   {
     id: 'gazette-short',

@@ -47,9 +47,11 @@ export function buildInventoryStatus(input: InventoryStatusInput): InventoryStat
 export async function writeInventoryStatus(root: string, status: InventoryStatus): Promise<boolean> {
   const path = join(root, INVENTORY_STATUS_PATH);
   const stored = await readJsonFile<{ schemaVersion: string; jurisdictions: Record<string, InventoryStatus> }>(path);
-  // Der Block `simulation` gehört der Sim-Fortschreibung (`import-simulation completeness --write`) und bleibt erhalten.
-  const previous = stored?.jurisdictions?.[status.jurisdiction] as (InventoryStatus & { simulation?: unknown }) | undefined;
-  const jurisdictions = { ...(stored?.jurisdictions ?? {}), [status.jurisdiction]: previous?.simulation !== undefined ? { ...status, simulation: previous.simulation } : status };
+  // Der Block `simulation` gehört der Sim-Fortschreibung (`import-simulation completeness --write`), der Block
+  // `baselineFreeze` der Freeze-Bewertung (`scripts/nsh-freeze-readiness.ts`); beide bleiben erhalten.
+  const previous = stored?.jurisdictions?.[status.jurisdiction] as InventoryStatus | undefined;
+  const merged: InventoryStatus = { ...status, ...(previous?.simulation !== undefined ? { simulation: previous.simulation } : {}), ...(previous?.baselineFreeze !== undefined ? { baselineFreeze: previous.baselineFreeze } : {}) };
+  const jurisdictions = { ...(stored?.jurisdictions ?? {}), [status.jurisdiction]: merged };
   const ordered = Object.fromEntries(Object.entries(jurisdictions).sort(([left], [right]) => left.localeCompare(right)));
   return writeJsonAtomic(path, { schemaVersion: INVENTORY_STATUS_SCHEMA, jurisdictions: ordered });
 }

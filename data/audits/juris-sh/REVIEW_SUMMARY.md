@@ -2,13 +2,13 @@
 
 Erzeugt von `node scripts/import-juris-sh.ts audit --write`. Stichtag **2023-12-01**. Quelle: Bürgerservice Schleswig-Holstein (juris), Simulationsland Niedersachsen-Holstein (`nsh`).
 
-Review-Fälle: **2514** (offen 451). Manifesteinträge: 5195. Kein Fall wurde automatisch entschieden; ein Human Approval oder Freeze findet nicht statt.
+Review-Fälle: **2516** (offen 414). Manifesteinträge: 5195. Kein Fall wurde automatisch entschieden; ein Human Approval oder Freeze findet nicht statt.
 
 | Kategorie | Fälle |
 | --- | --- |
 | contradictory-evidence | 7 |
 | historical-gap | 97 |
-| import-regression | 156 |
+| import-regression | 158 |
 | incomplete-annex | 612 |
 | institution-mapping | 563 |
 | pdf-only | 293 |
@@ -25,6 +25,6 @@ Review-Fälle: **2514** (offen 451). Manifesteinträge: 5195. Kein Fall wurde au
 | quelleninventar | ok | Fingerabdrücke von Inventar und Enumeration stimmen überein |
 | sitemap-belege | ok | SHA-256 der Sitemap-Belege im Cache nachgerechnet |
 | probe-belege | ok | 20 Probebelege konsistent |
-| bestand | ok | 2592 übernommene Manifesteinträge, 2592 Normverzeichnisse, 7776 Dateien unter content/norms/nsh (erwartet 7776); Sim-Normen 28 (88 Dateien) |
-| rohquellen | ok | 9338 Rohquellen (PDF) übernommener Normen im Cache nachgerechnet, 506 Abbildungen aus ihrer PDF-Ausgabe reproduziert |
+| bestand | ok | 2611 übernommene Manifesteinträge, 2611 Normverzeichnisse, 7833 Dateien unter content/norms/nsh (erwartet 7833); Sim-Normen 33 (104 Dateien) |
+| rohquellen | ok | 9865 Rohquellen (PDF) übernommener Normen im Cache nachgerechnet, 507 Abbildungen aus ihrer PDF-Ausgabe reproduziert |
 

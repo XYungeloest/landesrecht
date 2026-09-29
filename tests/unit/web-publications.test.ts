@@ -87,7 +87,9 @@ describe('Seiten und API (Quelltext-Regressionen)', () => {
     const notice = await read('components/InventoryNotice.astro');
     expect(notice).toContain('getInventoryNotice(jurisdiction)');
     expect(notice).toContain('Sicher belegter Rechtsstand zum');
-    expect(notice).toContain('<strong>Simulationsrecht:</strong>');
+    expect(notice).toContain('<strong>Sim-Quellenstatus – Simulationsrecht:</strong>');
+    expect(notice).toContain('Baseline-Status');
+    expect(notice).toContain('status?.baselineFreeze');
     expect(notice).toContain('simulation.simulationNorms');
     expect(notice).toContain('status.published');
     expect(notice).toContain('Quellensammlung unvollständig');

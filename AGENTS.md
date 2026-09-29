@@ -63,6 +63,10 @@ Prioritäten:
   Schema 2: SHA-256 der Ausgangsfassung, `decision`); neue Seeds nur mit ausdrücklicher Freigabe, West-Freeze bleibt.
   Evidenzhierarchie (`docs/SIMULATION_IMPORT.md` 2.1): Sekundärquellen (Wiki-Verzeichnisse, Presse) nie als Wortlaut-,
   Verkündungs- oder alleinige Rechtswirkungsgrundlage (Gate G11); nichts aus Dateinamen ableiten.
+  Ein Baseline-Freeze fixiert nur den realen Ausgangsrechtsstand samt Provenienz, nie die Sim-Fortschreibung
+  (`docs/SIMULATION_IMPORT.md` 6.1); Freeze nur auf ausdrückliche Entscheidung, Bereitschaft NSH:
+  `node scripts/nsh-freeze-readiness.ts`. Tabellenänderungen gespeicherter Fassungen nur mit Freigabe
+  (`npm run content:tables`, `data/content-table-changes.json`).
 - Bundesrecht (`gesetze-sim-internet.de`) wird nicht importiert; Anbindungsplan und Mapping in
   `docs/BUNDESRECHT_COMPATIBILITY.md` (bevorzugt read-only-Quelle statt Kopie, keine Bund-Sonderstrukturen im Kern).
 - Öffentliche Texte auf Deutsch mit echten Umlauten; der Simulationshinweis bleibt sichtbar
@@ -73,7 +77,7 @@ Prioritäten:
 - Vor Architekturentscheidungen den tatsächlichen Repo-Zustand und `ARCHITECTURE.md` lesen.
 - Neue zentrale Regeln knapp hier oder im passenden Dokument unter `docs/` dokumentieren; keine
   Chroniken oder Statusberichte in Markdown.
-- Vor Abschluss ausführen: `npm run check`, `npm run test`, `npm run content:check`,
+- Vor Abschluss ausführen: `npm run check`, `npm run test`, `npm run content:check` (mit `content:tables`),
   `npm run d1:schema:check`, `npm run build`; bei Importänderungen zusätzlich
   `npm run import:recht-nrw:audit`, `npm run import:recht-nrw:coverage` und `npm run import:recht-nrw:readiness`.
 

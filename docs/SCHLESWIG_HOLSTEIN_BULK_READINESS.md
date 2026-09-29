@@ -196,6 +196,40 @@ die 222 veröffentlichten Tabellennormen sind unverändert übernahmefähig). An
 juris, 8 VwV-Anlagen als eigenes Dokument ohne Zuordnung, 4 ohne eindeutige Stammnorm – keine OCR, keine Veröffentlichung einer
 Stammnorm, deren normativer Kern ohne Anlage unvollständig wäre (bleibt Review).
 
+## 8e Run 16 (2026-09-29): Tabellenbelege, Freeze-Readiness
+
+`bulk --write` über 5 197 Dokumente: import-ready 2 610, review 357, reconstruction 13, part-of-main 476, not-at-baseline
+1 739; Normen geschrieben 41 (21 neu, 20 korrigiert), zurückgenommen 2 → **2 611 Baseline-Normen** (vorher 2 592) neben 33
+Sim-Normen. Offene Reviewfälle **451 → 414** (unknown-structure 212 → 187, reconstruction-required 12 → 0,
+institution-mapping 77 → 75, import-regression 4 → 6 durch die zwei Rücknahmen). Neu übernommen u. a. Gemeindeordnung
+(`go-nsh`), Amtsordnung (`ao-nsh`), Landesbeamtengesetz (`lbg-nsh`), Friesisch-Gesetz, Abgeordnetengesetz,
+Binnenfischereiverordnung. Die sechs per Seed gelockten Normen
+blieben unberührt; alle Sim-Rezepte reproduzierbar (G4). Freigaben: `data/content-immutability-exceptions.json` (Block
+`a7325a736`, 22 Fassungen) und `data/content-table-changes.json` (16 Tabellenänderungen mit Fingerabdruck).
+
+- **Tabellen** (`wrappedGrid`, Belegregeln `run16`, Rückfall auf das bisherige Raster, wenn sie nicht tragen – keine
+  bisher übernommene Tabelle geht verloren): Kopfzelle bündig über ihrer schmaleren Spalte (`header-unassigned`);
+  spaltenübergreifende Kopfzelle nur mit Unterköpfen darunter; Kopf-Colspan nur zentriert oder bündig, eine
+  Tabellenüberschrift über alle Spalten ist keine Kopfzelle; Zeilen mit fortgesetzter Dezimalnummer (`7.1` → `7.2`,
+  `4.7` → `4.7.1`) auch mit zwei Segmenten, Tabellenbeginn an einer Tarifnummer (nicht an Aufzählungen „1.“, nicht an
+  Inhaltsverzeichnissen mit Seitenzahlen) (`columns-vary`); Teilzeile im Zeilenrhythmus vollständiger Zeilen
+  (`ambiguous-row-gap`); Absätze und Spiegelstrich-Aufzählungen innerhalb einer Zelle ab drei Spalten, belegt durch
+  einen um ≥ 5 pt größeren Zeilenbeginn der Tabelle (Zellentext mit Zeilenumbruch); nachgestellter Namensteil
+  („Augustenkoog, Neu-“) vor einer Zeile im Rhythmus ist Bindestrich im Wort, sonst bleibt `hyphenated-cell`;
+  amtliche Inhaltsübersicht („Inhaltsverzeichnis:“, Paragraphenbereiche) als Tabelle. Tests mit Geometrie echter Fälle
+  und Gegenbeispielen: `tests/unit/juris-sh-run16.test.ts`. Tabellenbefunde im Vollkorpus 2 065 → 1 883.
+- **Regressionsgate** `npm run content:tables` (in `content:check`): semantischer Fingerabdruck jeder Tabelle gegen
+  HEAD; jede Änderung braucht Vorher-/Nachher-Fingerabdruck, Regel und Begründung.
+- **Stichtag:** Nach dem Stichtag ausgefertigte bzw. erlassene, rückwirkend geltende Vorschriften (Ausfertigungs- bzw.
+  Erlassdatum nach dem 01.12.2023) sind nicht Ausgangsrechtsstand: zwei bisher veröffentlichte Normen (SpielbkAbgV 2025,
+  EFGSH 2024) zurückgenommen, zwölf rückwirkende VwV aus der Rekonstruktionsqueue. Am Stichtag nicht geltende
+  Dokumente scheitern nicht mehr an Parserfehlern (Titel).
+- **Weitere Parserregeln:** Briefkopf mit Erlassdatum/Aktenzeichen über dem VwV-Titel; „Anlage 1 a:“ als Anlage;
+  Anlagenvermerk nennt seine Einheit (Untergruppen der fehlenden Anlagen). Transformer 1.4.0: „Amtsblatt (für) Schl.-H./SH“.
+- **Freeze-Readiness:** `node scripts/nsh-freeze-readiness.ts --write` → `docs/NSH_BASELINE_FREEZE_READINESS.md`
+  (Status, Blocker, Human Decisions; kein Freeze gesetzt). Seed-Konflikt: weiterhin nur `lbo-nsh` (Einzelfassungs-
+  Baseline weicht ab, seit Run 9, durch Run 16 unverändert).
+
 ## 8c Run 9 (2026-09-28): Regeln umgesetzt, Schreiblauf zunächst offen
 
 Alle Regeln sind im Adapter mit Tests (`tests/unit/juris-sh-run9.test.ts`) umgesetzt und im Dry-run geprüft; der

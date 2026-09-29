@@ -98,6 +98,11 @@ export function classifyEdition(parsed: ParsedJurisPdf, isVwv: boolean, baseline
   // „Gültig bis“ ist der letzte Geltungstag: Wer bis zum Stichtag selbst gilt, galt am Stichtag.
   if (validTo && validTo < baseline) return { class: 'repealed-before-baseline', basis: `Gültig bis ${validTo}` };
   if (enacted && enacted > baseline && !parsed.header['Textnachweis ab']) return { class: 'enacted-after-baseline', basis: `Gültig ab ${enacted}` };
+  // Run 16: Erst nach dem Stichtag ausgefertigt bzw. erlassen, aber rückwirkend in Kraft („Erlassdatum 22.02.2024“,
+  // „Gültig ab 19.10.2023“): Am Stichtag gab es die Vorschrift noch nicht – sie gehört nicht zum Ausgangsrechtsstand.
+  // Das Erlassdatum nennt die erste Fassung; eine spätere „Fassung vom“ ändert daran nichts.
+  const issued = isoDate(parsed.header.Ausfertigungsdatum) ?? isoDate(parsed.header.Erlassdatum);
+  if (issued && issued > baseline && !parsed.header['Textnachweis ab']) return { class: 'enacted-after-baseline', basis: `${parsed.header.Ausfertigungsdatum ? 'ausgefertigt' : 'erlassen'} am ${issued}, rückwirkend gültig ab ${validFrom ?? '?'} – am Stichtag noch nicht erlassen` };
   // Fußnote zum Titel mit befristeter Geltung („Fristablauf 31.12.2004“, „tritt … außer Kraft“) vor dem Stichtag,
   // ohne dass der Kopf ein Ende nennt: Ob die Norm verlängert wurde, sagt die Ausgabe nicht – Review.
   const titleNote = parsed.titleFootnoteLines.map((line) => line.text).join(' ');

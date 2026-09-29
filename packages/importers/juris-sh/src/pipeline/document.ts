@@ -252,9 +252,11 @@ export function processDocument(bytes: Uint8Array, document: SourceDocument, opt
     counts: countBlocks(parsed),
     findings,
   };
+  // Am Stichtag nicht geltend (vor dem Stichtag aufgehoben, danach erlassen): gehört nicht zum Ausgangsrechtsstand, auch wenn
+  // der Normtext sich nicht vollständig lesen lässt (Run 16: Erlassverzeichnis 2024 ohne Titel ist kein Parserfehler der Baseline).
+  if (baseline.class === 'repealed-before-baseline' || baseline.class === 'enacted-after-baseline') return { ...result, outcome: 'not-at-baseline', reasons: [`${baseline.class}: ${baseline.basis}`] };
   const errors = findings.filter((finding) => finding.severity === 'error');
   if (errors.length > 0) return { ...result, outcome: 'failed', reasons: errors.map((finding) => `${finding.code}: ${finding.message}`), blockers: errors.map((finding) => ({ kind: 'schema' as const, code: finding.code, detail: finding.message })) };
-  if (baseline.class === 'repealed-before-baseline' || baseline.class === 'enacted-after-baseline') return { ...result, outcome: 'not-at-baseline', reasons: [`${baseline.class}: ${baseline.basis}`] };
   const reasons: string[] = [];
   const blockers: DocumentBlocker[] = [];
   let sourceStatus: { validity: 'exact'; text: 'direct'; note?: string } = { validity: 'exact', text: 'direct' };

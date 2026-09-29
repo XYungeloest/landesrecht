@@ -38,6 +38,22 @@ export interface SimulationInventoryStatus {
   updatedAt: string;
 }
 
+/**
+ * Baseline-Status (Run 16): ob der reale Ausgangsrechtsstand eines Landes eingefroren ist (`data/simulation/baseline-locks.json`,
+ * `freeze`) und – solange nicht – wie weit er dafür bereit ist (`node scripts/nsh-freeze-readiness.ts --write`). Getrennt vom
+ * Sim-Quellenstatus (`simulation.status`): Lücken der Sim-Verkündungsblätter sind nie ein Baseline-Blocker.
+ */
+export const FREEZE_READINESS_STATUSES = ['NOT READY', 'READY WITH HUMAN REVIEW', 'BASELINE READY'] as const;
+export type FreezeReadinessStatus = (typeof FREEZE_READINESS_STATUSES)[number];
+
+export interface BaselineFreezeStatus {
+  frozen: boolean;
+  /** Bewertete Bereitschaft (nur, solange nicht eingefroren). */
+  readiness?: FreezeReadinessStatus;
+  /** Stand der Bewertung (ISO-Datum). */
+  assessedAt: string;
+}
+
 export interface InventoryStatus {
   jurisdiction: JurisdictionId;
   baselineDate: string;
@@ -55,6 +71,8 @@ export interface InventoryStatus {
   };
   /** Stand der Simulationsrechtsfortschreibung; fehlt, solange kein Sim-Bestand bewertet ist. */
   simulation?: SimulationInventoryStatus;
+  /** Baseline-Status (Freeze); fehlt, solange nicht bewertet. */
+  baselineFreeze?: BaselineFreezeStatus;
 }
 
 const count = (value: unknown, path: string): number => {
@@ -87,6 +105,16 @@ export function parseSimulationInventoryStatus(value: unknown, path: string): Si
   return result;
 }
 
+export function parseBaselineFreezeStatus(value: unknown, path: string): BaselineFreezeStatus {
+  if (!value || typeof value !== 'object') throw new Error(`inventory-status.json: ${path} muss ein Objekt sein`);
+  const raw = value as Record<string, unknown>;
+  if (typeof raw.frozen !== 'boolean') throw new Error(`inventory-status.json: ${path}.frozen fehlt`);
+  if (typeof raw.assessedAt !== 'string' || !/^\d{4}-\d{2}-\d{2}$/u.test(raw.assessedAt)) throw new Error(`inventory-status.json: ${path}.assessedAt muss ein ISO-Datum sein`);
+  if (raw.readiness !== undefined && !(FREEZE_READINESS_STATUSES as readonly unknown[]).includes(raw.readiness)) throw new Error(`inventory-status.json: ${path}.readiness muss einer der Werte ${FREEZE_READINESS_STATUSES.join(', ')} sein`);
+  if (raw.frozen && raw.readiness !== undefined) throw new Error(`inventory-status.json: ${path}: ein eingefrorener Bestand trägt keine Bereitschaftsbewertung`);
+  return { frozen: raw.frozen, ...(raw.readiness !== undefined ? { readiness: raw.readiness as FreezeReadinessStatus } : {}), assessedAt: raw.assessedAt };
+}
+
 export function parseInventoryStatusFile(value: unknown): Map<JurisdictionId, InventoryStatus> {
   const file = value as { schemaVersion?: unknown; jurisdictions?: Record<string, unknown> };
   if (!file || file.schemaVersion !== INVENTORY_STATUS_SCHEMA || typeof file.jurisdictions !== 'object' || file.jurisdictions === null) {
@@ -111,6 +139,7 @@ export function parseInventoryStatusFile(value: unknown): Map<JurisdictionId, In
       },
     };
     if (entry.simulation !== undefined) parsed.simulation = parseSimulationInventoryStatus(entry.simulation, `${key}.simulation`);
+    if (entry.baselineFreeze !== undefined) parsed.baselineFreeze = parseBaselineFreezeStatus(entry.baselineFreeze, `${key}.baselineFreeze`);
     entries.set(key, parsed);
   }
   return entries;

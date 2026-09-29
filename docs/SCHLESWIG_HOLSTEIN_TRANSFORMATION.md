@@ -11,7 +11,7 @@ Nordrhein-Westfalen → Land Westdeutschland (`docs/RECHT_NRW_IMPORT.md`,
 | --- | --- |
 | Quellland (Provenienz, nie transformiert) | Schleswig-Holstein (`SOURCE_STATE`) |
 | Zieljurisdiktion | `nsh` – „Land Niedersachsen-Holstein“, Kurzform „NSH“, Verkündungsblatt „GVOBl. NSH“ |
-| Transformerversion | `juris-sh-transformer/1.3.0` (`TRANSFORMER_VERSION` in `transform/rules.ts`); 1.1.0 (Run 7): Abkürzungsregel für bekannte Normabkürzungen, Schutz historischer Eigennamen; 1.2.0 (Run 8): Kürzel in der Mitte, amtliche Kurzbezeichnungen aus Titeln, Fundstellen ohne Blattnamen, weitere Aktenzeichenformen; 1.3.0 (Run 9): Erlassorgane gemeinsamer Verordnungen, Namensvarianten desselben Organs, Normgeber des juris-Kopfs als Entscheid zwischen Formelorganen |
+| Transformerversion | `juris-sh-transformer/1.4.0` (`TRANSFORMER_VERSION` in `transform/rules.ts`); 1.1.0 (Run 7): Abkürzungsregel für bekannte Normabkürzungen, Schutz historischer Eigennamen; 1.2.0 (Run 8): Kürzel in der Mitte, amtliche Kurzbezeichnungen aus Titeln, Fundstellen ohne Blattnamen, weitere Aktenzeichenformen; 1.3.0 (Run 9): Erlassorgane gemeinsamer Verordnungen, Namensvarianten desselben Organs, Normgeber des juris-Kopfs als Entscheid zwischen Formelorganen; 1.4.0 (Run 16): ausgeschriebener Blattname mit Landeskürzel („Amtsblatt für Schl.-H.“, „Amtsblatt SH“) ist geschützte Fundstellenbezeichnung |
 | Reportschema | `juris-sh-transformation-report/1` |
 | Institutionen-Zuordnung | `data/imports/juris-sh/institution-mapping.json` (`juris-sh-institution-mapping/1`) |
 | Tests | `tests/unit/juris-sh-transform.test.ts` |

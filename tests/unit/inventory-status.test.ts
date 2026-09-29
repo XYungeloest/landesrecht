@@ -29,6 +29,22 @@ describe('Statusdatei inventory-status.json', () => {
     expect(() => parseInventoryStatusFile({ schemaVersion: INVENTORY_STATUS_SCHEMA, jurisdictions: { baywue: entry({ published: -1 }) } })).toThrow(/published/u);
   });
 
+  it('trennt den Baseline-Status (Freeze, Bereitschaft) vom Sim-Quellenstatus', async () => {
+    const withFreeze = parseInventoryStatusFile({ schemaVersion: INVENTORY_STATUS_SCHEMA, jurisdictions: { baywue: entry({ baselineFreeze: { frozen: false, readiness: 'READY WITH HUMAN REVIEW', assessedAt: '2026-09-29' } }) } });
+    expect(withFreeze.get('baywue')?.baselineFreeze).toEqual({ frozen: false, readiness: 'READY WITH HUMAN REVIEW', assessedAt: '2026-09-29' });
+    expect(() => parseInventoryStatusFile({ schemaVersion: INVENTORY_STATUS_SCHEMA, jurisdictions: { baywue: entry({ baselineFreeze: { frozen: true, readiness: 'BASELINE READY', assessedAt: '2026-09-29' } }) } })).toThrow(/eingefroren/u);
+    expect(() => parseInventoryStatusFile({ schemaVersion: INVENTORY_STATUS_SCHEMA, jurisdictions: { baywue: entry({ baselineFreeze: { frozen: false, readiness: 'SIM SOURCES PARTIAL', assessedAt: '2026-09-29' } }) } })).toThrow(/readiness/u);
+    // Der Importer-Schreibweg erhält Freeze- und Sim-Block.
+    const root = await tempRoot();
+    await writeInventoryStatus(root, buildInventoryStatus({ baseline: { decisions: [] }, manifest: { entries: [] }, baselineOnlyOpen: 0 }));
+    const path = join(root, INVENTORY_STATUS_PATH);
+    const file = JSON.parse(await readFile(path, 'utf8'));
+    file.jurisdictions.baywue.baselineFreeze = { frozen: false, assessedAt: '2026-09-29' };
+    await (await import('node:fs/promises')).writeFile(path, JSON.stringify(file));
+    await writeInventoryStatus(root, buildInventoryStatus({ baseline: { decisions: [] }, manifest: { entries: [] }, baselineOnlyOpen: 1 }));
+    expect(JSON.parse(await readFile(path, 'utf8')).jurisdictions.baywue.baselineFreeze).toEqual({ frozen: false, assessedAt: '2026-09-29' });
+  });
+
   it('die ausgelieferte Datei ist gültig und führt West nicht als Teilbestand', async () => {
     const shipped = parseInventoryStatusFile(JSON.parse(await readFile(join(process.cwd(), INVENTORY_STATUS_PATH), 'utf8')));
     // West ist eingefroren und vollständig; ein Eintrag entsteht nur durch den Simulationsblock (complete bleibt true).

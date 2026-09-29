@@ -72,7 +72,7 @@ describe('Zielbezeichnungen stammen aus dem Jurisdiktionsregister', () => {
   });
 
   it('nennt eine eigene Transformerversion für die Staleness-Erkennung', () => {
-    expect(TRANSFORMER_VERSION).toBe('juris-sh-transformer/1.3.0');
+    expect(TRANSFORMER_VERSION).toBe('juris-sh-transformer/1.4.0');
   });
 });
 
@@ -231,6 +231,14 @@ describe('Abkürzungen mit Landeskürzel (Version 1.1.0/1.2.0) und historische N
     for (const text of ['vom 25. Februar 1975 (Schl.-H. S. 31)', 'vom 12. Mai 2010 (GVOBl. Schl.-H. S. 415) und (Schl.-H. 2010 S. 415)', '(GV- OBl. Schl.-H. S. 162)', 'Erl. v. 10.12.2001 – II 142/1510 E – 90 SH – 5 – SH –', 'MJAE vom 07.02.2007 – II 178/ 3200 125g SH –']) {
       expect(convert(text)).toBe(text);
     }
+  });
+
+  it('1.4.0: ausgeschriebener Blattname mit Landeskürzel bleibt unverändert, das Kürzel allein nicht geschützt', () => {
+    for (const text of ['tritt nach Bekanntgabe im Amtsblatt für Schl.-H. in Kraft', 'die Veröffentlichung im Amtsblatt SH in der Ausgabe']) expect(apply(text)).toBe(text);
+    const record = { meta: { title: 'x', subjects: [], keywords: [], initialCitation: 'x' }, versions: [{ citation: 'x', body: [{ type: 'paragraphText', text: 'Bekanntgabe im Amtsblatt für Schl.-H.; Förderung in SH' }] }] } as never;
+    const codes = auditRecord(record).map((finding) => finding.code);
+    expect(codes).not.toContain('residual-source-state-reference');
+    expect(codes).toContain('undecidable-source-state-abbreviation');
   });
 
   it('leitet die preußische Provinz nicht über und meldet eine übergeleitete historische Bezeichnung', () => {

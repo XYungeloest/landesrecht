@@ -381,6 +381,16 @@ describe('Run 9: historische Einzelfassungen', () => {
     const parsed = { header: { 'Gültig ab': 'zukünftig', Ausfertigungsdatum: '30.05.2023' }, titleFootnoteLines: [], body: [{ type: 'article', label: 'Artikel 1' }], toc: [] } as unknown as ParsedJurisPdf;
     expect(classifyEdition(parsed, false)).toEqual({ class: 'enacted-after-baseline', basis: 'Gültig ab: zukünftig (noch nicht in Kraft)' });
   });
+
+  it('Run 16: erst nach dem Stichtag ausgefertigt, rückwirkend in Kraft – am Stichtag nicht erlassen', () => {
+    const retro = { header: { 'Gültig ab': '31.10.2020', Ausfertigungsdatum: '27.02.2025' }, titleFootnoteLines: [], body: [{ type: 'paragraph', label: '§ 1' }], toc: [{ label: '§ 1', validFrom: '2020-10-31' }] } as unknown as ParsedJurisPdf;
+    expect(classifyEdition(retro, false).class).toBe('enacted-after-baseline');
+    const vwv = { header: { 'Gültig ab': '19.10.2023', Erlassdatum: '22.02.2024', 'Fassung vom': '22.02.2024' }, titleFootnoteLines: [], body: [{ type: 'paragraphText', text: 'x' }], toc: [] } as unknown as ParsedJurisPdf;
+    expect(classifyEdition(vwv, true)).toMatchObject({ class: 'enacted-after-baseline', basis: expect.stringMatching(/erlassen am 2024-02-22/u) });
+    // Gegenbeispiel: vor dem Stichtag erlassen, danach geändert – bleibt eine Norm des Ausgangsrechtsstands.
+    const amended = { header: { 'Gültig ab': '01.03.2019', Erlassdatum: '01.03.2019', 'Fassung vom': '01.01.2024' }, titleFootnoteLines: [], body: [{ type: 'paragraphText', text: 'x' }], toc: [] } as unknown as ParsedJurisPdf;
+    expect(classifyEdition(amended, true).class).toBe('changed-after-baseline');
+  });
 });
 
 /* ------------------------------------------------------------------------------------------------ */

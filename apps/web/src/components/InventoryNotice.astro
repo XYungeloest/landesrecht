@@ -25,6 +25,15 @@ const outstanding = status ? status.pending.atBaseline + status.pending.baseline
 const shortName = getJurisdiction(jurisdiction).shortName;
 const plural = (value: number, one: string, many: string): string => `${number.format(value)} ${value === 1 ? one : many}`;
 
+/** Baseline-Status: eingefroren oder – solange nicht – die bewertete Bereitschaft (getrennt vom Sim-Quellenstatus). */
+function freezeText(): string | undefined {
+  const freeze = status?.baselineFreeze;
+  if (!freeze) return undefined;
+  if (freeze.frozen) return 'Ausgangsrechtsstand eingefroren (Änderungen nur mit dokumentierter Entscheidung).';
+  const readiness = freeze.readiness === 'BASELINE READY' ? 'bereit' : freeze.readiness === 'READY WITH HUMAN REVIEW' ? 'bereit nach fachlicher Prüfung offener Fälle' : 'noch nicht bereit (technische Klärungen offen)';
+  return `Ausgangsrechtsstand nicht eingefroren; Freeze-Bewertung: ${readiness}, Stand ${freeze.assessedAt}.`;
+}
+
 function sourcesText(entry: SimulationInventoryStatus): string {
   if (entry.status === 'SIM SOURCES PARTIAL') return `Quellensammlung unvollständig: ${number.format(entry.presentIssues)} von ${number.format(entry.knownIssues)} bekannten Ausgaben liegen vor; der Rechtsstand nach dem Stichtag kann Lücken haben.`;
   if (entry.status === 'SIM SOURCES COMPLETE FOR KNOWN INVENTORY') return `Quellensammlung vollständig für das bekannte Inventar (${plural(entry.presentIssues, 'Ausgabe', 'Ausgaben')}); der Rechtsstand wird noch geprüft.`;
@@ -37,15 +46,16 @@ const badgeTitle = notice?.baselinePartial ? `${shortName}: Teilbestand – weit
   <aside class="inventory-notice" aria-label={`Hinweis zum Bestand ${shortName}`}>
     {notice.baselinePartial ? (
       <p>
-        <strong>Teilbestand.</strong> Veröffentlicht sind {number.format(status.published)} Normen, deren Fassung vom {formatBaselineDate(status.baselineDate)} aus amtlichen Quellen belegt ist.
+        <strong>Baseline-Status: Teilbestand.</strong> Veröffentlicht sind {number.format(status.published)} Normen, deren Fassung vom {formatBaselineDate(status.baselineDate)} aus amtlichen Quellen belegt ist.
         {outstanding > 0 && <> Für weitere {number.format(outstanding)} Normen, die an diesem Tag galten, wird die Stichtagsfassung noch nachgewiesen; sie werden danach ergänzt.</>}
+        {freezeText() && <> {freezeText()}</>}
       </p>
     ) : (
-      <p><strong>Sicher belegter Rechtsstand zum {formatBaselineDate(status.baselineDate)}:</strong> {number.format(status.published)} Normen aus amtlichen Quellen.</p>
+      <p><strong>Baseline-Status: Sicher belegter Rechtsstand zum {formatBaselineDate(status.baselineDate)}:</strong> {number.format(status.published)} Normen aus amtlichen Quellen.{freezeText() && <> {freezeText()}</>}</p>
     )}
     {simulation && (
       <p>
-        <strong>Simulationsrecht:</strong> {plural(simulation.secureActs, 'Rechtsakt', 'Rechtsakte')} aus {plural(simulation.presentIssues, 'Ausgabe', 'Ausgaben')} übernommen ({plural(simulation.simulationNorms, 'eigene Norm der Simulation', 'eigene Normen der Simulation')}), {number.format(simulation.review)} in Prüfung{simulation.draftsWithoutPromulgation > 0 && <>, {plural(simulation.draftsWithoutPromulgation, 'Entwurf ohne Verkündungsbeleg', 'Entwürfe ohne Verkündungsbeleg')}</>}; {sourcesText(simulation)} <span class="muted">Stand {simulation.updatedAt}.</span>
+        <strong>Sim-Quellenstatus – Simulationsrecht:</strong> {plural(simulation.secureActs, 'Rechtsakt', 'Rechtsakte')} aus {plural(simulation.presentIssues, 'Ausgabe', 'Ausgaben')} übernommen ({plural(simulation.simulationNorms, 'eigene Norm der Simulation', 'eigene Normen der Simulation')}), {number.format(simulation.review)} in Prüfung{simulation.draftsWithoutPromulgation > 0 && <>, {plural(simulation.draftsWithoutPromulgation, 'Entwurf ohne Verkündungsbeleg', 'Entwürfe ohne Verkündungsbeleg')}</>}; {sourcesText(simulation)} <span class="muted">Stand {simulation.updatedAt}.</span>
       </p>
     )}
   </aside>

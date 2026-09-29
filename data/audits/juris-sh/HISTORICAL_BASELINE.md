@@ -8,12 +8,12 @@ Je Dokument aus der öffentlichen PDF-Ausgabe (Kopf „Gültig ab/bis“, Ausgab
 
 | Bereich | unchanged-since-baseline | changed-after-baseline | repealed-after-baseline | enacted-after-baseline | repealed-before-baseline | undetermined |
 | --- | --- | --- | --- | --- | --- | --- |
-| landesrecht | 1283 | 250 | 88 | 153 | 962 | 72 |
-| vwv | 1766 | 12 | 0 | 608 | 0 | 3 |
+| landesrecht | 1281 | 250 | 88 | 157 | 962 | 70 |
+| vwv | 1766 | 0 | 0 | 620 | 0 | 3 |
 
-`undetermined` (→ Review): sonstige 72 · nicht im Cache 2 · Ausgabe ohne Normtext 1
+`undetermined` (→ Review): sonstige 70 · nicht im Cache 2 · Ausgabe ohne Normtext 1
 
-Historische Fassungen: Stichtagsfassungen aus den am Stichtag geltenden Einzelfassungen der juris-Historie (PDF-Ausgabe „genau dieses Dokument“) zusammengesetzt und übernahmefähig: 289; zusammengesetzt, aber aus anderen Gründen im Review: 84. Der heutige Text ersetzt nie die Stichtagsfassung.
+Historische Fassungen: Stichtagsfassungen aus den am Stichtag geltenden Einzelfassungen der juris-Historie (PDF-Ausgabe „genau dieses Dokument“) zusammengesetzt und übernahmefähig: 328; zusammengesetzt, aber aus anderen Gründen im Review: 64. Der heutige Text ersetzt nie die Stichtagsfassung.
 
 Rangfolge für jede Stichtagsfassung (unverändert): 1. öffentlich erreichbare historische juris-Fassung (Einzelfassungen „genau dieses Dokument“ mit Gültigkeitszeitraum) · 2. amtliche vollständige Veröffentlichung · 3. sichere Rekonstruktion · 4. Review. Der heutige Text ersetzt nie die Stichtagsfassung.
 
@@ -23,14 +23,14 @@ Ereignisse gesamt 5857, davon nach dem Stichtag 528. Zuordnung Ereignis → DOKN
 
 ## 3 baseline-only-Kandidaten
 
-Register (Systematische Übersicht) Stand 2024-12-13. Kandidaten **54**: Dubletten 0 · Ende vor dem Registerstand (durch das Register belegt) 21 · Ende nach dem Registerstand (nur angekündigt, Entfristung nicht ausschließbar) 33 · einem juris-Dokument zugeordnet 49 · Stichtagsfassung übernahmefähig 34.
+Register (Systematische Übersicht) Stand 2024-12-13. Kandidaten **54**: Dubletten 0 · Ende vor dem Registerstand (durch das Register belegt) 21 · Ende nach dem Registerstand (nur angekündigt, Entfristung nicht ausschließbar) 33 · einem juris-Dokument zugeordnet 49 · Stichtagsfassung übernahmefähig 36.
 
 Zugeordnete Kandidaten sind in juris als nach dem Stichtag aufgehobene Normen geführt; ihre Stichtagsfassung entsteht aus den Einzelfassungen (sonst Review). Nicht zugeordnete stehen in der Rekonstruktionsqueue.
 
 | Ende | Typ | Gl.Nr. | Titel | Fundstelle | Einordnung | juris | Ausgang |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2023-12-19 | repeal | 2020-3-36 | Landesverordnung über die Aufstellung und Ausführung des Haushaltsplanes der Gemeinden (Gemeindehaus | GVOBl. 2024 S. 75 | confirmed-by-register | jlr-NNLSH00002AFF | import-ready |
-| 2023-12-31 | expire | 2013-2-63 | Landesverordnung über Verwaltungsgebühren für Pflanzenschutzangelegenheiten | GVOBl. S. 841 | confirmed-by-register | jlr-NNLSH00002FCD | review |
+| 2023-12-31 | expire | 2013-2-63 | Landesverordnung über Verwaltungsgebühren für Pflanzenschutzangelegenheiten | GVOBl. S. 841 | confirmed-by-register | jlr-NNLSH00002FCD | import-ready |
 | 2023-12-31 | expire | 2020-3-37 | Landesverordnung über die Kassenführung der Gemeinden mit einer Haushaltswirtschaft nach den Grundsä | GVOBl. S. 623 | confirmed-by-register | – | – |
 | 2023-12-31 | expire | 2020-3-41 | Landesverordnung über die Aufstellung und Ausführung eines kameralen Haushaltsplanes der Gemeinden ( | GVOBl. S. 623 | confirmed-by-register | jlr-NNLSH00002DE1 | import-ready |
 | 2023-12-31 | expire | 2120-22-1 | Landesverordnung zur Durchführung des Schleswig-Holsteinischen Rettungsdienstgesetzes (SHRDG-DVO) | GVOBl. S. 830 | confirmed-by-register | jlr-NNLSH00003088 | review |
@@ -66,7 +66,7 @@ Zugeordnete Kandidaten sind in juris als nach dem Stichtag aufgehobene Normen ge
 | 2025-02-28 | expire | 2130-14-25 | Landesverordnung über das Übereinstimmungszeichen (Übereinstimmungszeichen-Verordnung - ÜZVO) | GVOBl. S. 17 | announced-only | jlr-NNLSH00003046 | import-ready |
 | 2025-05-07 | expire | 630-2-1 | Landesverordnung über das Verfahren zur Bestimmung der Konjunkturkomponente nach § 5 des Gesetzes zu | GVOBl. S. 210 | announced-only | jlr-NNLSH00003047 | import-ready |
 | 2025-05-30 | expire | 2011-0-21 | Landesverordnung zur Abwehr von Gefahren für die öffentliche Sicherheit durch Kampfmittel (Kampfmitt | GVOBl. S. 607 | announced-only | jlr-NNLSH00002B66 | import-ready |
-| 2025-06-25 | expire | 7220-4-3 | Landesverordnung zur Feststellung der repräsentativen Tarifverträge im Bereich des öffentlichen Pers | GVOBl. S. 305 | announced-only | jlr-NNLSH00002B95 | review |
+| 2025-06-25 | expire | 7220-4-3 | Landesverordnung zur Feststellung der repräsentativen Tarifverträge im Bereich des öffentlichen Pers | GVOBl. S. 305 | announced-only | jlr-NNLSH00002B95 | import-ready |
 | 2025-06-29 | expire | 224-11-1 | Landesverordnung über den Denkmalrat (Denkmalratsverordnung) | GVOBl. S. 299 | announced-only | jlr-NNLSH00002B51 | import-ready |
 | 2025-06-29 | expire | 224-11-2 | Landesverordnung über die Vertrauensleute für Kulturdenkmale | GVOBl. S. 300 | announced-only | jlr-NNLSH00002B4A | import-ready |
 | 2025-06-29 | expire | 224-11-3 | Landesverordnung über die Einführung des Zustimmungsvorbehalts bei Genehmigungsverfahren betreffend  | GVOBl. S. 300 | announced-only | jlr-NNLSH00002B4C | import-ready |
@@ -79,7 +79,7 @@ Zugeordnete Kandidaten sind in juris als nach dem Stichtag aufgehobene Normen ge
 | 2025-08-30 | expire | 2013-2-65 | Landesverordnung über Verwaltungsgebühren in Angelegenheiten der Lebensmittel- und Bedarfsgegenständ | GVOBl. S. 471 | announced-only | jlr-NNLSH00002B1F | import-ready |
 | 2025-10-28 | expire | 114-0-4 | Landesverordnung über die örtliche Bekanntmachung und Verkündung (Bekanntmachungsverordnung - Bekann | GVOBl. S. 573 | announced-only | jlr-NNLSH00002B12 | import-ready |
 | 2025-12-31 | expire | 780-3-31 | Landesverordnung über die Wahl der Hauptversammlung der Landwirtschaftskammer Schleswig-Holstein (Wa | GVOBl. S. 538 | announced-only | jlr-NNLSH00003019 | review |
-| 2025-12-31 | expire | B 850-1-3 | Landesverordnung über die Personalqualifikation in öffentlich geförderten Kindertageseinrichtungen ( | GVOBl. S. 851 | announced-only | jlr-NNLSH00002B9B | reconstruction |
+| 2025-12-31 | expire | B 850-1-3 | Landesverordnung über die Personalqualifikation in öffentlich geförderten Kindertageseinrichtungen ( | GVOBl. S. 851 | announced-only | jlr-NNLSH00002B9B | review |
 | 2025-12-31 | expire | 90-1-14 | Landesverordnung über die Kostentragung bei der Verwaltung von Kreisstraßen durch das Land | GVOBl. S. 852 | announced-only | jlr-NNLSH00002AF4 | not-at-baseline |
 | 2026-02-19 | expire | 12-3-2 | Landesverordnung zur Feststellung der lebenswichtigen Einrichtungen im Sinne des § 2 Absatz 2 des La | GVOBl. S. 263 | announced-only | – | – |
 | 2026-06-10 | expire | B 864-8-16 | Landesverordnung über die Freistellung für ehrenamtliche Mitarbeit in der Jugendarbeit (Freistellung | GVOBl. S. 646 | announced-only | jlr-NNLSH00003029 | import-ready |
