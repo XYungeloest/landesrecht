@@ -37,6 +37,43 @@ export interface CompletenessPeriod {
   note: string;
 }
 
+/**
+ * Klassifizierte Sim-Quellenlücke (docs/SIMULATION_IMPORT.md, Abschnitt 7.1):
+ *  - `gazette-issue-missing` (A): bekannte Blattausgabe fehlt;
+ *  - `standalone-act-missing` (B): amtlicher Einzelakt fehlt, obwohl seine Existenz sonst belegt ist;
+ *  - `evidence-incomplete` (C): Quelle liegt vor, aber Wortlaut, Verkündung, Wirkdatum, Unterschrift, Anlage oder
+ *    Publikationsidentität sind nicht belegt;
+ *  - `possible-gap` (D): nur mögliche Lücke oder unklarer Zeitraum – nie als sicher fehlende Quelle gezählt.
+ */
+export const SOURCE_GAP_CLASSES = ['gazette-issue-missing', 'standalone-act-missing', 'evidence-incomplete', 'possible-gap'] as const;
+export type SourceGapClass = (typeof SOURCE_GAP_CLASSES)[number];
+export const SOURCE_GAP_MISSING = ['wording', 'promulgation', 'effective-date', 'signature', 'annex', 'publication-identity'] as const;
+export type SourceGapMissing = (typeof SOURCE_GAP_MISSING)[number];
+/** P1: entsperrt mehrere Akte oder eine zentrale Norm; P2: schließt eine klare Publikationslücke; P3: nur Vollständigkeit/Provenienz. */
+export const ACQUISITION_PRIORITIES = ['P1', 'P2', 'P3'] as const;
+export const ACQUISITION_CONFIDENCES = ['high', 'medium', 'low'] as const;
+export const ACQUISITION_STATUSES = ['open', 'requested', 'obtained', 'dead-end'] as const;
+
+export interface SourceGap {
+  id: string;
+  class: SourceGapClass;
+  title: string;
+  /** Woher wir wissen, dass die Quelle existiert (oder warum die Lücke nur möglich ist). */
+  existenceEvidence: string;
+  expectedDate?: string;
+  expectedPublication?: string;
+  /** Nur Klasse A: Blattreihe und Ausgabe aus `series[].missingIssues`; fehlt beides, ist die Ausgabe nur angekündigt. */
+  series?: string;
+  issue?: string;
+  /** Was fehlt (Pflicht bei Klasse C). */
+  missing: SourceGapMissing[];
+  /** Ledger-Ereignisse und Normen, die die Lücke offen hält. */
+  blocks: { events: string[]; norms: string[] };
+  /** Nur nützliche Quellen tragen einen Akquisitionseintrag (data/simulation/source-acquisition-queue.json). */
+  acquisition?: { priority: (typeof ACQUISITION_PRIORITIES)[number]; confidence: (typeof ACQUISITION_CONFIDENCES)[number]; status: (typeof ACQUISITION_STATUSES)[number] };
+  note?: string;
+}
+
 export interface CompletenessFile {
   schemaVersion: typeof COMPLETENESS_SCHEMA;
   jurisdiction: JurisdictionId;
@@ -50,6 +87,8 @@ export interface CompletenessFile {
   unclearPeriods: CompletenessPeriod[];
   /** Rechtsakte: sicher belegt und übernommen, in Prüfung, gesperrt (Ziel nicht im Bestand), Entwürfe ohne Verkündung. */
   acts: { secure: number; review: number; blocked: number; draftsWithoutPromulgation: number };
+  /** Klassifizierte Quellenlücken A–D; der Sim-Quellenstatus wird daraus und aus dem Ledger berechnet (assessment.ts). */
+  sourceGaps: SourceGap[];
   notes: string[];
 }
 
@@ -120,6 +159,44 @@ function parseSeries(value: unknown, path: string): CompletenessSeries {
   return series;
 }
 
+function expectEnum<T extends string>(value: unknown, allowed: readonly T[], path: string): T {
+  if (typeof value !== 'string' || !(allowed as readonly string[]).includes(value)) fail(path, `muss einer der Werte ${allowed.join(', ')} sein`);
+  return value as T;
+}
+
+function parseSourceGap(value: unknown, path: string): SourceGap {
+  const object = expectObject(value, path);
+  const id = expectString(object.id, `${path}.id`);
+  if (!/^[a-z0-9][a-z0-9-]*$/u.test(id)) fail(`${path}.id`, 'muss ein Slug sein');
+  const gap: SourceGap = {
+    id,
+    class: expectEnum(object.class, SOURCE_GAP_CLASSES, `${path}.class`),
+    title: expectString(object.title, `${path}.title`),
+    existenceEvidence: expectString(object.existenceEvidence, `${path}.existenceEvidence`),
+    missing: expectStringList(object.missing, `${path}.missing`).map((entry, index) => expectEnum(entry, SOURCE_GAP_MISSING, `${path}.missing[${index}]`)),
+    blocks: { events: [], norms: [] },
+  };
+  for (const key of ['expectedDate', 'expectedPublication', 'series', 'issue', 'note'] as const) if (object[key] !== undefined) gap[key] = expectString(object[key], `${path}.${key}`);
+  const blocks = expectObject(object.blocks ?? {}, `${path}.blocks`);
+  gap.blocks = { events: expectStringList(blocks.events, `${path}.blocks.events`), norms: expectStringList(blocks.norms, `${path}.blocks.norms`) };
+  if ((gap.series === undefined) !== (gap.issue === undefined)) fail(path, 'series und issue nur gemeinsam');
+  if (gap.series !== undefined && gap.class !== 'gazette-issue-missing') fail(`${path}.series`, 'nur bei Klasse gazette-issue-missing');
+  if (gap.class === 'evidence-incomplete' && gap.missing.length === 0) fail(`${path}.missing`, 'Klasse evidence-incomplete nennt, was fehlt');
+  if (object.acquisition !== undefined) {
+    const acquisition = expectObject(object.acquisition, `${path}.acquisition`);
+    gap.acquisition = {
+      priority: expectEnum(acquisition.priority, ACQUISITION_PRIORITIES, `${path}.acquisition.priority`),
+      confidence: expectEnum(acquisition.confidence, ACQUISITION_CONFIDENCES, `${path}.acquisition.confidence`),
+      status: expectEnum(acquisition.status, ACQUISITION_STATUSES, `${path}.acquisition.status`),
+    };
+    // Keine spekulative P1: eine mögliche Lücke oder eine unsichere Existenz entsperrt nichts Belegtes.
+    if (gap.class === 'possible-gap') fail(`${path}.acquisition`, 'eine nur mögliche Lücke ist keine Akquisitionsaufgabe');
+    if (gap.acquisition.priority === 'P1' && gap.acquisition.confidence === 'low') fail(`${path}.acquisition.priority`, 'P1 verlangt belegte Existenz (confidence nicht low)');
+    if (gap.acquisition.priority === 'P1' && gap.blocks.events.length + gap.blocks.norms.length === 0) fail(`${path}.acquisition.priority`, 'P1 verlangt, dass die Quelle Akte oder Normen entsperrt');
+  }
+  return gap;
+}
+
 export function parseCompletenessFile(value: unknown, path = 'completeness.json'): CompletenessFile {
   const object = expectObject(value, path);
   if (object.schemaVersion !== COMPLETENESS_SCHEMA) fail(`${path}.schemaVersion`, `muss ${COMPLETENESS_SCHEMA} sein`);
@@ -154,13 +231,34 @@ export function parseCompletenessFile(value: unknown, path = 'completeness.json'
       blocked: expectCount(acts.blocked ?? 0, `${path}.acts.blocked`),
       draftsWithoutPromulgation: expectCount(acts.draftsWithoutPromulgation ?? 0, `${path}.acts.draftsWithoutPromulgation`),
     },
+    sourceGaps: [],
     notes: expectStringList(object.notes, `${path}.notes`),
   };
-  // Der Status muss belegbar sein: „vollständig“ verträgt weder fehlende Ausgaben noch ungeklärte Zeiträume.
+  const gapsRaw = object.sourceGaps === undefined ? [] : object.sourceGaps;
+  if (!Array.isArray(gapsRaw)) fail(`${path}.sourceGaps`, 'muss eine Liste sein');
+  file.sourceGaps = gapsRaw.map((entry, index) => parseSourceGap(entry, `${path}.sourceGaps[${index}]`));
+  const gapIds = file.sourceGaps.map((gap) => gap.id);
+  if (new Set(gapIds).size !== gapIds.length) fail(`${path}.sourceGaps`, 'eine Lücken-ID ist doppelt');
+  // Jede fehlende Ausgabe einer Blattreihe ist genau eine Lücke der Klasse A – und umgekehrt.
+  const linked = new Map<string, string>();
+  for (const gap of file.sourceGaps) {
+    if (gap.series === undefined) continue;
+    const entry = series.find((candidate) => candidate.gazette === gap.series);
+    if (!entry || !entry.missingIssues.includes(gap.issue!)) fail(`${path}.sourceGaps`, `${gap.id}: ${gap.series} ${gap.issue} ist keine fehlende Ausgabe der Blattreihen`);
+    const key = `${gap.series}\u0000${gap.issue}`;
+    if (linked.has(key)) fail(`${path}.sourceGaps`, `${gap.series} ${gap.issue} ist doppelt als Lücke erfasst`);
+    linked.set(key, gap.id);
+  }
+  for (const entry of series) for (const issue of entry.missingIssues) {
+    if (!linked.has(`${entry.gazette}\u0000${issue}`)) fail(`${path}.sourceGaps`, `fehlende Ausgabe ${entry.gazette} ${issue} ist nicht als Lücke der Klasse A erfasst`);
+  }
+  // Der Status muss belegbar sein: „vollständig“ verträgt keine fehlenden Ausgaben und keine Quellenlücke A–C.
+  // Nur mögliche Lücken (Klasse D, ungeklärte Zeiträume) sperren „vollständig“ nicht (Abschnitt 7.2).
   const missing = series.reduce((sum, entry) => sum + entry.missingIssues.length, 0);
   if (file.status !== 'SIM SOURCES PARTIAL') {
     if (missing > 0) fail(`${path}.status`, `${file.status} verträgt keine fehlenden Ausgaben (${missing})`);
-    if (unclearPeriods.length > 0) fail(`${path}.status`, `${file.status} verträgt keine ungeklärten Zeiträume (${unclearPeriods.length})`);
+    const open = file.sourceGaps.filter((gap) => gap.class !== 'possible-gap').length;
+    if (open > 0) fail(`${path}.status`, `${file.status} verträgt keine Quellenlücken der Klassen A–C (${open})`);
   }
   if (file.status === 'SIM LEGAL STATE COMPLETE' && (file.acts.review > 0 || file.acts.blocked > 0)) {
     fail(`${path}.status`, `SIM LEGAL STATE COMPLETE verträgt keine Rechtsakte in Prüfung oder Sperre (${file.acts.review + file.acts.blocked})`);

@@ -8,7 +8,7 @@
 import { join } from 'node:path';
 
 import { readJsonFile, writeJsonAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
-import { INVENTORY_STATUS_SCHEMA, parseInventoryStatusFile, type InventoryStatus, type SimulationInventoryStatus } from '@landesrecht/legal-core/config/inventory-status.ts';
+import { INVENTORY_STATUS_SCHEMA, parseInventoryStatusFile, type InventoryStatus, type SimulationInventoryStatus, type SimulationSourceStatus } from '@landesrecht/legal-core/config/inventory-status.ts';
 import { SIMULATION_BASELINE_DATE, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { loadJurisdictionNorms } from '@landesrecht/legal-core/lib/loader.ts';
 import type { NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
@@ -40,17 +40,19 @@ export async function countJurisdictionNorms(root: string, jurisdiction: Jurisdi
   return countNorms(await loadJurisdictionNorms(jurisdiction, root));
 }
 
-export function buildSimulationInventoryStatus(file: CompletenessFile, counts: Pick<NormCounts, 'simulationNorms'>): SimulationInventoryStatus {
+export function buildSimulationInventoryStatus(file: CompletenessFile, counts: Pick<NormCounts, 'simulationNorms'>, sources?: SimulationSourceStatus): SimulationInventoryStatus {
   const totals = completenessTotals(file);
+  // Bekannte/vorhandene Ausgaben folgen dem getrennten Modell, sobald es berechnet ist (angekündigte Ausgaben zählen mit).
   return {
     status: file.status,
-    knownIssues: totals.knownIssues,
-    presentIssues: totals.presentIssues,
+    knownIssues: sources?.gazetteCoverage.knownIssues ?? totals.knownIssues,
+    presentIssues: sources?.gazetteCoverage.presentIssues ?? totals.presentIssues,
     secureActs: totals.secureActs,
     review: totals.review,
     draftsWithoutPromulgation: totals.draftsWithoutPromulgation,
     simulationNorms: counts.simulationNorms,
     updatedAt: file.assessedAt,
+    ...(sources ? { sources } : {}),
   };
 }
 

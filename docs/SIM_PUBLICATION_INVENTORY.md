@@ -5,7 +5,15 @@ Ausgabe gilt als bekannt, wenn Nummernfolge, Querverweis oder Verkündungsmittei
 konkrete Suchliste. Eine bislang fehlende Quelle, die im Archiv `imports/` auftaucht, wird über das Inventar und die
 Bewertung nachgetragen (Status je Land bleibt `SIM SOURCES PARTIAL`, bis alle bekannten Lücken geschlossen sind).
 
+Blattabdeckung und Gesamtstatus sind getrennt (docs/SIMULATION_IMPORT.md, Abschnitt 7.2): „alle bekannten Ausgaben
+vorhanden“ heißt nicht, dass der Sim-Rechtsstand vollständig belegt ist. Beschaffbare Quellen: `docs/SIM_SOURCE_ACQUISITION.md`.
+
 ## Land Westdeutschland (`west`) – SIM SOURCES PARTIAL, Stand 2026-09-29
+
+- Blattabdeckung: **PARTIAL** (22/23 bekannte Ausgaben, 5 verdächtig)
+- Einzelverkündungen: **COMPLETE** (9 vorhanden, 0 nur als Beleg, 0 fehlend)
+- Sim-Quellen gesamt: **PARTIAL** · fehlende Quellen 1 · Evidenz unvollständig 7 · mögliche Lücken 1 + 4 Zeiträume
+- Ereignisse: 41 applied, 0 pending, 38 review, 17 blocked (davon 10 wegen Zielnorm außerhalb des eingefrorenen Bestands), 7 not-promulgated; quellenbedingt offen 28; letzte Quelle 2026-09-18
 
 | Blattreihe | bekannt | vorhanden | fehlend | verdächtig |
 | --- | ---: | ---: | --- | --- |
@@ -21,12 +29,35 @@ Ungeklärte Zeiträume (Suchliste):
 - 2025-09-07 – 2025-12-17: Keine Ausgabe des Gesetz- und Verordnungsblatts zwischen Nr. 04/2025 und Nr. 05/2025; nur Ministerialblätter Nr. 1–3.
 - 2026-05-18 – 2026-09-17: Ausgaben mit Platzhaltern (GV. West „Nr. 3“ vom 29.06.2026, MBl. WD 2026 Nr. 3), Ministerialblatt 2026 Nr. 2 fehlt; Umzug der Landesregierung nach Mainz nur als Entwurf belegt.
 
+Lücken A – Blattausgabe fehlt:
+
+- `west-mbl-2026-2` Ministerialblatt für das Land Westdeutschland (MBl. WD) 2026 Nr. 2 (P2)
+
+Lücken C – Evidenz unvollständig (Quelle vorhanden):
+
+- `west-verfassung-2024` Verfassung für Westdeutschland vom 23.02.2024 – Ausfertigung und Volksabstimmung (P3)
+- `west-haushalt-2024-anlage` Haushaltsplan 2024 (Anlage zum Haushaltsgesetz, GV. West 2024 Nr. 3 S. 77) (P3)
+- `west-grenzkontrollen-2024` Verordnung zur Einführung von Grenzkontrollen (Einzelausfertigung 24-MP-02-V-01 vom 16.08.2024) und ihre Aufhebung (P3)
+- `west-south-carolina-2024` Gesetz zu dem Partnerschaftsabkommen mit South Carolina (GV. West 2024 Nr. 3 S. 84)
+- `west-entwurf-verkuendet` Als „Entwurf“ betitelte, aber ausgefertigte Gesetze (GV. West 2024 Nr. 2 Serie B, 2025 Nr. 01/02, 2026 Nr. 1)
+- `west-bauordnung-2026` Gesetz zur Novellierung des Landesbaurechts (GV. West 2026 Nr. 2 S. 27)
+- `west-2026-platzhalter` Ausgaben mit Platzhalterdatum: GV. West 2026 Nr. 3 (29.06.2026) und MBl. WD 2026 Nr. 3 („09. Monat 2026“)
+
+Lücken D – mögliche Lücke (nie als fehlende Quelle gezählt):
+
+- `west-gv-2026-nr4ff` GV. West 2026 Nr. 4 ff.
+
 Hinweise zu fehlenden Quellen:
 
 - Rechtsstand nicht vollständig belegbar: Lücken in den Nummernfolgen, dreifache Nummer 3 im Jahrgang 2026, fehlendes Ministerialblatt 2026 Nr. 2, Ausgaben mit Platzhaltern.
 - Blattverzeichnis (gvbl.wiki): Gesetzblätter 2024 Nr. 01–06, 2025 Nr. 07–10, 2026 Nr. 11–12 (17.05.2026) und Ministerialblätter 2025 Nr. 1–2 – alle im Archiv; keine neue Ausgabe. Sekundärquelle (Ebene 4): nur Ausgabenfolge und Lückenerkennung. Das Verzeichnis endet am 17.05.2026 und führt GV. West 2025 Nr. 05, MBl. WD 2025 Nr. 3 und die Ausgaben ab Juni 2026 nicht; die dreifache „Nr. 3“ 2026, die Nummern 4 ff. und das fehlende MBl. WD 2026 Nr. 2 bleiben ungeklärt.
 
 ## Land Niedersachsen-Holstein (`nsh`) – SIM SOURCES PARTIAL, Stand 2026-09-29
+
+- Blattabdeckung: **PARTIAL** (5/6 bekannte Ausgaben, 1 verdächtig)
+- Einzelverkündungen: **COMPLETE** (15 vorhanden, 4 nur als Beleg, 0 fehlend)
+- Sim-Quellen gesamt: **PARTIAL** · fehlende Quellen 1 · Evidenz unvollständig 7 · mögliche Lücken 0 + 2 Zeiträume
+- Ereignisse: 33 applied, 0 pending, 28 review, 4 blocked (davon 4 wegen Zielnorm außerhalb des eingefrorenen Bestands), 2 not-promulgated; quellenbedingt offen 17; letzte Quelle 2026-09-02
 
 | Blattreihe | bekannt | vorhanden | fehlend | verdächtig |
 | --- | ---: | ---: | --- | --- |
@@ -41,12 +72,31 @@ Ungeklärte Zeiträume (Suchliste):
 - 2024-03-05 – 2025-08-03: Keine Blattausgabe zwischen NH GVBl. MAL-I Teil 2/2024 (04.03.2024) und NSH GVBl. LAH-I Teil 1/2025 (04.08.2025); Verkündungen nur durch Mitteilungen (08.07.2024, 17.09.2024, 26.12.2024, 05.05.2025, 12.05.2025). Für 08.07.2024 wurde ein Gesetzblatt angekündigt („Aushändigung folgt in Kürze“), das nicht vorliegt; die verkündeten Drucksachen 02/09–13 liegen vor und stehen wortgleich in LAH-I Teil 1/2025.
 - 2025-08-05 – 2026-09-01: Keine Blattausgabe zwischen LAH-I Teil 1/2025 und LAH-II Teil 1/2026 (02.09.2026); Verkündung 24.11.2025 nur durch Mitteilung (Drucksachen 05/06–05/10, später in LAH-II Teil 1/2026). Regime-Bezeichnungen der Blätter (Maluchel I, Lahn I, Lahn II) decken die Regierungen Röttgen, Newsorow und Ulbricht nicht ab.
 
+Lücken A – Blattausgabe fehlt:
+
+- `nsh-gvbl-2024-07-08` Gesetzblatt zur Verkündung vom 08.07.2024 (P2)
+
+Lücken C – Evidenz unvollständig (Quelle vorhanden):
+
+- `nsh-mal-i-2024-sieben-gesetze` Sieben im Inhaltsverzeichnis von NH GVBl. MAL-I Teil 1/2024 genannte Gesetze (u. a. Landesverfassungsschutzgesetz, Änderung der Landesverfassung) (P1)
+- `nsh-staatsvertrag-2025-12-09` Staatsvertrag zum Gesetz vom 09.12.2025 (NSH GVBl. LAH-II Teil 2/2026 S. 8–9) (P2)
+- `nsh-landesverfassung-2024` Landesverfassung Niedersachsen-Holstein (NH GVBl. MAL-I Teil 1/2024 S. 4–26) (P3)
+- `nsh-sondvrseg-2025` Gesetz zur Errichtung eines Sondervermögens (NSH SondVRsEG, Drucksache 04/14)
+- `nsh-schulgesetz-2026` Schulverordnungen 2026 auf Grundlage des nicht verkündeten Schulgesetzes (SchulReNeuOG) (P3)
+- `nsh-wirkdaten` Akte ohne bestimmbares Inkrafttreten (Budgetgesetz „F…“, Erste-Hilfe- und Schwimmkurs-Verordnung, Landesfonds)
+- `nsh-videoueberwachung-2025` Verordnung zur Videoüberwachung und Sicherheit im öffentlichen Raum (06.03.2025)
+
 Hinweise zu fehlenden Quellen:
 
 - Verdächtig: MAL-I Teil 1/2024 enthält nur die Landesverfassung (S. 4–26), das Inhaltsverzeichnis nennt sieben weitere Gesetze („Fehler! Textmarke nicht definiert.“), die fehlen.
 - Fehlende Quellen: das für den 08.07.2024 angekündigte Gesetzblatt; Staatsvertrag zum Gesetz vom 09.12.2025 (im Blatt nicht abgedruckt); die sieben im Inhaltsverzeichnis von MAL-I Teil 1/2024 genannten Gesetze.
 
 ## Freistaat Bayern-Württemberg (`baywue`) – SIM SOURCES PARTIAL, Stand 2026-09-29
+
+- Blattabdeckung: **COMPLETE** (8/8 bekannte Ausgaben, 2 verdächtig)
+- Einzelverkündungen: **PARTIAL** (28 vorhanden, 3 nur als Beleg, 5 fehlend)
+- Sim-Quellen gesamt: **PARTIAL** · fehlende Quellen 5 · Evidenz unvollständig 6 · mögliche Lücken 1 + 2 Zeiträume
+- Ereignisse: 35 applied, 0 pending, 28 review, 18 blocked (davon 17 wegen Zielnorm außerhalb des eingefrorenen Bestands), 0 not-promulgated; quellenbedingt offen 18; letzte Quelle 2026-08-30
 
 | Blattreihe | bekannt | vorhanden | fehlend | verdächtig |
 | --- | ---: | ---: | --- | --- |
@@ -59,6 +109,27 @@ Ungeklärte Zeiträume (Suchliste):
 
 - 2025-04-30 – 2026-05-28: Keine Blattausgabe über 13 Monate (das Blattverzeichnis führt zwischen 2025 Nr. 3 und 2026 Nr. 1 keine Ausgabe); das Gesetz zur Bereitstellung finanzieller Hilfen für Erdbebenschäden vom 14. Mai 2026 wird vom Aufhebungsgesetz vom 26. Juni 2026 vorausgesetzt, ist aber weder im Archiv (nur Entwurf) noch im Blattverzeichnis als verkündet belegt.
 - 2026-08-31 – 2026-09-28: Keine Quelle nach GVBl. BayWü 2026 Nr. 4 (30. August 2026); das Blattverzeichnis endet mit dieser Ausgabe.
+
+Lücken B – amtlicher Einzelakt fehlt (Existenz sonst belegt):
+
+- `baywue-erdbebenhilfeg-2026` Gesetz zur Bereitstellung finanzieller Hilfen für Erdbebenschäden in Bayern-Württemberg vom 14.05.2026 (P1)
+- `baywue-ago-bekanntmachung-2026-05-31` Bekanntmachung vom 31.05.2026 der AGO-Änderungsverordnung 26-StIH-07-V-03 (P2)
+- `baywue-grenzschutz-2024` Weitere „Verordnungen betreffend des Grenzschutzes“ 2024 (u. a. Verordnung zur Verstärkung der Polizeipräsenz an den Süddeutschen Auslandsgrenzen vom 16.08.2024) (P2)
+- `baywue-verfassung-2025-originalblatt` Original-Verkündungsblatt der Staatsverfassung vom 12.01.2025 (P3)
+- `baywue-orgerlass-2025-02-14` Organisationserlass 25-MP-04-OE-01 vom 14.02.2025 (P3)
+
+Lücken C – Evidenz unvollständig (Quelle vorhanden):
+
+- `baywue-gvbl-2025-2-seite-11` GVBl. BayWü 2025 Nr. 2 – vollständiges PDF (Seite 11 fehlt, Duplikat von Seite 10) (P2)
+- `baywue-einzelverordnungen-2025-01` Amtliche Verkündungsbelege der Einzelverordnungen Januar 2025 (Sexualkunde, Unterrichtsbeginn, Hausaufgaben, KZ-Besuchspflicht, Wolfsverordnung, Grenzüberwachung) (P2)
+- `baywue-haushalt-2026-anlage` Haushaltsplan 2026 (Anlage zum Haushaltsgesetz 2026) (P3)
+- `baywue-druckmaengel` Druckmängel verkündeter Gesetze (Landarzt-Stipendiengesetz GVBl. Süd 2024 Nr. 1, SchuSprG GVBl. BayWü 2025 Nr. 1) (P3)
+- `baywue-wirkdaten` Verkündete Akte ohne bestimmbares Wirkdatum (Meisterpflichtgesetz, Gesetz zur Stärkung der Familiengesundheit) (P3)
+- `baywue-rainer-winkler-orden` Bekanntmachung über die Stiftung des Rainer-Winkler-Ordens (05.06.2026, „Nr. 1, Ausgegeben zu Stuttgart“)
+
+Lücken D – mögliche Lücke (nie als fehlende Quelle gezählt):
+
+- `baywue-handlungsfaehigkeit-ausserkrafttreten` Bekanntmachung des Außerkrafttretens des Gesetzes zur Sicherstellung der Handlungsfähigkeit der Staatsorgane
 
 Hinweise zu fehlenden Quellen:
 

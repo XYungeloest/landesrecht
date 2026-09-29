@@ -2,6 +2,7 @@
  * SimRecht-Kompatibilitätsschicht: explizite, versionierte Antworttypen der öffentlichen API.
  * Schemaversion 1.0 – Änderungen an Feldern erfordern eine neue Schemaversion.
  */
+import type { JurisdictionStatusSummary } from '@landesrecht/legal-core/config/inventory-status.ts';
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import type { NormHistory, NormMeta, NormStatus, NormType, NormVersion, Publication, PublicationEntry } from '@landesrecht/legal-core/lib/schema.ts';
 import type { SearchHit } from '@landesrecht/search/ranking.ts';
@@ -42,6 +43,11 @@ export interface ApiJurisdiction {
   search: Omit<ApiSearchCoverage, 'jurisdiction'>;
   /** Diagnose der Laufzeitquelle (nur `ostrecht-d1`): Sync-Zustand und Identität der vorgelagerten Projektion. */
   runtime?: { syncState: string | null; syncedAt: string | null; upstreamCorpusHash: string | null; projectionFingerprint: string | null };
+  /**
+   * Baseline- und Sim-Quellenstatus (West, NSH, BayWü; fehlt für Ost). Getrennte Ebenen: `gazetteCoverage.status =
+   * COMPLETE` kann neben `simulationStatus = PARTIAL` stehen (docs/SIMULATION_IMPORT.md, Abschnitt 7.2).
+   */
+  status?: JurisdictionStatusSummary;
 }
 
 export interface ApiJurisdictionsResponse {

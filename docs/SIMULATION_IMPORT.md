@@ -541,7 +541,8 @@ Format (`packages/importers/simulation/src/completeness/schema.ts`, fail-closed)
   nur durch Mitteilung belegt). `acts`: sicher belegte und übernommene Akte, in Prüfung, gesperrt (Ziel nicht sicher
   im Bestand), Entwürfe ohne Verkündungsbeleg.
 - Der Status muss belegbar sein: `SIM SOURCES COMPLETE FOR KNOWN INVENTORY` und `SIM LEGAL STATE COMPLETE` vertragen
-  weder `missingIssues` noch `unclearPeriods`; `SIM LEGAL STATE COMPLETE` verträgt keine Akte in `review` oder `blocked`.
+  weder `missingIssues` noch eine Quellenlücke der Klassen A–C (7.1); `SIM LEGAL STATE COMPLETE` verträgt keine Akte und
+  kein Ledger-Ereignis in `review` oder `blocked`. Ungeklärte Zeiträume (Klasse D) sperren den Status nicht.
 - `npm run import:simulation:completeness -- --write [--jurisdiction <land>]` zählt aus `content/norms/<land>/` die
   Baseline-Normen (Fassung am Ausgangsrechtsstand) und die eigenen Sim-Normen (erste Fassung danach) und schreibt je Land
   den Block `simulation` (`status`, `knownIssues`, `presentIssues`, `secureActs`, `review` = `acts.review + acts.blocked`,
@@ -551,6 +552,59 @@ Format (`packages/importers/simulation/src/completeness/schema.ts`, fail-closed)
   Baseline-Normzahl (`published`) und Sim-Normzahl (`simulationNorms`) getrennt aus („Sicher belegter Rechtsstand zum
   1. Dezember 2023 …; Simulationsrecht: n Rechtsakte aus m Ausgaben übernommen, k in Prüfung; Quellensammlung
   unvollständig …“) und entfällt automatisch, sobald `complete: true` und `SIM LEGAL STATE COMPLETE` gelten.
+
+### 7.1 Quellenlücken A–D (`sourceGaps`)
+
+Jede offene Sim-Lücke steht genau einmal in `sourceGaps[]` der Bewertung (`id`, `class`, `title`, `existenceEvidence`,
+optional `expectedDate`, `expectedPublication`, `series`/`issue`, `missing[]`, `blocks.events`/`blocks.norms` mit
+Ledger-IDs und Slugs, `acquisition`, `note`):
+
+| Klasse | `class` | Bedeutung | zählt als |
+| --- | --- | --- | --- |
+| A | `gazette-issue-missing` | bekannte Blattausgabe fehlt; mit `series`/`issue` genau eine Zeile aus `missingIssues`, ohne beides eine angekündigte Ausgabe außerhalb jeder Nummernfolge | fehlende Quelle |
+| B | `standalone-act-missing` | amtlicher Einzelakt fehlt, obwohl seine Existenz durch eine andere amtliche Quelle belegt ist | fehlende Quelle |
+| C | `evidence-incomplete` | Quelle liegt vor, aber `wording`, `promulgation`, `effective-date`, `signature`, `annex` oder `publication-identity` fehlt (`missing[]` Pflicht) | unvollständige Evidenz |
+| D | `possible-gap` | nur mögliche Lücke (z. B. „Nr. 4 ff.“, nie belegte Bekanntmachung); ebenso `unclearPeriods` | nie fehlende Quelle |
+
+Fail-closed: jede `missingIssues`-Zeile hat genau eine Lücke A; Ledger-IDs in `blocks.events` müssen existieren.
+Publikationsidentität entsteht aus Blattreihe, Jahr, Nummer, Datum und Quell-Hash, nie aus der Nummer allein (West: die
+dreifache Nr. 3 des GV. West 2026 sind drei Ausgaben). Eine Drucksache allein ist keine Verkündung; Drucksache und
+amtliche Verkündungsmitteilung zusammen können die Rechtswirkung belegen (NSH 08.07.2024), die angekündigte
+Blattausgabe bleibt dann eine Lücke A.
+
+`acquisition` (`priority`, `confidence`, `status`) tragen nur nützliche Quellen: P1 entsperrt mehrere Akte oder eine
+zentrale Norm (nie mit `confidence: low`, nie ohne `blocks`), P2 schließt eine klare Publikationslücke, P3 dient nur
+Vollständigkeit oder Provenienz; Klasse D ist nie Akquisitionsaufgabe. `completeness --write` erzeugt daraus
+`data/simulation/source-acquisition-queue.json` und `docs/SIM_SOURCE_ACQUISITION.md`. Bekannte Sackgassen werden nicht
+erneut gesucht.
+
+### 7.2 Getrennte Statusebenen
+
+`completeness` berechnet aus Bewertung und Ledger den Block `simulation.sources` (`assessment.ts`):
+
+- `gazetteCoverage` (`COMPLETE`/`PARTIAL`, bekannt/vorhanden/fehlend/verdächtig) – nur Blattausgaben;
+- `standaloneSourceCoverage` – Einzelverkündungen (vorhanden, nur belegt, fehlend = Klasse B);
+- `missingSourceCount` (A + B), `evidenceIncompleteCount` (C), `possibleGapCount` und `knownUnclearPeriods` (D);
+- `events`: applied, pending, review, blocked, not-promulgated, `byReason`, `sourceCaused` (review/blocked mit
+  `missing-source`, `promulgation-unclear`, `effective-date-undetermined`, `draft-only`) und `blockedByBaselineTarget`;
+- `lastSourceDate` (jüngstes Ereignisdatum außer Entwürfen) und der Gesamtstatus `simulationStatus`.
+
+`simulationStatus = COMPLETE` nur, wenn alle bekannten Blattausgaben und Einzelverkündungen vorliegen, keine Lücke C offen
+ist (auch keine unklare Publikationsidentität, keine fehlende normative Anlage) und kein Ereignis aus Quellengründen in
+`review` oder `blocked` steht. Hypothetische Veröffentlichungen (D) müssen nicht widerlegt werden. Der erklärte `status`
+muss dem berechneten entsprechen (PARTIAL ↔ `SIM SOURCES PARTIAL`), sonst bricht der Befehl ab.
+
+**`gazetteCoverage = COMPLETE` neben `simulationStatus = PARTIAL` ist regulär** (BayWü: alle 8 bekannten Ausgaben
+vorhanden, aber belegte Einzelakte fehlen). Oberfläche und API (`/api/v1/jurisdictions`, Feld `status`) zeigen beide
+Ebenen getrennt; „alle bekannten Ausgaben vorhanden“ wird nie als vollständiger Sim-Rechtsstand ausgegeben. Der
+Baseline-Status (`baselineFreeze`) ist davon unabhängig: ein eingefrorener Ausgangsrechtsstand bleibt `FROZEN`.
+
+`missing-baseline-target` heißt: Die Zielnorm steht nicht im eingefrorenen Ausgangsrechtsstand – mit Slug, weil sie
+mangels ausreichender Evidenz ausgeschlossen wurde (`resolved-excluded`), ohne Slug, weil sie nie zum übernommenen
+Bestand gehörte. Der Sim-Akt selbst kann verkündet sein; gesperrt ist nur die Konsolidierung. Ein Sim-Lauf fügt das Ziel
+nie ein. Zeigt neue Evidenz, dass ein ausgeschlossenes Ziel rekonstruierbar ist, entsteht ein `freeze-review-candidate`
+(Freigabe `kind: "added"` zum Freeze-Commit, 6.1), nie eine automatische Aufnahme. Steht ein so gesperrtes Ziel doch im
+Bestand, bricht `completeness` ab (Grund falsch).
 
 ## 8 Sim-Quellenarchiv in R2
 

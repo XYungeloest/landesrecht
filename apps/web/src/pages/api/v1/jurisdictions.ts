@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 
+import { getJurisdictionStatusSummary } from '@landesrecht/legal-core/config/inventory-status.ts';
 import { JURISDICTION_LIST } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { getJurisdictionUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import { OSTRECHT_RUNTIME_META_KEYS } from '@landesrecht/runtime/ostrecht-d1-store.ts';
@@ -29,6 +30,8 @@ export const GET: APIRoute = async () => {
         search: store ? await getStoreSearchCoverage(store) : FULL_SEARCH_COVERAGE,
       };
       if (jurisdiction.upstreamSourceOfTruth) entry.upstreamSourceOfTruth = { system: jurisdiction.upstreamSourceOfTruth.system, label: jurisdiction.upstreamSourceOfTruth.label, siteUrl: jurisdiction.upstreamSourceOfTruth.siteUrl };
+      const status = getJurisdictionStatusSummary(jurisdiction.id);
+      if (status) entry.status = status;
       if (jurisdiction.legacySource) entry.legacySource = { system: jurisdiction.legacySource.system, label: jurisdiction.legacySource.label, siteUrl: jurisdiction.legacySource.siteUrl };
       if (store && jurisdiction.runtimeSource === 'ostrecht-d1') {
         const [syncState, syncedAt, upstreamCorpusHash, projectionFingerprint] = await Promise.all([

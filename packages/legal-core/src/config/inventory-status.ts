@@ -36,6 +36,49 @@ export interface SimulationInventoryStatus {
   simulationNorms: number;
   /** Stand der Bewertung (ISO-Datum). */
   updatedAt: string;
+  /** Getrenntes Statusmodell (Lauf 21): Blattabdeckung, Einzelakte, Evidenz, Ereignisse; fehlt bei alten Dateien. */
+  sources?: SimulationSourceStatus;
+}
+
+/**
+ * Getrennte Sim-Statusebenen (docs/SIMULATION_IMPORT.md, Abschnitt 7.2). `gazetteCoverage` sagt nur, ob alle
+ * bekannten Blattausgaben vorliegen; der Gesamtstatus `simulationStatus` ist erst COMPLETE, wenn zusätzlich alle
+ * bekannten Einzelverkündungen vorliegen, keine Quellenlücke A–C offen ist und kein Ereignis aus Quellengründen
+ * in Prüfung oder gesperrt ist. `gazetteCoverage = COMPLETE` neben `simulationStatus = PARTIAL` ist daher regulär.
+ */
+export const SIM_COVERAGE_STATUSES = ['COMPLETE', 'PARTIAL'] as const;
+export type SimCoverageStatus = (typeof SIM_COVERAGE_STATUSES)[number];
+
+export interface SimulationSourceStatus {
+  simulationStatus: SimCoverageStatus;
+  /** Blattausgaben: bekannte (Nummernfolgen, Querverweise, angekündigte Ausgaben), vorhandene, fehlende (Klasse A). */
+  gazetteCoverage: { status: SimCoverageStatus; knownIssues: number; presentIssues: number; missingIssues: number; suspiciousIssues: number };
+  /** Einzelverkündungen ohne Blattausgabe: vorhanden, nur durch Mitteilung belegt, fehlend trotz Existenzbeleg (Klasse B). */
+  standaloneSourceCoverage: { status: SimCoverageStatus; present: number; evidenceOnly: number; missing: number };
+  /** Sicher fehlende Quellen: Klasse A + B. */
+  missingSourceCount: number;
+  /** Quelle vorhanden, Evidenz unvollständig (Klasse C). */
+  evidenceIncompleteCount: number;
+  /** Nur mögliche Lücken (Klasse D ohne Zeiträume) – nie als fehlende Quelle gezählt. */
+  possibleGapCount: number;
+  /** Ungeklärte Zeiträume (ebenfalls Klasse D). */
+  knownUnclearPeriods: number;
+  /** Ereignisse des Ledgers. */
+  events: {
+    total: number;
+    applied: number;
+    pending: number;
+    review: number;
+    blocked: number;
+    notPromulgated: number;
+    /** In Prüfung oder gesperrt aus Quellengründen (fehlende Quelle, Verkündung, Wirkdatum, nur Entwurf). */
+    sourceCaused: number;
+    /** Gesperrt, weil die Zielnorm nicht im eingefrorenen Ausgangsbestand steht (`missing-baseline-target`). */
+    blockedByBaselineTarget: { events: number; targets: number; excludedFromFrozenBaseline: number; notInBaselineInventory: number };
+    byReason: Record<string, number>;
+  };
+  /** Jüngstes Datum einer ausgewerteten Sim-Quelle (Ledger). */
+  lastSourceDate: string | null;
 }
 
 /**
@@ -114,6 +157,56 @@ export function parseSimulationInventoryStatus(value: unknown, path: string): Si
   if (result.presentIssues > result.knownIssues) throw new Error(`inventory-status.json: ${path}.presentIssues übersteigt knownIssues`);
   if (result.status !== 'SIM SOURCES PARTIAL' && result.presentIssues !== result.knownIssues) throw new Error(`inventory-status.json: ${path}.status ${result.status} setzt voraus, dass alle bekannten Ausgaben vorliegen`);
   if (result.status === 'SIM LEGAL STATE COMPLETE' && result.review !== 0) throw new Error(`inventory-status.json: ${path}.status SIM LEGAL STATE COMPLETE verträgt keine offene Prüfung`);
+  if (raw.sources !== undefined) {
+    result.sources = parseSimulationSourceStatus(raw.sources, `${path}.sources`);
+    if ((result.sources.simulationStatus === 'COMPLETE') !== (result.status !== 'SIM SOURCES PARTIAL')) throw new Error(`inventory-status.json: ${path}.status ${result.status} widerspricht sources.simulationStatus ${result.sources.simulationStatus}`);
+  }
+  return result;
+}
+
+const coverage = (value: unknown, path: string): SimCoverageStatus => {
+  if (!(SIM_COVERAGE_STATUSES as readonly unknown[]).includes(value)) throw new Error(`inventory-status.json: ${path} muss COMPLETE oder PARTIAL sein`);
+  return value as SimCoverageStatus;
+};
+
+export function parseSimulationSourceStatus(value: unknown, path: string): SimulationSourceStatus {
+  if (!value || typeof value !== 'object') throw new Error(`inventory-status.json: ${path} muss ein Objekt sein`);
+  const raw = value as Record<string, unknown>;
+  const gazette = (raw.gazetteCoverage ?? {}) as Record<string, unknown>;
+  const standalone = (raw.standaloneSourceCoverage ?? {}) as Record<string, unknown>;
+  const events = (raw.events ?? {}) as Record<string, unknown>;
+  const baseline = (events.blockedByBaselineTarget ?? {}) as Record<string, unknown>;
+  const byReason: Record<string, number> = {};
+  for (const [reason, amount] of Object.entries((events.byReason ?? {}) as Record<string, unknown>)) byReason[reason] = count(amount, `${path}.events.byReason.${reason}`);
+  if (raw.lastSourceDate !== null && (typeof raw.lastSourceDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/u.test(raw.lastSourceDate))) throw new Error(`inventory-status.json: ${path}.lastSourceDate muss ein ISO-Datum oder null sein`);
+  const result: SimulationSourceStatus = {
+    simulationStatus: coverage(raw.simulationStatus, `${path}.simulationStatus`),
+    gazetteCoverage: { status: coverage(gazette.status, `${path}.gazetteCoverage.status`), knownIssues: count(gazette.knownIssues, `${path}.gazetteCoverage.knownIssues`), presentIssues: count(gazette.presentIssues, `${path}.gazetteCoverage.presentIssues`), missingIssues: count(gazette.missingIssues, `${path}.gazetteCoverage.missingIssues`), suspiciousIssues: count(gazette.suspiciousIssues, `${path}.gazetteCoverage.suspiciousIssues`) },
+    standaloneSourceCoverage: { status: coverage(standalone.status, `${path}.standaloneSourceCoverage.status`), present: count(standalone.present, `${path}.standaloneSourceCoverage.present`), evidenceOnly: count(standalone.evidenceOnly, `${path}.standaloneSourceCoverage.evidenceOnly`), missing: count(standalone.missing, `${path}.standaloneSourceCoverage.missing`) },
+    missingSourceCount: count(raw.missingSourceCount, `${path}.missingSourceCount`),
+    evidenceIncompleteCount: count(raw.evidenceIncompleteCount, `${path}.evidenceIncompleteCount`),
+    possibleGapCount: count(raw.possibleGapCount, `${path}.possibleGapCount`),
+    knownUnclearPeriods: count(raw.knownUnclearPeriods, `${path}.knownUnclearPeriods`),
+    events: {
+      total: count(events.total, `${path}.events.total`),
+      applied: count(events.applied, `${path}.events.applied`),
+      pending: count(events.pending, `${path}.events.pending`),
+      review: count(events.review, `${path}.events.review`),
+      blocked: count(events.blocked, `${path}.events.blocked`),
+      notPromulgated: count(events.notPromulgated, `${path}.events.notPromulgated`),
+      sourceCaused: count(events.sourceCaused, `${path}.events.sourceCaused`),
+      blockedByBaselineTarget: { events: count(baseline.events, `${path}.events.blockedByBaselineTarget.events`), targets: count(baseline.targets, `${path}.events.blockedByBaselineTarget.targets`), excludedFromFrozenBaseline: count(baseline.excludedFromFrozenBaseline, `${path}.events.blockedByBaselineTarget.excludedFromFrozenBaseline`), notInBaselineInventory: count(baseline.notInBaselineInventory, `${path}.events.blockedByBaselineTarget.notInBaselineInventory`) },
+      byReason,
+    },
+    lastSourceDate: raw.lastSourceDate as string | null,
+  };
+  const gazetteComplete = result.gazetteCoverage.missingIssues === 0;
+  if ((result.gazetteCoverage.status === 'COMPLETE') !== gazetteComplete) throw new Error(`inventory-status.json: ${path}.gazetteCoverage.status widerspricht missingIssues`);
+  if (result.gazetteCoverage.presentIssues + result.gazetteCoverage.missingIssues !== result.gazetteCoverage.knownIssues) throw new Error(`inventory-status.json: ${path}.gazetteCoverage: vorhanden + fehlend ≠ bekannt`);
+  if ((result.standaloneSourceCoverage.status === 'COMPLETE') !== (result.standaloneSourceCoverage.missing === 0)) throw new Error(`inventory-status.json: ${path}.standaloneSourceCoverage.status widerspricht missing`);
+  if (result.missingSourceCount !== result.gazetteCoverage.missingIssues + result.standaloneSourceCoverage.missing) throw new Error(`inventory-status.json: ${path}.missingSourceCount ≠ fehlende Ausgaben + fehlende Einzelakte`);
+  const strictComplete = result.missingSourceCount === 0 && result.evidenceIncompleteCount === 0 && result.events.sourceCaused === 0;
+  if (result.simulationStatus === 'COMPLETE' && !strictComplete) throw new Error(`inventory-status.json: ${path}.simulationStatus COMPLETE verlangt: keine fehlende Quelle, keine unvollständige Evidenz, kein quellenbedingtes Review/Blocked`);
   return result;
 }
 
@@ -184,4 +277,57 @@ export function describeInventoryNotice(entry: InventoryStatus | undefined): Inv
 /** Hinweis eines Landes aus der ausgelieferten Statusdatei. */
 export function getInventoryNotice(id: JurisdictionId): InventoryNoticeState | undefined {
   return describeInventoryNotice(STATUS.get(id));
+}
+
+/**
+ * Gemeinsame Statusstruktur je Land (West, NSH, BayWü) für Oberfläche und API – abgeleitet aus derselben Statusdatei,
+ * keine zweite Quelle. Baseline- und Sim-Status sind unabhängig: Ein eingefrorener Ausgangsrechtsstand bleibt FROZEN,
+ * gleich wie lückenhaft die Sim-Quellen sind.
+ */
+export interface JurisdictionStatusSummary {
+  baselineStatus: 'FROZEN' | 'NOT FROZEN' | 'NOT ASSESSED';
+  baselineReadiness?: FreezeReadinessStatus;
+  /** Vollständigkeitsstufe der Bewertung (`SIM SOURCES PARTIAL` …). */
+  simulationStatusKind: SimulationInventoryStatusKind;
+  simulationStatus: SimCoverageStatus;
+  gazetteCoverage: SimulationSourceStatus['gazetteCoverage'];
+  standaloneSourceCoverage: SimulationSourceStatus['standaloneSourceCoverage'];
+  missingSourceCount: number;
+  evidenceIncompleteCount: number;
+  possibleGapCount: number;
+  reviewCount: number;
+  blockedCount: number;
+  blockedByBaselineTarget: SimulationSourceStatus['events']['blockedByBaselineTarget'];
+  knownUnclearPeriods: number;
+  lastSourceDate: string | null;
+  updatedAt: string;
+}
+
+export function summarizeJurisdictionStatus(entry: InventoryStatus | undefined): JurisdictionStatusSummary | undefined {
+  const simulation = entry?.simulation;
+  const sources = simulation?.sources;
+  if (!entry || !simulation || !sources) return undefined;
+  const freeze = entry.baselineFreeze;
+  return {
+    baselineStatus: freeze?.frozen ? 'FROZEN' : freeze ? 'NOT FROZEN' : 'NOT ASSESSED',
+    ...(freeze && !freeze.frozen && freeze.readiness ? { baselineReadiness: freeze.readiness } : {}),
+    simulationStatusKind: simulation.status,
+    simulationStatus: sources.simulationStatus,
+    gazetteCoverage: sources.gazetteCoverage,
+    standaloneSourceCoverage: sources.standaloneSourceCoverage,
+    missingSourceCount: sources.missingSourceCount,
+    evidenceIncompleteCount: sources.evidenceIncompleteCount,
+    possibleGapCount: sources.possibleGapCount,
+    reviewCount: sources.events.review,
+    blockedCount: sources.events.blocked,
+    blockedByBaselineTarget: sources.events.blockedByBaselineTarget,
+    knownUnclearPeriods: sources.knownUnclearPeriods,
+    lastSourceDate: sources.lastSourceDate,
+    updatedAt: simulation.updatedAt,
+  };
+}
+
+/** Gemeinsame Statusstruktur eines Landes aus der ausgelieferten Statusdatei. */
+export function getJurisdictionStatusSummary(id: JurisdictionId): JurisdictionStatusSummary | undefined {
+  return summarizeJurisdictionStatus(STATUS.get(id));
 }

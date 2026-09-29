@@ -33,6 +33,7 @@ function completeness(overrides: Record<string, unknown> = {}): Record<string, u
     standaloneActs: { present: 12, evidenceOnly: 2 },
     unclearPeriods: [{ from: '2024-06-01', to: '2025-10-19', note: 'keine Ausgabe bekannt' }],
     acts: { secure: 31, review: 4, blocked: 1, draftsWithoutPromulgation: 3 },
+    sourceGaps: [{ id: 'gv-2024-1', class: 'gazette-issue-missing', title: 'GV. West 2024 Nr. 1', existenceEvidence: 'Inhaltsverzeichnis von Nr. 2', series: 'GV. West', issue: '2024 Nr. 1' }],
     notes: ['Nr. 1/2024 laut Inhaltsverzeichnis von Nr. 2 vorhanden, Datei fehlt.'],
     ...overrides,
   };
@@ -42,6 +43,7 @@ const complete = (): Record<string, unknown> => completeness({
   status: 'SIM LEGAL STATE COMPLETE',
   series: [{ gazette: 'GV. West', knownIssues: ['2026 Nr. 2'], presentIssues: ['2026 Nr. 2'], missingIssues: [] }],
   unclearPeriods: [],
+  sourceGaps: [],
   acts: { secure: 5, review: 0, blocked: 0, draftsWithoutPromulgation: 1 },
 });
 
@@ -57,7 +59,15 @@ describe('completeness.json', () => {
     expect(() => parseCompletenessFile(completeness({ series: [{ gazette: 'GV. West', knownIssues: ['1'], presentIssues: ['1'], missingIssues: ['1'] }] }))).toThrow(/missingIssues/u);
     expect(() => parseCompletenessFile(completeness({ series: [{ gazette: 'GV. West', knownIssues: ['1'], presentIssues: ['2'], missingIssues: ['1'] }] }))).toThrow(/keine bekannte Ausgabe/u);
     expect(() => parseCompletenessFile(completeness({ status: 'SIM SOURCES COMPLETE FOR KNOWN INVENTORY' }))).toThrow(/fehlenden Ausgaben/u);
-    expect(() => parseCompletenessFile(completeness({ status: 'SIM SOURCES COMPLETE FOR KNOWN INVENTORY', series: [], unclearPeriods: [{ from: '2024-01-01', to: '2024-02-01', note: 'x' }] }))).toThrow(/ungeklärten Zeiträume/u);
+    // Nur mögliche Lücken (ungeklärte Zeiträume, Klasse D) sperren „vollständig“ nicht; Klassen A–C schon.
+    expect(() => parseCompletenessFile(completeness({ status: 'SIM SOURCES COMPLETE FOR KNOWN INVENTORY', series: [], sourceGaps: [], unclearPeriods: [{ from: '2024-01-01', to: '2024-02-01', note: 'x' }] }))).not.toThrow();
+    expect(() => parseCompletenessFile(completeness({ status: 'SIM SOURCES COMPLETE FOR KNOWN INVENTORY', series: [], sourceGaps: [{ id: 'x', class: 'evidence-incomplete', title: 'x', existenceEvidence: 'x', missing: ['annex'] }] }))).toThrow(/Klassen A–C/u);
+    expect(() => parseCompletenessFile(completeness({ sourceGaps: [] }))).toThrow(/nicht als Lücke der Klasse A/u);
+    expect(() => parseCompletenessFile(completeness({ sourceGaps: [{ id: 'x', class: 'gazette-issue-missing', title: 'x', existenceEvidence: 'x', series: 'GV. West', issue: '2024 Nr. 2' }] }))).toThrow(/keine fehlende Ausgabe/u);
+    expect(() => parseCompletenessFile(completeness({ series: [], sourceGaps: [{ id: 'x', class: 'evidence-incomplete', title: 'x', existenceEvidence: 'x' }] }))).toThrow(/was fehlt/u);
+    expect(() => parseCompletenessFile(completeness({ series: [], sourceGaps: [{ id: 'x', class: 'possible-gap', title: 'x', existenceEvidence: 'x', acquisition: { priority: 'P3', confidence: 'low', status: 'open' } }] }))).toThrow(/keine Akquisitionsaufgabe/u);
+    expect(() => parseCompletenessFile(completeness({ series: [], sourceGaps: [{ id: 'x', class: 'standalone-act-missing', title: 'x', existenceEvidence: 'x', blocks: { events: ['e'] }, acquisition: { priority: 'P1', confidence: 'low', status: 'open' } }] }))).toThrow(/P1 verlangt belegte Existenz/u);
+    expect(() => parseCompletenessFile(completeness({ series: [], sourceGaps: [{ id: 'x', class: 'standalone-act-missing', title: 'x', existenceEvidence: 'x', acquisition: { priority: 'P1', confidence: 'high', status: 'open' } }] }))).toThrow(/entsperrt/u);
     expect(() => parseCompletenessFile(complete())).not.toThrow();
     expect(() => parseCompletenessFile({ ...complete(), acts: { secure: 5, review: 1, blocked: 0, draftsWithoutPromulgation: 0 } })).toThrow(/Prüfung oder Sperre/u);
     expect(() => parseCompletenessFile(completeness({ status: 'FERTIG' }))).toThrow(/status/u);
@@ -133,11 +143,13 @@ describe('SIM_PUBLICATION_INVENTORY.md', () => {
       standaloneActs: { present: 1, evidenceOnly: 0 },
       unclearPeriods: [{ from: '2026-05-18', to: '2026-09-17', note: 'Ministerialblatt 2026 Nr. 2 fehlt.' }],
       acts: { secure: 1, review: 0, blocked: 0, draftsWithoutPromulgation: 0 },
+      sourceGaps: [{ id: 'mbl-2026-2', class: 'gazette-issue-missing', title: 'MBl. WD 2026 Nr. 2', existenceEvidence: 'Nummernfolge', series: 'MBl. WD', issue: '2026 Nr. 2', acquisition: { priority: 'P2', confidence: 'high', status: 'open' } }],
       notes: ['Fehlende Quellen: MBl. WD 2026 Nr. 2.'],
     });
     const text = renderPublicationInventory([{ jurisdiction: 'west', file }]);
     expect(text).toContain('| MBl. WD – Ministerialblatt | 2 | 1 | 2026 Nr. 2 | – |');
     expect(text).toContain('- 2026-05-18 – 2026-09-17: Ministerialblatt 2026 Nr. 2 fehlt.');
     expect(text).toContain('- Fehlende Quellen: MBl. WD 2026 Nr. 2.');
+    expect(text).toContain('- `mbl-2026-2` MBl. WD 2026 Nr. 2 (P2)');
   });
 });

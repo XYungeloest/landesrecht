@@ -92,7 +92,11 @@ describe('Seiten und API (Quelltext-Regressionen)', () => {
     expect(notice).toContain('status?.baselineFreeze');
     expect(notice).toContain('simulation.simulationNorms');
     expect(notice).toContain('status.published');
-    expect(notice).toContain('Quellensammlung unvollständig');
+    // Blattabdeckung und Sim-Gesamtstatus getrennt: „X von Y bekannten Ausgaben“ ist nie die Vollständigkeitsaussage.
+    expect(notice).toContain('summarizeJurisdictionStatus(status)');
+    expect(notice).toContain('Das allein belegt keinen vollständigen Sim-Rechtsstand.');
+    expect(notice).toContain("summary.simulationStatus === 'COMPLETE' ? 'vollständig belegt' : 'unvollständig'");
+    expect(notice).not.toContain('Quellensammlung unvollständig');
     expect(notice).not.toMatch(/2023-12-01|West|BayWü/u);
   });
 });
