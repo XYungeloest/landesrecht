@@ -9,10 +9,10 @@ import { createFederalProvider } from '@landesrecht/providers/federal.ts';
 import { createContentProvider } from '@landesrecht/providers/content-provider.ts';
 import { createOstRechtProvider } from '@landesrecht/providers/ostrecht-provider.ts';
 import { createReferenceResolver, type ReferenceResolver } from '@landesrecht/providers/resolver.ts';
-import { createRegistryFromEnv, createStoreRegistry, type StoreRegistry } from '@landesrecht/runtime/registry.ts';
+import { createStoreRegistry, type JurisdictionAvailability, type StoreRegistry } from '@landesrecht/runtime/registry.ts';
 import type { NormStore } from '@landesrecht/runtime/store.ts';
 
-import { assertCompleteBindings } from './configuration.ts';
+import { buildWorkerRegistry, currentRuntimeMode } from './configuration.ts';
 
 let workerEnvPromise: Promise<Record<string, unknown> | null> | null = null;
 let fileRegistryPromise: Promise<StoreRegistry> | null = null;
@@ -37,10 +37,12 @@ function createFileRegistry(): Promise<StoreRegistry> {
       import('@landesrecht/runtime/file-store.ts'),
     ]);
     const stores: Partial<Record<JurisdictionId, NormStore>> = {};
+    const availability: Partial<Record<JurisdictionId, JurisdictionAvailability>> = {};
     for (const jurisdiction of JURISDICTION_IDS) {
       if (JURISDICTIONS[jurisdiction].runtimeSource === 'ostrecht-d1') {
         // Ost hat keinen Dateibestand. Lokal (Entwicklung, Audit) kann eine SQLite im OstRecht-Schema angegeben werden
-        // (OSTRECHT_D1_SQLITE, z. B. ein Seed aus `scripts/d1-runtime-seed.mjs` von OstRecht); sonst bleibt Ost leer.
+        // (OSTRECHT_D1_SQLITE, z. B. ein Seed aus `scripts/d1-runtime-seed.mjs` von OstRecht) – dann `fixture`
+        // (Teilbestand, development only); sonst ist Ost `unavailable-local`, nie ein stiller leerer Bestand.
         const sqlitePath = typeof process !== 'undefined' ? process.env?.OSTRECHT_D1_SQLITE : undefined;
         if (sqlitePath) {
           // Variabler Modulpfad: `node:sqlite` darf nie ins Worker-Bundle (nur Node außerhalb des Workers lädt ihn).
@@ -51,12 +53,15 @@ function createFileRegistry(): Promise<StoreRegistry> {
             import('@landesrecht/runtime/ostrecht-d1-store.ts'),
           ]);
           stores[jurisdiction] = createOstRechtD1Store(createReadOnlyD1(await openSqliteD1(sqlitePath, { readOnly: true })));
+          availability[jurisdiction] = { state: 'fixture', mode: 'development', reason: 'lokale SQLite (OSTRECHT_D1_SQLITE), development only, nicht als vollständig garantiert' };
           continue;
         }
+        availability[jurisdiction] = { state: 'unavailable-local', mode: 'development', reason: 'ohne Worker keine OstRecht-D1 (OSTRECHT_D1_SQLITE nicht gesetzt)' };
+        continue;
       }
       stores[jurisdiction] = createFileNormStore(jurisdiction, await loadJurisdictionNorms(jurisdiction), { publications: await loadJurisdictionPublications(jurisdiction) });
     }
-    return createStoreRegistry(stores);
+    return createStoreRegistry(stores, availability);
   })();
   return fileRegistryPromise;
 }
@@ -64,10 +69,9 @@ function createFileRegistry(): Promise<StoreRegistry> {
 export async function getStoreRegistry(): Promise<StoreRegistry> {
   const env = await resolveWorkerEnv();
   if (env) {
-    // Fail-closed: Jede fehlende D1-Bindung ist ein Konfigurationsfehler (500 über src/middleware.ts), nie ein
-    // stiller Rückfall auf Dateien oder eine leere Jurisdiktion.
-    assertCompleteBindings(env);
-    return createRegistryFromEnv(env);
+    // Produktion fail-closed: Jede fehlende D1-Bindung ist ein Konfigurationsfehler (500 über src/middleware.ts), nie ein
+    // stiller Rückfall auf Dateien oder eine leere Jurisdiktion. Nur `astro dev`: fehlende/leere OstRecht-D1 → Ost 503.
+    return buildWorkerRegistry(env, currentRuntimeMode());
   }
   return createFileRegistry();
 }

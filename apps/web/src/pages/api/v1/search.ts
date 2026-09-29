@@ -31,5 +31,8 @@ export const GET: APIRoute = async ({ url }) => {
     hits: page.hits.map(({ rank: _rank, ...hit }) => hit),
     coverage,
   };
+  // Nur Entwicklung: lokal nicht verfügbare Jurisdiktionen sind im Ergebnis nicht enthalten – ausdrücklich ausgewiesen.
+  const unavailable = registry.unavailable().filter((entry) => entry.state === 'unavailable-local' && (state.jurisdictions.length === 0 || state.jurisdictions.includes(entry.jurisdiction)));
+  if (unavailable.length > 0) payload.unavailable = unavailable;
   return jsonResponse(payload, { headers: { 'cache-control': 'public, max-age=60, s-maxage=600' } });
 };

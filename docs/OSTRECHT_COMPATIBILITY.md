@@ -100,6 +100,11 @@ Jede Abweichung ist ein `OstRechtContractError` → HTTP 500 über die Middlewar
 das OstRecht-Git (`--ostrecht-root`, nur lesend). `/api/v1/jurisdictions` gibt für Ost `runtime` (Sync-Zustand,
 Zeitpunkt, `upstreamCorpusHash`, `projectionFingerprint`) aus.
 
+Das gilt für jeden gebauten Worker. Nur im lokalen Entwicklungsbetrieb (`astro dev`) ist eine fehlende oder schemalose
+lokale `OSTRECHT_RECHT` ein erwarteter Zustand: Ost ist `unavailable-local` (503 für Ost-Anfragen, `availability` in
+`/api/v1/jurisdictions`, `/health` `degraded`), die übrigen Länder bleiben nutzbar. Eine lokale Kopie ist `fixture`
+(development only) und nie der vollständige Bestand (`docs/MAINTENANCE.md`, `tests/unit/web-local-dev.test.ts`).
+
 ## Prüfung
 
 - `tests/unit/ostrecht-d1-store.test.ts` – Fixture `tests/fixtures/ostrecht/ostrecht-recht.sql` (Auszug aus einem

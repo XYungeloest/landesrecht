@@ -567,12 +567,15 @@ Ledger-IDs und Slugs, `acquisition`, `note`):
 | D | `possible-gap` | nur mögliche Lücke (z. B. „Nr. 4 ff.“, nie belegte Bekanntmachung); ebenso `unclearPeriods` | nie fehlende Quelle |
 
 Fail-closed: jede `missingIssues`-Zeile hat genau eine Lücke A; Ledger-IDs in `blocks.events` müssen existieren.
+Geschlossen (nicht mehr gezählt) sind `resolved`/`superseded` und Lücken A, deren Ausgabe inzwischen in `presentIssues`
+steht (nur mit `candidate-found`/`resolved`); `resolved` verlangt `resolution` und kein Ereignis mehr auf `missing-source`.
 Publikationsidentität entsteht aus Blattreihe, Jahr, Nummer, Datum und Quell-Hash, nie aus der Nummer allein (West: die
 dreifache Nr. 3 des GV. West 2026 sind drei Ausgaben). Eine Drucksache allein ist keine Verkündung; Drucksache und
 amtliche Verkündungsmitteilung zusammen können die Rechtswirkung belegen (NSH 08.07.2024), die angekündigte
 Blattausgabe bleibt dann eine Lücke A.
 
-`acquisition` (`priority`, `confidence`, `status`) tragen nur nützliche Quellen: P1 entsperrt mehrere Akte oder eine
+`acquisition` (`priority`, `confidence`, `status` = `open` · `candidate-found` · `resolved` · `rejected` · `superseded`,
+Lebenszyklus in `docs/MAINTENANCE.md`) tragen nur nützliche Quellen: P1 entsperrt mehrere Akte oder eine
 zentrale Norm (nie mit `confidence: low`, nie ohne `blocks`), P2 schließt eine klare Publikationslücke, P3 dient nur
 Vollständigkeit oder Provenienz; Klasse D ist nie Akquisitionsaufgabe. `completeness --write` erzeugt daraus
 `data/simulation/source-acquisition-queue.json` und `docs/SIM_SOURCE_ACQUISITION.md`. Bekannte Sackgassen werden nicht

@@ -6,7 +6,7 @@ nicht darin. P1 entsperrt mehrere Akte oder eine zentrale Norm, P2 schließt ein
 Vollständigkeit oder Provenienz. Eine beschaffte Quelle wird archiviert, im Inventar erfasst und die Lücke in
 `completeness.json` geschlossen; Ost ist nicht Teil der Liste (OstRecht ist vorgelagertes Quellsystem).
 
-Summe: 19 (P1 2, P2 7, P3 10).
+Summe: 19 (P1 2, P2 7, P3 10); noch zu beschaffen: 19. Kurzliste im Terminal: `npm run sources:needed` (`--land <land>`, `--priority P1`); neue Dateien: `npm run sources:intake` (docs/MAINTENANCE.md).
 
 ## P1
 

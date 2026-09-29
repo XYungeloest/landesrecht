@@ -3,8 +3,12 @@
  * aller Quellen mit Erkennungsbefund. Der Bericht behauptet nichts über Geltung – er dokumentiert, was im
  * Archiv liegt und was die Vorsortierung erkannt hat.
  */
+import { join } from 'node:path';
+
+import { writeFileAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
 import { JURISDICTIONS } from '@landesrecht/legal-core/config/jurisdictions.ts';
 
+import { INVENTORY_DOC_PATH, INVENTORY_PATH } from '../common/paths.ts';
 import type { InventorySource, SourceInventory } from './scan.ts';
 
 const escape = (value: string | undefined): string => (value ?? '–').replace(/\|/gu, '\\|').replace(/\n/gu, ' ');
@@ -50,4 +54,11 @@ export function renderInventoryReport(inventory: SourceInventory): string {
     lines.push('');
   }
   return `${lines.join('\n')}\n`;
+}
+
+/** Schreibt Inventar und Bericht (`inventory --write`, `sources:intake --write`); `true`, wenn sich etwas geändert hat. */
+export async function writeInventoryFiles(root: string, inventory: SourceInventory): Promise<boolean> {
+  const json = await writeFileAtomic(join(root, INVENTORY_PATH), `${JSON.stringify(inventory, null, 2)}\n`, { skipIfUnchanged: true });
+  const doc = await writeFileAtomic(join(root, INVENTORY_DOC_PATH), renderInventoryReport(inventory), { skipIfUnchanged: true });
+  return json || doc;
 }

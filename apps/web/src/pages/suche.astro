@@ -25,6 +25,8 @@ const coverage = page ? await registry.searchCoverage(state.jurisdictions) : [];
 const historicalRequested = state.versionScope !== 'current' || Boolean(state.validOn);
 const currentOnly = coverage.filter((entry) => entry.fullText === 'current-version-only');
 const partial = coverage.filter((entry) => entry.readiness === 'partial');
+// Nur Entwicklung: lokal nicht verfügbare Jurisdiktionen fehlen im Ergebnis und werden ausdrücklich genannt.
+const unavailable = page ? registry.unavailable().filter((entry) => entry.state === 'unavailable-local' && (state.jurisdictions.length === 0 || state.jurisdictions.includes(entry.jurisdiction))) : [];
 Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=600');
 
 function pageUrl(offset: number): string {
@@ -105,6 +107,9 @@ const activeFilters = [
     <section aria-labelledby="treffer-heading">
       {historicalRequested && currentOnly.length > 0 && (
         <p class="muted" role="note"><strong>Hinweis:</strong> Für {currentOnly.map((entry) => getJurisdiction(entry.jurisdiction).name).join(', ')} ist der Volltext nur für die geltende Fassung durchsuchbar. Frühere Fassungen sind vollständig über die Fassungsübersicht der jeweiligen Vorschrift erreichbar, erscheinen hier aber nicht als Volltexttreffer.</p>
+      )}
+      {unavailable.length > 0 && (
+        <p class="muted" role="note"><strong>Entwicklungsbetrieb:</strong> {unavailable.map((entry) => getJurisdiction(entry.jurisdiction).name).join(', ')} lokal nicht verfügbar und nicht in den Treffern enthalten.</p>
       )}
       {partial.length > 0 && (
         <p class="muted" role="note"><strong>Hinweis:</strong> Für {partial.map((entry) => `${getJurisdiction(entry.jurisdiction).name} (${entry.staleNormCount} ${entry.staleNormCount === 1 ? 'Vorschrift' : 'Vorschriften'})`).join(', ')} ist die geltende Fassung noch nicht im Volltext durchsuchbar; diese Vorschriften werden über Titel, Abkürzung und Schlagworte gefunden.</p>

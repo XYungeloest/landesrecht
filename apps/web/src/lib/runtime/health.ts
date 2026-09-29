@@ -12,14 +12,19 @@ import { OSTRECHT_SYNC_STATE_COMPLETE } from '@landesrecht/runtime/ostrecht-cont
 import { getOstRechtFreshness, type SearchCoverage } from '@landesrecht/runtime/ostrecht-freshness.ts';
 import { createReadOnlyD1 } from '@landesrecht/runtime/read-only-d1.ts';
 
-export type BindingHealth = 'ok' | 'missing' | 'error' | 'timeout' | 'incomplete';
+/** `unavailable-local`: nur Entwicklung – externes Binding (OstRecht-D1) lokal nicht gebunden oder ohne Schema. */
+export type BindingHealth = 'ok' | 'missing' | 'error' | 'timeout' | 'incomplete' | 'unavailable-local';
 
 export interface HealthReport {
   /** `degraded`: alle Bindings antworten, aber die Suche ist nur teilweise bereit (HTTP 200, kein Ausfall). */
   status: 'ok' | 'degraded' | 'error';
   worker: 'ok';
   storage: 'd1' | 'file';
+  /** Nur gesetzt im Entwicklungsbetrieb (`astro dev`); fehlt in Produktion. */
+  mode?: 'development';
   d1: Record<string, BindingHealth>;
+  /** Nur Entwicklung: erwartete lokale Einschränkungen, klar benannt (keine Umgebungswerte). */
+  diagnostics?: string[];
   /**
    * Such-Readiness der OstRecht-D1 (nur wenn gebunden): `partial`, wenn am Landesrecht-Stichtag geltende Fassungen im
    * Volltextindex von OstRecht fehlen; `fullText` benennt, dass frühere Fassungen dort nie volltextindexiert sind.
@@ -32,6 +37,12 @@ export interface HealthOptions {
   /** Frist je D1-Abfrage (Standard 3 000 ms). */
   timeoutMs?: number;
   now?: () => Date;
+  /**
+   * Laufzeitmodus (Standard `production`): In Produktion ist ein fehlendes oder unvollständiges Pflicht-Binding immer
+   * `error` (503). Nur im Entwicklungsbetrieb gilt eine lokal fehlende oder schemalose OstRecht-D1 als erwarteter Zustand
+   * (`unavailable-local`, Status `degraded`, HTTP 200) – eigene Bindings bleiben Pflicht.
+   */
+  mode?: 'production' | 'development';
 }
 
 export const HEALTH_TIMEOUT_MS = 3_000;
@@ -67,7 +78,15 @@ export async function checkHealth(env: Record<string, unknown> | null, options: 
     const results = await Promise.all(bindings.map(async (binding) => [binding, await probeBinding(env[binding], timeoutMs, kindOf(binding))] as const));
     for (const [binding, health] of results) d1[binding] = health;
   }
-  const healthy = env === null || Object.values(d1).every((health) => health === 'ok');
+  const diagnostics: string[] = [];
+  if (env && options.mode === 'development' && JURISDICTIONS.ost.runtimeSource === 'ostrecht-d1') {
+    const ost = d1[OSTRECHT_D1_BINDING];
+    if (ost === 'missing' || ost === 'error') {
+      d1[OSTRECHT_D1_BINDING] = 'unavailable-local';
+      diagnostics.push(`${OSTRECHT_D1_BINDING}: ${ost === 'missing' ? 'lokal nicht gebunden' : 'lokale D1 ohne OstRecht-Schema'} – Ost im Entwicklungsbetrieb nicht verfügbar (503 für Ost-Anfragen); Produktion verlangt das Binding.`);
+    }
+  }
+  const healthy = env === null || Object.values(d1).every((health) => health === 'ok' || health === 'unavailable-local');
   let search: HealthReport['search'];
   if (env && d1[OSTRECHT_D1_BINDING] === 'ok' && JURISDICTIONS.ost.runtimeSource === 'ostrecht-d1') {
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -79,8 +98,17 @@ export async function checkHealth(env: Record<string, unknown> | null, options: 
       if (timer) clearTimeout(timer);
     }
   }
-  const degraded = healthy && search !== undefined && Object.values(search).some((entry) => entry.readiness !== 'ready');
-  return { status: healthy ? (degraded ? 'degraded' : 'ok') : 'error', worker: 'ok', storage: env ? 'd1' : 'file', d1, ...(search ? { search } : {}), checkedAt: now().toISOString() };
+  const degraded = healthy && ((search !== undefined && Object.values(search).some((entry) => entry.readiness !== 'ready')) || diagnostics.length > 0);
+  return {
+    status: healthy ? (degraded ? 'degraded' : 'ok') : 'error',
+    worker: 'ok',
+    storage: env ? 'd1' : 'file',
+    ...(options.mode === 'development' ? { mode: 'development' as const } : {}),
+    d1,
+    ...(search ? { search } : {}),
+    ...(diagnostics.length > 0 ? { diagnostics } : {}),
+    checkedAt: now().toISOString(),
+  };
 }
 
 /** 200 bei `ok`, sonst 503; nie cachen. */

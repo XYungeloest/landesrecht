@@ -8,7 +8,7 @@
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts';
 
-import type { CompletenessFile, SourceGap } from './schema.ts';
+import type { AcquisitionCandidate, AcquisitionResolution, AcquisitionStatus, CompletenessFile, SourceGap } from './schema.ts';
 
 export const ACQUISITION_QUEUE_PATH = 'data/simulation/source-acquisition-queue.json';
 export const ACQUISITION_DOC_PATH = 'docs/SIM_SOURCE_ACQUISITION.md';
@@ -42,8 +42,17 @@ export interface AcquisitionQueueEntry {
   blocks: { events: string[]; norms: string[] };
   priority: 'P1' | 'P2' | 'P3';
   confidence: 'high' | 'medium' | 'low';
-  status: 'open' | 'requested' | 'obtained' | 'dead-end';
+  status: AcquisitionStatus;
+  candidate?: AcquisitionCandidate;
+  resolution?: AcquisitionResolution;
+  supersededBy?: string;
+  reason?: string;
   note?: string;
+}
+
+/** Noch zu beschaffen (Ausgabe von `sources:needed`): offen oder Kandidat gefunden, aber nicht verarbeitet. */
+export function isNeeded(entry: Pick<AcquisitionQueueEntry, 'status'>): boolean {
+  return entry.status === 'open' || entry.status === 'candidate-found';
 }
 
 type Assessed = ReadonlyArray<{ jurisdiction: JurisdictionId; file: CompletenessFile }>;
@@ -71,11 +80,38 @@ export function buildAcquisitionQueue(files: Assessed): AcquisitionQueueEntry[] 
   return entries.sort((a, b) => a.priority.localeCompare(b.priority) || a.jurisdiction.localeCompare(b.jurisdiction) || a.id.localeCompare(b.id));
 }
 
-export function acquisitionQueueFile(files: Assessed): { schemaVersion: string; totals: Record<string, number>; entries: AcquisitionQueueEntry[] } {
+export function acquisitionQueueFile(files: Assessed): { schemaVersion: string; totals: Record<string, number>; byStatus: Record<string, number>; entries: AcquisitionQueueEntry[] } {
   const entries = buildAcquisitionQueue(files);
   const totals: Record<string, number> = { all: entries.length, P1: 0, P2: 0, P3: 0 };
-  for (const entry of entries) totals[entry.priority] = (totals[entry.priority] ?? 0) + 1;
-  return { schemaVersion: ACQUISITION_QUEUE_SCHEMA, totals, entries };
+  const byStatus: Record<string, number> = {};
+  for (const entry of entries) {
+    totals[entry.priority] = (totals[entry.priority] ?? 0) + 1;
+    byStatus[entry.status] = (byStatus[entry.status] ?? 0) + 1;
+  }
+  return { schemaVersion: ACQUISITION_QUEUE_SCHEMA, totals, byStatus: Object.fromEntries(Object.entries(byStatus).sort(([a], [b]) => a.localeCompare(b))), entries };
+}
+
+/** Kurzgrund einer Queue-Zeile: was fehlt und was die Quelle entsperrt. */
+export function neededReason(entry: AcquisitionQueueEntry): string {
+  const what = `${CLASS_LABEL[entry.sourceType]}${entry.missing.length ? ` (${entry.missing.map((key) => MISSING_LABEL[key] ?? key).join(', ')})` : ''}`;
+  return `${what}; entsperrt ${unblocks(entry)}`;
+}
+
+/** Kompakte Liste „Was soll ich besorgen?“ je Priorität, optional nach Land und Priorität gefiltert. */
+export function renderNeededLines(entries: readonly AcquisitionQueueEntry[], filter: { jurisdiction?: JurisdictionId; priority?: 'P1' | 'P2' | 'P3' } = {}): string[] {
+  const selected = entries.filter((entry) => isNeeded(entry) && (!filter.jurisdiction || entry.jurisdiction === filter.jurisdiction) && (!filter.priority || entry.priority === filter.priority));
+  const lines: string[] = [];
+  for (const priority of ['P1', 'P2', 'P3'] as const) {
+    const group = selected.filter((entry) => entry.priority === priority);
+    if (group.length === 0) continue;
+    lines.push(`${priority} (${group.length})`);
+    for (const entry of group) {
+      lines.push(`  ${getJurisdiction(entry.jurisdiction).shortName.padEnd(6)} ${entry.expectedTitle}${entry.status === 'candidate-found' ? ` [Kandidat ${entry.candidate!.sha256.slice(0, 12)} liegt vor – verarbeiten]` : ''}`);
+      lines.push(`         ${neededReason(entry)} · ${entry.confidence} · ${entry.id}`);
+    }
+  }
+  if (lines.length === 0) lines.push('Keine offenen Quellen für diesen Filter.');
+  return lines;
 }
 
 function unblocks(entry: AcquisitionQueueEntry): string {
@@ -96,7 +132,7 @@ export function renderAcquisitionDoc(files: Assessed): string {
     'Vollständigkeit oder Provenienz. Eine beschaffte Quelle wird archiviert, im Inventar erfasst und die Lücke in',
     '`completeness.json` geschlossen; Ost ist nicht Teil der Liste (OstRecht ist vorgelagertes Quellsystem).',
     '',
-    `Summe: ${entries.length} (P1 ${entries.filter((e) => e.priority === 'P1').length}, P2 ${entries.filter((e) => e.priority === 'P2').length}, P3 ${entries.filter((e) => e.priority === 'P3').length}).`,
+    `Summe: ${entries.length} (P1 ${entries.filter((e) => e.priority === 'P1').length}, P2 ${entries.filter((e) => e.priority === 'P2').length}, P3 ${entries.filter((e) => e.priority === 'P3').length}); noch zu beschaffen: ${entries.filter(isNeeded).length}. Kurzliste im Terminal: \`npm run sources:needed\` (\`--land <land>\`, \`--priority P1\`); neue Dateien: \`npm run sources:intake\` (docs/MAINTENANCE.md).`,
     '',
   ];
   for (const priority of ['P1', 'P2', 'P3'] as const) {
@@ -108,7 +144,12 @@ export function renderAcquisitionDoc(files: Assessed): string {
       lines.push(`- **Was fehlt:** ${CLASS_LABEL[entry.sourceType]}${entry.missing.length ? ` (${entry.missing.map((key) => MISSING_LABEL[key] ?? key).join(', ')})` : ''}${entry.expectedPublication ? `; erwartet: ${entry.expectedPublication}` : ''}${entry.expectedDate ? `, ${entry.expectedDate}` : ''}.`);
       lines.push(`- **Existenzbeleg:** ${entry.existenceEvidence}`);
       lines.push(`- **Entsperrt:** ${unblocks(entry)}.`);
-      lines.push(`- **Sicherheit / Status:** ${entry.confidence} / ${entry.status} (\`${entry.id}\`).${entry.note ? ` ${entry.note}` : ''}`, '');
+      lines.push(`- **Sicherheit / Status:** ${entry.confidence} / ${entry.status} (\`${entry.id}\`).${entry.note ? ` ${entry.note}` : ''}`);
+      if (entry.candidate) lines.push(`- **Kandidat:** \`${entry.candidate.sha256.slice(0, 12)}\` (${entry.candidate.path}, gefunden ${entry.candidate.foundAt}).`);
+      if (entry.resolution) lines.push(`- **Aufgelöst:** ${entry.resolution.resolvedAt} durch \`${entry.resolution.resolvedBySha256.slice(0, 12)}\`${entry.resolution.publications.length ? `, Verkündung ${entry.resolution.publications.join(', ')}` : ''}${entry.resolution.events.length ? `, Ereignisse ${entry.resolution.events.join(', ')}` : ''}.`);
+      if (entry.supersededBy) lines.push(`- **Ersetzt durch:** \`${entry.supersededBy}\`.`);
+      if (entry.reason) lines.push(`- **Verworfen:** ${entry.reason}`);
+      lines.push('');
     }
   }
   return `${lines.join('\n')}\n`;

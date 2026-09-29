@@ -7,7 +7,7 @@
  */
 import type { SimulationSourceStatus } from '@landesrecht/legal-core/config/inventory-status.ts';
 
-import { CompletenessValidationError, type CompletenessFile } from './schema.ts';
+import { CompletenessValidationError, isOpenGap, type CompletenessFile } from './schema.ts';
 
 /** Gründe, aus denen ein Ereignis wegen der Quelle (nicht wegen Bestand oder Inhalt) offen ist. */
 export const SOURCE_REASON_CODES: readonly string[] = ['missing-source', 'promulgation-unclear', 'effective-date-undetermined', 'draft-only'];
@@ -37,7 +37,18 @@ export function assessSimulationSources(file: CompletenessFile, events: readonly
   for (const gap of file.sourceGaps) {
     for (const id of gap.blocks.events) if (!eventIds.has(id)) throw new CompletenessValidationError(`${path}: Lücke ${gap.id} nennt unbekanntes Ledger-Ereignis ${id}`);
   }
-  const byClass = (kind: string) => file.sourceGaps.filter((gap) => gap.class === kind);
+  // Nur offene Lücken zählen (Lebenszyklus: resolved/superseded und vorliegende Ausgaben sind geschlossen).
+  const byClass = (kind: string) => file.sourceGaps.filter((gap) => gap.class === kind && isOpenGap(file, gap));
+  // Eine aufgelöste Lücke darf kein Ereignis mehr aus fehlender Quelle sperren (Lücke im Audit tatsächlich geschlossen).
+  const byId = new Map(events.map((event) => [event.id, event]));
+  for (const gap of file.sourceGaps) {
+    if (gap.acquisition?.status !== 'resolved') continue;
+    const still = gap.blocks.events.filter((id) => {
+      const event = byId.get(id);
+      return event && (event.status === 'review' || event.status === 'blocked') && event.reasonCode === 'missing-source';
+    });
+    if (still.length > 0) throw new CompletenessValidationError(`${path}: Lücke ${gap.id} ist resolved, aber ${still.join(', ')} steht noch auf missing-source`);
+  }
   // Klasse A ohne Blattreihe: angekündigte Ausgabe, die in keiner Nummernfolge steht – zählt zusätzlich als bekannt.
   const announced = byClass('gazette-issue-missing').filter((gap) => gap.series === undefined).length;
   const knownIssues = file.series.reduce((sum, entry) => sum + entry.knownIssues.length, 0) + announced;

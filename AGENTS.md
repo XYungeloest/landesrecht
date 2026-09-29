@@ -71,6 +71,11 @@ Prioritäten:
   `node scripts/nsh-freeze-readiness.ts`, BayWü: `node scripts/baywue-freeze-readiness.ts`
   (`docs/BAYWUE_BASELINE_FREEZE_READINESS.md`). Tabellenänderungen gespeicherter Fassungen nur mit Freigabe
   (`npm run content:tables`, `data/content-table-changes.json`).
+- Neue Sim-Quellen nur über die Inbox `imports/` und `npm run sources:intake` (Dry-run Standard, `docs/MAINTENANCE.md`):
+  `--write` nur bei eindeutiger Zuordnung (Inventar, `candidate-found`), `resolved` erst nach geschlossener Lücke;
+  mögliche Baseline-Evidenz ist nur `freeze-review-candidate`. Offene Quellen: `npm run sources:needed`.
+- Lokaler Entwicklungsbetrieb (`astro dev`): fehlt die externe OstRecht-D1, ist nur Ost `unavailable-local` (503 für
+  Ost-Anfragen); gebaute Worker bleiben fail-closed (`apps/web/src/lib/runtime/configuration.ts`).
 - Bundesrecht (`gesetze-sim-internet.de`) wird nicht importiert; Anbindungsplan und Mapping in
   `docs/BUNDESRECHT_COMPATIBILITY.md` (bevorzugt read-only-Quelle statt Kopie, keine Bund-Sonderstrukturen im Kern).
 - Öffentliche Texte auf Deutsch mit echten Umlauten; der Simulationshinweis bleibt sichtbar

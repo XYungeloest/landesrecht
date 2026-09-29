@@ -4,6 +4,7 @@
  */
 import type { JurisdictionStatusSummary } from '@landesrecht/legal-core/config/inventory-status.ts';
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import type { JurisdictionAvailability } from '@landesrecht/runtime/registry.ts';
 import type { NormHistory, NormMeta, NormStatus, NormType, NormVersion, Publication, PublicationEntry } from '@landesrecht/legal-core/lib/schema.ts';
 import type { SearchHit } from '@landesrecht/search/ranking.ts';
 
@@ -39,8 +40,10 @@ export interface ApiJurisdiction {
   upstreamSourceOfTruth?: { system: string; label: string; siteUrl: string };
   /** Bisheriges Rechtsportal (Legacy-Adressen als Verweis), z. B. OstRecht für Ost. */
   legacySource?: { system: string; label: string; siteUrl: string };
-  /** Suchabdeckung des Bestands (Volltextindex je Fassung, fehlende geltende Fassungen). */
-  search: Omit<ApiSearchCoverage, 'jurisdiction'>;
+  /** Suchabdeckung des Bestands (Volltextindex je Fassung, fehlende geltende Fassungen); fehlt nur bei lokal nicht verfügbarer Jurisdiktion. */
+  search?: Omit<ApiSearchCoverage, 'jurisdiction'>;
+  /** Nur Entwicklung: `unavailable-local` (kein Bestand, Anfragen → 503) oder `fixture` (lokaler Teilbestand, development only). */
+  availability?: JurisdictionAvailability;
   /** Diagnose der Laufzeitquelle (nur `ostrecht-d1`): Sync-Zustand und Identität der vorgelagerten Projektion. */
   runtime?: { syncState: string | null; syncedAt: string | null; upstreamCorpusHash: string | null; projectionFingerprint: string | null };
   /**
@@ -113,6 +116,8 @@ export interface ApiSearchResponse {
    * `readiness: partial`, wenn einzelnen geltenden Fassungen der Volltextindex fehlt.
    */
   coverage: ApiSearchCoverage[];
+  /** Nur Entwicklung: lokal nicht verfügbare Jurisdiktionen, die im Ergebnis fehlen. */
+  unavailable?: Array<{ jurisdiction: JurisdictionId } & JurisdictionAvailability>;
 }
 
 export interface ApiSearchCoverage {

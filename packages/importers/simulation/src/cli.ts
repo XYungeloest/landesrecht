@@ -2,18 +2,15 @@
  * CLI der Simulationsrechtsfortschreibung (`scripts/import-simulation.ts`). Ohne `--write` wird nichts
  * geschrieben (Dry-run). Exit-Codes: 0 ok, 1 Fehler/Abweichung, 2 nicht implementiert.
  */
-import { mkdir, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-
 import { isJurisdictionId, JURISDICTION_IDS, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 
 import { INVENTORY_DOC_PATH, INVENTORY_PATH, SIMULATION_DATA_DIR } from './common/paths.ts';
 import { renderConsolidationLines, runConsolidation } from './consolidate/run.ts';
-import { renderInventoryReport } from './inventory/report.ts';
+import { writeInventoryFiles } from './inventory/report.ts';
 import { scanArchive } from './inventory/scan.ts';
 
-export const COMMANDS = ['inventory', 'consolidate', 'ledger-sync', 'r2-sync', 'completeness', 'help'] as const;
+export const COMMANDS = ['inventory', 'consolidate', 'ledger-sync', 'r2-sync', 'completeness', 'intake', 'needed', 'help'] as const;
 export type Command = (typeof COMMANDS)[number];
 
 export interface CliOptions {
@@ -31,6 +28,8 @@ export interface CliOptions {
   verify?: 'readback' | 'etag';
   limit?: number;
   stagingDir?: string;
+  /** needed: Filter nach Priorität. */
+  priority?: 'P1' | 'P2' | 'P3';
 }
 
 function positiveInteger(value: string | undefined, option: string): number {
@@ -57,9 +56,13 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
     else if (argument === '--json') options.json = true;
     else if (argument === '--quiet') options.quiet = true;
     else if (argument === '--stage-only') options.stageOnly = true;
-    else if (argument === '--jurisdiction' || argument === '--only') {
+    else if (argument === '--priority') {
+      const priority = take();
+      if (priority !== 'P1' && priority !== 'P2' && priority !== 'P3') throw new Error('--priority erwartet P1|P2|P3');
+      options.priority = priority;
+    } else if (argument === '--jurisdiction' || argument === '--land' || argument === '--only') {
       const value = take();
-      if (argument === '--jurisdiction') {
+      if (argument === '--jurisdiction' || argument === '--land') {
         if (!isJurisdictionId(value)) throw new Error(`Unbekannte Jurisdiktion: ${value}. Zulässig: ${JURISDICTION_IDS.join(', ')}`);
         options.jurisdiction = value;
       } else options.only = value.split(',').map((entry) => entry.trim()).filter(Boolean);
@@ -110,6 +113,12 @@ const HELP = `Simulationsrechtsfortschreibung
                                            ${SIMULATION_DATA_DIR}/<j>/completeness.json lesen, Baseline- und Sim-Normen
                                            zählen; --write schreibt den Block simulation nach
                                            packages/legal-core/src/config/inventory-status.json
+  intake [--write] [--json]                Source-Inbox imports/ auswerten: Hash, bekannte Dateien, Land, Typ, Abgleich mit
+                                           ${SIMULATION_DATA_DIR}/source-acquisition-queue.json, Freeze-Prüfung; Bericht
+                                           data/audits/source-intake/latest.json; --write nur sichere Schritte (Inventar bei
+                                           eindeutiger Zuordnung, candidate-found, resolved nach geschlossener Lücke)
+  needed [--land <j>] [--priority P1|P2|P3]
+                                           Was noch zu beschaffen ist (offene Queue-Einträge, kompakt)
 Ohne --write wird nichts in content/, data/, docs/ oder packages/ geschrieben (Ausnahme: r2-sync --stage-only schreibt
 Staging, Manifest und Bericht, kein Netz); der Cache .cache/simulation/ wird immer befüllt.`;
 
@@ -132,10 +141,7 @@ export async function runCli(argv: readonly string[], io: { print: (line: string
       io.print(`Dry-run: ${INVENTORY_PATH} und ${INVENTORY_DOC_PATH} nicht geschrieben (--write).`);
       return 0;
     }
-    await mkdir(dirname(join(root, INVENTORY_PATH)), { recursive: true });
-    await writeFile(join(root, INVENTORY_PATH), `${JSON.stringify(inventory, null, 2)}\n`, 'utf8');
-    await writeFile(join(root, INVENTORY_DOC_PATH), renderInventoryReport(inventory), 'utf8');
-    io.print(`Geschrieben: ${INVENTORY_PATH}, ${INVENTORY_DOC_PATH}`);
+    io.print(await writeInventoryFiles(root, inventory) ? `Geschrieben: ${INVENTORY_PATH}, ${INVENTORY_DOC_PATH}` : `${INVENTORY_PATH} und ${INVENTORY_DOC_PATH} unverändert.`);
     return 0;
   }
   if (options.command === 'consolidate') {
@@ -160,6 +166,14 @@ export async function runCli(argv: readonly string[], io: { print: (line: string
   if (options.command === 'r2-sync') {
     const { runR2Sync } = await import('./r2/command.ts');
     return runR2Sync({ write: options.write, stageOnly: options.stageOnly, ...(options.r2Transport ? { r2Transport: options.r2Transport } : {}), ...(options.concurrency !== undefined ? { concurrency: options.concurrency } : {}), ...(options.verify ? { verify: options.verify } : {}), ...(options.limit !== undefined ? { limit: options.limit } : {}), ...(options.stagingDir ? { stagingDir: options.stagingDir } : {}) }, root, io);
+  }
+  if (options.command === 'intake') {
+    const { runIntake } = await import('./intake/command.ts');
+    return runIntake({ write: options.write, json: options.json }, root, io);
+  }
+  if (options.command === 'needed') {
+    const { runNeeded } = await import('./intake/needed.ts');
+    return runNeeded({ ...(options.jurisdiction ? { jurisdiction: options.jurisdiction } : {}), ...(options.priority ? { priority: options.priority } : {}), json: options.json }, root, io);
   }
   if (options.command === 'completeness') {
     const { runCompleteness } = await import('./completeness/command.ts');

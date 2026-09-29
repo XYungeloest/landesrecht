@@ -52,7 +52,33 @@ export type SourceGapMissing = (typeof SOURCE_GAP_MISSING)[number];
 /** P1: entsperrt mehrere Akte oder eine zentrale Norm; P2: schließt eine klare Publikationslücke; P3: nur Vollständigkeit/Provenienz. */
 export const ACQUISITION_PRIORITIES = ['P1', 'P2', 'P3'] as const;
 export const ACQUISITION_CONFIDENCES = ['high', 'medium', 'low'] as const;
-export const ACQUISITION_STATUSES = ['open', 'requested', 'obtained', 'dead-end'] as const;
+/**
+ * Lebenszyklus eines Akquisitionseintrags (docs/MAINTENANCE.md):
+ *  - `open`: Quelle wird gesucht;
+ *  - `candidate-found`: `sources:intake` hat eine Datei eindeutig zugeordnet (`candidate`) – die Lücke ist noch offen;
+ *  - `resolved`: Quelle verarbeitet und Lücke geschlossen (`resolution`); nie schon beim Auffinden einer Datei;
+ *  - `rejected`: Beschaffung verworfen (`reason`) – die Lücke bleibt offen und zählt weiter;
+ *  - `superseded`: durch eine andere Lücke ersetzt (`supersededBy`).
+ */
+export const ACQUISITION_STATUSES = ['open', 'candidate-found', 'resolved', 'rejected', 'superseded'] as const;
+export type AcquisitionStatus = (typeof ACQUISITION_STATUSES)[number];
+
+export interface AcquisitionCandidate {
+  sha256: string;
+  /** Pfad in der Inbox (relativ zu `imports/`) beim Auffinden. */
+  path: string;
+  foundAt: string;
+}
+
+export interface AcquisitionResolution {
+  resolvedBySha256: string;
+  resolvedAt: string;
+  /** Kennung im Quelleninventar (`data/simulation/source-inventory.json`, SHA-256). */
+  sourceInventoryId: string;
+  publications: string[];
+  events: string[];
+  note?: string;
+}
 
 export interface SourceGap {
   id: string;
@@ -70,7 +96,15 @@ export interface SourceGap {
   /** Ledger-Ereignisse und Normen, die die Lücke offen hält. */
   blocks: { events: string[]; norms: string[] };
   /** Nur nützliche Quellen tragen einen Akquisitionseintrag (data/simulation/source-acquisition-queue.json). */
-  acquisition?: { priority: (typeof ACQUISITION_PRIORITIES)[number]; confidence: (typeof ACQUISITION_CONFIDENCES)[number]; status: (typeof ACQUISITION_STATUSES)[number] };
+  acquisition?: {
+    priority: (typeof ACQUISITION_PRIORITIES)[number];
+    confidence: (typeof ACQUISITION_CONFIDENCES)[number];
+    status: AcquisitionStatus;
+    candidate?: AcquisitionCandidate;
+    resolution?: AcquisitionResolution;
+    supersededBy?: string;
+    reason?: string;
+  };
   note?: string;
 }
 
@@ -116,6 +150,12 @@ function expectString(value: unknown, path: string): string {
 function expectIsoDate(value: unknown, path: string): string {
   const text = expectString(value, path);
   if (!/^\d{4}-\d{2}-\d{2}$/u.test(text)) fail(path, 'muss ein ISO-Datum sein');
+  return text;
+}
+
+function expectSha(value: unknown, path: string): string {
+  const text = expectString(value, path);
+  if (!/^[0-9a-f]{64}$/u.test(text)) fail(path, 'muss ein SHA-256 sein');
   return text;
 }
 
@@ -189,6 +229,29 @@ function parseSourceGap(value: unknown, path: string): SourceGap {
       confidence: expectEnum(acquisition.confidence, ACQUISITION_CONFIDENCES, `${path}.acquisition.confidence`),
       status: expectEnum(acquisition.status, ACQUISITION_STATUSES, `${path}.acquisition.status`),
     };
+    const status = gap.acquisition.status;
+    if (acquisition.candidate !== undefined) {
+      const candidate = expectObject(acquisition.candidate, `${path}.acquisition.candidate`);
+      gap.acquisition.candidate = { sha256: expectSha(candidate.sha256, `${path}.acquisition.candidate.sha256`), path: expectString(candidate.path, `${path}.acquisition.candidate.path`), foundAt: expectIsoDate(candidate.foundAt, `${path}.acquisition.candidate.foundAt`) };
+    }
+    if (acquisition.resolution !== undefined) {
+      const resolution = expectObject(acquisition.resolution, `${path}.acquisition.resolution`);
+      gap.acquisition.resolution = {
+        resolvedBySha256: expectSha(resolution.resolvedBySha256, `${path}.acquisition.resolution.resolvedBySha256`),
+        resolvedAt: expectIsoDate(resolution.resolvedAt, `${path}.acquisition.resolution.resolvedAt`),
+        sourceInventoryId: expectSha(resolution.sourceInventoryId, `${path}.acquisition.resolution.sourceInventoryId`),
+        publications: expectStringList(resolution.publications, `${path}.acquisition.resolution.publications`),
+        events: expectStringList(resolution.events, `${path}.acquisition.resolution.events`),
+        ...(resolution.note !== undefined ? { note: expectString(resolution.note, `${path}.acquisition.resolution.note`) } : {}),
+      };
+    }
+    if (acquisition.supersededBy !== undefined) gap.acquisition.supersededBy = expectString(acquisition.supersededBy, `${path}.acquisition.supersededBy`);
+    if (acquisition.reason !== undefined) gap.acquisition.reason = expectString(acquisition.reason, `${path}.acquisition.reason`);
+    if (status === 'candidate-found' && !gap.acquisition.candidate) fail(`${path}.acquisition`, 'candidate-found verlangt candidate (sha256, path, foundAt)');
+    if (status === 'resolved' && !gap.acquisition.resolution) fail(`${path}.acquisition`, 'resolved verlangt resolution (resolvedBySha256, resolvedAt, sourceInventoryId)');
+    if (status !== 'resolved' && gap.acquisition.resolution) fail(`${path}.acquisition.resolution`, 'nur bei resolved');
+    if (status === 'superseded' && !gap.acquisition.supersededBy) fail(`${path}.acquisition`, 'superseded verlangt supersededBy');
+    if (status === 'rejected' && !gap.acquisition.reason) fail(`${path}.acquisition`, 'rejected verlangt reason');
     // Keine spekulative P1: eine mögliche Lücke oder eine unsichere Existenz entsperrt nichts Belegtes.
     if (gap.class === 'possible-gap') fail(`${path}.acquisition`, 'eine nur mögliche Lücke ist keine Akquisitionsaufgabe');
     if (gap.acquisition.priority === 'P1' && gap.acquisition.confidence === 'low') fail(`${path}.acquisition.priority`, 'P1 verlangt belegte Existenz (confidence nicht low)');
@@ -244,7 +307,10 @@ export function parseCompletenessFile(value: unknown, path = 'completeness.json'
   for (const gap of file.sourceGaps) {
     if (gap.series === undefined) continue;
     const entry = series.find((candidate) => candidate.gazette === gap.series);
-    if (!entry || !entry.missingIssues.includes(gap.issue!)) fail(`${path}.sourceGaps`, `${gap.id}: ${gap.series} ${gap.issue} ist keine fehlende Ausgabe der Blattreihen`);
+    const present = entry?.presentIssues.includes(gap.issue!) === true;
+    // Eine inzwischen vorliegende Ausgabe schließt die Lücke nur mit gefundener oder aufgelöster Quelle (Lebenszyklus).
+    if (present && gap.acquisition?.status !== 'candidate-found' && gap.acquisition?.status !== 'resolved') fail(`${path}.sourceGaps`, `${gap.id}: ${gap.series} ${gap.issue} liegt vor – Lücke als candidate-found/resolved führen oder entfernen`);
+    if (!entry || (!present && !entry.missingIssues.includes(gap.issue!))) fail(`${path}.sourceGaps`, `${gap.id}: ${gap.series} ${gap.issue} ist keine fehlende Ausgabe der Blattreihen`);
     const key = `${gap.series}\u0000${gap.issue}`;
     if (linked.has(key)) fail(`${path}.sourceGaps`, `${gap.series} ${gap.issue} ist doppelt als Lücke erfasst`);
     linked.set(key, gap.id);
@@ -252,12 +318,15 @@ export function parseCompletenessFile(value: unknown, path = 'completeness.json'
   for (const entry of series) for (const issue of entry.missingIssues) {
     if (!linked.has(`${entry.gazette}\u0000${issue}`)) fail(`${path}.sourceGaps`, `fehlende Ausgabe ${entry.gazette} ${issue} ist nicht als Lücke der Klasse A erfasst`);
   }
+  for (const gap of file.sourceGaps) {
+    if (gap.acquisition?.supersededBy && !gapIds.includes(gap.acquisition.supersededBy)) fail(`${path}.sourceGaps`, `${gap.id}: supersededBy ${gap.acquisition.supersededBy} ist keine Lücke`);
+  }
   // Der Status muss belegbar sein: „vollständig“ verträgt keine fehlenden Ausgaben und keine Quellenlücke A–C.
   // Nur mögliche Lücken (Klasse D, ungeklärte Zeiträume) sperren „vollständig“ nicht (Abschnitt 7.2).
   const missing = series.reduce((sum, entry) => sum + entry.missingIssues.length, 0);
   if (file.status !== 'SIM SOURCES PARTIAL') {
     if (missing > 0) fail(`${path}.status`, `${file.status} verträgt keine fehlenden Ausgaben (${missing})`);
-    const open = file.sourceGaps.filter((gap) => gap.class !== 'possible-gap').length;
+    const open = file.sourceGaps.filter((gap) => gap.class !== 'possible-gap' && isOpenGap(file, gap)).length;
     if (open > 0) fail(`${path}.status`, `${file.status} verträgt keine Quellenlücken der Klassen A–C (${open})`);
   }
   if (file.status === 'SIM LEGAL STATE COMPLETE' && (file.acts.review > 0 || file.acts.blocked > 0)) {
@@ -276,4 +345,15 @@ export function completenessTotals(file: CompletenessFile): { knownIssues: numbe
     review: file.acts.review + file.acts.blocked,
     draftsWithoutPromulgation: file.acts.draftsWithoutPromulgation,
   };
+}
+
+/**
+ * Ob eine Lücke offen ist und zählt: aufgelöste und ersetzte Lücken sind geschlossen; eine Lücke A mit Blattreihe ist
+ * geschlossen, sobald ihre Ausgabe in `presentIssues` steht. `open`, `candidate-found` und `rejected` bleiben offen.
+ */
+export function isOpenGap(file: Pick<CompletenessFile, 'series'>, gap: SourceGap): boolean {
+  const status = gap.acquisition?.status;
+  if (status === 'resolved' || status === 'superseded') return false;
+  if (gap.series !== undefined) return !(file.series.find((entry) => entry.gazette === gap.series)?.presentIssues.includes(gap.issue!) ?? false);
+  return true;
 }
