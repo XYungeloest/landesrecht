@@ -37,6 +37,8 @@ DOCX, TXT, MD und HTML; ohne Textebene gibt es kein OCR, die Datei geht ins Huma
    - Evidenzprüfung in `data/simulation/<land>/sources.json`.
    - Verkündung unter `content/publications/<land>/`, Akte und Rezepte unter `data/simulation/<land>/`.
    - Ledger-Ereignis und Lücke in `completeness.json` fortschreiben (Ausgabe in `presentIssues`, Status).
+   - Inhaltsverzeichnis der Ausgabe: `npm run import:simulation:publications -- --write` (jeder abgedruckte Akt als Eintrag,
+     auch ohne Portalnorm; Gate G12).
    - Konsolidierung: `npm run import:simulation:consolidate -- --jurisdiction <land> --write`, dann `ledger-sync`.
 6. Erneut `npm run sources:intake -- --write`. Erst jetzt wird der Eintrag `resolved`: Die Quelle ist inventarisiert und
    von einer Verkündung oder einem Ledger-Ereignis belegt, die Lücke ist im Audit geschlossen. Die Auflösung trägt

@@ -23,6 +23,8 @@ export const GET: APIRoute = async ({ params }) => {
     return jsonResponse(error, { status: 404, headers: { 'cache-control': 'no-store' } });
   }
   const entries: ApiPublicationEntry[] = publication.entries.map((entry) => {
+    // Ohne veröffentlichte Portalnorm keine Adresse (nie ein erfundener Link); Stand in `consolidationStatus`.
+    if (!entry.normSlug) return { ...entry };
     const result: ApiPublicationEntry = { ...entry, normUrl: getNormUrl(jurisdiction, entry.normSlug) };
     if (entry.versionId) result.versionUrl = getNormVersionUrl(jurisdiction, entry.normSlug, entry.versionId);
     return result;

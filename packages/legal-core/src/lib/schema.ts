@@ -439,18 +439,36 @@ export interface NormRecord {
   versions: NormVersion[];
 }
 
+/**
+ * Konsolidierungsstand eines abgedruckten Akts ohne veröffentlichte Portalnorm (Ledger-Status, docs/SIMULATION_IMPORT.md §3):
+ * `review` in Prüfung, `blocked` Konsolidierung gesperrt, `not-promulgated` nicht als verkündet übernommen.
+ */
+export const PUBLICATION_ENTRY_STATUSES = ['review', 'blocked', 'not-promulgated'] as const;
+export type PublicationEntryStatus = (typeof PUBLICATION_ENTRY_STATUSES)[number];
+
+/**
+ * Eintrag im Inhaltsverzeichnis einer Ausgabe. Er beschreibt, was tatsächlich abgedruckt ist – unabhängig davon, ob der
+ * Akt als Portalnorm veröffentlicht ist. Die Verknüpfung (`normSlug`, `versionId`) steht nur bei sicherer Zuordnung;
+ * ohne Portalnorm verweisen `ledgerEvents` auf die Ereignisse des Sim-Ledgers und `consolidationStatus` nennt den Stand.
+ */
 export interface PublicationEntry {
   title: string;
   /** Normtyp des verkündeten Akts (`NORM_TYPES`). */
   type?: NormType;
   citation: string;
-  normSlug: string;
+  /** Veröffentlichte Portalnorm (nur bei sicherer Zuordnung; nie ein erfundener Slug). */
+  normSlug?: string;
+  /** Durch diese Ausgabe entstandene Fassung (nur mit `normSlug`). */
   versionId?: string;
   pages?: string;
   /** Erste Seite des Akts in der Ausgabe. */
   startPage?: number;
   /** Ausfertigungsdatum des Akts. */
   documentDate?: string;
+  /** IDs der Ereignisse in `data/simulation/<land>/ledger.json`, die diesen Akt betreffen. */
+  ledgerEvents?: string[];
+  /** Stand ohne Portalnorm (nur ohne `normSlug`); vom Gate gegen den Ledger geprüft. */
+  consolidationStatus?: PublicationEntryStatus;
 }
 
 /**
@@ -973,17 +991,29 @@ export function parsePublicationEntry(value: unknown, path: string): Publication
   const result: PublicationEntry = {
     title: expectString(item.title, `${path}.title`),
     citation: expectString(item.citation, `${path}.citation`),
-    normSlug: expectSlug(item.normSlug, `${path}.normSlug`),
   };
+  if (item.normSlug !== undefined) result.normSlug = expectSlug(item.normSlug, `${path}.normSlug`);
   if (item.type !== undefined) result.type = expectEnumValue(item.type, `${path}.type`, NORM_TYPES);
   const versionId = expectOptionalString(item.versionId, `${path}.versionId`);
-  if (versionId !== undefined) result.versionId = versionId;
+  if (versionId !== undefined) {
+    if (result.normSlug === undefined) fail(`${path}.versionId`, 'nur zusammen mit normSlug');
+    result.versionId = versionId;
+  }
   const pages = expectOptionalString(item.pages, `${path}.pages`);
   if (pages !== undefined) result.pages = pages;
   const startPage = expectOptionalInteger(item.startPage, `${path}.startPage`, { minimum: 1 });
   if (startPage !== undefined) result.startPage = startPage;
   const documentDate = expectOptionalIsoDate(item.documentDate, `${path}.documentDate`);
   if (documentDate !== undefined) result.documentDate = documentDate;
+  if (item.ledgerEvents !== undefined) {
+    const events = expectArray(item.ledgerEvents, `${path}.ledgerEvents`).map((event, index) => expectString(event, `${path}.ledgerEvents[${index}]`));
+    if (events.length === 0 || new Set(events).size !== events.length) fail(`${path}.ledgerEvents`, 'muss eindeutige Ereignis-IDs enthalten');
+    result.ledgerEvents = events;
+  }
+  if (item.consolidationStatus !== undefined) {
+    if (result.normSlug !== undefined) fail(`${path}.consolidationStatus`, 'nur ohne normSlug (Stand eines nicht veröffentlichten Akts)');
+    result.consolidationStatus = expectEnumValue(item.consolidationStatus, `${path}.consolidationStatus`, PUBLICATION_ENTRY_STATUSES);
+  }
   return result;
 }
 

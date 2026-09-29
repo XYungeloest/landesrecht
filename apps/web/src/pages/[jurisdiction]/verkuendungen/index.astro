@@ -8,7 +8,7 @@ import { getJurisdictionUrl, getPublicationsUrl, getPublicationUrl, PORTAL_PATHS
 import InventoryNotice from '../../../components/InventoryNotice.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { jurisdictionFromParam } from '../../../lib/norm-view.ts';
-import { entryLinkKey, resolveEntryLinks } from '../../../lib/publication-view.ts';
+import { entryLinkKey, entryStatusLabel, resolveEntryLinks } from '../../../lib/publication-view.ts';
 import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../../lib/runtime/context.ts';
 
 // Verkündungsblatt-Ausgaben der Simulation (docs/SIM_LAW_PROGRESSION.md 5.1 Schritt 8, Vorbild OstRecht
@@ -93,7 +93,7 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
                     <li>
                       <span>{entry.title}</span>
                       <span class="muted"> – {entry.citation}{pages && ` · ${pages}`}{entry.type && ` · ${typeLabel(entry.type)}`}</span>
-                      {link ? <> · <a href={link.href}>{link.label}</a>{link.historyUrl && <> · <a href={link.historyUrl}>{VOCABULARY.sections.history}</a></>}</> : <span class="muted"> · Norm nicht im Bestand</span>}
+                      {link ? <> · <a href={link.href}>{link.label}</a>{link.historyUrl && <> · <a href={link.historyUrl}>{VOCABULARY.sections.history}</a></>}</> : <span class="muted"> · {entry.normSlug ? 'Norm nicht im Bestand' : entryStatusLabel(entry)}</span>}
                     </li>
                   );
                 })}

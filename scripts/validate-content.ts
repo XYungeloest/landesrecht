@@ -70,6 +70,8 @@ async function validateDataset(dataset: 'production' | 'fixtures', contentRoot: 
       if (previous) problems.push(`${label}/publications/${jurisdiction}/${publication.slug}.json: Verkündungs-Slug ist doppelt (auch ${previous})`);
       else publicationSlugs.set(publication.slug, `${label}/publications/${jurisdiction}/${publication.slug}.json`);
       for (const entry of publication.entries) {
+        // Abgedruckter Akt ohne veröffentlichte Portalnorm: kein Normbezug zu prüfen (Inhaltsverzeichnis ≠ Bestand).
+        if (!entry.normSlug) continue;
         const norm = all.get(`${jurisdiction}:${entry.normSlug}`);
         if (!norm) {
           problems.push(`${label}/publications/${jurisdiction}/${publication.slug}.json: Norm ${entry.normSlug} fehlt im Bestand`);

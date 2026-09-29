@@ -10,7 +10,7 @@ import { renderConsolidationLines, runConsolidation } from './consolidate/run.ts
 import { writeInventoryFiles } from './inventory/report.ts';
 import { scanArchive } from './inventory/scan.ts';
 
-export const COMMANDS = ['inventory', 'consolidate', 'ledger-sync', 'r2-sync', 'completeness', 'intake', 'needed', 'help'] as const;
+export const COMMANDS = ['inventory', 'consolidate', 'ledger-sync', 'r2-sync', 'completeness', 'publications', 'intake', 'needed', 'help'] as const;
 export type Command = (typeof COMMANDS)[number];
 
 export interface CliOptions {
@@ -113,6 +113,10 @@ const HELP = `Simulationsrechtsfortschreibung
                                            ${SIMULATION_DATA_DIR}/<j>/completeness.json lesen, Baseline- und Sim-Normen
                                            zählen; --write schreibt den Block simulation nach
                                            packages/legal-core/src/config/inventory-status.json
+  publications [--jurisdiction <j>] [--write | --check]
+                                           Inhaltsverzeichnis der Sim-Verkündungen aus sources.json (acts[]): fehlende
+                                           Einträge ergänzen (auch ohne Portalnorm, mit Ledger-Stand), Stand fortschreiben;
+                                           --check prüft nur (Gate G12, Exit 1 bei Lücken)
   intake [--write] [--json]                Source-Inbox imports/ auswerten: Hash, bekannte Dateien, Land, Typ, Abgleich mit
                                            ${SIMULATION_DATA_DIR}/source-acquisition-queue.json, Freeze-Prüfung; Bericht
                                            data/audits/source-intake/latest.json; --write nur sichere Schritte (Inventar bei
@@ -166,6 +170,17 @@ export async function runCli(argv: readonly string[], io: { print: (line: string
   if (options.command === 'r2-sync') {
     const { runR2Sync } = await import('./r2/command.ts');
     return runR2Sync({ write: options.write, stageOnly: options.stageOnly, ...(options.r2Transport ? { r2Transport: options.r2Transport } : {}), ...(options.concurrency !== undefined ? { concurrency: options.concurrency } : {}), ...(options.verify ? { verify: options.verify } : {}), ...(options.limit !== undefined ? { limit: options.limit } : {}), ...(options.stagingDir ? { stagingDir: options.stagingDir } : {}) }, root, io);
+  }
+  if (options.command === 'publications') {
+    const { auditPublicationEntries, renderPublicationEntryLines, syncPublicationEntries } = await import('./publications/entries.ts');
+    let failed = false;
+    for (const jurisdiction of options.jurisdiction ? [options.jurisdiction] : (['west', 'nsh', 'baywue'] as const)) {
+      const report = options.check ? await auditPublicationEntries(root, jurisdiction) : await syncPublicationEntries(root, jurisdiction, { write: options.write });
+      for (const line of renderPublicationEntryLines(report)) io.print(line);
+      failed ||= report.problems.length > 0;
+    }
+    if (!options.write && !options.check) io.print('Dry-run: nichts geschrieben (--write).');
+    return failed ? 1 : 0;
   }
   if (options.command === 'intake') {
     const { runIntake } = await import('./intake/command.ts');

@@ -154,8 +154,8 @@ export interface ApiPublicationsResponse {
 }
 
 export interface ApiPublicationEntry extends PublicationEntry {
-  /** Adresse der verkündeten Norm bzw. der entstandenen Fassung im Portal. */
-  normUrl: string;
+  /** Adresse der verkündeten Norm bzw. der entstandenen Fassung im Portal; fehlt ohne veröffentlichte Portalnorm. */
+  normUrl?: string;
   versionUrl?: string;
 }
 

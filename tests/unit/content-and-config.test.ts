@@ -59,6 +59,11 @@ describe('Produktionsbestand (content/)', () => {
       for (const publication of await loadJurisdictionPublications(jurisdiction, root)) {
         expect(publication.slug.startsWith('testfixture-'), publication.slug).toBe(false);
         for (const entry of publication.entries) {
+          // Ein abgedruckter Akt ohne Portalnorm trägt keinen Slug (nie einen erfundenen), aber einen Ledger-Bezug.
+          if (!entry.normSlug) {
+            expect(entry.ledgerEvents?.length ?? 0, `${publication.slug}: ${entry.title}`).toBeGreaterThan(0);
+            continue;
+          }
           expect(entry.normSlug.startsWith('testfixture-'), `${publication.slug}: ${entry.normSlug}`).toBe(false);
           expect(slugs.has(`${jurisdiction}:${entry.normSlug}`), `${publication.slug}: ${entry.normSlug}`).toBe(true);
         }

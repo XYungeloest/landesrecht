@@ -221,6 +221,18 @@ Blattname wie gedruckt), `regime`, `place`, `entries[].type`, `entries[].startPa
 `gazette` ist das Blattkürzel **wie gedruckt bzw. historisch** (`GV. West`, `MBl. WD`, `GVOBl. NSH`, `GVBl. Süd`,
 `GVBl. BayWü`); die heutige Jurisdiktion steht in `jurisdiction`. Historische Bezeichnungen werden nicht umbenannt.
 
+**Inhaltsverzeichnis = tatsächlicher Inhalt der Ausgabe.** `entries[]` nennt jeden abgedruckten Akt aus
+`data/simulation/<land>/sources.json` (`acts[]` der Quelle), unabhängig davon, ob er `applied`, `review`, `blocked`,
+`not-promulgated` oder gar nicht als Norm veröffentlicht ist. Die Verknüpfung ist davon getrennt: `normSlug`/`versionId`
+nur bei sicherer Zuordnung (kuratierter `actSlug` mit vorhandener Norm; Fassung nur, wenn sie diese Ausgabe belegt), nie
+ein erfundener Slug. Ohne Portalnorm trägt der Eintrag `ledgerEvents` (IDs im Ledger) und – bei einheitlichem Stand –
+`consolidationStatus` (`review` → „in Prüfung“, `blocked` → „Konsolidierung gesperrt“, `not-promulgated` bzw. ohne Stand →
+„nicht im veröffentlichten Bestand“); die Oberfläche zeigt dann keinen Link. `npm run import:simulation:publications
+[-- --write]` ergänzt fehlende Einträge (Titel, Dokumentart, Seiten, Datum, Fundstelle aus dem Inventar; bestehende
+Einträge unverändert) und schreibt den Stand fort; Gate G12 prüft das fail-closed. Eine bewusste Lücke nur als
+dokumentierte Ausnahme in `data/simulation/publication-entry-exceptions.json` (`jurisdiction`, `publication`, `actTitle`,
+`reason`). Rechtswirkung folgt nie aus einem Eintrag.
+
 ## 5 Sim-Rechtsakte und Rezepte
 
 ### 5.1 Sim-Akt als Norm: `data/simulation/<land>/acts/<akt-slug>.json`
@@ -419,6 +431,7 @@ sind Fehler (Exit 1); gesperrte Ziele sind dokumentierter Zustand (Exit 0).
 | G7 | Projektion: `law_publications`, `current_version_id` folgt `getApplicableVersion`, historische Fassung bleibt abrufbar, `law_versions.simulation_valid_to` abgeleitet | `npm run test` (`d1-projection`), `npm run d1:schema:check` |
 | G8 | Engine: je Operation Treffer 0/1/2, Hash-/Alttext-/Wirkdatumsabweichung | `npm run test` (`simulation-engine`, `simulation-recipes`, `simulation-consolidate`, `simulation-gates`) |
 | G11 | Evidenzhierarchie (2.1): keine Wortlautquelle, kein Blatt-, Einzelakt-, Verkündungs- oder Änderungsbeleg und keine strukturtragende Rolle aus Ebene 4/5; jeder Akt hat einen Beleg der Ebene 1–3; kein angewandtes Ereignis nur mit Ebene-4/5-Belegen | `npm run content:simulation-gates` |
+| G12 | Inhaltsverzeichnis (4): jede Ausgabe mit inventarisierten Akten hat eine Publication, jeder Akt einen Eintrag (sonst dokumentierte Ausnahme); Identität (Blatt, Jahr, Nummer, Datum) wie im Inventar; Einträge ohne Portalnorm mit Titel, Seiten, Datum ihres Akts, gültigen Ledger-Bezügen und aktuellem Stand; keine Dubletten | `npm run content:simulation-gates` |
 | G9 | Inventar reproduzierbar: `inventory` erneut gerechnet entspricht `data/simulation/source-inventory.json` ohne `scannedAt` (nur mit vorhandenem `imports/`; `--skip-inventory` überspringt) | `npm run content:simulation-gates` |
 | G10 | R2/D1 konsistent, West-Fingerabdruck unverändert | `npm run audit:r2`, `npm run audit:d1-remote` |
 

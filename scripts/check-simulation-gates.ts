@@ -7,6 +7,8 @@
  *   G4 Konsolidierung reproduzierbar (`import-simulation consolidate --check` je Land)
  *   G9 Inventar reproduzierbar (nur mit vorhandenem imports/-Archiv)
  *   G11 Evidenzhierarchie: keine Wortlaut-, Verkündungs- oder Rechtswirkungsgrundlage aus Sekundärquellen (Ebene 4/5)
+ *   G12 Inhaltsverzeichnis der Sim-Verkündungen: jeder inventarisierte Akt einer Ausgabe steht als Eintrag in ihrer
+ *       Publication (auch ohne Portalnorm), Identität, Titel, Seiten, Datum, Ledger-Stand, keine Dubletten
  *
  * G1 (`content:immutability`), G5/G6 (`content:validate`) und G8 (Unit-Tests) laufen getrennt.
  *
@@ -16,6 +18,7 @@ import { isJurisdictionId, JURISDICTION_IDS, type JurisdictionId } from '@landes
 import { isExternallyMaintained } from '@landesrecht/legal-core/lib/provenance.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { runConsolidation } from '@landesrecht/importer-simulation/consolidate/run.ts';
+import { auditPublicationEntries } from '@landesrecht/importer-simulation/publications/entries.ts';
 
 import { readBaselineLockFile, seedsFor } from '@landesrecht/importer-simulation/common/baseline-locks.ts';
 
@@ -58,6 +61,11 @@ for (const jurisdiction of jurisdictions) {
 }
 
 for (const jurisdiction of jurisdictions) reports.push(await checkEvidenceHierarchy(root, jurisdiction));
+
+for (const jurisdiction of jurisdictions) {
+  const audit = await auditPublicationEntries(root, jurisdiction);
+  reports.push({ gate: 'G12', jurisdiction, problems: audit.problems, notes: [`${jurisdiction}: Inhaltsverzeichnis geprüft – ${audit.publications} Ausgabe(n), ${audit.acts} inventarisierte Akt(e), ${audit.entries} Einträge, ${audit.emptyAfter} leere Ausgabe(n)`] });
+}
 
 if (!skipInventory && !requested) reports.push(await checkInventoryReproducible(root));
 
