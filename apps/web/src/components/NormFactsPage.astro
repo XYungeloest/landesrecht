@@ -5,13 +5,19 @@ import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { resolveRelationNote, sourceStatusResolutions } from '@landesrecht/legal-core/lib/editorial-resolutions.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import type { NormView } from '../lib/norm-view.ts';
+import { relationTargetKey, type RelationTargetState } from '../lib/relation-targets.ts';
 import NormPageShell from './NormPageShell.astro';
 
 interface Props {
   view: NormView;
+  /** Existenz der Beziehungsziele (`resolveRelationTargets`); fehlt die Angabe, wird wie bisher verlinkt. */
+  relationTargets?: Map<string, RelationTargetState>;
 }
 
-const { view } = Astro.props;
+const { view, relationTargets } = Astro.props;
+/** Verlinkt nur vorhandene Ziele; ein nicht vorhandenes Ziel erscheint als Text mit Status statt als toter Link. */
+const targetState = (jurisdiction: string, slug: string): RelationTargetState => relationTargets?.get(relationTargetKey(jurisdiction, slug)) ?? 'present';
+const ABSENT_TARGET = 'nicht im veröffentlichten Bestand';
 const { meta } = view.record;
 const RELATION_LABELS: Record<string, string> = {
   amends: 'ändert', 'amended-by': 'geändert durch', repeals: 'hebt auf', 'repealed-by': 'aufgehoben durch', replaces: 'ersetzt', 'replaced-by': 'ersetzt durch',
@@ -41,8 +47,8 @@ const RELATION_LABELS: Record<string, string> = {
       <dt>Zuständige Stelle</dt><dd>{meta.responsibleBody ?? '–'}</dd>
       <dt>Sachgebiete</dt><dd>{meta.subjects.join(', ') || '–'}</dd>
       <dt>Schlagwörter</dt><dd>{meta.keywords.join(', ') || '–'}</dd>
-      <dt>Vorgänger</dt><dd>{meta.predecessorTarget ? <a href={getNormUrl(meta.predecessorTarget.jurisdiction ?? meta.jurisdiction, meta.predecessorTarget.slug)}>{meta.predecessor ?? meta.predecessorTarget.slug}</a> : (meta.predecessor ?? '–')}</dd>
-      <dt>Nachfolger</dt><dd>{meta.successorTarget ? <a href={getNormUrl(meta.successorTarget.jurisdiction ?? meta.jurisdiction, meta.successorTarget.slug)}>{meta.successor ?? meta.successorTarget.slug}</a> : (meta.successor ?? '–')}</dd>
+      <dt>Vorgänger</dt><dd>{meta.predecessorTarget && targetState(meta.predecessorTarget.jurisdiction ?? meta.jurisdiction, meta.predecessorTarget.slug) === 'present' ? <a href={getNormUrl(meta.predecessorTarget.jurisdiction ?? meta.jurisdiction, meta.predecessorTarget.slug)}>{meta.predecessor ?? meta.predecessorTarget.slug}</a> : meta.predecessorTarget ? <>{meta.predecessor ?? meta.predecessorTarget.slug} <span class="muted">({ABSENT_TARGET})</span></> : (meta.predecessor ?? '–')}</dd>
+      <dt>Nachfolger</dt><dd>{meta.successorTarget && targetState(meta.successorTarget.jurisdiction ?? meta.jurisdiction, meta.successorTarget.slug) === 'present' ? <a href={getNormUrl(meta.successorTarget.jurisdiction ?? meta.jurisdiction, meta.successorTarget.slug)}>{meta.successor ?? meta.successorTarget.slug}</a> : meta.successorTarget ? <>{meta.successor ?? meta.successorTarget.slug} <span class="muted">({ABSENT_TARGET})</span></> : (meta.successor ?? '–')}</dd>
     </dl>
   </div>
   <div class="card">
@@ -70,7 +76,7 @@ const RELATION_LABELS: Record<string, string> = {
           const jurisdiction = relation.target.jurisdiction ?? meta.jurisdiction;
           return (
             <li>
-              {RELATION_LABELS[relation.type] ?? relation.type}: <a href={getNormUrl(jurisdiction, relation.target.slug)}>{relation.target.slug}</a>
+              {RELATION_LABELS[relation.type] ?? relation.type}: {targetState(jurisdiction, relation.target.slug) === 'present' ? <a href={getNormUrl(jurisdiction, relation.target.slug)}>{relation.target.slug}</a> : <>{relation.target.slug} <span class="muted">– {ABSENT_TARGET}</span></>}
               <span class="muted"> ({getJurisdiction(jurisdiction).shortName}{resolveRelationNote(meta, relation).note ? `, ${resolveRelationNote(meta, relation).note}` : ''}{relation.date ? `, ${formatDate(relation.date)}` : ''})</span>
               {resolveRelationNote(meta, relation).superseded && <span class="muted"><br />Überholte technische Notiz{resolveRelationNote(meta, relation).superseded!.date ? ` (aufgelöst am ${formatDate(resolveRelationNote(meta, relation).superseded!.date!)})` : ''}: <s>{resolveRelationNote(meta, relation).superseded!.note}</s></span>}
             </li>

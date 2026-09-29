@@ -44,7 +44,7 @@ DOCX, TXT, MD und HTML; ohne Textebene gibt es kein OCR, die Datei geht ins Huma
 7. Gates: `npm run content:simulation-gates` (Freeze 0 Abweichungen), `npm run content:check`, `npm run test`.
 8. Projektion: D1-Projektion des Landes und R2 (`import:simulation:r2-sync -- --stage-only`, dann `--write`), nur wenn
    sich Inhalte geändert haben.
-9. `npm run deploy`, danach `npm run smoke`.
+9. `npm run release:check` (Exit 1 nur bei Releaseblockern), dann `npm run deploy`, danach `npm run smoke`.
 
 Queue-Lebenszyklus (`data/simulation/<land>/completeness.json` → `sourceGaps[].acquisition`; die Queue wird daraus
 erzeugt):
@@ -78,7 +78,9 @@ Fortschreiben des Stichtags läuft `npm run audit:ost-drift -- --as-of <Datum>`.
 
 ## Lokaler Entwicklungsbetrieb
 
-`astro dev` (`npm run dev`) ist der einzige Entwicklungsmodus (Vite `DEV`). Jeder gebaute Worker (Produktion, Staging)
+`astro dev` (`npm run dev`) ist der einzige Entwicklungsmodus (Vite `DEV`). Der vorgeschaltete Seed überspringt aktuelle
+lokale D1s; der erste Start nach `npm run build` läuft dank getrennter Vite-Caches stabil (`docs/DEPLOYMENT.md`, Lokaler
+Worker). In einer Agent-Umgebung startet Astro 7 den Dev-Server selbst im Hintergrund (`astro dev status|logs|stop`). Jeder gebaute Worker (Produktion, Staging)
 bleibt fail-closed: Alle Bindings sind Pflicht, ein verletzter Ost-Contract ergibt 500, `/health` antwortet mit 503.
 
 Lokal gilt:

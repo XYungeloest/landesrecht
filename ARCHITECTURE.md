@@ -24,8 +24,11 @@ apps/web (Astro im Cloudflare Worker): Seiten, /api/v1, /.well-known/simrecht.js
 R2 landesrecht-quellen: unveränderte Rohquellen (Objektschlüssel <jur>/<system>/<stichtag>/<datei>)
 ```
 
-Ohne Worker (Dev, Prerendering, Tests) ersetzt `createFileNormStore` den D1-Store; beide
-implementieren dieselbe `NormStore`-Schnittstelle (`packages/runtime/src/store.ts`).
+Auch `astro dev` führt die Routen in workerd aus und liest die lokale Miniflare-D1 (`npm run d1:seed:dev`). Nur ohne
+Worker (Prerendering im Node-Build, Skripte, Tests) ersetzt `createFileNormStore` den D1-Store; beide implementieren
+dieselbe `NormStore`-Schnittstelle (`packages/runtime/src/store.ts`). Ost hat dort keinen Bestand: ohne lokale
+OstRecht-D1 ist Ost im Entwicklungsbetrieb `unavailable-local` (503 für Ost-Anfragen), gebaute Worker bleiben
+fail-closed (`apps/web/src/lib/runtime/configuration.ts`, `docs/MAINTENANCE.md`).
 
 ## Pakete
 
@@ -35,7 +38,7 @@ implementieren dieselbe `NormStore`-Schnittstelle (`packages/runtime/src/store.t
 | `@landesrecht/search` | Sucheinheiten aus dem Normkörper, Abfrageplan (Strukturadressen, Phrasen, Token, Filter), FTS5-Vertrag (Spalten, Gewichte, Trigger), In-Memory-Bewertung, Zusammenführung mehrerer Stores |
 | `@landesrecht/runtime` | Bindings, Projektionsplan, D1-Store, Dateistore, Registry, SQLite-Adapter (D1-kompatibel, nur Node) |
 | `@landesrecht/providers` | `LegalProvider`-Schnittstelle, Content-Provider, OstRecht-Adapter + Provider, Bundesrechts-Provider, zentraler Resolver |
-| `@landesrecht/importer-*` | Pipeline-Schnittstellen (`common`); `importer-recht-nrw` mit `common/` (Fetcher, Fassungsseite, lokale Stichtagsauswahl, Parserbausteine, Integrität, Manifest, Review-Queue, Coverage), `lrgv/` (Gesetze, Verordnungen), `lrmb/` (Verwaltungsvorschriften: Klassifikation, Parser, Ministerialblatt, Stichtagsbelege, Rekonstruktion), `transform/` (Erkennung, Regeln, Erlassorgane, Transformation), CLI; Platzhalter für juris SH, BAYERN.RECHT, OstRecht-Leser |
+| `@landesrecht/importer-*` | Pipeline-Schnittstellen (`common`); `importer-recht-nrw` mit `common/` (Fetcher, Fassungsseite, lokale Stichtagsauswahl, Parserbausteine, Integrität, Manifest, Review-Queue, Coverage), `lrgv/` (Gesetze, Verordnungen), `lrmb/` (Verwaltungsvorschriften: Klassifikation, Parser, Ministerialblatt, Stichtagsbelege, Rekonstruktion), `transform/` (Erkennung, Regeln, Erlassorgane, Transformation), CLI; `importer-juris-sh` (NSH), `importer-bayernrecht` (BayWü) und `importer-simulation` (Sim-Quelleninventar, Konsolidierung, Ledger, Vollständigkeit, Source-Intake). Für Ost gibt es keinen Importer (OstRecht upstream) |
 
 ## Jurisdiktionsmodell
 
@@ -97,8 +100,13 @@ vor jeder Entscheidung, PDF-Policy, ein Bulk-Runner mit atomaren Checkpoints je 
 Resume, ein unveränderliches R2-Archiv (Staging ohne Zugangsdaten), Slug-Registry, dokumentierte Overrides,
 Institutionen-Zuordnung und eine maschinelle Readiness-Prüfung. Die D1-Projektion skaliert über
 inkrementelle Pläne mit Basisprüfung und SQL-Batches (`packages/runtime/src/incremental.ts`,
-`sql-batches.ts`). Status: validierte Beispielkorpora (12 LRGV, 15 LRMB), Bulk vorbereitet
-(`docs/RECHT_NRW_BULK_IMPORT.md`, `docs/RECHT_NRW_BULK_READINESS.md`). Umfang: `docs/LEGAL_SCOPE.md`.
+`sql-batches.ts`). Status: Bulk ausgeführt, Ausgangsrechtsstand eingefroren (`docs/WEST_REFERENCE_BASELINE.md`);
+Ablauf in `docs/RECHT_NRW_BULK_IMPORT.md`, `docs/RECHT_NRW_BULK_READINESS.md`. Umfang: `docs/LEGAL_SCOPE.md`.
+
+NSH (juris SH) und BayWü (BAYERN.RECHT) folgen demselben Muster mit eigenen Adaptern; beide Ausgangsrechtsstände
+sind eingefroren (`docs/NSH_BASELINE_FREEZE.md`, `docs/BAYWUE_BASELINE_FREEZE.md`). Die Simulationsrechtsfortschreibung
+nach dem Stichtag ist davon getrennt (`docs/SIMULATION_IMPORT.md`): Sim-Akte und Rezepte, Ledger, Gates G2–G11,
+Vollständigkeit je Land (bewusst `PARTIAL`) und der Source-Intake für neue Quellen (`docs/MAINTENANCE.md`).
 
 ## Wiederverwendbare Importkomponenten vs. NRW-spezifisch
 

@@ -3,6 +3,7 @@ export const prerender = false;
 
 import NormFactsPage from '../../../../components/NormFactsPage.astro';
 import { jurisdictionFromParam, loadNormView } from '../../../../lib/norm-view.ts';
+import { resolveRelationTargets } from '../../../../lib/relation-targets.ts';
 import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../../../lib/runtime/context.ts';
 
 const resolved = jurisdictionFromParam(Astro.params.jurisdiction);
@@ -11,6 +12,8 @@ const registry = await getStoreRegistry();
 if (!registry.has(resolved.id)) return Astro.rewrite('/404');
 const view = await loadNormView(registry.get(resolved.id), Astro.params.slug);
 if (!view) return Astro.rewrite('/404');
+// Nur vorhandene Beziehungsziele werden verlinkt (keine toten Links auf ausgeschlossene Zielnormen).
+const relationTargets = await resolveRelationTargets(registry, view.record.meta);
 Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
 ---
-<NormFactsPage view={view} />
+<NormFactsPage view={view} relationTargets={relationTargets} />

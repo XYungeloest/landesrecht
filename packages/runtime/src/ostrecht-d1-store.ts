@@ -3,7 +3,7 @@
  *
  * Datenfluss: OstRecht Git/Importer → D1 `ostrecht-recht` (Projektion von OstRecht) → dieser Store (nur lesend, über
  * `ReadOnlyD1Database`) → Landesrecht Web/API. Landesrecht besitzt für Ost bewusst keine zweite kanonische
- * Rechtsdatenbank: `landesrecht-ost` bleibt leer und ist keine Laufzeitquelle; neue Ost-Rechtsakte entstehen nur in
+ * Rechtsdatenbank (die frühere leere `landesrecht-ost` ist seit 2026-09-28 entfernt); neue Ost-Rechtsakte entstehen nur in
  * OstRecht. Alles, was Landesrecht anders sieht als OstRecht, wird beim Lesen abgeleitet, nie gespeichert:
  *
  *   - Baseline-Regel: die OstRecht-Fassung, die am Ausgangsrechtsstand (2023-12-01) galt, beginnt hier am

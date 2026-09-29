@@ -21,6 +21,13 @@ deployt und verbrauchte nur CI-Minuten. Prüfen und Ausliefern geschieht lokal u
 `npm run deploy` – Cloudflare nur über die Wrangler-OAuth-Anmeldung (`npx wrangler login`), ohne API-Token.
 Es werden weder GitHub-Actions- noch GitLab-CI-Workflows verwendet.
 
+Vor einem Release bündelt `npm run release:check` alle bestehenden Prüfungen (Typen, Tests, Content mit Freeze-Gate G2,
+Freeze-Fingerabdrücke, D1-Schema, Sim-Vollständigkeit, Build, Suchaudits, Provenienz, Ost-Contract/Drift/Freshness, Smoke,
+Website-Stichprobe; `--full` zusätzlich D1-Remote, R2 und Performance, `--offline` ohne Produktion). Exit 1 nur bei
+echten Releaseblockern; bewusst fehlende Sim-Quellen sind bekannte Einschränkungen. `--write` schreibt
+`docs/RELEASE_READINESS.md` und `data/audits/release-readiness.json`; akzeptierte Befunde stehen in
+`data/audits/release-accepted-findings.json`.
+
 Optional: `SITE_URL` (öffentliche Origin für Canonical-Links; Standard in `astro.config.mjs`).
 Keine Secrets im Repository (`.env` ist ignoriert, `.env.example` dokumentiert die Namen).
 
@@ -203,7 +210,16 @@ Nach jeder Änderung unter `apps/web/` ist ein Redeploy nötig (`npm run build &
 
 `npm run d1:seed:dev` (Teil von `npm run dev`) spielt Migrationen und Projektion über
 `wrangler d1 execute --local` in die Miniflare-D1 unter `apps/web/.wrangler/state` ein; `astro dev`
-und `wrangler dev` lesen daraus. Ein Remote-Zugriff findet dabei nicht statt.
+und `wrangler dev` lesen daraus. Ein Remote-Zugriff findet dabei nicht statt. Trägt die lokale D1 schon den
+Fingerabdruck des aktuellen Bestands und sind die Migrationen unverändert, wird das Land übersprungen (Sekunden statt
+rund acht Minuten); `--force` spielt neu ein.
+
+`astro dev` und `astro build` nutzen getrennte Vite-Caches (`apps/web/node_modules/.vite` bzw. `.vite-build`,
+`astro.config.mjs`), und der SSR-Optimizer schließt die beim Laden des Server-Einstiegs entdeckten Abhängigkeiten vorab ein.
+Ohne beides überschrieb der Build den Dev-Optimizer-Cache; der erste `npm run dev` nach `npm run build` optimierte
+dann während der ersten Anfrage neu und brach im workerd-Runner ab („The file does not exist … deps_ssr/…“). Bei einem
+dennoch verdorbenen Cache genügt es, die generierten Verzeichnisse `apps/web/node_modules/.vite*` und `apps/web/.astro`
+zu löschen (nicht `node_modules` insgesamt).
 
 ## R2-Transporte für den Upload der Rohquellen
 
@@ -311,4 +327,3 @@ deployt wird nur, wenn sich die Oberfläche ändert (Baseline-Status im Bestands
 ## Offen
 
 - Playwright-Smokes gegen den lokalen Worker (Muster: OstRecht `serve-law-worker`).
-- Domain/Routes in `wrangler.jsonc` nach Festlegung der öffentlichen Site-URL.

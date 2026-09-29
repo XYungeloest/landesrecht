@@ -87,7 +87,8 @@ Prioritäten:
 - Neue zentrale Regeln knapp hier oder im passenden Dokument unter `docs/` dokumentieren; keine
   Chroniken oder Statusberichte in Markdown.
 - Vor Abschluss ausführen: `npm run check`, `npm run test`, `npm run content:check` (mit `content:tables`),
-  `npm run d1:schema:check`, `npm run build`; bei Importänderungen zusätzlich
+  `npm run d1:schema:check`, `npm run build` (gebündelt mit Suche, Freezes, Ost und Produktion: `npm run release:check`,
+  `docs/RELEASE_READINESS.md`); bei Importänderungen zusätzlich
   `npm run import:recht-nrw:audit`, `npm run import:recht-nrw:coverage` und `npm run import:recht-nrw:readiness`.
 
 ## Technik

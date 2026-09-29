@@ -1,5 +1,9 @@
 # NSH: Remote-Freigabe – vorbereitete Artefakte, Reihenfolge, Smoke-Plan
 
+> **Historisches Dokument.** Die Remote-Freigabe ist ausgeführt: NSH ist live und sein Ausgangsrechtsstand eingefroren
+> (`docs/NSH_BASELINE_FREEZE.md`). Die Zahlen und Aussagen unten beschreiben den Stand von Run 7 und werden nicht
+> fortgeschrieben.
+
 **Stand 2026-09-19 (Run 7). Nichts davon ist ausgeführt.** NSH ist `TECHNICALLY READY`, die Remote-Freigabe steht auf
 `REMOTE RELEASE PENDING SOURCE-RIGHTS DECISION` (`npm run import:juris-sh:readiness`). Einziger offener Punkt ist die
 Quellenrechts-/Datenbankfrage (TDM-Vorbehalt, Weiterveröffentlichung der juris-Konsolidierung;

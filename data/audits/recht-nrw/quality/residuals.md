@@ -1,6 +1,6 @@
 # Quellreste (Abkürzungen, Text) und Slug-Qualität – Audit
 
-Erzeugt mit `npm run audit:residuals` (offline, alle 1493 West-Normen). Nur Befund und Klassifikation; es wird nichts
+Erzeugt mit `npm run audit:residuals` (offline, alle 1482 West-Normen). Nur Befund und Klassifikation; es wird nichts
 geändert. Grundsatz aus `docs/RECHT_NRW_BULK_READINESS.md`: keine pauschale Ersetzung „NRW → West“, korrekter Text vor
 kosmetischer Umbenennung. Slugs sind dauerhafte Adressen (keine Migration).
 
@@ -35,24 +35,24 @@ bleiben bewusst stehen. Zeilen ohne Schutz sind Kandidaten für die Transformlü
 | Fundstelle MBl./SMBl. NW. | ja | 1 | 1 | allgemeines-berggesetz-west: …ndert auf Grund der Bek. v. 1. 5. 1961 (MBl. NW. S. 1072).… |
 | Abkürzung + NW (z. B. „GnO NW“) | nein | 141 | 71 | 3-rundfunkaenderungsgesetz-west: …Entsprechend § 3 Abs. 1-6 LRG NW in der Fassung dieses Gesetzes, jedoch abwe… ‖ 3-rundfunkaenderungsgesetz-west: …len Hörfunk durch Veranstalter nach dem LRG NW der LfR zugeordnet:… |
 | NW sonstig (Wortgrenze) | nein | 190 | 80 | abubesvg-west: …Veröffentlicht durch Art. 1 des RBG 87 NW. v. 6. 10. 1987; GV. NW. ausgegeben am 12. Okto… ‖ allgemeines-berggesetz-west: … (PrGS. S. 119) und v. 25. 5. 1954 (GS. NW. S. 694) erfolgten Fassung.… |
-| NRW (Wortgrenze, nach Transformation verbleibend) | nein | 18546 | 1283 | 5-rundfunkaenderungsgesetz-west: …kel 6 des Gesetzes vom 8. Mai 2018 (GV. NRW. S. 214), in Kraft getreten am 25. Mai 2018.… ‖ 5-rundfunkaenderungsgesetz-west: …taatsvertrages vom 31. August 1991 (GV. NRW. S. 408), der zuletzt durch Artikel 1 des Neun… |
-| Eigenname mit .NRW / NRW.BANK | ja | 169 | 59 | apo-os-west: …Artikel der Verordnung vom 1. Mai 2020 (GV.NRW. S. 312b), in Kraft getreten am 2. Mai 2020… ‖ arzneimittelbevorratungsverordnung-west: …gesetzes für das Land Westdeutschland - VwVfG.NRW - in der Fassung der Bekanntmachung vom … |
+| NRW (Wortgrenze, nach Transformation verbleibend) | nein | 18457 | 1275 | 5-rundfunkaenderungsgesetz-west: …kel 6 des Gesetzes vom 8. Mai 2018 (GV. NRW. S. 214), in Kraft getreten am 25. Mai 2018.… ‖ 5-rundfunkaenderungsgesetz-west: …taatsvertrages vom 31. August 1991 (GV. NRW. S. 408), der zuletzt durch Artikel 1 des Neun… |
+| Eigenname mit .NRW / NRW.BANK | ja | 167 | 58 | apo-os-west: …Artikel der Verordnung vom 1. Mai 2020 (GV.NRW. S. 312b), in Kraft getreten am 2. Mai 2020… ‖ arzneimittelbevorratungsverordnung-west: …gesetzes für das Land Westdeutschland - VwVfG.NRW - in der Fassung der Bekanntmachung vom … |
 
 ## Slug-Qualität
 
 | Code | Schwere | Anzahl | Bewertung |
 | --- | --- | --- | --- |
-| slug-collision-suffix | info | 138 | technisch korrekt und stabil; redaktionell unschön, wenn zwei Stammnormen denselben Titel tragen (Neufassung als eigener Datensatz). Keine Migration. |
+| slug-collision-suffix | info | 136 | technisch korrekt und stabil; redaktionell unschön, wenn zwei Stammnormen denselben Titel tragen (Neufassung als eigener Datensatz). Keine Migration. |
 | slug-double-jurisdiction-suffix | warning | 0 | wäre ein Ableitungsfehler. |
 | slug-jurisdiction-in-title-no-suffix | info | 24 | gewollt: der transformierte Titel endet auf „Westdeutschland“, ein zusätzliches „-west“ würde doppeln; eindeutig und lesbar. |
 | slug-residual-source-state | warning | 11 | aus amtlichen Abkürzungen („GnO NW“) oder Eigennamen (IT.NRW, NRW.BANK, VITAL.NRW, Servicekonto.NRW) abgeleitet; Adressen bleiben, Bewertung in der Abkürzungstabelle. |
 | slug-generic-only | warning | 0 | nicht unterscheidbar; müsste aus Abkürzung oder Titelteil ergänzt werden. |
 | slug-very-short-ambiguous | info | 65 | aus amtlichen Abkürzungen (GO, LBG, HG …) – amtlich und gebräuchlich, im Land eindeutig. |
-| slug-truncated-title | info | 384 | Längenkürzung vor dem Landeszusatz; unverständliches Ende, aber eindeutig. Vorschlag nur für künftige Ableitungen: auf Wortgrenze kürzen und Funktionswörter am Ende entfernen (siehe naming.md). |
-| slug-long | info | 41 | innerhalb der Längengrenze, keine Änderung. |
+| slug-truncated-title | info | 381 | Längenkürzung vor dem Landeszusatz; unverständliches Ende, aber eindeutig. Vorschlag nur für künftige Ableitungen: auf Wortgrenze kürzen und Funktionswörter am Ende entfernen (siehe naming.md). |
+| slug-long | info | 40 | innerhalb der Längengrenze, keine Änderung. |
 | slug-digit-leading | info | 2 | aus dem Titel („3. Rundfunkänderungsgesetz“), gültig. |
 
-Kollisionsgruppen (gleicher Stamm, Term-ID als Suffix): 59, davon mit identischem Titel 6.
+Kollisionsgruppen (gleicher Stamm, Term-ID als Suffix): 58, davon mit identischem Titel 6.
 Detailtabellen mit Vorschlägen: `naming.md` (Codes `slug-truncated-title`, Kollisionssuffixe).
 
 ### Rest der Quell-Landesbezeichnung (nrw/nw) (11)
@@ -69,7 +69,7 @@ Detailtabellen mit Vorschlägen: `naming.md` (Codes `slug-truncated-title`, Koll
 - `stbvg-nw-west` – Gesetz über die Versorgung der Steuerberaterinnen und Steuerberater
 - `vital-nrw-richtlinie-west` – Richtlinie über die Gewährung von Zuwendungen zur Förderung von Verantwortung, Innovation und Tatkraft im Rahmen der Entwicklung attraktiver ländlicher Räume Runderlass des Ministeriums für Klimaschutz, Umwelt, Landwirtschaft, Natur- und Verbraucherschutz - IIB2. 2090.05.02 vom 7. Februar 2017
 
-### Kollisionsgruppen (59)
+### Kollisionsgruppen (58)
 
 | Stamm | Slugs | gleicher Titel |
 | --- | --- | --- |
@@ -79,7 +79,6 @@ Detailtabellen mit Vorschlägen: `naming.md` (Codes `slug-truncated-title`, Koll
 | blb | blb-west, blb-west-31302 | nein |
 | efre | efre-west, efre-west-31343 | nein |
 | eu | eu-west, eu-west-28724, eu-west-31328 | nein |
-| foeri-mm | foeri-mm-west, foeri-mm-west-32422 | nein |
 | gesetz-ueber-die-errichtung-und-den-betrieb-einer-rohrleitungsanlage | gesetz-ueber-die-errichtung-und-den-betrieb-einer-rohrleitungsanlage-west, gesetz-ueber-die-errichtung-und-den-betrieb-einer-rohrleitungsanlage-west-29131 | nein |
 | gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des | gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27493, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27495, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27496, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27498, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27503, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27505, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27507, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27508, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27509, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27510, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27511, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27517, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-27521, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-28806, gesetz-ueber-die-verleihung-der-rechte-einer-koerperschaft-des-west-28807 | nein |
 | gesetz-ueber-die-verleihung-der-rechtsstellung-einer-anstalt-des | gesetz-ueber-die-verleihung-der-rechtsstellung-einer-anstalt-des-west, gesetz-ueber-die-verleihung-der-rechtsstellung-einer-anstalt-des-west-27519 | nein |
@@ -96,14 +95,14 @@ Detailtabellen mit Vorschlägen: `naming.md` (Codes `slug-truncated-title`, Koll
 | richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-fuer-die | richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-fuer-die-west, richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-fuer-die-west-33228 | nein |
 | richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-fuer | richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-fuer-west, richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-fuer-west-33783, richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-fuer-west-33803, richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-fuer-west-33823, richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-fuer-west-33849 | nein |
 | richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-zur | richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-zur-west, richtlinie-ueber-die-gewaehrung-von-billigkeitsleistungen-zur-west-33836 | nein |
-| richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer | richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west, richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west-31313, richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west-33462, richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west-33617, richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west-33748, richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west-33922 | nein |
+| richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer | richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west, richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west-33462, richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west-33617, richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west-33748, richtlinie-ueber-die-gewaehrung-von-zuwendungen-aus-dem-programm-fuer-west-33922 | nein |
 | richtlinie-ueber-die-gewaehrung-von-zuwendungen-fuer-massnahmen-zur | richtlinie-ueber-die-gewaehrung-von-zuwendungen-fuer-massnahmen-zur-west, richtlinie-ueber-die-gewaehrung-von-zuwendungen-fuer-massnahmen-zur-west-32426 | nein |
 | richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-der | richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-der-west, richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-der-west-31575, richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-der-west-32354, richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-der-west-32502, richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-der-west-33137, richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-der-west-33741 | nein |
 | richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-von | richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-von-west, richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-von-west-32480, richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-von-west-33903 | nein |
 | richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung | richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-west, richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-west-33230, richtlinie-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-west-33864 | nein |
 | richtlinien-fuer-das-beschaffungswesen-im-geschaeftsbereich-des | richtlinien-fuer-das-beschaffungswesen-im-geschaeftsbereich-des-west, richtlinien-fuer-das-beschaffungswesen-im-geschaeftsbereich-des-west-32390 | ja |
 | richtlinien-fuer-die-dienstliche-beurteilung-der-beamtinnen-und-beamten | richtlinien-fuer-die-dienstliche-beurteilung-der-beamtinnen-und-beamten-west, richtlinien-fuer-die-dienstliche-beurteilung-der-beamtinnen-und-beamten-west-31545 | nein |
-| schulbaur | schulbaur-west, schulbaur-west-32424 | nein |
+| richtlinien-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-von | richtlinien-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-von-west, richtlinien-ueber-die-gewaehrung-von-zuwendungen-zur-foerderung-von-west-33822 | nein |
 | unterweisungszeit-beim-laufbahnwechsel-von-polizeidienstunfaehigen | unterweisungszeit-beim-laufbahnwechsel-von-polizeidienstunfaehigen-west, unterweisungszeit-beim-laufbahnwechsel-von-polizeidienstunfaehigen-west-32251 | nein |
 | verordnung-ueber-beamtenrechtliche-und-disziplinarrechtliche | verordnung-ueber-beamtenrechtliche-und-disziplinarrechtliche-west, verordnung-ueber-beamtenrechtliche-und-disziplinarrechtliche-west-32245 | nein |
 | verordnung-ueber-die-anwendung-landesgesetzlicher-vorschriften-ueber | verordnung-ueber-die-anwendung-landesgesetzlicher-vorschriften-ueber-west, verordnung-ueber-die-anwendung-landesgesetzlicher-vorschriften-ueber-west-27070 | ja |

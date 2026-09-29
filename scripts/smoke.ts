@@ -106,6 +106,22 @@ const checks: Check[] = [
     const west = payload.jurisdictions.find((entry: any) => entry.id === 'west');
     return west?.search?.fullText === 'all-versions' ? null : `West fullText ${west?.search?.fullText}`;
   }) },
+  // Getrennte Statusebenen: Ausgangsrechtsstand eingefroren, Sim-Quellen bewusst PARTIAL; in Produktion nie ein
+  // Verfügbarkeitsvermerk (der gibt es nur im lokalen Entwicklungsbetrieb).
+  { path: '/api/v1/jurisdictions', status: 200, expect: json((payload) => {
+    for (const entry of payload.jurisdictions ?? []) if (entry.availability !== undefined) return `${entry.id}: availability ${JSON.stringify(entry.availability)} in Produktion`;
+    for (const id of ['west', 'nsh', 'baywue']) {
+      const status = (payload.jurisdictions ?? []).find((entry: any) => entry.id === id)?.status;
+      if (status?.baselineStatus !== 'FROZEN') return `${id}: baselineStatus ${status?.baselineStatus}`;
+      if (status?.simulationStatus !== 'PARTIAL' && status?.simulationStatus !== 'COMPLETE') return `${id}: simulationStatus ${status?.simulationStatus}`;
+      if (!status?.gazetteCoverage?.status) return `${id}: gazetteCoverage fehlt`;
+    }
+    return null;
+  }) },
+  { path: '/.well-known/simrecht.json', status: 200, expect: json((payload) => (typeof payload === 'object' && payload !== null ? null : 'keine Deklaration')) },
+  { path: '/west/verkuendungen/gibt-es-nicht/', status: 404, expect: null },
+  { path: '/api/v1/norms/west/gibt-es-nicht', status: 404, expect: null },
+  { path: '/api/v1/publications/west/gv-west-2024-1-20240223', status: 200, expect: '"gv-west-2024-1-20240223"' },
   // Suche, auch über Länder hinweg
   { path: '/api/v1/search?q=Landesnaturschutzgesetz&jurisdiction=west', status: 200, expect: 'lnatschg-west' },
   { path: '/api/v1/search?q=Landesbauordnung&jurisdiction=nsh', status: 200, expect: 'lbo-nsh' },
@@ -144,7 +160,9 @@ const report = (ok: boolean, line: string): void => {
       const result = await get('/health', 20_000);
       const payload = JSON.parse(result.body) as { status?: string; d1?: Record<string, string>; search?: Record<string, { readiness?: string }> };
       attempts.push(`${result.status}/${payload.status} ${result.ms}ms`);
-      healthy = result.status === 200 && (payload.status === 'ok' || payload.status === 'degraded');
+      // Produktion: kein Entwicklungsmodus, jedes Pflicht-Binding (auch OSTRECHT_RECHT) antwortet.
+      const production = (payload as { mode?: string }).mode === undefined && Object.values(payload.d1 ?? {}).every((health) => health === 'ok');
+      healthy = result.status === 200 && (payload.status === 'ok' || payload.status === 'degraded') && production;
       detail = `d1 ${JSON.stringify(payload.d1)}${payload.search ? `, Suche ${JSON.stringify(Object.fromEntries(Object.entries(payload.search).map(([key, value]) => [key, value.readiness])))}` : ''}`;
       if (healthy && payload.status === 'degraded') detail += ' (degraded: Such-Readiness nicht vollständig)';
     } catch (error) {

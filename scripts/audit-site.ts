@@ -13,6 +13,7 @@
  * Erwartungen. Reports: data/audits/recht-nrw/quality/site-smoke.{json,md} und accessibility.{json,md}.
  */
 import { readManifest } from '@landesrecht/importer-recht-nrw/common/manifest.ts';
+import { loadJurisdictionNorms } from '@landesrecht/legal-core/lib/loader.ts';
 import { expandNormTypeFilter, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 
 import { createPageFetcher, DEPLOYED_SITE_URL, loadWestCorpus, mdTable, parseCliArgs, repositoryRoot, writeAuditReport } from './lib/audit-common.ts';
@@ -27,7 +28,10 @@ const stats = norms.map((record) => computeNormStats(record));
 const statsBySlug = new Map(stats.map((entry) => [entry.slug, entry]));
 const manifest = await readManifest(root);
 const warningsBySlug = new Map(manifest.entries.filter((entry) => entry.importStatus.startsWith('imported')).map((entry) => [entry.targetSlug, entry.findings.filter((finding) => finding.severity === 'warning').length]));
-const typeCounts = norms.reduce<Record<string, number>>((acc, record) => { acc[record.meta.type] = (acc[record.meta.type] ?? 0) + 1; return acc; }, {});
+// Die Länderseite listet den ganzen West-Bestand: eingefrorene Stichtagsnormen und eigene Sim-Normen. Die übrigen Prüfungen
+// dieses Audits betreffen den importierten Stichtagsbestand (`loadWestCorpus`).
+const listedNorms = await loadJurisdictionNorms('west', root);
+const typeCounts = listedNorms.reduce<Record<string, number>>((acc, record) => { acc[record.meta.type] = (acc[record.meta.type] ?? 0) + 1; return acc; }, {});
 const countForFilter = (type: NormType): number => expandNormTypeFilter([type]).reduce((sum, expanded) => sum + (typeCounts[expanded] ?? 0), 0);
 
 const pick = (predicate: (index: number) => boolean, key: keyof Pick<(typeof stats)[number], 'blocks' | 'tables' | 'annexes'>): string => [...stats.keys()].filter(predicate).sort((left, right) => stats[right]![key] - stats[left]![key] || stats[left]!.slug.localeCompare(stats[right]!.slug)).map((index) => stats[index]!.slug)[0]!;
@@ -70,9 +74,9 @@ const specs: PageSpec[] = [
   { key: 'west', path: '/west/', kind: 'html', expectStatus: 200, check: (document) => {
     const problems: string[] = [];
     const heading = byTag(document, 'h2').map(normalizedText).find((text) => text.startsWith('Vorhandene Normen')) ?? '';
-    if (!heading.includes(`(${norms.length})`)) problems.push(`Normzahl „${heading}“ ≠ ${norms.length}`);
+    if (!heading.includes(`(${listedNorms.length})`)) problems.push(`Normzahl „${heading}“ ≠ ${listedNorms.length}`);
     const hits = queryAll(document, (element) => element.tag === 'li' && hasClass(element, 'hit')).length;
-    if (hits !== Math.min(500, norms.length)) problems.push(`Liste zeigt ${hits} statt ${Math.min(500, norms.length)} Normen`);
+    if (hits !== Math.min(500, listedNorms.length)) problems.push(`Liste zeigt ${hits} statt ${Math.min(500, listedNorms.length)} Normen`);
     const filters = queryAll(document, (element) => element.tag === 'ul' && hasClass(element, 'type-filter'))[0];
     if (!filters) problems.push('Typfilter fehlt');
     else if (!byTag(filters, 'a').some((link) => link.attrs['aria-current'] === 'true')) problems.push('Typfilter ohne aria-current');

@@ -481,9 +481,9 @@ Er verhindert **nicht** die Simulationsrechtsfortschreibung: neue Sim-Normen, ne
 Sim-Verkündungen, additive Beziehungen und additive Historieneinträge entstehen weiter über
 `import:simulation:consolidate` (G3 prüft die Additivität). Maßgeblich für jede fortgeschriebene Norm bleibt ihr
 per-Norm-Seed: Eine Konsolidierung ist an den akzeptierten Inhalt ihrer Ausgangsfassung gebunden, nicht an den Freeze.
-Ein Freeze wird nur auf ausdrückliche Entscheidung gesetzt. Ob ein Land dafür bereit ist, berechnet für NSH
-`node scripts/nsh-freeze-readiness.ts --write` (`docs/NSH_BASELINE_FREEZE_READINESS.md`: `NOT READY`, `READY WITH HUMAN
-REVIEW`, `BASELINE READY`); Sim-Quellenlücken (`SIM SOURCES PARTIAL`) sind davon getrennt und nie Blocker des
+Ein Freeze wird nur auf ausdrückliche Entscheidung gesetzt; West, NSH und BayWü sind eingefroren. Die Bereitschaft
+berechneten `node scripts/nsh-freeze-readiness.ts --write` bzw. `node scripts/baywue-freeze-readiness.ts --write`
+(`NOT READY`, `READY WITH HUMAN REVIEW`, `BASELINE READY`; heute prüfen sie Freeze-Commit und Fingerabdruck); Sim-Quellenlücken (`SIM SOURCES PARTIAL`) sind davon getrennt und nie Blocker des
 Ausgangsrechtsstands. Oberfläche und Dokumentation unterscheiden entsprechend **Baseline-Status** (Teilbestand,
 eingefroren, Freeze-Readiness) und **Sim-Quellenstatus** (Vollständigkeit der Sim-Verkündungsblätter).
 

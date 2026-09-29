@@ -1,6 +1,6 @@
 # Tabellen ohne Kopfzeile, mehrfach eingebettete Fußnoten – technische Klassifikation
 
-Erzeugt mit `npm run audit:legacy-structure` -- --online. Offline über alle 1493 West-Normen; Format je Norm aus dem
+Erzeugt mit `npm run audit:legacy-structure`. Offline über alle 1482 West-Normen; Format je Norm aus dem
 Manifest (`contentFormat`: native = RECHT.NRW-HTML, legacy-file = Word-Altdatei). Keine Normstrukturänderung – die Einordnung
 beschreibt, was ein Parser aus der Quelle ableiten könnte, und was die Website daraus macht.
 
@@ -123,14 +123,6 @@ Verweisen) und keine Darstellungskorrektur.
 | gesetz-ueber-den-verfassungsgerichtshof-fuer-das-land-westdeutschland | legacy-file | 46 | 29 | 7 | 9 | Fn 21 ×9: §§ 53 bis 61 eingefügt durch Artikel 1 des Gesetzes vom 21. Juli 2018 (GV. NRW.  |
 | jvollzdsg-west | legacy-file | 13 | 5 | 1 | 9 | Fn 3 ×9: § 2, § 12; § 13 Absatz 2, § 15 Absatz 2, § 20 Absatz 3, § 24 Absatz 7, § 33 Absa |
 
-## Stichprobe online (5)
+## Stichprobe online (0)
 
-Basis `https://landesrecht.xyungeloestlp.workers.dev`: Vorbefund-Seiten aus `accessibility.md` (doppelte ids) sowie Normen mit den meisten Tabellen bzw. eingebetteten Fußnoten.
-
-| Norm | Grund | HTTP | ms | doppelte ids | Tabellen | ohne th | in Scroll-Region | Fußnoten (Soll) | Befunde |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| lostv-west | accessibility.md: doppelte ids (Vorbefund) | 200 | 341 | 0 | 32 | 0 | 32 | 1 (1) |  |
-| gesetz-ueber-die-fachhochschulen-fuer-den-oeffentlichen-dienst-im-lande-west | accessibility.md: doppelte ids (Vorbefund) | 200 | 462 | 0 | 1 | 1 | 1 | 46 (46) |  |
-| gesetz-ueber-die-vereinigung-des-landes-lippe-mit-dem-land-west | meiste Tabellen | 200 | 140 | 0 | 18 | 11 | 18 | 1 (1) |  |
-| heilberg-west | meiste eingebettete Fußnoten | 200 | 388 | 0 | 0 | 0 | 0 | 211 (211) |  |
-| go-west | meiste eingebettete Fußnoten | 200 | 220 | 0 | 0 | 0 | 0 | 157 (157) |  |
+Nicht ausgeführt (`--online`).

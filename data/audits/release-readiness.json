@@ -1,0 +1,547 @@
+{
+  "schemaVersion": "landesrecht-release-readiness/1",
+  "generatedAt": "2026-09-29T17:46:37.153Z",
+  "head": "53f000df983c352b30d2d8ad655a71f1998080ae",
+  "baseUrl": "https://landesrecht-online.de",
+  "mode": {
+    "offline": false,
+    "full": true
+  },
+  "status": "READY WITH KNOWN LIMITATIONS",
+  "blockers": [],
+  "jurisdictions": [
+    {
+      "id": "west",
+      "name": "West",
+      "baselineStatus": "FROZEN",
+      "freezeCommit": "ff1b1f43e209390a0dd610e5a06b5c5e07efa27a",
+      "baselineNorms": 1482,
+      "simulationStatus": "PARTIAL",
+      "gazetteCoverage": "PARTIAL 22/23",
+      "missingSources": 1,
+      "evidenceIncomplete": 7,
+      "review": 38,
+      "blocked": 17,
+      "lastSourceDate": "2026-09-18"
+    },
+    {
+      "id": "nsh",
+      "name": "NSH",
+      "baselineStatus": "FROZEN",
+      "freezeCommit": "eeeca2cdc5596a602db4332e59a4b252df2b8ea0",
+      "baselineNorms": 2672,
+      "simulationStatus": "PARTIAL",
+      "gazetteCoverage": "PARTIAL 5/6",
+      "missingSources": 1,
+      "evidenceIncomplete": 7,
+      "review": 28,
+      "blocked": 4,
+      "lastSourceDate": "2026-09-02"
+    },
+    {
+      "id": "ost",
+      "name": "Ost",
+      "baselineStatus": "READ-ONLY UPSTREAM (OstRecht)",
+      "freezeCommit": null,
+      "baselineNorms": null,
+      "simulationStatus": "upstream",
+      "gazetteCoverage": null,
+      "missingSources": null,
+      "evidenceIncomplete": null,
+      "review": null,
+      "blocked": null,
+      "lastSourceDate": null
+    },
+    {
+      "id": "baywue",
+      "name": "BayWü",
+      "baselineStatus": "FROZEN",
+      "freezeCommit": "018752abcd5cba9a4824410277e9dd7bd37698a4",
+      "baselineNorms": 1618,
+      "simulationStatus": "PARTIAL",
+      "gazetteCoverage": "COMPLETE 8/8",
+      "missingSources": 5,
+      "evidenceIncomplete": 6,
+      "review": 28,
+      "blocked": 18,
+      "lastSourceDate": "2026-08-30"
+    }
+  ],
+  "steps": [
+    {
+      "id": "check",
+      "area": "Build",
+      "title": "Typprüfung (tsc + astro check)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 8,
+      "summary": [
+        "- 0 errors",
+        "- 0 warnings"
+      ]
+    },
+    {
+      "id": "test",
+      "area": "Tests",
+      "title": "Vitest (alle Tests)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 36,
+      "summary": [
+        "Test Files  124 passed (124)",
+        "Tests  2009 passed (2009)"
+      ]
+    },
+    {
+      "id": "content",
+      "area": "Inhalt",
+      "title": "content:check (Validierung, Unveränderlichkeit, Tabellen, Sim-Gates inkl. Freeze-Gate G2)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 54,
+      "summary": [
+        "Unveränderlichkeit geprüft: 5919 gespeicherte Fassung(en) gegen HEAD: 5919 unverändert, 0 dokumentiert freigegeben, 0 als Testfixture verschoben.",
+        "Tabellen-Regressionsgate: 0 geänderte Fassung(en) gegen 53f000df983c verglichen (Tabellen 0 → 0), 0 Tabellenänderung(en) begründet freigegeben, keine unbegründete.",
+        "G2: west: 1482 Baseline-Fassungen gegen ff1b1f43e209 geprüft, 0 dokumentiert freigegeben, 54 Norm(en) mit Sim-Fassungen, 46 eigene Sim-Norm(en), 0 Baseline-Norm(en) nach dem Referenz-Commit",
+        "G2: west: 9 Baseline-Seed(s) geprüft, 9 fortgeschriebene Ausgangsfassung(en)",
+        "G2: nsh: 2672 Baseline-Fassungen gegen eeeca2cdc559 geprüft, 0 dokumentiert freigegeben, 38 Norm(en) mit Sim-Fassungen, 33 eigene Sim-Norm(en), 0 Baseline-Norm(en) nach dem Referenz-Commit",
+        "G2: nsh: 6 Baseline-Seed(s) geprüft, 6 fortgeschriebene Ausgangsfassung(en)",
+        "G2: baywue: 1618 Baseline-Fassungen gegen 018752abcd5c geprüft, 0 dokumentiert freigegeben, 48 Norm(en) mit Sim-Fassungen, 46 eigene Sim-Norm(en), 0 Baseline-Norm(en) nach dem Referenz-Commit",
+        "G2: baywue: 3 Baseline-Seed(s) geprüft, 3 fortgeschriebene Ausgangsfassung(en)"
+      ]
+    },
+    {
+      "id": "freeze-nsh",
+      "area": "Freeze",
+      "title": "NSH-Freeze (Commit, Fingerabdruck)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 2,
+      "summary": [
+        "NSH-Baseline-Status: FROZEN (Freeze-Commit eeeca2cdc559; Bewertung READY WITH HUMAN REVIEW) · Baseline-Fingerabdruck 1b92d06468585d5d…",
+        "Gate freeze-fingerprint: ok – Freeze-Commit eeeca2cdc559: 2.672 Normen, 1b92d06468585d5d… · Arbeitskopie 2.672 Normen, 1b92d06468585d5d… · dokumentiert 1b92d06468585d5d…"
+      ]
+    },
+    {
+      "id": "freeze-baywue",
+      "area": "Freeze",
+      "title": "BayWü-Freeze (Commit, Fingerabdruck)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 1,
+      "summary": [
+        "BayWü-Baseline-Status: FROZEN (Freeze-Commit 018752abcd5c; Bewertung BASELINE READY) · Baseline 1.618 Normen · Fingerabdruck 07c7fec745054453…",
+        "Gate freeze-fingerprint: ok – Freeze-Commit 018752abcd5c: 1.618 Normen, 07c7fec745054453… · Arbeitskopie 1.618 Normen, 07c7fec745054453… · dokumentiert 07c7fec745054453…"
+      ]
+    },
+    {
+      "id": "d1-schema",
+      "area": "D1",
+      "title": "D1-Schema, Projektion, FTS5-Integrität",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 11,
+      "summary": [
+        "D1-Schema gültig: 12 Tabellen, 276522 Anweisungen, 5897 Normen, 5919 Fassungen, 85054 Sucheinheiten, 35 Verkündungen, FTS5-Integrität geprüft."
+      ]
+    },
+    {
+      "id": "sim-completeness",
+      "area": "Sim-Quellen",
+      "title": "Sim-Vollständigkeit (Status fail-closed berechnet)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 1,
+      "summary": [
+        "west: Sim-Quellen PARTIAL (SIM SOURCES PARTIAL) · Blätter PARTIAL 22/23 · Einzelakte COMPLETE (fehlend 0) · fehlende Quellen 1, Evidenz unvollständig 7, mögliche Lücken 1 + 4 Zeiträume · Ereignisse applied 41, review 38, blocked 17, not-promulgated 7 · letzte Quelle 2026-09-18",
+        "nsh: Sim-Quellen PARTIAL (SIM SOURCES PARTIAL) · Blätter PARTIAL 5/6 · Einzelakte COMPLETE (fehlend 0) · fehlende Quellen 1, Evidenz unvollständig 7, mögliche Lücken 0 + 2 Zeiträume · Ereignisse applied 33, review 28, blocked 4, not-promulgated 2 · letzte Quelle 2026-09-02",
+        "baywue: Sim-Quellen PARTIAL (SIM SOURCES PARTIAL) · Blätter COMPLETE 8/8 · Einzelakte PARTIAL (fehlend 5) · fehlende Quellen 5, Evidenz unvollständig 6, mögliche Lücken 1 + 2 Zeiträume · Ereignisse applied 35, review 28, blocked 18, not-promulgated 0 · letzte Quelle 2026-08-30"
+      ]
+    },
+    {
+      "id": "intake",
+      "area": "Sim-Quellen",
+      "title": "Source-Inbox (Dry-run)",
+      "blocking": false,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 0,
+      "summary": [
+        "Queue: all 19 · open 19"
+      ]
+    },
+    {
+      "id": "build",
+      "area": "Build",
+      "title": "Astro-Build (Worker)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 2,
+      "summary": [
+        "19:39:05 [build] Complete!"
+      ]
+    },
+    {
+      "id": "search-west",
+      "area": "Suche",
+      "title": "West: Golden Set (Recall, Top-1, Verletzungen)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 24,
+      "summary": [
+        "Golden Set or-prefix: Recall@10 94.1 %, MRR 0.933, Top-1 100.0 %, Sprungziel 100.0 %, Nulltreffer 100.0 %, verletzt 0, Latenz p50 92.9 ms / p95 344.4 ms / max 849.7 ms (Standard: and-first)",
+        "Golden Set and-first: Recall@10 94.1 %, MRR 0.933, Top-1 100.0 %, Sprungziel 100.0 %, Nulltreffer 100.0 %, verletzt 0, Latenz p50 6.8 ms / p95 35.6 ms / max 114.5 ms (Standard: and-first)"
+      ]
+    },
+    {
+      "id": "search-nsh",
+      "area": "Suche",
+      "title": "NSH: Suchintegrität (Stichprobe) und Golden Set",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 55,
+      "summary": [
+        "or-prefix: Recall@10 0.957, MRR 0.942, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 221.8 ms",
+        "and-first: Recall@10 0.957, MRR 0.942, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 24.8 ms",
+        "West + BayWü + NSH: 12/12 gemeinsame Titelbruchstücke richtig gefiltert"
+      ]
+    },
+    {
+      "id": "search-baywue",
+      "area": "Suche",
+      "title": "BayWü: Suchintegrität (Stichprobe) und Golden Set",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 55,
+      "summary": [
+        "or-prefix: Recall@10 0.935, MRR 0.904, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 256.7 ms",
+        "and-first: Recall@10 0.944, MRR 0.926, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 34.1 ms",
+        "West + BayWü: 10/10 gemeinsame Titelbruchstücke richtig gefiltert"
+      ]
+    },
+    {
+      "id": "provenance",
+      "area": "Qualität",
+      "title": "Provenienz West (--strict)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 1,
+      "summary": [
+        "Provenienz-Audit: 1482 Normen, 0 Fehler, 22 Warnungen → /Users/petzke/landesrecht/data/audits/recht-nrw/quality/provenance.md"
+      ]
+    },
+    {
+      "id": "reconstruction",
+      "area": "Qualität",
+      "title": "Rekonstruktion VV LHundG (Determinismus)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 1,
+      "summary": [
+        "Rekonstruktions-Audit: 13/13 Prüfungen bestanden → /Users/petzke/landesrecht/data/audits/recht-nrw/quality/reconstruction-vv-lhundg.md"
+      ]
+    },
+    {
+      "id": "ost-drift",
+      "area": "Ost",
+      "title": "Ost: Contract, Drift, Freshness (Stichtag 2026-09-28)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 157,
+      "summary": [
+        "Contract: ok",
+        "Freshness: Landesrecht-Stichtag 2026-09-28; OstRecht-Sync 2026-09-13T12:13:44.344Z (complete), indexierter Stichtag zwischen 2026-09-12 und vor 2026-10-01; Such-Readiness ready, Volltext current-version-only",
+        "Ergebnis: keine Drift"
+      ]
+    },
+    {
+      "id": "smoke",
+      "area": "API/Routen",
+      "title": "Produktions-Smoke (https://landesrecht-online.de)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 17,
+      "summary": [
+        "Alle 67 Prüfungen bestanden"
+      ]
+    },
+    {
+      "id": "site",
+      "area": "API/Routen",
+      "title": "Website-Stichprobe und Barrierefreiheit (Produktion)",
+      "blocking": true,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 17,
+      "summary": [
+        "Website-Stichprobe: 41 Seiten, 0 mit Befunden, 41 Abrufe → /Users/petzke/landesrecht/data/audits/recht-nrw/quality/site-smoke.md"
+      ]
+    },
+    {
+      "id": "d1-remote-west",
+      "area": "D1",
+      "title": "D1 lokal ↔ remote (landesrecht-west)",
+      "blocking": false,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 22,
+      "summary": [
+        "Lokal ↔ Remote (landesrecht-west): identisch in 12 Prüfungen."
+      ]
+    },
+    {
+      "id": "d1-remote-nsh",
+      "area": "D1",
+      "title": "D1 lokal ↔ remote (landesrecht-nsh)",
+      "blocking": false,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 22,
+      "summary": [
+        "Lokal ↔ Remote (landesrecht-nsh): identisch in 12 Prüfungen."
+      ]
+    },
+    {
+      "id": "d1-remote-baywue",
+      "area": "D1",
+      "title": "D1 lokal ↔ remote (landesrecht-baywue)",
+      "blocking": false,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 24,
+      "summary": [
+        "Lokal ↔ Remote (landesrecht-baywue): identisch in 12 Prüfungen."
+      ]
+    },
+    {
+      "id": "r2",
+      "area": "R2",
+      "title": "R2-Archiv (Manifest ↔ Listing, Byte-Stichprobe)",
+      "blocking": false,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 50,
+      "summary": [
+        "Ergebnis: **0 relevante Abweichungen**."
+      ]
+    },
+    {
+      "id": "performance",
+      "area": "Performance",
+      "title": "Performance-Baseline (lokal + Produktion)",
+      "blocking": false,
+      "status": "passed",
+      "exitCode": 0,
+      "durationSeconds": 7,
+      "summary": [
+        "D1 Normliste (500)                           median      3 ms  p95      6 ms  (5 Läufe)",
+        "Suche exakter Titel (Ladenöffnungszeiten)    median      4 ms  p95      8 ms  (5 Läufe)",
+        "Suche Abkürzung „LÖG West“                   median      3 ms  p95      4 ms  (5 Läufe)",
+        "Suche Abkürzung „DVO KiBiz“                  median      1 ms  p95      1 ms  (5 Läufe)",
+        "Suche Volltext „Erlaubnis“                   median      9 ms  p95     11 ms  (5 Läufe)",
+        "Suche §-Adresse „§ 5 LÖG West“               median     48 ms  p95     50 ms  (5 Läufe)",
+        "Suche VwV „Nr. 4.2 VV LHundG West“           median     45 ms  p95     45 ms  (5 Läufe)",
+        "Suche Typfilter VwV „Erlaubnis“              median      4 ms  p95      5 ms  (5 Läufe)"
+      ]
+    }
+  ],
+  "knownLimitations": [
+    "West: Sim-Quellen PARTIAL (Gesetzblätter PARTIAL 22/23, 1 fehlende Quelle(n), 7 mit unvollständiger Evidenz, 17 gesperrt / 38 in Prüfung) – bewusst, kein Releaseblocker",
+    "NSH: Sim-Quellen PARTIAL (Gesetzblätter PARTIAL 5/6, 1 fehlende Quelle(n), 7 mit unvollständiger Evidenz, 4 gesperrt / 28 in Prüfung) – bewusst, kein Releaseblocker",
+    "BayWü: Sim-Quellen PARTIAL (Gesetzblätter COMPLETE 8/8, 5 fehlende Quelle(n), 6 mit unvollständiger Evidenz, 18 gesperrt / 28 in Prüfung) – bewusst, kein Releaseblocker",
+    "Acquisition Queue: 19 offene Quelle(n) (P1 2, P2 7, P3 10) – `npm run sources:needed`",
+    "Ost: Volltextindex von OstRecht nur für die geltende Fassung (frühere Fassungen über die Fassungsnavigation erreichbar)",
+    "Suche: Tiefe Seiten der länderübergreifenden Suche (Offset 1 000–5 000) brauchen 8–20 s, weil jeder Store bis offset + limit Treffer liefert (mergeSearchPages); Offset ist auf 5 000 begrenzt, Antwort stabil 200 (maintenance)",
+    "Qualität: Benennungs-Audit West: 12 Abkürzungen mit Quell-Landesbezeichnung (z. B. „BVSG NW“) oder generischem Kürzel („EU“, „EG“) (expected/legal-data limitation)",
+    "Qualität: Legacy-Struktur West: 390 Tabellen ohne sichere Kopfzeile, 150 Normen mit mehrfach eingebetteten Fußnoten; Anker-Audit offline 245 Normen mit Strukturhinweisen (online 0/60 Seiten mit Befunden) (expected/legal-data limitation)",
+    "Suche: Zwei geltende West-Normen tragen den Titel „Verfassung für das Land Westdeutschland“ (Stichtagsverfassung und Sim-Verfassung 2024) (expected/legal-data limitation)",
+    "R2: R2-Audit: Umschläge (Metadaten-JSON) weichen bytegenau vom neu erzeugten Umschlag ab; Rohobjekte, Größen, MD5 und Byte-Stichprobe ohne Abweichung (expected/legal-data limitation)",
+    "API/Routen: Keine eigene Sitemap; robots.txt erlaubt alles, Canonicals zeigen auf https://landesrecht-online.de, Fassungs- und Suchseiten tragen noindex (maintenance)"
+  ],
+  "acceptedFindings": [
+    {
+      "id": "search-deep-paging",
+      "area": "Suche",
+      "classification": "maintenance",
+      "finding": "Tiefe Seiten der länderübergreifenden Suche (Offset 1 000–5 000) brauchen 8–20 s, weil jeder Store bis offset + limit Treffer liefert (mergeSearchPages); Offset ist auf 5 000 begrenzt, Antwort stabil 200",
+      "rationale": "Vorbestehend, keine Regression; normale Seiten 0,3–2 s. Verbesserung nur mit geänderter Paginierung (z. B. Cursor je Store)."
+    },
+    {
+      "id": "west-naming-errors",
+      "area": "Qualität",
+      "classification": "expected/legal-data limitation",
+      "finding": "Benennungs-Audit West: 12 Abkürzungen mit Quell-Landesbezeichnung (z. B. „BVSG NW“) oder generischem Kürzel („EU“, „EG“)",
+      "rationale": "Daten des eingefrorenen West-Referenzbestands; Änderung nur über eine dokumentierte Freeze-Ausnahme."
+    },
+    {
+      "id": "west-legacy-structure",
+      "area": "Qualität",
+      "classification": "expected/legal-data limitation",
+      "finding": "Legacy-Struktur West: 390 Tabellen ohne sichere Kopfzeile, 150 Normen mit mehrfach eingebetteten Fußnoten; Anker-Audit offline 245 Normen mit Strukturhinweisen (online 0/60 Seiten mit Befunden)",
+      "rationale": "Quellstruktur von RECHT.NRW im eingefrorenen Bestand; Darstellung und Sprungziele online ohne Befund."
+    },
+    {
+      "id": "west-identical-constitution-titles",
+      "area": "Suche",
+      "classification": "expected/legal-data limitation",
+      "finding": "Zwei geltende West-Normen tragen den Titel „Verfassung für das Land Westdeutschland“ (Stichtagsverfassung und Sim-Verfassung 2024)",
+      "rationale": "Verhältnis fachlich ungeklärt (data/simulation/west/completeness.json); Golden Set akzeptiert beide als ersten Treffer."
+    },
+    {
+      "id": "r2-envelope-bytes",
+      "area": "R2",
+      "classification": "expected/legal-data limitation",
+      "finding": "R2-Audit: Umschläge (Metadaten-JSON) weichen bytegenau vom neu erzeugten Umschlag ab; Rohobjekte, Größen, MD5 und Byte-Stichprobe ohne Abweichung",
+      "rationale": "Unveränderliches Archiv: Umschläge werden nie überschrieben; das Audit wertet sie als nicht relevant (0 relevante Abweichungen)."
+    },
+    {
+      "id": "no-sitemap",
+      "area": "API/Routen",
+      "classification": "maintenance",
+      "finding": "Keine eigene Sitemap; robots.txt erlaubt alles, Canonicals zeigen auf https://landesrecht-online.de, Fassungs- und Suchseiten tragen noindex",
+      "rationale": "Bestand wird dynamisch aus D1 ausgeliefert; Auffindbarkeit über Länderseiten und interne Links. Eine Sitemap wäre eine spätere Erweiterung."
+    }
+  ],
+  "acquisitionQueue": {
+    "totals": {
+      "all": 19,
+      "P1": 2,
+      "P2": 7,
+      "P3": 10
+    },
+    "byStatus": {
+      "open": 19
+    },
+    "needed": [
+      {
+        "id": "baywue-erdbebenhilfeg-2026",
+        "jurisdiction": "baywue",
+        "priority": "P1",
+        "title": "Gesetz zur Bereitstellung finanzieller Hilfen für Erdbebenschäden in Bayern-Württemberg vom 14.05.2026"
+      },
+      {
+        "id": "nsh-mal-i-2024-sieben-gesetze",
+        "jurisdiction": "nsh",
+        "priority": "P1",
+        "title": "Sieben im Inhaltsverzeichnis von NH GVBl. MAL-I Teil 1/2024 genannte Gesetze (u. a. Landesverfassungsschutzgesetz, Änderung der Landesverfassung)"
+      },
+      {
+        "id": "baywue-ago-bekanntmachung-2026-05-31",
+        "jurisdiction": "baywue",
+        "priority": "P2",
+        "title": "Bekanntmachung vom 31.05.2026 der AGO-Änderungsverordnung 26-StIH-07-V-03"
+      },
+      {
+        "id": "baywue-einzelverordnungen-2025-01",
+        "jurisdiction": "baywue",
+        "priority": "P2",
+        "title": "Amtliche Verkündungsbelege der Einzelverordnungen Januar 2025 (Sexualkunde, Unterrichtsbeginn, Hausaufgaben, KZ-Besuchspflicht, Wolfsverordnung, Grenzüberwachung)"
+      },
+      {
+        "id": "baywue-grenzschutz-2024",
+        "jurisdiction": "baywue",
+        "priority": "P2",
+        "title": "Weitere „Verordnungen betreffend des Grenzschutzes“ 2024 (u. a. Verordnung zur Verstärkung der Polizeipräsenz an den Süddeutschen Auslandsgrenzen vom 16.08.2024)"
+      },
+      {
+        "id": "baywue-gvbl-2025-2-seite-11",
+        "jurisdiction": "baywue",
+        "priority": "P2",
+        "title": "GVBl. BayWü 2025 Nr. 2 – vollständiges PDF (Seite 11 fehlt, Duplikat von Seite 10)"
+      },
+      {
+        "id": "nsh-gvbl-2024-07-08",
+        "jurisdiction": "nsh",
+        "priority": "P2",
+        "title": "Gesetzblatt zur Verkündung vom 08.07.2024"
+      },
+      {
+        "id": "nsh-staatsvertrag-2025-12-09",
+        "jurisdiction": "nsh",
+        "priority": "P2",
+        "title": "Staatsvertrag zum Gesetz vom 09.12.2025 (NSH GVBl. LAH-II Teil 2/2026 S. 8–9)"
+      },
+      {
+        "id": "west-mbl-2026-2",
+        "jurisdiction": "west",
+        "priority": "P2",
+        "title": "Ministerialblatt für das Land Westdeutschland (MBl. WD) 2026 Nr. 2"
+      },
+      {
+        "id": "baywue-druckmaengel",
+        "jurisdiction": "baywue",
+        "priority": "P3",
+        "title": "Druckmängel verkündeter Gesetze (Landarzt-Stipendiengesetz GVBl. Süd 2024 Nr. 1, SchuSprG GVBl. BayWü 2025 Nr. 1)"
+      },
+      {
+        "id": "baywue-haushalt-2026-anlage",
+        "jurisdiction": "baywue",
+        "priority": "P3",
+        "title": "Haushaltsplan 2026 (Anlage zum Haushaltsgesetz 2026)"
+      },
+      {
+        "id": "baywue-orgerlass-2025-02-14",
+        "jurisdiction": "baywue",
+        "priority": "P3",
+        "title": "Organisationserlass 25-MP-04-OE-01 vom 14.02.2025"
+      },
+      {
+        "id": "baywue-verfassung-2025-originalblatt",
+        "jurisdiction": "baywue",
+        "priority": "P3",
+        "title": "Original-Verkündungsblatt der Staatsverfassung vom 12.01.2025"
+      },
+      {
+        "id": "baywue-wirkdaten",
+        "jurisdiction": "baywue",
+        "priority": "P3",
+        "title": "Verkündete Akte ohne bestimmbares Wirkdatum (Meisterpflichtgesetz, Gesetz zur Stärkung der Familiengesundheit)"
+      },
+      {
+        "id": "nsh-landesverfassung-2024",
+        "jurisdiction": "nsh",
+        "priority": "P3",
+        "title": "Landesverfassung Niedersachsen-Holstein (NH GVBl. MAL-I Teil 1/2024 S. 4–26)"
+      },
+      {
+        "id": "nsh-schulgesetz-2026",
+        "jurisdiction": "nsh",
+        "priority": "P3",
+        "title": "Schulverordnungen 2026 auf Grundlage des nicht verkündeten Schulgesetzes (SchulReNeuOG)"
+      },
+      {
+        "id": "west-grenzkontrollen-2024",
+        "jurisdiction": "west",
+        "priority": "P3",
+        "title": "Verordnung zur Einführung von Grenzkontrollen (Einzelausfertigung 24-MP-02-V-01 vom 16.08.2024) und ihre Aufhebung"
+      },
+      {
+        "id": "west-haushalt-2024-anlage",
+        "jurisdiction": "west",
+        "priority": "P3",
+        "title": "Haushaltsplan 2024 (Anlage zum Haushaltsgesetz, GV. West 2024 Nr. 3 S. 77)"
+      },
+      {
+        "id": "west-verfassung-2024",
+        "jurisdiction": "west",
+        "priority": "P3",
+        "title": "Verfassung für Westdeutschland vom 23.02.2024 – Ausfertigung und Volksabstimmung"
+      }
+    ]
+  }
+}

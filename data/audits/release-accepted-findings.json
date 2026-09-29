@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "landesrecht-release-accepted-findings/1",
+  "description": "Bekannte, geprüfte und bewusst akzeptierte Befunde des Release-Audits. Klassifikation: bug (zu beheben), maintenance (technische Pflege ohne Releasewirkung), expected/legal-data limitation (Eigenschaft des eingefrorenen oder bewusst unvollständigen Rechtsbestands), obsolete finding (nicht mehr zutreffend). Nur nicht blockierende Befunde; `npm run release:check` listet sie unter den bekannten Einschränkungen.",
+  "findings": [
+    {
+      "id": "search-deep-paging",
+      "area": "Suche",
+      "classification": "maintenance",
+      "finding": "Tiefe Seiten der länderübergreifenden Suche (Offset 1 000–5 000) brauchen 8–20 s, weil jeder Store bis offset + limit Treffer liefert (mergeSearchPages); Offset ist auf 5 000 begrenzt, Antwort stabil 200",
+      "rationale": "Vorbestehend, keine Regression; normale Seiten 0,3–2 s. Verbesserung nur mit geänderter Paginierung (z. B. Cursor je Store)."
+    },
+    {
+      "id": "west-naming-errors",
+      "area": "Qualität",
+      "classification": "expected/legal-data limitation",
+      "finding": "Benennungs-Audit West: 12 Abkürzungen mit Quell-Landesbezeichnung (z. B. „BVSG NW“) oder generischem Kürzel („EU“, „EG“)",
+      "rationale": "Daten des eingefrorenen West-Referenzbestands; Änderung nur über eine dokumentierte Freeze-Ausnahme."
+    },
+    {
+      "id": "west-legacy-structure",
+      "area": "Qualität",
+      "classification": "expected/legal-data limitation",
+      "finding": "Legacy-Struktur West: 390 Tabellen ohne sichere Kopfzeile, 150 Normen mit mehrfach eingebetteten Fußnoten; Anker-Audit offline 245 Normen mit Strukturhinweisen (online 0/60 Seiten mit Befunden)",
+      "rationale": "Quellstruktur von RECHT.NRW im eingefrorenen Bestand; Darstellung und Sprungziele online ohne Befund."
+    },
+    {
+      "id": "west-identical-constitution-titles",
+      "area": "Suche",
+      "classification": "expected/legal-data limitation",
+      "finding": "Zwei geltende West-Normen tragen den Titel „Verfassung für das Land Westdeutschland“ (Stichtagsverfassung und Sim-Verfassung 2024)",
+      "rationale": "Verhältnis fachlich ungeklärt (data/simulation/west/completeness.json); Golden Set akzeptiert beide als ersten Treffer."
+    },
+    {
+      "id": "r2-envelope-bytes",
+      "area": "R2",
+      "classification": "expected/legal-data limitation",
+      "finding": "R2-Audit: Umschläge (Metadaten-JSON) weichen bytegenau vom neu erzeugten Umschlag ab; Rohobjekte, Größen, MD5 und Byte-Stichprobe ohne Abweichung",
+      "rationale": "Unveränderliches Archiv: Umschläge werden nie überschrieben; das Audit wertet sie als nicht relevant (0 relevante Abweichungen)."
+    },
+    {
+      "id": "no-sitemap",
+      "area": "API/Routen",
+      "classification": "maintenance",
+      "finding": "Keine eigene Sitemap; robots.txt erlaubt alles, Canonicals zeigen auf https://landesrecht-online.de, Fassungs- und Suchseiten tragen noindex",
+      "rationale": "Bestand wird dynamisch aus D1 ausgeliefert; Auffindbarkeit über Länderseiten und interne Links. Eine Sitemap wäre eine spätere Erweiterung."
+    }
+  ]
+}

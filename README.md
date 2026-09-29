@@ -21,15 +21,18 @@ Das Projekt ist eine politische Simulation; keine Seite ist eine amtliche Veröf
 
 - **Git ist fachlicher Source of Truth**: `content/norms/<jurisdiction>/<slug>/` mit `meta.json`,
   `history.json` und unveränderlichen Fassungs-Snapshots unter `versions/<yyyy-mm-dd>.json`.
-- **D1 ist eine abgeleitete Laufzeitprojektion**, je Jurisdiktion eine Datenbank
-  (`landesrecht-west`, `-nsh`, `-ost`, `-baywue`), deterministisch aus Git erzeugt.
+- **D1 ist eine abgeleitete Laufzeitprojektion**, je eigener Jurisdiktion eine Datenbank
+  (`landesrecht-west`, `-nsh`, `-baywue`), deterministisch aus Git erzeugt. Ost hat keine eigene D1.
 - **R2 ist das unveränderliche Quellenarchiv** für amtliche Rohquellen (`landesrecht-quellen`).
 - **Zwei Zeitachsen je Fassung**: `simulationValidFrom/To` (Geltung in der Simulation) und
   `sourceValidFrom/To` (Geltung der übernommenen realen Quellfassung).
-- **OstRecht bleibt Source of Truth für Ost**; dieses Repository übernimmt ostdeutsche Normen nur
-  über die Provider-/Importschnittstelle und pflegt sie nicht selbst.
+- **OstRecht bleibt Source of Truth für Ost**: Der Worker liest Ost ausschließlich lesend aus der OstRecht-D1
+  `ostrecht-recht` (Binding `OSTRECHT_RECHT`, Schema-Contract fail-closed); nichts wird kopiert, importiert oder
+  gepflegt (`docs/OSTRECHT_COMPATIBILITY.md`).
 - **Bundesrecht bleibt extern** (`gesetze-sim-internet.de`); der FederalProvider bildet Links an
-  genau einer Stelle.
+  genau einer Stelle. Das Bundesportal ist nur erkundet (Discovery, `docs/BUNDESRECHT_COMPATIBILITY.md`), nicht integriert.
+- **Ausgangsrechtsstand ≠ Sim-Vollständigkeit**: West, NSH und BayWü sind eingefroren (Baseline FROZEN); die
+  Simulationsrechtsfortschreibung ist davon getrennt bewertet und bewusst `PARTIAL` (`docs/SIMULATION_IMPORT.md` §7).
 - **Möglichst vollständiger Landesrechtsbestand** je Land zum Ausgangsrechtsstand – Gesetze,
   Verordnungen und landesweite Verwaltungsvorschriften (`docs/LEGAL_SCOPE.md`); nach dem Stichtag gilt
   Simulationsrecht.
@@ -48,10 +51,10 @@ packages/search/          Sucheinheiten, Abfrageplan, FTS5-Vertrag, Ranking, Zus
 packages/runtime/         D1-Projektionsplan, D1-Store, Dateistore, Store-Registry, SQLite-Adapter, Bindings
 packages/providers/       LegalProvider-Schnittstelle, Content-, OstRecht-, Bundesrechts-Provider, Resolver
 packages/importers/       Pipeline-Schnittstellen (common), RECHT.NRW-Importer (recht-nrw), juris-sh, bayernrecht, Sim-Rechtsfortschreibung (simulation: Inventar, Konsolidierungsengine, Ledger, R2-Archiv, Vollständigkeit)
-content/norms/<jur>/      kanonische Normen (west: 12 LRGV- und 8 LRMB-Stichtagsfassungen aus RECHT.NRW; keine Testfixtures)
+content/norms/<jur>/      kanonische Normen (west, nsh, baywue: eingefrorene Stichtagsfassungen und Sim-Fassungen; kein Ost; keine Testfixtures)
 content/publications/     Verkündungsblatt-Ausgaben je Jurisdiktion (Simulation; Web /<land>/verkuendungen/, D1 law_publications)
 data/simulation/          Sim-Quelleninventar, je Land sources.json (Evidenz), ledger.json (Ereignisse), acts/ und amendments/ (Rezepte), Konsolidierungsmanifest, completeness.json, Baseline-Locks
-imports/                  vom Nutzer abgelegte Sim-Rechtsquellen (Original, nicht versioniert; Archiv in R2 unter <land>/simulation/)
+imports/                  Source-Inbox für neue Sim-Rechtsquellen (Original, nicht versioniert; `npm run sources:intake`, docs/MAINTENANCE.md; Archiv in R2 unter <land>/simulation/)
 data/d1/                  D1-Migrationen (Schema)
 data/runtime/             lokale SQLite-Projektionen, SQL-Pläne und -Batches, Projektionszustand (generiert, nicht eingecheckt)
 data/audits/recht-nrw/    Importberichte je Norm, Belege nicht übernommener Dokumente (lrgv/, lrmb/), coverage.json + COVERAGE.md, runs/, d1-scale.json, bulk-simulation.json
@@ -66,8 +69,11 @@ docs/                     Datenmodell, OstRecht-/Bundesrechts-Kompatibilität, I
 
 ```sh
 npm ci
-npm run dev              # seedet die lokale Miniflare-D1 aus content/ und startet den Astro-Dev-Server
-npm run d1:seed:dev      # nur der Seed der lokalen Miniflare-D1 (apps/web/.wrangler/state)
+npm run dev              # seedet die lokale Miniflare-D1 (übersprungen, wenn aktuell) und startet den Astro-Dev-Server
+npm run d1:seed:dev      # nur der Seed der lokalen Miniflare-D1 (apps/web/.wrangler/state; --force spielt neu ein)
+npm run release:check    # Release-Prüfung: Checks, Tests, Content, Freezes, Build, Suche, Ost, Audits (docs/RELEASE_READINESS.md)
+npm run sources:intake   # neue Sim-Quellen in imports/ auswerten (Dry-run; docs/MAINTENANCE.md)
+npm run sources:needed   # noch zu beschaffende Sim-Quellen (P1/P2/P3)
 npm run check            # tsc (Packages, Skripte, Tests) + astro check
 npm run test             # Vitest
 npm run build            # Astro-Build für Cloudflare Workers (apps/web/dist)
@@ -112,13 +118,15 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 
 ```text
 /                                   Startseite mit gemeinsamer Suche und vier Länderzugängen
-/<land>/                            Länderseite mit Testnormen
+/<land>/                            Länderseite mit Typfilter und Bestandsstatus
 /<land>/norm/<slug>/                geltende Fassung
 /<land>/norm/<slug>/version/<yyyy-mm-dd>/   unveränderliche Fassung
 /<land>/norm/<slug>/{daten,historie,vergleich,quellen}/
+/<land>/verkuendungen/[<slug>/]     Sim-Verkündungsblätter
 /suche/                             Suche über alle oder einzelne Länder
 /.well-known/simrecht.json          SimRecht-Deklaration
-/api/v1/jurisdictions, /api/v1/norms/{jurisdiction}/{slug}[/versions], /api/v1/search
+/health                             Healthcheck (Bindings, Ost-Contract, Such-Readiness)
+/api/v1/jurisdictions, /api/v1/norms/{jurisdiction}/{slug}[/versions], /api/v1/publications/{jurisdiction}[/{slug}], /api/v1/search
 ```
 
 ## Dokumentation
@@ -153,18 +161,25 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | `docs/BAYWUE_HISTORICAL_BASELINE.md` | Wie der Stichtagsbestand 2023-12-01 entsteht: Klassen, Wiederherstellungswege, Provenienzrang |
 | `docs/BAYWUE_BASELINE_STATUS.md` | Stand des BayWü-Stichtagsbestands: was übernommen ist, was fehlt und warum |
 | `docs/BAYWUE_SOURCE_MODEL.md` | Quellenmodell: amtlich, nachrichtlich, nichtamtlich – und wo das im Datenmodell steht |
-| `docs/BAYERN_BULK_READINESS.md` | Bereitschaft des BayWü-Ausgangsimports: NOT READY, offene Punkte, GO/No-Go |
+| `docs/BAYERN_BULK_READINESS.md` | Bereitschaft des BayWü-Ausgangsimports (historisch; READY, Bulk ausgeführt), GO/No-Go |
 | `docs/SEARCH.md` | Suchplan (and-first), Golden Set, Fast-/Full-Audit |
 | `docs/DEPLOYMENT.md` | Lokale Prüf- und Deployschritte (keine CI), Cloudflare-Ressourcen, D1-Projektion, Variablen |
+| `docs/RELEASE_READINESS.md` | Release-Status (`npm run release:check`): Baselines, Sim-Status, Tests, Suche, API, D1/R2, Ost, bekannte Einschränkungen |
+| `docs/MAINTENANCE.md` | Laufender Betrieb: Source-Inbox und Intake, Queue-Lebenszyklus, Baseline-Evidenz, lokaler Dev-Betrieb |
+| `docs/SIMULATION_IMPORT.md` | Sim-Rechtsfortschreibung: Evidenz, Ledger, Rezepte, Gates, Freeze-Semantik, Vollständigkeit |
+| `docs/SIM_SOURCE_ACQUISITION.md` | Noch zu beschaffende Sim-Quellen (erzeugt; Kurzliste `npm run sources:needed`) |
 
 ## Stand der Quelladapter
 
 | Land | Quelle | Stand |
 | --- | --- | --- |
-| West | RECHT.NRW | **Referenzbestand eingefroren** – 1 482 Normen zum Stichtag, Human Approval abgeschlossen (`docs/WEST_REFERENCE_BASELINE.md`) |
-| NSH | juris Schleswig-Holstein | **Deployed (Teilbestand, in der Oberfläche gekennzeichnet).** Normtext über die öffentliche PDF-Ausgabe (anonyme Sitzung eines Permalinks, keine interne Schnittstelle); 2 450 Normen zum Stichtag (1 372 Landesrecht, 1 078 VwV), 613 offene Reviewfälle (Tabellen ohne sicheres Raster, separate PDF-Anlagen, Abkürzungen ohne Beleg, historische Fassungen, 10 nach dem Release wegen falscher Tabellenstruktur zurückgenommene Normen). Release nach Nutzerfreigabe (Nutzungsfreigabe von juris laut Nutzer; `docs/NSH_SOURCE_RIGHTS_AND_PROVENANCE.md`); R2 und Remote-D1 befüllt (`docs/SCHLESWIG_HOLSTEIN_BULK_READINESS.md`) |
-| Ost | OstRecht | lesend; OstRecht bleibt externe Source of Truth |
-| BayWü | BAYERN.RECHT | **Deployed (Teilbestand, in der Oberfläche gekennzeichnet).** 1 700 Normen zum Stichtag: 1 569 unverändert, 70 bewiesen rückgerechnet (14 davon über mehrere Änderungen, 21 mit Alttext aus der Stammverkündung), 61 heute fehlende aus amtlichen Verkündungen wiederhergestellt; normative Abbildungen als eigene Assets. R2 und Remote-D1 befüllt. 443 geänderte und die übrigen heute fehlenden Normen warten auf einen sicheren Beleg ihrer Stichtagsfassung; sie werden nicht durch den heutigen Text ersetzt (`docs/BAYWUE_BASELINE_STATUS.md`) |
+| West | RECHT.NRW | **Baseline FROZEN** – 1 482 Normen zum Stichtag, Human Approval abgeschlossen (`docs/WEST_REFERENCE_BASELINE.md`) |
+| NSH | juris Schleswig-Holstein | **Baseline FROZEN** – 2 672 Normen zum Stichtag (Freeze-Commit `eeeca2cd…`, `docs/NSH_BASELINE_FREEZE.md`); nicht sicher belegte Stichtagsfassungen bleiben ausgeschlossen und werden in der Oberfläche als Teilbestand gekennzeichnet |
+| Ost | OstRecht | **read-only upstream** – Laufzeit aus der OstRecht-D1 `ostrecht-recht`; Volltextindex nur für die geltende Fassung |
+| BayWü | BAYERN.RECHT | **Baseline FROZEN** – 1 618 Normen zum Stichtag (Freeze-Commit `018752ab…`, `docs/BAYWUE_BASELINE_FREEZE.md`); nicht sicher belegte Stichtagsfassungen bleiben ausgeschlossen (`docs/BAYWUE_BASELINE_STATUS.md`) |
+
+Sim-Quellenstatus West, NSH und BayWü: bewusst `PARTIAL` (bekannte Quellenlücken, `docs/SIM_SOURCE_ACQUISITION.md`);
+das ist keine Einschränkung des eingefrorenen Ausgangsrechtsstands.
 
 Der NSH-Bestand entsteht ausschließlich über öffentliche Ausgabewege des Portals; die interne
 Sitzungs-/CSRF-Schnittstelle wird nicht benutzt.
