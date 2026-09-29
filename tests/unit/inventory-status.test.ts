@@ -7,7 +7,7 @@ import { join } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'vitest';
 
-import { describeInventoryNotice, INVENTORY_STATUS_SCHEMA, parseInventoryStatusFile } from '@landesrecht/legal-core/config/inventory-status.ts';
+import { baselineFreezeText, describeInventoryNotice, INVENTORY_STATUS_SCHEMA, parseInventoryStatusFile } from '@landesrecht/legal-core/config/inventory-status.ts';
 import { baselineOnlyOpen, buildInventoryStatus, INVENTORY_STATUS_PATH, writeInventoryStatus } from '@landesrecht/importer-bayernrecht/audit/inventory-status.ts';
 
 import { cleanupTempRoots, tempRoot } from '../helpers/bayernrecht-state.ts';
@@ -116,5 +116,16 @@ describe('Erzeugung aus den Belegen (BayWü)', () => {
     expect(await writeInventoryStatus(root, status)).toBe(true);
     const written = JSON.parse(await readFile(join(root, INVENTORY_STATUS_PATH), 'utf8')) as { jurisdictions: Record<string, Record<string, unknown>> };
     expect(written.jurisdictions.baywue).toEqual({ ...status, simulation });
+  });
+});
+
+describe('Baseline-Status in der Oberfläche (Lauf 18)', () => {
+  it('unterscheidet datengetrieben: keine Bewertung, NOT READY, READY WITH HUMAN REVIEW, BASELINE READY, FROZEN', () => {
+    expect(baselineFreezeText(undefined)).toBeUndefined();
+    expect(baselineFreezeText({ frozen: false, assessedAt: '2026-09-29' })).toBe('Ausgangsrechtsstand nicht eingefroren; Freeze-Bewertung noch nicht durchgeführt.');
+    expect(baselineFreezeText({ frozen: false, readiness: 'NOT READY', assessedAt: '2026-09-29' })).toContain('noch nicht bereit (technische Blocker offen)');
+    expect(baselineFreezeText({ frozen: false, readiness: 'READY WITH HUMAN REVIEW', assessedAt: '2026-09-29' })).toContain('bereit nach fachlicher Prüfung');
+    expect(baselineFreezeText({ frozen: false, readiness: 'BASELINE READY', assessedAt: '2026-09-29' })).toContain('Freeze-Bewertung: bereit,');
+    expect(baselineFreezeText({ frozen: true, assessedAt: '2026-09-29' })).toContain('eingefroren');
   });
 });

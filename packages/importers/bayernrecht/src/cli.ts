@@ -17,7 +17,7 @@ import { CACHE_DIR, EVALUATION_DATE, SOURCE_AREAS, SOURCE_STATE, TARGET_JURISDIC
 import { assertSourceArea } from './common/paths.ts';
 import { enumerateSummary, runEnumerate } from './enumerate/run.ts';
 import { corpusSummary, runSample } from './corpus/run.ts';
-import { decideReviewItem, openReviewItems, readReviewQueue, REVIEW_CATEGORIES, REVIEW_ITEM_STATUSES, writeReviewShard, type ReviewDecision, type ReviewItemStatus } from './common/review.ts';
+import { decideReviewItem, openReviewItems, readReviewQueue, REVIEW_CATEGORIES, REVIEW_ITEM_STATUSES, REVIEW_REASON_CODES, writeReviewShard, type ReviewDecision, type ReviewItemStatus, type ReviewReasonCode } from './common/review.ts';
 import { evaluateReadiness, renderReadiness } from './readiness/evaluate.ts';
 import { auditSummary, runAudit } from './audit/audit.ts';
 import { buildEventLedger, eventsSummary, writeEventLedger, DECEMBER_REPORT_PATH, LEDGER_PATH, REPORT_PATH } from './events/build.ts';
@@ -82,6 +82,10 @@ export interface CliOptions {
   reason?: string;
   by?: string;
   override?: string;
+  /** review --decide … --status resolved-excluded --reason-code <code> (Pflicht bei resolved-excluded). */
+  reasonCode?: string;
+  /** review --apply-class-decisions: Klassenentscheidungen auf offene Fälle anwenden. */
+  applyClassDecisions?: boolean;
   /** r2-sync: Einträge gleichzeitig (höchstens 8 bei wrangler, 32 bei wrangler-api). */
   concurrency?: number;
   /** r2-sync: Transport über die Wrangler-OAuth-Anmeldung. */
@@ -137,6 +141,8 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
       case '--reason': options.reason = take(); break;
       case '--by': options.by = take(); break;
       case '--override': options.override = take(); break;
+      case '--reason-code': options.reasonCode = take(); break;
+      case '--apply-class-decisions': options.applyClassDecisions = true; break;
       case '--concurrency': options.concurrency = positiveInteger(take(), '--concurrency'); break;
       case '--sample': options.sample = positiveInteger(take(), '--sample'); break;
       case '--seed': options.seed = take(); break;
@@ -286,10 +292,13 @@ export const COMMAND_HELP: Readonly<Record<Command, string>> = {
   Ziel: data/audits/bayernrecht/coverage.json und data/audits/bayernrecht/COVERAGE.md
   Deterministisch: Die Zahlen hängen nur vom Bestand ab; ein zweiter Lauf schreibt nichts.`,
   review: `review [--area ${SOURCE_AREAS.join('|')}] [--json] [--limit n]
-review --decide <id> --status <s> --reason <text> [--by <name>] [--override <id>] [--write]
+review --decide <id> --status <s> --reason <text> [--reason-code <code>] [--by <name>] [--override <id>] [--write]
+review --apply-class-decisions [--write]
   Ohne --decide: offene Review-Fälle des BayWü-Bestands (optional je Bereich). Mit --decide: Entscheidung
   zu einem Fall (Status ${REVIEW_ITEM_STATUSES.filter((status) => status !== 'open').join('|')});
-  --reason ist Pflicht, --override verweist auf data/imports/bayernrecht/overrides.json.
+  --reason ist Pflicht, --override verweist auf data/imports/bayernrecht/overrides.json; resolved-excluded braucht
+  --reason-code (${REVIEW_REASON_CODES.join('|')}). --apply-class-decisions wendet die Klassenentscheidungen aus
+  data/imports/bayernrecht/review-class-decisions.json auf offene Fälle an (Rekonstruktionsfälle nach ihrem Queue-Zustand).
   Gespeichert nur mit --write. Kategorien: ${REVIEW_CATEGORIES.join(', ')}`,
   readiness: `readiness [--json]
   Maschinelle Bereitschaftsprüfung gegen docs/BAYERN_BULK_READINESS.md: erste Zeile READY oder
@@ -412,6 +421,26 @@ function notImplemented(command: Command, io: Io): number {
 /** review: offene Fälle anzeigen oder genau einen Fall entscheiden. Liest den Bestand, schreibt nur mit --write. */
 async function runReviewCommand(options: CliOptions, root: string, io: Io): Promise<number> {
   const queue = await readReviewQueue(root);
+  if (options.applyClassDecisions) {
+    const { applyClassDecisions, readClassDecisions, readQueueFacts } = await import('./audit/review-classes.ts');
+    const file = await readClassDecisions(root);
+    if (!file) {
+      io.error('data/imports/bayernrecht/review-class-decisions.json fehlt.');
+      return 1;
+    }
+    const { queue: next, decided } = applyClassDecisions(queue, file, await readQueueFacts(root));
+    const byRule = new Map<string, number>();
+    for (const entry of decided) byRule.set(entry.rule, (byRule.get(entry.rule) ?? 0) + 1);
+    io.print(`Klassenentscheidungen: ${decided.length} offene Fälle entschieden (${[...byRule.entries()].map(([rule, count]) => `${rule} ${count}`).join(', ')})`);
+    if (!options.write) {
+      io.print('Dry-run. Mit --write speichern.');
+      return 0;
+    }
+    const touched = new Map(queue.items.filter((item) => decided.some((entry) => entry.id === item.id)).map((item) => [item.sourceIdentity, item.sourceArea]));
+    for (const [identity, area] of touched) await writeReviewShard(root, next, area, identity);
+    io.print(`Geschrieben: ${touched.size} Review-Dateien.`);
+    return 0;
+  }
   if (options.decide) {
     const status = options.status ?? '';
     if (!(REVIEW_ITEM_STATUSES as readonly string[]).includes(status) || status === 'open') {
@@ -420,6 +449,10 @@ async function runReviewCommand(options: CliOptions, root: string, io: Io): Prom
     }
     if (!options.reason?.trim()) {
       io.error('--reason ist Pflicht: Eine Entscheidung ohne Begründung wird nicht gespeichert.');
+      return 1;
+    }
+    if (status === 'resolved-excluded' && !(REVIEW_REASON_CODES as readonly string[]).includes(options.reasonCode ?? '')) {
+      io.error(`resolved-excluded braucht --reason-code (${REVIEW_REASON_CODES.join('|')}).`);
       return 1;
     }
     const item = queue.items.find((candidate) => candidate.id === options.decide);
@@ -433,6 +466,7 @@ async function runReviewCommand(options: CliOptions, root: string, io: Io): Prom
       decidedAt: new Date().toISOString().slice(0, 10),
       ...(options.by ? { decidedBy: options.by } : {}),
       ...(options.override ? { override: options.override } : {}),
+      ...(options.reasonCode ? { reasonCode: options.reasonCode as ReviewReasonCode } : {}),
     };
     const updated = decideReviewItem(queue, item.id, decision);
     if (!options.write) {

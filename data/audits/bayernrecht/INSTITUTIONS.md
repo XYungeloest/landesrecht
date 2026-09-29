@@ -4,61 +4,57 @@ Erzeugt von `bayernrecht coverage --write` aus den Manifestbefunden `enacting-bo
 
 Eingetragen sind nur Verfassungsorgane mit unstrittiger Entsprechung (Landtag, Staatsregierung, Ministerpräsident). Staatsministerien und Behörden bleiben Prüffälle, weil ihr Zuschnitt im Freistaat Bayern-Württemberg nicht festgelegt ist – es werden keine Behörden erfunden.
 
-- Befunde: **450**
+- Befunde: **419**
 - Unterschiedliche Bezeichnungen: **18**
 - Ressortgruppen: **12**
-- Historische Erlassorgane (am Stichtag nicht mehr bestehend, Beleg StRGVV § 2; nur Provenienz, kein Prüffall): **581** Befunde, 34 Bezeichnungen
+- Historische Erlassorgane (am Stichtag nicht mehr bestehend, Beleg StRGVV § 2; nur Provenienz, kein Prüffall): **556** Befunde, 34 Bezeichnungen
 
 | Ressortgruppe | Befunde | Bezeichnungen |
 | --- | ---: | ---: |
-| Unterricht, Kultus, Bildung | 140 | 1 |
-| Justiz | 110 | 1 |
-| Arbeit, Soziales, Familie | 39 | 1 |
-| Wohnen, Bau, Verkehr | 37 | 1 |
+| Unterricht, Kultus, Bildung | 133 | 1 |
+| Justiz | 106 | 1 |
+| Wohnen, Bau, Verkehr | 36 | 1 |
 | Finanzen | 34 | 1 |
-| Umwelt, Landesentwicklung | 28 | 1 |
+| Arbeit, Soziales, Familie | 32 | 1 |
+| Umwelt, Landesentwicklung | 27 | 1 |
 | Wissenschaft und Kunst | 18 | 1 |
-| Inneres | 17 | 1 |
-| Wirtschaft, Energie, Verkehr | 13 | 1 |
+| Inneres | 15 | 1 |
 | Mehrere Ressorts oder Zusatz in der Formel | 7 | 6 |
-| Staatskanzlei, Ministerpräsident, ohne Ressort | 6 | 2 |
+| Wirtschaft, Energie, Verkehr | 6 | 1 |
+| Staatskanzlei, Ministerpräsident, ohne Ressort | 4 | 2 |
 | Digitales | 1 | 1 |
 
-## Unterricht, Kultus, Bildung (140)
+## Unterricht, Kultus, Bildung (133)
 
-- 140 × Bayerisches Staatsministerium für Unterricht und Kultus
+- 133 × Bayerisches Staatsministerium für Unterricht und Kultus
 
-## Justiz (110)
+## Justiz (106)
 
-- 110 × Bayerisches Staatsministerium der Justiz
+- 106 × Bayerisches Staatsministerium der Justiz
 
-## Arbeit, Soziales, Familie (39)
+## Wohnen, Bau, Verkehr (36)
 
-- 39 × Bayerisches Staatsministerium für Familie, Arbeit und Soziales
-
-## Wohnen, Bau, Verkehr (37)
-
-- 37 × Bayerisches Staatsministerium für Wohnen, Bau und Verkehr
+- 36 × Bayerisches Staatsministerium für Wohnen, Bau und Verkehr
 
 ## Finanzen (34)
 
 - 34 × Bayerisches Staatsministerium der Finanzen und für Heimat
 
-## Umwelt, Landesentwicklung (28)
+## Arbeit, Soziales, Familie (32)
 
-- 28 × Bayerisches Staatsministerium für Umwelt und Verbraucherschutz
+- 32 × Bayerisches Staatsministerium für Familie, Arbeit und Soziales
+
+## Umwelt, Landesentwicklung (27)
+
+- 27 × Bayerisches Staatsministerium für Umwelt und Verbraucherschutz
 
 ## Wissenschaft und Kunst (18)
 
 - 18 × Bayerisches Staatsministerium für Wissenschaft und Kunst
 
-## Inneres (17)
+## Inneres (15)
 
-- 17 × Bayerisches Staatsministerium des Innern, für Sport und Integration
-
-## Wirtschaft, Energie, Verkehr (13)
-
-- 13 × Bayerisches Staatsministerium für Wirtschaft, Landesentwicklung und Energie
+- 15 × Bayerisches Staatsministerium des Innern, für Sport und Integration
 
 ## Mehrere Ressorts oder Zusatz in der Formel (7)
 
@@ -69,10 +65,14 @@ Eingetragen sind nur Verfassungsorgane mit unstrittiger Entsprechung (Landtag, S
 - 1 × Bayerisches Staatsministerium für Wohnen, Bau und Verkehr und des Bayerischen Staatsministeriums des Innern, für Sport und Integration
 - 1 × Bayerisches Staatsministerium für Wohnen, Bau und Verkehr und des Bayerischen Staatsministeriums für Umwelt und Verbraucherschutz
 
-## Staatskanzlei, Ministerpräsident, ohne Ressort (6)
+## Wirtschaft, Energie, Verkehr (6)
 
-- 3 × Bayerische Staatskanzlei
+- 6 × Bayerisches Staatsministerium für Wirtschaft, Landesentwicklung und Energie
+
+## Staatskanzlei, Ministerpräsident, ohne Ressort (4)
+
 - 3 × Bayerisches Staatsministerium
+- 1 × Bayerische Staatskanzlei
 
 ## Digitales (1)
 
@@ -82,14 +82,14 @@ Eingetragen sind nur Verfassungsorgane mit unstrittiger Entsprechung (Landtag, S
 
 `historical-source-only` in `institution-mapping.json`: kein Simulationsorgan, Quellorgan bleibt `originEnactingBody`, Normtext unverändert.
 
-- Inneres: 206 (178 × Bayerisches Staatsministerium des Innern; 25 × Bayerisches Staatsministerium des Innern, für Bau und Verkehr; 2 × Bayerisches Staatsministerium des Innern und für Integration; 1 × Staatsministerium des Innern)
-- Ernährung, Landwirtschaft, Forsten: 85 (48 × Bayerisches Staatsministerium für Ernährung, Landwirtschaft und Forsten; 32 × Bayerisches Staatsministerium für Landwirtschaft und Forsten; 5 × Bayerisches Staatsministerium für Gesundheit, Ernährung und Verbraucherschutz)
-- Finanzen: 84 (66 × Bayerisches Staatsministerium der Finanzen; 18 × Bayerisches Staatsministerium der Finanzen, für Landesentwicklung und Heimat)
+- Inneres: 197 (173 × Bayerisches Staatsministerium des Innern; 22 × Bayerisches Staatsministerium des Innern, für Bau und Verkehr; 1 × Bayerisches Staatsministerium des Innern und für Integration; 1 × Staatsministerium des Innern)
+- Finanzen: 83 (65 × Bayerisches Staatsministerium der Finanzen; 18 × Bayerisches Staatsministerium der Finanzen, für Landesentwicklung und Heimat)
+- Ernährung, Landwirtschaft, Forsten: 75 (43 × Bayerisches Staatsministerium für Ernährung, Landwirtschaft und Forsten; 27 × Bayerisches Staatsministerium für Landwirtschaft und Forsten; 5 × Bayerisches Staatsministerium für Gesundheit, Ernährung und Verbraucherschutz)
 - Umwelt, Landesentwicklung: 48 (26 × Bayerisches Staatsministerium für Landesentwicklung und Umweltfragen; 14 × Bayerisches Staatsministerium für Umwelt, Gesundheit und Verbraucherschutz; 8 × Bayerisches Staatsministerium für Umwelt und Gesundheit)
-- Wirtschaft, Energie, Verkehr: 36 (16 × Bayerisches Staatsministerium für Wirtschaft und Verkehr; 10 × Bayerisches Staatsministerium für Wirtschaft, Infrastruktur, Verkehr und Technologie; 5 × Bayerisches Staatsministerium für Wirtschaft und Medien, Energie und Technologie; 4 × Bayerisches Staatsministerium für Wirtschaft, Verkehr und Technologie; 1 × Bayerisches Staatsministerium für Wirtschaft, Energie und Technologie)
+- Wirtschaft, Energie, Verkehr: 35 (16 × Bayerisches Staatsministerium für Wirtschaft und Verkehr; 9 × Bayerisches Staatsministerium für Wirtschaft, Infrastruktur, Verkehr und Technologie; 5 × Bayerisches Staatsministerium für Wirtschaft und Medien, Energie und Technologie; 4 × Bayerisches Staatsministerium für Wirtschaft, Verkehr und Technologie; 1 × Bayerisches Staatsministerium für Wirtschaft, Energie und Technologie)
 - Arbeit, Soziales, Familie: 33 (19 × Bayerisches Staatsministerium für Arbeit und Sozialordnung, Familie und Frauen; 5 × Bayerisches Staatsministerium für Arbeit und Soziales, Familie und Integration; 4 × Bayerisches Staatsministerium für Arbeit und Sozialordnung, Familie, Frauen und Gesundheit; 3 × Bayerisches Staatsministerium für Arbeit und Sozialordnung; 2 × Bayerisches Staatsministerium für Arbeit, Familie und Sozialordnung)
 - Unterricht, Kultus, Bildung: 29 (22 × Bayerisches Staatsministerium für Bildung und Kultus, Wissenschaft und Kunst; 7 × Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst)
-- Justiz: 20 (20 × Bayerisches Staatsministerium der Justiz und für Verbraucherschutz)
-- Gesundheit: 17 (17 × Bayerisches Staatsministerium für Gesundheit und Pflege)
+- Justiz: 17 (17 × Bayerisches Staatsministerium der Justiz und für Verbraucherschutz)
+- Gesundheit: 16 (16 × Bayerisches Staatsministerium für Gesundheit und Pflege)
 - Wissenschaft und Kunst: 16 (16 × Bayerisches Staatsministerium für Wissenschaft, Forschung und Kunst)
 - Mehrere Ressorts oder Zusatz in der Formel: 7 (1 × Bayerisches Staatsministerium der Finanzen und des Bayerischen Staatsministeriums für Arbeit und Sozialordnung, Familie, Frauen und Gesundheit; 1 × Bayerisches Staatsministerium der Finanzen, für Landesentwicklung und Heimat sowie das Bayerische Staatsministerium des Innern, für Bau und Verkehr; 1 × Bayerisches Staatsministerium des Innern und das Bayerische Staatsministerium für Wirtschaft, Infrastruktur, Verkehr und Technologie; 1 × Bayerisches Staatsministerium für Arbeit und Soziales, Familie und Integration nach Beschluss des Berufsbildungsausschusses; 1 × Bayerisches Staatsministerium für Arbeit und Sozialordnung, Familie, Frauen und Gesundheit – soweit die Änderung der Verordnung über die Errichtung des Staatsinstituts für Frühpädagogik und Familienforschung betroffen ist; 1 × Bayerisches Staatsministerium für Arbeit und Sozialordnung*; 1 × Bayerisches Staatsministerium für Unterricht, Kultus, Wissenschaft und Kunst soweit erforderlich)

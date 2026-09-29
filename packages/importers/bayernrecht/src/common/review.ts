@@ -50,8 +50,29 @@ export const REVIEW_CATEGORIES = [
 ] as const;
 export type ReviewCategory = (typeof REVIEW_CATEGORIES)[number];
 
-export const REVIEW_ITEM_STATUSES = ['open', 'accepted', 'resolved', 'excluded', 'deferred', 'superseded'] as const;
+export const REVIEW_ITEM_STATUSES = ['open', 'accepted', 'resolved', 'excluded', 'deferred', 'superseded', 'resolved-imported', 'resolved-excluded'] as const;
 export type ReviewItemStatus = (typeof REVIEW_ITEM_STATUSES)[number];
+
+/**
+ * Begründungsklassen einer bewussten Nichtveröffentlichung (`resolved-excluded`, Lauf 18, wie NSH): Der Fall ist fachlich
+ * entschieden und nicht mehr offen; er bleibt mit Begründung im Shard und wird bei neuer Evidenz neu geöffnet.
+ */
+export const REVIEW_REASON_CODES = [
+  'old-text-missing',
+  'command-not-invertible',
+  'source-scan-unreadable',
+  'missing-primary-source',
+  'baseline-validity-unresolved',
+  'structure-ambiguous',
+  'missing-normative-annex',
+  'unsafe-table-structure',
+  'missing-normative-image',
+  'text-unproven-after-baseline',
+  'not-at-baseline',
+  'source-deficiency',
+  'baseline-seed-authoritative',
+] as const;
+export type ReviewReasonCode = (typeof REVIEW_REASON_CODES)[number];
 
 export const IMPORTER_DECIDER = 'importer';
 
@@ -74,6 +95,10 @@ export interface ReviewDecision {
   replacement?: Record<string, unknown>;
   /** Kennung des dokumentierten Overrides (`data/imports/bayernrecht/overrides.json`). */
   override?: string;
+  /** Pflicht bei `resolved-excluded`: Begründungsklasse. */
+  reasonCode?: ReviewReasonCode;
+  /** Klassenentscheidung, aus der die Entscheidung stammt (`data/imports/bayernrecht/review-class-decisions.json`). */
+  classDecision?: string;
 }
 
 export interface ReviewItem extends ReviewItemInput {
@@ -135,6 +160,7 @@ export function validateReviewItem(value: unknown, where = 'Review-Fall'): strin
   if (item.severity !== 'blocking' && item.severity !== 'non-blocking') problems.push(`${where}: severity ist ${String(item.severity)}`);
   if (typeof item.summary !== 'string' || item.summary.trim() === '') problems.push(`${where}: summary fehlt`);
   if (!Array.isArray(item.details)) problems.push(`${where}: details fehlt`);
+  if (item.status === 'resolved-excluded' && !(REVIEW_REASON_CODES as readonly string[]).includes(String((item.decision as ReviewDecision | undefined)?.reasonCode))) problems.push(`${where}: resolved-excluded ohne gültigen reasonCode`);
   return problems;
 }
 
@@ -261,6 +287,7 @@ export function decideReviewItem(queue: ReviewQueue, id: string, decision: Revie
   if (!(REVIEW_ITEM_STATUSES as readonly string[]).includes(decision.decision) || (decision.decision as string) === 'open') throw new Error(`Unbekannte Entscheidung ${decision.decision}`);
   if (!decision.reason.trim()) throw new Error('Eine Entscheidung braucht eine Begründung');
   if (!/^\d{4}-\d{2}-\d{2}/u.test(decision.decidedAt)) throw new Error('decidedAt muss ein ISO-Datum sein');
+  if (decision.decision === 'resolved-excluded' && !(REVIEW_REASON_CODES as readonly string[]).includes(decision.reasonCode ?? '')) throw new Error(`resolved-excluded braucht einen reasonCode (${REVIEW_REASON_CODES.join(', ')})`);
   const history = item.decision ? [...(item.history ?? []), item.decision] : item.history;
   const next: ReviewItem = { ...item, status: decision.decision, decision, updatedAt: decision.decidedAt, ...(history ? { history } : {}) };
   return { ...queue, items: queue.items.map((candidate) => (candidate.id === id ? next : candidate)) };

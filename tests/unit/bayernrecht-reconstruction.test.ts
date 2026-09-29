@@ -465,6 +465,9 @@ describe('Rezept', () => {
   it('verlangt Inkrafttreten = inkraft des Pakets und einen belegten Beginn der Stichtagsfassung', () => {
     const recipe = recipeFor(current, command);
     expect(recipeProblems({ ...recipe, source: { ...recipe.source, inForceFrom: '2026-06-01' } })[0]).toContain('inkraft des heutigen Pakets');
+    // Lauf 18: Ein Paketdatum vor dem Stichtag ist nachweislich veraltet (Änderung aus Register/Vollzitat) und widerspricht
+    // der Kette nicht – die Einarbeitung belegt der Rundlauf.
+    expect(recipeProblems({ ...recipe, source: { ...recipe.source, inForceFrom: '2015-01-01' } })).toEqual([]);
     expect(recipeProblems({ ...recipe, baselineTextInForce: { date: '2024-01-01', evidence: ['x'] } })[0]).toContain('nach dem Stichtag');
     const { baselineTextInForce: _omitted, ...withoutStart } = recipe;
     expect(recipeProblems(withoutStart as ReconstructionRecipe)[0]).toContain('nicht belegt');
@@ -479,7 +482,9 @@ describe('Rezept', () => {
       expect(`${name}: ${recipeProblems(recipe).join('; ')}`).toBe(`${name}: `);
       expect(recipe.documentId).toBe(name.replace(/\.json$/u, ''));
       const amendments = recipeAmendments(recipe);
-      expect(amendments[0]!.effectiveDate).toBe(recipe.source.inForceFrom);
+      // Inkrafttreten der jüngsten Änderung = inkraft des Pakets – oder das Paketdatum liegt vor dem Stichtag und ist
+      // nachweislich veraltet (Lauf 18, Klassifikation 3b; die Einarbeitung belegt der Rundlauf).
+      expect(amendments[0]!.effectiveDate === recipe.source.inForceFrom || recipe.source.inForceFrom <= recipe.baselineDate).toBe(true);
       expect(amendments.every((amendment) => amendment.effectiveDate > recipe.baselineDate)).toBe(true);
       expect(isRecipeV2(recipe) ? amendments.length > 1 : amendments.length === 1).toBe(true);
       expect(recipe.baselineTextInForce.date <= recipe.baselineDate).toBe(true);

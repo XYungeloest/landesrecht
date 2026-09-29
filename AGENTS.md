@@ -67,7 +67,8 @@ Prioritäten:
   Ein Baseline-Freeze fixiert nur den realen Ausgangsrechtsstand samt Provenienz, nie die Sim-Fortschreibung
   (`docs/SIMULATION_IMPORT.md` 6.1); nach dem Stichtag ausgefertigte, nur rückwirkend geltende Normen gehören nie
   zum Ausgangsrechtsstand (6.2); Freeze nur auf ausdrückliche Entscheidung; Stand und Fingerabdruck NSH:
-  `node scripts/nsh-freeze-readiness.ts`. Tabellenänderungen gespeicherter Fassungen nur mit Freigabe
+  `node scripts/nsh-freeze-readiness.ts`, Bereitschaft BayWü: `node scripts/baywue-freeze-readiness.ts`
+  (`docs/BAYWUE_BASELINE_FREEZE_READINESS.md`). Tabellenänderungen gespeicherter Fassungen nur mit Freigabe
   (`npm run content:tables`, `data/content-table-changes.json`).
 - Bundesrecht (`gesetze-sim-internet.de`) wird nicht importiert; Anbindungsplan und Mapping in
   `docs/BUNDESRECHT_COMPATIBILITY.md` (bevorzugt read-only-Quelle statt Kopie, keine Bund-Sonderstrukturen im Kern).

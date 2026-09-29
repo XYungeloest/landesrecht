@@ -89,8 +89,12 @@ export interface BaselineInput {
   registerAbsent?: boolean;
   /** Datierte Änderungsvermerke der Quelle, aufsteigend. */
   changeNotes?: string[];
-  /** Belegte Ereignisse nach dem Stichtag aus dem Ereignisregister. */
-  postBaselineEvents?: Array<{ type: string; date: string; citation?: string }>;
+  /** Belegte Ereignisse nach dem Stichtag aus dem Ereignisregister (stark zugeordnet). */
+  postBaselineEvents?: Array<{ type: string; date: string; citation?: string; enactmentDate?: string; effectiveDate?: string }>;
+  /** Letzte Änderung laut Vollzitat („zuletzt … geändert“; Ausfertigungsdatum des Änderungsakts). */
+  lastAmendmentDate?: string;
+  /** Stand der Quelle (Abrufdatum): Änderungen, die bis dahin wirksam wurden, trägt der gezeigte Text. */
+  evaluationDate?: string;
   /**
    * Verkündung der Norm selbst (ihre eigene Fundstelle), soweit das amtliche Verkündungsverzeichnis sie datiert.
    * Eine erst nach dem Stichtag verkündete Norm galt am Stichtag nicht – auch wenn sie davor ausgefertigt wurde.
@@ -245,6 +249,35 @@ export function classifyBaseline(input: BaselineInput): BaselineDecision {
       reason: 'no-text-validity-date',
       blockers: ['Beginn der Textgeltung fehlt; ob der gezeigte Text am Stichtag galt, ist offen'],
     };
+  }
+
+  // 3b – Lauf 18 (BayWü-Freeze-Readiness): Das Paketdatum `inkraft` belegt die Textgeltung nur, wenn keine spätere
+  //      Änderung dagegen spricht. Nennt das Ereignisregister (stark zugeordnet) eine nach dem Stichtag ausgefertigte
+  //      Änderung, die bis zum Stand der Quelle wirksam wurde, oder das Vollzitat eine nach dem Stichtag ausgefertigte letzte
+  //      Änderung, die das Register nicht als erst künftig wirksam ausweist, ist `inkraft` veraltet (GVBl. 2024 S. 98:
+  //      Ressortbezeichnungen „…, Forsten und Tourismus“ in Texten mit Paketdatum 2007). Der gezeigte Text ist dann nicht
+  //      als Stichtagstext belegt – die Stichtagsfassung ist zurückzurechnen. Auch eine rückwirkend in Kraft gesetzte
+  //      Änderung zählt: nach dem Stichtag ausgefertigt, gehört sie nicht zum Ausgangsrechtsstand
+  //      (docs/SIMULATION_IMPORT.md 6.2).
+  if (input.inForceFrom <= baseline) {
+    const evaluation = input.evaluationDate ?? '9999-12-31';
+    const amendments = (input.postBaselineEvents ?? []).filter((event) => event.type === 'amend' && (event.enactmentDate ?? event.date) > baseline);
+    const effective = amendments.filter((event) => !event.effectiveDate || event.effectiveDate <= evaluation);
+    const citationAmended = input.lastAmendmentDate !== undefined && input.lastAmendmentDate > baseline
+      && !amendments.some((event) => (event.enactmentDate ?? event.date) === input.lastAmendmentDate && event.effectiveDate !== undefined && event.effectiveDate > evaluation);
+    if (effective.length > 0 || citationAmended) {
+      const named = effective.length > 0
+        ? effective.map((event) => `${event.citation ?? event.date} (ausgefertigt ${event.enactmentDate ?? event.date}, wirksam ${event.effectiveDate ?? 'unbekannt'})`).join('; ')
+        : `Vollzitat: zuletzt geändert durch Akt vom ${input.lastAmendmentDate}`;
+      return {
+        ...base,
+        class: 'changed-after-baseline',
+        status: 'active-at-baseline',
+        method: 'undetermined',
+        reason: 'amended-after-baseline-portal-date-stale',
+        blockers: [`Der gezeigte Text gilt laut Paket seit ${input.inForceFrom}, wurde aber nach dem Stichtag geändert: ${named}; die Fassung vom ${baseline} ist zurückzurechnen`],
+      };
+    }
   }
 
   if (input.inForceFrom <= baseline) {

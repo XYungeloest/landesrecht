@@ -50,6 +50,8 @@ export interface BaselineFile {
 interface LedgerEvent {
   eventType: string;
   eventDate?: string;
+  /** Ausfertigungs- bzw. Erlassdatum des Akts laut Verkündung. */
+  enactmentDate?: string;
   citation?: string;
   sourceId?: string;
   sourceUrl?: string;
@@ -242,12 +244,16 @@ export async function buildBaseline(root: string, options: BuildBaselineOptions)
         ...(dates.versionDate ? { versionDate: dates.versionDate } : {}),
         ...(dates.issueYear ? { issueYear: dates.issueYear } : {}),
         ...(overrides.get(entry.documentId)?.registerAbsent ? { registerAbsent: true } : {}),
+        ...(fromCitation.lastAmendmentDate ? { lastAmendmentDate: fromCitation.lastAmendmentDate } : {}),
+        evaluationDate: options.evaluationDate,
         ...(eventsByDocument.has(entry.documentId)
           ? {
               postBaselineEvents: eventsByDocument.get(entry.documentId)!.map((event) => ({
                 type: event.eventType,
                 date: event.eventDate ?? '',
                 ...(event.citation ? { citation: event.citation } : {}),
+                ...(event.enactmentDate ? { enactmentDate: event.enactmentDate } : {}),
+                ...(event.effectiveDate ? { effectiveDate: event.effectiveDate } : {}),
               })),
             }
           : {}),

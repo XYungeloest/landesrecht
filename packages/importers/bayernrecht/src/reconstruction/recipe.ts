@@ -300,7 +300,7 @@ export { stableStringify };
 /**
  * Formale Prüfung eines Rezepts (v1 und v2) vor jeder Anwendung. Liefert die Liste der Verstöße (leer = gültig):
  * Schema, Methode, jede Änderung mit belegtem Inkrafttreten nach dem Stichtag, das jüngste = `inkraft` des heutigen
- * Pakets, die Inkrafttreten in Kettenreihenfolge, belegter Beginn der Stichtagsfassung am oder vor dem Stichtag,
+ * Pakets (außer das Paketdatum liegt vor dem Stichtag und ist damit nachweislich veraltet), die Inkrafttreten in Kettenreihenfolge, belegter Beginn der Stichtagsfassung am oder vor dem Stichtag,
  * je Änderung mindestens ein Schritt.
  */
 export function recipeProblems(recipe: AnyReconstructionRecipe): string[] {
@@ -329,7 +329,10 @@ export function recipeProblems(recipe: AnyReconstructionRecipe): string[] {
     if (!Array.isArray(amendment?.steps) || amendment.steps.length === 0) problems.push(`keine Schritte (${label})`);
   });
   const newest = amendments[0];
-  if (newest && iso.test(newest.effectiveDate ?? '') && newest.effectiveDate !== recipe.source?.inForceFrom) {
+  // Lauf 18: Ein Paketdatum vor dem Stichtag ist veraltet (die Klassifikation hat die Änderung nach dem Stichtag aus
+  // Register oder Vollzitat belegt) und widerspricht der Kette nicht; die Einarbeitung belegt der Rundlauf.
+  const staleInForce = iso.test(recipe.source?.inForceFrom ?? '') && recipe.source!.inForceFrom <= recipe.baselineDate;
+  if (newest && iso.test(newest.effectiveDate ?? '') && newest.effectiveDate !== recipe.source?.inForceFrom && !staleInForce) {
     problems.push(`Inkrafttreten der ${amendments.length > 1 ? 'jüngsten ' : ''}Änderung (${newest.effectiveDate}) ≠ inkraft des heutigen Pakets (${recipe.source?.inForceFrom ?? '–'})`);
   }
   for (let index = 1; index < amendments.length; index += 1) {

@@ -84,6 +84,11 @@
         "severity": "info",
         "code": "sentence-numbers",
         "message": "57 Satznummern als Inline-Marker übernommen (Unicode-Hochzahl vor dem Satz)"
+      },
+      {
+        "severity": "warning",
+        "code": "withdrawn-text-unproven",
+        "message": "Veröffentlichung zurückgenommen: der übernommene Text trägt eine Änderung nach dem Stichtag (Der gezeigte Text gilt laut Paket seit 2013-04-30, wurde aber nach dem Stichtag geändert (Ereignisregister oder Vollzitat); die Fassung vom 2023-12-01 ist zurückzurechnen); Stichtagsfassung nicht sicher rückrechenbar. Slug bayschlg-baywue bleibt reserviert"
       }
     ],
     "integrity": {
@@ -91,13 +96,13 @@
       "sourceCanonical": true
     },
     "transformation": {
-      "changes": 6,
-      "unresolved": 6,
-      "detections": 15,
-      "postTransformAudit": true
+      "changes": 0,
+      "unresolved": 0,
+      "detections": 0,
+      "postTransformAudit": false
     },
-    "reviewStatus": "none",
-    "targetSlug": "bayschlg-baywue",
+    "reviewStatus": "resolved",
+    "targetSlug": "",
     "sourceArea": "landesrecht",
     "sourceIdentity": "BaySchlG",
     "bayRsNumber": "300-1-5-J",
@@ -113,7 +118,7 @@
     "sourceValidFrom": "2013-04-30",
     "sourceValidTo": null,
     "baselineStatus": "active-at-baseline",
-    "baselineRecoveryMethod": "current-source",
+    "baselineRecoveryMethod": "reverse-post-baseline-event",
     "sourceProvenance": {
       "publicationAuthority": "printed-official",
       "digitalRepresentation": "born-digital",
@@ -123,12 +128,12 @@
     "sha256": "4f8e61b1b10d879c26753a0d939a10b11820a32edad6e5c1d37ab6be2f918cb4",
     "contentType": "application/zip",
     "transformerVersion": "bayernrecht-transformer/1.3.1",
-    "importStatus": "imported-with-warnings",
+    "importStatus": "needs-review",
     "decisionTrace": {
       "schemaVersion": "bayernrecht-decision-trace/1",
       "documentId": "BaySchlG",
       "baselineDate": "2023-12-01",
-      "statement": "Die Vorschrift wurde am 2000-04-25 ausgefertigt und ihr gezeigter Text gilt seit 2013-04-30 unverändert; damit galt genau dieser Text am 2023-12-01.",
+      "statement": "Nicht übernommen: amended-after-baseline-portal-date-stale (changed-after-baseline, active-at-baseline).",
       "scope": {
         "decision": "include",
         "reason": "state-law-in-scope",
@@ -137,11 +142,14 @@
         ]
       },
       "baseline": {
-        "class": "unchanged-since-baseline",
+        "class": "changed-after-baseline",
         "status": "active-at-baseline",
-        "method": "current-unchanged",
-        "reason": "text-unchanged-since-before-baseline",
-        "blockers": [],
+        "method": "undetermined",
+        "reason": "amended-after-baseline-portal-date-stale",
+        "blockers": [
+          "Der gezeigte Text gilt laut Paket seit 2013-04-30, wurde aber nach dem Stichtag geändert (Ereignisregister oder Vollzitat); die Fassung vom 2023-12-01 ist zurückzurechnen",
+          "Rekonstruktion: missing-base (predecessor-source-missing) – Verkündung des Vorgängers „vom 20. Dezember 2011 (GVBl S. 713)“ nicht im Cache (https://www.verkuendung-bayern.de/gvbl/2011-713/); ohne sie ist nicht ausgeschlossen, dass er erst nach dem Stichtag in Kraft trat"
+        ],
         "evidence": [
           {
             "kind": "issue-date",
@@ -171,8 +179,8 @@
         ]
       },
       "recovery": {
-        "method": "current-source",
-        "note": "Der gezeigte Text gilt seit vor dem Stichtag unverändert; die abgerufene Quellfassung ist zugleich die Stichtagsfassung."
+        "method": "reverse-post-baseline-event",
+        "note": "Der Stichtagsstand ist nicht gewonnen. reverse-post-baseline-event bezeichnet den vorgesehenen Weg (Klassifikation: undetermined); der Eintrag wird nicht übernommen."
       },
       "source": {
         "zipUrl": "https://www.gesetze-bayern.de/Content/Zip/BaySchlG",
@@ -186,17 +194,17 @@
       },
       "evidenceChain": [
         "Scope: include – state-law-in-scope (enumeration:facet-hitlist)",
-        "Stichtag: unchanged-since-baseline / active-at-baseline / current-unchanged – text-unchanged-since-before-baseline",
+        "Stichtag: changed-after-baseline / active-at-baseline / undetermined – amended-after-baseline-portal-date-stale",
         "Beleg issue-date: 2000-04-25 (xml:ausfertigungsdatum)",
         "Beleg text-in-force: 2013-04-30 (xml:inkraft)",
         "Beleg version-date: 2000-04-25 (xml:fassungsdatum)",
         "Beleg post-baseline-event: amend 2026-03-31 (GVBl. 2026 S. 75) (event-ledger)",
         "Beleg change-note: 2026-03-26 (citation:zuletzt geändert)",
+        "Offen: Der gezeigte Text gilt laut Paket seit 2013-04-30, wurde aber nach dem Stichtag geändert (Ereignisregister oder Vollzitat); die Fassung vom 2023-12-01 ist zurückzurechnen",
+        "Offen: Rekonstruktion: missing-base (predecessor-source-missing) – Verkündung des Vorgängers „vom 20. Dezember 2011 (GVBl S. 713)“ nicht im Cache (https://www.verkuendung-bayern.de/gvbl/2011-713/); ohne sie ist nicht ausgeschlossen, dass er erst nach dem Stichtag in Kraft trat",
         "Quelle: https://www.gesetze-bayern.de/Content/Zip/BaySchlG (SHA-256 4f8e61b1b10d879c…, abgerufen 2026-09-18T00:39:19.598Z)",
         "Werkzeuge: bayernrecht-parser/0.2.0, bayernrecht-transformer/1.3.1"
       ]
-    },
-    "importedAt": "2026-09-19T15:27:08.774Z",
-    "runId": "bayernrecht-bulk-20260919t152641z"
+    }
   }
 }

@@ -34,10 +34,12 @@
  * Resume vollständig wiederholt; jeder Schritt ist für sich wiederholbar, und der Vergleich vor dem
  * Schreiben verhindert, dass die Wiederholung etwas verändert.
  */
+import { join } from 'node:path';
+
 import { retrievalDate, type ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 import { previousDay, type NormRecord, type SourceReference } from '@landesrecht/legal-core/lib/schema.ts';
 
-import { TARGET_JURISDICTION, PARSER_VERSION, type SourceArea } from '../common/constants.ts';
+import { BASELINE_DATE, TARGET_JURISDICTION, PARSER_VERSION, type SourceArea } from '../common/constants.ts';
 import { assessBaselineValidity, type ValidityEvidence } from '../common/evidence.ts';
 import {
   isImportedStatus,
@@ -72,7 +74,9 @@ import { loadMergedAnnexes } from './annex.ts';
 import { figureRawDocuments, type FigurePackage } from './figures.ts';
 import { reversedAmendmentsText } from './trace.ts';
 import { isCachedPackageProblem, readCachedPackage, type CachedPackage } from './cache.ts';
-import { removeRetiredNormDirectory, writeNormRecord } from './persist.ts';
+import { inspectBaselineLock } from '@landesrecht/importer-common/baseline-lock.ts';
+
+import { normsDirectory, removeRetiredNormDirectory, writeNormRecord } from './persist.ts';
 import { baselineGate, type BulkCandidate, type GateVerdict } from './select.ts';
 import type { BulkPhase, BulkResult } from './state.ts';
 import { buildDecisionTrace, recoveryMethodFor, type DecisionTrace } from './trace.ts';
@@ -553,7 +557,9 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
     const mismatch = recipeProblems(recipe)[0]
       ?? (recipe.source.sha256 !== cached.sha256
         ? `Das Rezept gilt für das Paket ${recipe.source.sha256.slice(0, 16)}…, im Cache liegt ${cached.sha256.slice(0, 16)}…`
-        : newest.effectiveDate !== law.sourceValidFrom
+        // Lauf 18: Ein Paketdatum vor dem Stichtag ist veraltet (Klassifikation 3b) – dann muss es dem Rezept entsprechen,
+        // das Rundlauf und Einarbeitung belegt; sonst gilt wie bisher: jüngste Änderung = inkraft des Pakets.
+        : newest.effectiveDate !== law.sourceValidFrom && !(law.sourceValidFrom !== undefined && law.sourceValidFrom <= options.baselineDate && law.sourceValidFrom === recipe.source.inForceFrom)
           ? `Das Rezept nimmt als jüngste eine Änderung mit Wirkung vom ${newest.effectiveDate} zurück, der heutige Text gilt laut Paket aber ab ${law.sourceValidFrom ?? '?'}`
           : begin.date > options.baselineDate
             ? `Die Stichtagsfassung gilt laut Rezept erst ab ${begin.date} – nach dem Stichtag`
@@ -862,7 +868,15 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
   // Der Slug bleibt der Quellidentität dauerhaft zugeordnet und wird nie neu vergeben.
   const withdrawal = previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status)
     && candidate.baseline?.status === 'not-at-baseline' && candidate.baseline.reason === 'official-commencement-after-baseline';
-  const regression = !withdrawal && previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status);
+  // Lauf 18: Galt die Norm am Stichtag, belegt aber eine nach dem Stichtag ausgefertigte, am Quellstand wirksame Änderung
+  // (Register oder Vollzitat), dass der übernommene heutige Text nicht der Stichtagstext ist, und gelingt keine sichere
+  // Rückrechnung, wird die Veröffentlichung zurückgenommen – ohne den Slug stillzulegen: Er bleibt der Quellidentität
+  // reserviert, eine spätere belegte Stichtagsfassung erscheint unter derselben Adresse. Nie bei einer durch die Simulation
+  // fortgeschriebenen Norm (Baseline-Lock); die bleibt als Review-Fall stehen.
+  const textUnproven = previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status)
+    && candidate.baseline?.class === 'changed-after-baseline' && candidate.baseline.reason === 'amended-after-baseline-portal-date-stale'
+    && previous.targetSlug !== '' && !(await inspectBaselineLock(join(normsDirectory(root), previous.targetSlug), BASELINE_DATE)).locked;
+  const regression = !withdrawal && !textUnproven && previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status);
   // Eine früher zurückgenommene Norm bleibt als solche erkennbar (R2-Audit: archivierte Objekte kein Widerspruch).
   const withdrawnBefore = !withdrawal && !isImportedStatus(status)
     ? (options.registry.retired ?? []).find((retired) => retired.sourceIdentity === candidate.documentId && retired.withdrawn)
@@ -876,6 +890,23 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
       severity: 'info',
       code: 'withdrawn-not-at-baseline',
       message: `Aus dem Stichtagsbestand genommen: ${candidate.baseline!.evidence.filter((fact) => fact.kind === 'official-commencement').map((fact) => `in Kraft laut amtlicher Verkündung ab ${fact.value}`).join('; ') || 'Inkrafttreten laut amtlicher Verkündung nach dem Stichtag'}; Slug ${previous.targetSlug} bleibt reserviert`,
+    }];
+  }
+  // Eine früher so zurückgenommene Norm bleibt als solche erkennbar, solange sie nicht wieder übernommen wird (Reservierung).
+  const unprovenBefore = !textUnproven && !isImportedStatus(status) ? previous?.findings?.find((finding) => finding.code === 'withdrawn-text-unproven') : undefined;
+  if (unprovenBefore && options.registry.entries.some((reserved) => reserved.sourceIdentity === candidate.documentId)) {
+    entry.findings = [...(entry.findings ?? []), unprovenBefore];
+    // Archivnachweis der früheren Veröffentlichung bleibt (R2 behält die Objekte; R2-Audit: kein Widerspruch).
+    if (previous && previous.rawDocuments.length > 0) entry.rawDocuments = previous.rawDocuments.map((document) => ({ ...document }));
+  }
+  if (textUnproven && previous) {
+    // Nicht übernommene Einträge führen keinen Slug (Manifestschema); die Reservierung bleibt in der Slug-Registry.
+    entry.targetSlug = '';
+    entry.rawDocuments = previous.rawDocuments.map((document) => ({ ...document }));
+    entry.findings = [...(entry.findings ?? []), {
+      severity: 'warning',
+      code: 'withdrawn-text-unproven',
+      message: `Veröffentlichung zurückgenommen: der übernommene Text trägt eine Änderung nach dem Stichtag (${candidate.baseline!.blockers[0]?.slice(0, 220) ?? 'Register/Vollzitat'}); Stichtagsfassung nicht sicher rückrechenbar. Slug ${previous.targetSlug} bleibt reserviert`,
     }];
   }
   if (regression && previous) {
@@ -929,6 +960,11 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
       }
     }
     if (options.write && reserver.changed) await writeSlugRegistry(root, options.registry);
+  }
+
+  if (textUnproven && previous?.targetSlug && options.write) {
+    const removed = await removeRetiredNormDirectory(root, previous.targetSlug, candidate.documentId);
+    if (removed) { written.push(removed); changed = true; }
   }
 
   if (withdrawal && previous?.targetSlug) {

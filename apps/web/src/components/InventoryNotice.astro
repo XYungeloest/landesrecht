@@ -8,7 +8,7 @@
  * Simulationsstand als `SIM LEGAL STATE COMPLETE`, verschwindet der Hinweis ohne Codeänderung. Baseline-Normzahl
  * (`published`) und Sim-Normzahl (`simulation.simulationNorms`) werden getrennt ausgewiesen.
  */
-import { getInventoryNotice, type SimulationInventoryStatus } from '@landesrecht/legal-core/config/inventory-status.ts';
+import { baselineFreezeText, getInventoryNotice, type SimulationInventoryStatus } from '@landesrecht/legal-core/config/inventory-status.ts';
 import { formatBaselineDate, getJurisdiction, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 
 interface Props {
@@ -26,14 +26,8 @@ const outstanding = status ? status.pending.atBaseline + status.pending.baseline
 const shortName = getJurisdiction(jurisdiction).shortName;
 const plural = (value: number, one: string, many: string): string => `${number.format(value)} ${value === 1 ? one : many}`;
 
-/** Baseline-Status: eingefroren oder – solange nicht – die bewertete Bereitschaft (getrennt vom Sim-Quellenstatus). */
-function freezeText(): string | undefined {
-  const freeze = status?.baselineFreeze;
-  if (!freeze) return undefined;
-  if (freeze.frozen) return 'Der veröffentlichte Ausgangsrechtsstand ist eingefroren (Änderungen nur mit dokumentierter Entscheidung).';
-  const readiness = freeze.readiness === 'BASELINE READY' ? 'bereit' : freeze.readiness === 'READY WITH HUMAN REVIEW' ? 'bereit nach fachlicher Prüfung offener Fälle' : 'noch nicht bereit (technische Klärungen offen)';
-  return `Ausgangsrechtsstand nicht eingefroren; Freeze-Bewertung: ${readiness}, Stand ${freeze.assessedAt}.`;
-}
+/** Baseline-Status (eingefroren, bewertet oder noch nicht bewertet; getrennt vom Sim-Quellenstatus). */
+const freezeText = (): string | undefined => baselineFreezeText(status?.baselineFreeze);
 
 function sourcesText(entry: SimulationInventoryStatus): string {
   if (entry.status === 'SIM SOURCES PARTIAL') return `Quellensammlung unvollständig: ${number.format(entry.presentIssues)} von ${number.format(entry.knownIssues)} bekannten Ausgaben liegen vor; der Rechtsstand nach dem Stichtag kann Lücken haben.`;

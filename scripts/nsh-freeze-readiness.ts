@@ -474,7 +474,10 @@ if (write) {
   for (const [jurisdiction, lock] of Object.entries(lockFile?.jurisdictions ?? {})) {
     const entry = statusFile.jurisdictions[jurisdiction];
     if (!entry) continue;
-    entry.baselineFreeze = lock.freeze ? { frozen: true, assessedAt } : jurisdiction === 'nsh' ? { frozen: false, readiness: status, assessedAt } : { frozen: false, assessedAt };
+    // Nur NSH und eingefrorene Länder; die Bewertung eines anderen, nicht eingefrorenen Landes (BayWü:
+    // scripts/baywue-freeze-readiness.ts) bleibt unangetastet.
+    if (lock.freeze) entry.baselineFreeze = { frozen: true, assessedAt };
+    else if (jurisdiction === 'nsh') entry.baselineFreeze = { frozen: false, readiness: status, assessedAt };
   }
   await writeFile(statusPath, `${JSON.stringify(statusFile, null, 2)}\n`);
   console.log(`Geschrieben: ${DOC_PATH}, ${frozenState ? '' : `${APPROVAL_PATH}, `}${JSON_PATH}, Baseline-Status in packages/legal-core/src/config/inventory-status.json`);

@@ -124,7 +124,8 @@ export function checkSlugRegistry(manifest: Pick<ImportManifest, 'entries'>, reg
     if (isImportedStatus(entry.importStatus)) {
       if (!reservation) findings.push({ check: 'slug-nicht-registriert', identity: entry.sourceIdentity, detail: `übernommener Eintrag mit Slug ${entry.targetSlug} ohne Reservierung in ${SLUG_REGISTRY_PATH}` });
       else if (reservation.slug !== entry.targetSlug) findings.push({ check: 'slug-abweichung', identity: entry.sourceIdentity, detail: `Registry führt ${reservation.slug}, das Manifest ${entry.targetSlug}` });
-    } else if (reservation && entry.targetSlug === '') {
+    } else if (reservation && entry.targetSlug === '' && !(entry.findings ?? []).some((finding) => finding.code === 'withdrawn-text-unproven')) {
+      // Lauf 18: Eine wegen unbelegten Stichtagstexts zurückgenommene Veröffentlichung behält ihre Reservierung.
       findings.push({ check: 'slug-reserviert-ohne-uebernahme', identity: entry.sourceIdentity, detail: `Registry hält ${reservation.slug}, der Eintrag ist aber ${entry.importStatus} und führt keinen Slug` });
     }
   }

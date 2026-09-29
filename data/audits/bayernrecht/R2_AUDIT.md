@@ -1,6 +1,6 @@
 # R2-Rohquellenarchiv BayWü
 
-Bucket `landesrecht-quellen` (privat), Präfix `baywue/bayernrecht/2023-12-01/`. Lauf 2026-09-19T14:00:32.705Z – 2026-09-19T14:03:36.150Z (183 s), Transport `wrangler-api`.
+Bucket `landesrecht-quellen` (privat), Präfix `baywue/bayernrecht/2023-12-01/`. Lauf 2026-09-29T10:14:02.713Z – 2026-09-29T10:17:12.019Z (189 s), Transport `wrangler-api`.
 
 Status: **verified**
 
@@ -9,16 +9,16 @@ Status: **verified**
 | Kennzahl | Wert |
 | --- | --- |
 | Manifesteinträge | 2.404 |
-| übernommene Normen (imported, imported-with-warnings) | 1.700 |
-| Rohquellen der übernommenen Normen | 2.351 (459.3 MiB, 481.602.138 Bytes) |
-| Archivstatus im Manifest | verified 2.351 |
-| Staging `.cache/bayernrecht-r2-staging` | 2.351 Rohobjekte + 2.351 Umschläge |
+| übernommene Normen (imported, imported-with-warnings) | 1.619 |
+| Rohquellen der übernommenen Normen | 2.355 (461.6 MiB, 484.039.051 Bytes) |
+| Archivstatus im Manifest | verified 2.355 |
+| Staging `.cache/bayernrecht-r2-staging` | 2.355 Rohobjekte + 2.355 Umschläge |
 | fehlende erwartete Objekte im Staging | 0 |
 | Größe / SHA-256 abweichend (nachgerechnet) | 0 / 0 |
 | Umschläge abweichend | 0 |
 | Manifestbefunde (Bucket, Schlüssel, Status) | 0 |
 | Schlüssel außerhalb des Präfixes | 0 |
-| nur im Staging (kein Upload-Soll) | 2 |
+| nur im Staging (kein Upload-Soll) | 174 |
 | Staging-Audit | bestanden |
 
 ## Sync
@@ -26,30 +26,30 @@ Status: **verified**
 | Kennzahl | Wert |
 | --- | --- |
 | Prüfregime | etag (Listing: Existenz, Größe, Etag = MD5; deterministische Byte-Stichprobe je Charge) |
-| Parallelität | 32 |
-| offen vor dem Lauf (staged/uploaded) | 2.057 |
+| Parallelität | 8 |
+| offen vor dem Lauf (staged/uploaded) | 2.060 |
 | hochgeladen: Rohobjekte / Umschläge | 0 / 0 (0.0 MiB) |
-| bereits vorhanden (gleicher Inhalt): Rohobjekte / Umschläge | 2.057 / 2.057 |
+| bereits vorhanden (gleicher Inhalt): Rohobjekte / Umschläge | 2.060 / 2.060 |
 | davon Umschläge mit archiviertem Stand beibehalten (Kernfelder gleich, beschreibende Felder abweichend) | 0 |
-| per Listing nachgeprüft (Größe + MD5) | 4.114 |
-| Byte-Rücklesungen im Sync (SHA-256) | 34 |
-| Listings | 10 |
-| auf verified gesetzt | 2.057 |
-| Dauer Sync | 75 s |
+| per Listing nachgeprüft (Größe + MD5) | 4.120 |
+| Byte-Rücklesungen im Sync (SHA-256) | 33 |
+| Listings | 8 |
+| auf verified gesetzt | 2.060 |
+| Dauer Sync | 64 s |
 
 ## Nachprüfung (nur lesend)
 
 | Kennzahl | Wert |
 | --- | --- |
-| Objekte unter `baywue/bayernrecht/2023-12-01/` | 4.704 (461.3 MiB, 483.700.314 Bytes) |
-| davon Rohobjekte / Umschläge | 2.351 (459.3 MiB) / 2.351 |
-| erwartet (Rohobjekte + Umschläge) | 4.702 |
+| Objekte unter `baywue/bayernrecht/2023-12-01/` | 4.884 (469.5 MiB, 492.281.702 Bytes) |
+| davon Rohobjekte / Umschläge | 2.355 (461.6 MiB) / 2.355 |
+| erwartet (Rohobjekte + Umschläge) | 4.710 |
 | fehlend / noch offen | 0 / 0 |
 | Größe abweichend / Etag (MD5) abweichend | 0 / 0 |
 | unerwartet unter dem Präfix | 0 |
-| archiviert, Norm aus dem Stichtagsbestand zurückgenommen (bleibt, kein Widerspruch) | 2 |
+| archiviert, Norm aus dem Stichtagsbestand zurückgenommen (bleibt, kein Widerspruch) | 174 |
 | Manifest nicht verified | 0 |
-| deterministische Byte-Stichprobe (Saat `2023-12-01`, SHA-256 nach Download) | 150 von 150 geprüft, 0 Fehler, 25.5 MiB |
+| deterministische Byte-Stichprobe (Saat `2023-12-01`, SHA-256 nach Download) | 150 von 150 geprüft, 0 Fehler, 25.6 MiB |
 | Umschlag-Stichprobe (Kernfelder; bytegleich außer archiviertem Stand mit abweichendem Titel) | 25 geprüft, 0 Fehler, 1 mit archiviertem Titel |
 | Ergebnis | **0 Abweichungen** |
 
@@ -57,20 +57,20 @@ Status: **verified**
 
 | Kennzahl | vorher | nachher |
 | --- | --- | --- |
-| Zeitpunkt | 2026-09-19T14:01:26.912Z | 2026-09-19T14:03:36.143Z |
-| Objekte gesamt | 42.870 (2011.8 MiB) | 42.870 (2011.8 MiB) |
-| unter `baywue/` | 4.704 (461.3 MiB) | 4.704 (461.3 MiB) |
-| außerhalb `baywue/` | 38.166 | 38.166 |
-| `baywue/` | 4.704 (461.3 MiB) | 4.704 (461.3 MiB) |
-| `nsh/` | 15.454 (714.6 MiB) | 15.454 (714.6 MiB) |
-| `west/` | 22.712 (835.9 MiB) | 22.712 (835.9 MiB) |
-| Fingerabdruck außerhalb `baywue/` (Schlüssel, Größe, Etag) | `c5ee1078b02d5d29…` | `c5ee1078b02d5d29…` |
+| Zeitpunkt | 2026-09-29T10:15:07.563Z | 2026-09-29T10:17:12.011Z |
+| Objekte gesamt | 51.104 (2305.7 MiB) | 51.104 (2305.7 MiB) |
+| unter `baywue/` | 4.968 (484.7 MiB) | 4.968 (484.7 MiB) |
+| außerhalb `baywue/` | 46.136 | 46.136 |
+| `baywue/` | 4.968 (484.7 MiB) | 4.968 (484.7 MiB) |
+| `nsh/` | 23.356 (976.8 MiB) | 23.356 (976.8 MiB) |
+| `west/` | 22.780 (844.3 MiB) | 22.780 (844.3 MiB) |
+| Fingerabdruck außerhalb `baywue/` (Schlüssel, Größe, Etag) | `dd232c82de049d4f…` | `dd232c82de049d4f…` |
 
 Außerhalb von `baywue/` ist der Bucket unverändert (gleicher Fingerabdruck über Schlüssel, Größe und Etag).
 
 ## Läufe dieses Archivs
 
-17 Läufe, 2026-09-18T06:44:37.545Z – 2026-09-19T14:03:36.150Z (112739 s Wanduhr, 2535 s Laufzeit). Vor dem ersten Lauf: 22.712 Objekte im Bucket, 0 unter `baywue/`; nach dem letzten Lauf: 42.870 Objekte, 4.704 unter `baywue/`. Fingerabdruck außerhalb `baywue/` über alle Messungen: **verändert**.
+19 Läufe, 2026-09-18T06:44:37.545Z – 2026-09-29T10:17:12.019Z (963154 s Wanduhr, 2933 s Laufzeit). Vor dem ersten Lauf: 22.712 Objekte im Bucket, 0 unter `baywue/`; nach dem letzten Lauf: 51.104 Objekte, 4.968 unter `baywue/`. Fingerabdruck außerhalb `baywue/` über alle Messungen: **verändert**.
 
 | Beginn | Ende | Status | hochgeladen Roh / Umschlag | bereits vorhanden | Bucket vorher (gesamt / baywue) | Bucket nachher (gesamt / baywue) | Befund |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -91,6 +91,8 @@ Außerhalb von `baywue/` ist der Bucket unverändert (gleicher Fingerabdruck üb
 | 2026-09-19T06:36:23.386Z | 2026-09-19T06:37:25.224Z | verified | 0 / 0 | 0 | 27.384 / 4.672 | 27.384 / 4.672 | – |
 | 2026-09-19T13:55:29.311Z | 2026-09-19T13:58:26.065Z | failed | 16 / 16 | 2.041 | 42.838 / 4.672 | 42.870 / 4.704 | – |
 | 2026-09-19T14:00:32.705Z | 2026-09-19T14:03:36.150Z | verified | 0 / 0 | 2.057 | 42.870 / 4.704 | 42.870 / 4.704 | – |
+| 2026-09-29T10:05:14.010Z | 2026-09-29T10:08:42.985Z | failed | 90 / 90 | 1.971 | 50.924 / 4.788 | 51.104 / 4.968 | – |
+| 2026-09-29T10:14:02.713Z | 2026-09-29T10:17:12.019Z | verified | 0 / 0 | 2.060 | 51.104 / 4.968 | 51.104 / 4.968 | – |
 
 ## Regeln dieses Laufs
 
@@ -99,4 +101,4 @@ Außerhalb von `baywue/` ist der Bucket unverändert (gleicher Fingerabdruck üb
 - Der Bucket bleibt privat; keine öffentliche URL, kein r2.dev, keine Custom Domain.
 - Die Normdateien unter `content/norms/baywue/` bleiben unberührt; die Archivierung steht im Manifest (`bucket`, `objectKey`, `archiveStatus`).
 
-Befehl: `npm run import:bayernrecht:r2-sync -- --write --r2-transport wrangler-api --concurrency 32 --verify etag`
+Befehl: `npm run import:bayernrecht:r2-sync -- --write --r2-transport wrangler-api --concurrency 8 --verify etag`

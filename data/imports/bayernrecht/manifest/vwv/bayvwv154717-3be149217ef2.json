@@ -54,6 +54,11 @@
         "severity": "info",
         "code": "sentence-numbers",
         "message": "7 Satznummern als Inline-Marker übernommen (Unicode-Hochzahl vor dem Satz)"
+      },
+      {
+        "severity": "warning",
+        "code": "withdrawn-text-unproven",
+        "message": "Veröffentlichung zurückgenommen: der übernommene Text trägt eine Änderung nach dem Stichtag (Der gezeigte Text gilt laut Paket seit 2014-01-01, wurde aber nach dem Stichtag geändert (Ereignisregister oder Vollzitat); die Fassung vom 2023-12-01 ist zurückzurechnen); Stichtagsfassung nicht sicher rückrechenbar. Slug verguetungen-fuer-den-nebenamtlichen-unterricht-baywue bleibt reserviert"
       }
     ],
     "integrity": {
@@ -61,13 +66,13 @@
       "sourceCanonical": true
     },
     "transformation": {
-      "changes": 6,
+      "changes": 0,
       "unresolved": 0,
-      "detections": 8,
-      "postTransformAudit": true
+      "detections": 0,
+      "postTransformAudit": false
     },
-    "reviewStatus": "none",
-    "targetSlug": "verguetungen-fuer-den-nebenamtlichen-unterricht-baywue",
+    "reviewStatus": "resolved",
+    "targetSlug": "",
     "sourceArea": "vwv",
     "sourceIdentity": "BayVwV154717",
     "sourceTitle": "Vergütungen für den nebenamtlichen Unterricht",
@@ -82,7 +87,7 @@
     "sourceValidFrom": "2014-01-01",
     "sourceValidTo": null,
     "baselineStatus": "active-at-baseline",
-    "baselineRecoveryMethod": "current-source",
+    "baselineRecoveryMethod": "reverse-post-baseline-event",
     "sourceProvenance": {
       "publicationAuthority": "unknown",
       "digitalRepresentation": "born-digital",
@@ -92,12 +97,12 @@
     "sha256": "50fafc85e1d86d71826abe3f1ea985468418a69a0f21fe6c21ca4c6b40d2d26f",
     "contentType": "application/zip",
     "transformerVersion": "bayernrecht-transformer/1.3.1",
-    "importStatus": "imported",
+    "importStatus": "needs-review",
     "decisionTrace": {
       "schemaVersion": "bayernrecht-decision-trace/1",
       "documentId": "BayVwV154717",
       "baselineDate": "2023-12-01",
-      "statement": "Die Vorschrift wurde am ? ausgefertigt und ihr gezeigter Text gilt seit 2014-01-01 unverändert; damit galt genau dieser Text am 2023-12-01.",
+      "statement": "Nicht übernommen: amended-after-baseline-portal-date-stale (changed-after-baseline, active-at-baseline).",
       "scope": {
         "decision": "include",
         "reason": "state-law-in-scope",
@@ -106,11 +111,14 @@
         ]
       },
       "baseline": {
-        "class": "unchanged-since-baseline",
+        "class": "changed-after-baseline",
         "status": "active-at-baseline",
-        "method": "current-unchanged",
-        "reason": "text-unchanged-since-before-baseline",
-        "blockers": [],
+        "method": "undetermined",
+        "reason": "amended-after-baseline-portal-date-stale",
+        "blockers": [
+          "Der gezeigte Text gilt laut Paket seit 2014-01-01, wurde aber nach dem Stichtag geändert (Ereignisregister oder Vollzitat); die Fassung vom 2023-12-01 ist zurückzurechnen",
+          "Rekonstruktion: effective-date-undetermined (commencement-unreadable) – BayMBl. 2024 Nr. 610 (Nr. 1): Keine Grundregel zum Inkrafttreten gefunden"
+        ],
         "evidence": [
           {
             "kind": "issue-date",
@@ -140,8 +148,8 @@
         ]
       },
       "recovery": {
-        "method": "current-source",
-        "note": "Der gezeigte Text gilt seit vor dem Stichtag unverändert; die abgerufene Quellfassung ist zugleich die Stichtagsfassung."
+        "method": "reverse-post-baseline-event",
+        "note": "Der Stichtagsstand ist nicht gewonnen. reverse-post-baseline-event bezeichnet den vorgesehenen Weg (Klassifikation: undetermined); der Eintrag wird nicht übernommen."
       },
       "source": {
         "zipUrl": "https://www.gesetze-bayern.de/Content/Zip/BayVwV154717",
@@ -154,17 +162,17 @@
       },
       "evidenceChain": [
         "Scope: include – state-law-in-scope (enumeration:facet-hitlist)",
-        "Stichtag: unchanged-since-baseline / active-at-baseline / current-unchanged – text-unchanged-since-before-baseline",
+        "Stichtag: changed-after-baseline / active-at-baseline / undetermined – amended-after-baseline-portal-date-stale",
         "Beleg issue-date: 2001-07-13 (xml:ausfertigungsdatum)",
         "Beleg text-in-force: 2014-01-01 (xml:inkraft)",
         "Beleg post-baseline-event: amend 2024-12-11 (BayMBl. 2024 Nr. 610) (event-ledger)",
         "Beleg issue-date: 2001-07-13 (citation:Zitiervorschlag)",
         "Beleg change-note: 2024-10-20 (citation:zuletzt geändert)",
+        "Offen: Der gezeigte Text gilt laut Paket seit 2014-01-01, wurde aber nach dem Stichtag geändert (Ereignisregister oder Vollzitat); die Fassung vom 2023-12-01 ist zurückzurechnen",
+        "Offen: Rekonstruktion: effective-date-undetermined (commencement-unreadable) – BayMBl. 2024 Nr. 610 (Nr. 1): Keine Grundregel zum Inkrafttreten gefunden",
         "Quelle: https://www.gesetze-bayern.de/Content/Zip/BayVwV154717 (SHA-256 50fafc85e1d86d71…, abgerufen 2026-09-18T01:10:40.104Z)",
         "Werkzeuge: bayernrecht-parser/0.2.0, bayernrecht-transformer/1.3.1"
       ]
-    },
-    "importedAt": "2026-09-19T15:28:08.831Z",
-    "runId": "bayernrecht-bulk-20260919t152641z"
+    }
   }
 }

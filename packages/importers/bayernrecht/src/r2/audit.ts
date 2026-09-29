@@ -20,7 +20,7 @@ import type { R2ListedObject, R2Transport } from '@landesrecht/importer-recht-nr
 import { R2_SOURCES_BUCKET } from '../common/environment.ts';
 import type { ImportManifest } from '../common/manifest.ts';
 import { identityFileName } from '../common/paths.ts';
-import { deterministicSample, envelopeBytes, envelopeCoreProblems, envelopeFor, isArchiveKey, JURISDICTION_PREFIX, KEY_PREFIX, md5Hex, sha256Hex } from './archive.ts';
+import { deterministicSample, envelopeBytes, envelopeCoreProblems, envelopeFor, envelopeKey, isArchiveKey, JURISDICTION_PREFIX, KEY_PREFIX, md5Hex, r2ObjectKey, sha256Hex } from './archive.ts';
 import { archiveCandidates, readIfExists } from './stage.ts';
 
 /** Lokale Beschreibung eines erwarteten Objekts (Rohobjekt oder Umschlag) aus dem Staging. */
@@ -281,12 +281,22 @@ export async function auditRemote(options: RemoteAuditOptions): Promise<RemoteAu
     }
   }
   const expectedKeys = new Set(candidates.flatMap((candidate) => [candidate.objectKey, candidate.envelopeKey]));
-  const withdrawnPrefixes = options.manifest.entries
-    .filter((entry) => (entry.findings ?? []).some((finding) => finding.code === 'withdrawn-not-at-baseline'))
-    .map((entry) => `${KEY_PREFIX}${entry.sourceArea}/${identityFileName(entry.sourceIdentity)}/`);
+  // Zurückgenommene Normen (nicht am Stichtag geltend bzw. Lauf 18: Stichtagstext nicht belegt): ihr Archiv bleibt.
+  const withdrawnEntries = options.manifest.entries
+    .filter((entry) => (entry.findings ?? []).some((finding) => finding.code === 'withdrawn-not-at-baseline' || finding.code === 'withdrawn-text-unproven'));
+  const withdrawnPrefixes = withdrawnEntries.map((entry) => `${KEY_PREFIX}${entry.sourceArea}/${identityFileName(entry.sourceIdentity)}/`);
+  // Schlüssel wie im Archiv abgeleitet (Abbildungen liegen unter assets/, nicht unter dem Präfix der Quellidentität).
+  const withdrawnKeys = new Set(withdrawnEntries.flatMap((entry) => entry.rawDocuments.flatMap((document) => {
+    try {
+      const objectKey = r2ObjectKey({ sourceArea: entry.sourceArea, sourceIdentity: entry.sourceIdentity, sha256: document.sha256, role: document.role, contentType: document.contentType });
+      return [objectKey, envelopeKey(objectKey)];
+    } catch {
+      return [];
+    }
+  })));
   for (const key of listed.keys()) {
     if (expectedKeys.has(key)) continue;
-    if (withdrawnPrefixes.some((prefix) => key.startsWith(prefix))) audit.retainedWithdrawn.push(key);
+    if (withdrawnKeys.has(key) || withdrawnPrefixes.some((prefix) => key.startsWith(prefix))) audit.retainedWithdrawn.push(key);
     else audit.unexpected.push(key);
   }
   audit.unexpected.sort();

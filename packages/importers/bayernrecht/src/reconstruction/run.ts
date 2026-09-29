@@ -688,13 +688,17 @@ const RECONSTRUCTION_EVIDENCE_SOURCE = 'reconstruction';
 /** Stellt die Entscheidung der Klassifikation wieder her (idempotent gegenüber früheren Läufen). */
 function restoreChanged(decision: BaselineDecision, baselineDate: string): BaselineDecision {
   const inForce = decision.evidence.find((entry) => entry.kind === 'text-in-force')?.value;
+  // Lauf 18: Paketdatum vor dem Stichtag, aber nach dem Stichtag geändert (Klassifikation 3b) – Grund bleibt erhalten.
+  const stale = inForce !== undefined && inForce <= baselineDate;
   return {
     ...decision,
     status: 'active-at-baseline',
     method: 'undetermined',
-    reason: 'text-changed-after-baseline',
+    reason: stale ? 'amended-after-baseline-portal-date-stale' : 'text-changed-after-baseline',
     evidence: decision.evidence.filter((entry) => entry.source !== RECONSTRUCTION_EVIDENCE_SOURCE),
-    blockers: [`Der gezeigte Text gilt erst ab ${inForce ?? '–'}; die Fassung vom ${baselineDate} ist zu beschaffen`],
+    blockers: [stale
+      ? `Der gezeigte Text gilt laut Paket seit ${inForce}, wurde aber nach dem Stichtag geändert (Ereignisregister oder Vollzitat); die Fassung vom ${baselineDate} ist zurückzurechnen`
+      : `Der gezeigte Text gilt erst ab ${inForce ?? '–'}; die Fassung vom ${baselineDate} ist zu beschaffen`],
   };
 }
 

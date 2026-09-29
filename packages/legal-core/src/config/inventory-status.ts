@@ -54,6 +54,18 @@ export interface BaselineFreezeStatus {
   assessedAt: string;
 }
 
+/**
+ * Satz zum Baseline-Status für die Oberfläche – datengetrieben: eingefroren, bewertet (NOT READY, READY WITH HUMAN REVIEW,
+ * BASELINE READY) oder ausdrücklich noch nicht bewertet. Ohne Bewertung wird keine erfunden.
+ */
+export function baselineFreezeText(freeze: BaselineFreezeStatus | undefined): string | undefined {
+  if (!freeze) return undefined;
+  if (freeze.frozen) return 'Der veröffentlichte Ausgangsrechtsstand ist eingefroren (Änderungen nur mit dokumentierter Entscheidung).';
+  if (!freeze.readiness) return 'Ausgangsrechtsstand nicht eingefroren; Freeze-Bewertung noch nicht durchgeführt.';
+  const readiness = freeze.readiness === 'BASELINE READY' ? 'bereit' : freeze.readiness === 'READY WITH HUMAN REVIEW' ? 'bereit nach fachlicher Prüfung offener Fälle' : 'noch nicht bereit (technische Blocker offen)';
+  return `Ausgangsrechtsstand nicht eingefroren; Freeze-Bewertung: ${readiness}, Stand ${freeze.assessedAt}.`;
+}
+
 export interface InventoryStatus {
   jurisdiction: JurisdictionId;
   baselineDate: string;

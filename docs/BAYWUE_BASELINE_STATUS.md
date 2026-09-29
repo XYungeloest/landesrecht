@@ -1,5 +1,10 @@
 # Stand des Stichtagsbestands Bayern-Württemberg
 
+> **Aktueller Stand (Lauf 18, 2026-09-29):** 1 619 Baseline-Normen (1 444 exakt, 114 zurückgerechnet, 61 aus Verkündungen
+> wiederhergestellt). 83 früher als „unverändert“ übernommene Normen sind zurückgenommen, weil ihr Text nach dem Stichtag
+> geändert wurde und sich nicht sicher zurückrechnen ließ (`docs/BAYWUE_RECONSTRUCTION.md` §25). Die Freeze-Bewertung steht in
+> `docs/BAYWUE_BASELINE_FREEZE_READINESS.md`. Die Zahlen unten beschreiben den Stand von Lauf 10.
+
 ## Status: DEPLOYED (Teilbestand) · Stand 2026-09-19 (Run 10)
 
 **1 700 Normen des bayerischen Landesrechts zum 2023-12-01 sind übergeleitet, archiviert, projiziert und

@@ -1271,3 +1271,29 @@ Bulk-Schnittstelle: unverändert im Verfahren. Neu und optional am Rezeptschritt
 `relabel` (nur bei Wechsel der Gliederungsart; `apply.ts` setzt den Blocktyp mit um) und `reviewDecision` (Beleg). Eine
 Entscheidungsdatei liest nur die Rückrechnung; der Bulk sieht das fertige Rezept.
 
+
+## 25 Lauf 18: veraltetes Paketdatum – der heutige Text ist trotz `inkraft` vor dem Stichtag jünger
+
+Die Stichtagsklassifikation hielt eine Norm für „seit vor dem Stichtag unverändert“, sobald das Paketdatum `inkraft` vor dem
+Stichtag lag. Bei 127 Normen widerlegt das Ereignisregister (stark zugeordnete Änderung, nach dem Stichtag ausgefertigt, am
+Quellstand wirksam) oder das Vollzitat („zuletzt geändert durch … vom 4. Juni 2024“) diese Annahme. Häufigster Fall:
+GVBl. 2024 S. 98 (Anpassung der Ressortbezeichnungen, „Staatsministerium für Ernährung, Landwirtschaft, Forsten und
+Tourismus“) in Texten mit Paketdatum 2007 bis 2021.
+
+- **Klassifikation 3b** (`baseline/classify.ts`): In diesem Fall gilt `changed-after-baseline` mit Grund
+  `amended-after-baseline-portal-date-stale`. Das gilt auch für rückwirkend in Kraft gesetzte, nach dem Stichtag ausgefertigte
+  Änderungen (`docs/SIMULATION_IMPORT.md` 6.2). Eine erst künftig wirksame Änderung zählt nicht, der heutige Text ist
+  dann noch der alte.
+- **Rückrechnung**: Kette, Walk und Rezeptprüfung akzeptieren ein Paketdatum vor dem Stichtag als veraltet. Ob der heutige
+  Text jede Änderung trägt, belegt allein die Rückrechnung: Jeder neue Wortlaut wird genau einmal gefunden, und das
+  Forward-Replay ergibt exakt den heutigen Text. Der Bulk prüft das bei jeder Anwendung erneut.
+- **Ergebnis**:
+  - 43 neue Rezepte, alle mit exaktem Rundlauf. 42 veröffentlichte Normen tragen jetzt die zurückgerechnete
+    Stichtagsfassung, eine (BayVV_2230_7_1_K_10450) ist neu.
+  - 83 Veröffentlichungen sind zurückgenommen (`withdrawn-text-unproven`). Ihr Slug bleibt reserviert, ihr R2-Archiv
+    bleibt erhalten, der Review-Fall ist `resolved-excluded` / `text-unproven-after-baseline`.
+  - `strgvv-baywue` (Seed) bleibt gesperrt und offen, siehe `data/simulation/baywue/strgvv-baseline-seed-decision.md`.
+- **Nicht umgesetzt** (kein neuer Parser für Einzelfälle): die Reihenfolge von Inkrafttreten innerhalb eines Gesetzes
+  (`chain-commencement-order`). Ein Probelauf ohne diese Prüfung machte keinen der 21 Fälle rekonstruierbar; sie scheitern
+  danach an fehlenden Vorgängerverkündungen, Neufassungen ohne Alttext oder Paketdaten. Ebenso nicht umgesetzt: exotische
+  Befehlsformen (`unsupported-formula`, `round-trip-failed`).

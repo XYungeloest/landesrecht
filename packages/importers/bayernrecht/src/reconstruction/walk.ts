@@ -685,8 +685,13 @@ export async function walkChain(input: WalkInput): Promise<WalkResult> {
       newestLatest = remaining;
     } else result.steps.unshift(...lagging);
   }
-  if (input.inForceFrom !== newestLatest) return fail('contradictory', 'portal-in-force-mismatch', `Der heutige Text gilt laut Paket seit ${input.inForceFrom ?? '–'}, die jüngste Änderung ${result.steps[0]!.citation} tritt am ${result.steps[0]!.effectiveDates.join(', ')} in Kraft`);
-  result.evidence.push(`Inkrafttreten in Kettenreihenfolge, alle nach dem Stichtag: ${chronological.map((step) => `${step.citation}${step.section ? ` ${step.section}` : ''} → ${step.effectiveDates.join('/')}`).join('; ')}; das jüngste = inkraft des Pakets (${input.inForceFrom})`);
+  // Lauf 18: Ein Paketdatum vor dem Stichtag bei einer Kette nur aus Änderungen nach dem Stichtag ist veraltet (die
+  // Stichtagsklassifikation hat die Änderung aus Register oder Vollzitat belegt). Es widerlegt die Kette nicht; ob der
+  // heutige Text jede Änderung trägt, entscheidet allein die Rückrechnung: Jeder neue Wortlaut muss genau einmal gefunden
+  // werden und das Forward-Replay exakt den heutigen Text ergeben – sonst entsteht kein Rezept.
+  const staleInForce = input.inForceFrom !== undefined && input.inForceFrom <= input.baselineDate && newestLatest <= input.evaluationDate;
+  if (input.inForceFrom !== newestLatest && !staleInForce) return fail('contradictory', 'portal-in-force-mismatch', `Der heutige Text gilt laut Paket seit ${input.inForceFrom ?? '–'}, die jüngste Änderung ${result.steps[0]!.citation} tritt am ${result.steps[0]!.effectiveDates.join(', ')} in Kraft`);
+  result.evidence.push(`Inkrafttreten in Kettenreihenfolge, alle nach dem Stichtag: ${chronological.map((step) => `${step.citation}${step.section ? ` ${step.section}` : ''} → ${step.effectiveDates.join('/')}`).join('; ')}; ${staleInForce && input.inForceFrom !== newestLatest ? `inkraft des Pakets (${input.inForceFrom}) veraltet – Einarbeitung jeder Änderung nur durch Rückrechnung und Rundlauf belegt` : `das jüngste = inkraft des Pakets (${input.inForceFrom})`}`);
 
   // 5 – Ein Schritt weiter zurück: Die Vorgänger der Stichtagsfassung dürfen nicht erst nach dem Stichtag gelten.
   for (const witness of result.witnesses) {
