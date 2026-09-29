@@ -71,12 +71,41 @@ export function compareIntegrity(sourceText: string, canonicalText: string, expl
   if (explained.length > 0) {
     let reduced = source;
     const used: string[] = [];
+    // Umordnungen (mit Ersatz) stehen in Dokumentreihenfolge: Jede gilt ab dem Ende der vorigen – sonst träfe ein
+    // wiederholter Tabellenkopf („Lfd. Nr. | Registerzeichen | …“ auf jeder Seite) immer sein erstes Vorkommen (Run 17).
+    let reorderCursor = 0;
     for (const explanation of explained) {
       const stream = characterStream(explanation.text);
-      const at = stream ? reduced.indexOf(stream) : -1;
+      const reorder = explanation.replacement !== undefined;
+      const replacement = reorder ? characterStream(explanation.replacement!) : '';
+      let at = stream ? reduced.indexOf(stream, reorder ? reorderCursor : 0) : -1;
+      // Gleicher Quelltext mehrfach (nur als Tabelle übernommener Kopf, anderswo Fließtext): das Vorkommen, an dem der
+      // kanonische Text genau die Umordnung trägt.
+      if (reorder && at >= 0) {
+        for (let probe = at; probe >= 0; probe = reduced.indexOf(stream, probe + 1)) {
+          if (canonical.startsWith(replacement, probe)) {
+            at = probe;
+            break;
+          }
+        }
+      }
+      // Entfernung eines mehrdeutigen kurzen Textes (Fußnotenzeichen „1)“): das Vorkommen, an dem der Text davor und
+      // danach mit dem kanonischen Text übereinstimmt (Run 17).
+      if (!reorder && at >= 0 && reduced.indexOf(stream, at + 1) >= 0) {
+        for (let probe = at; probe >= 0; probe = reduced.indexOf(stream, probe + 1)) {
+          const before = reduced.slice(Math.max(0, probe - 30), probe);
+          const after = reduced.slice(probe + stream.length, probe + stream.length + 30);
+          if (canonical.slice(Math.max(0, probe - 30), probe) === before && canonical.startsWith(after, probe)) {
+            at = probe;
+            break;
+          }
+        }
+      }
       if (at < 0) continue;
       // Mit Ersatz: dieselben Zeichen in anderer Folge (mehrzeilige Tabellenzellen); sonst entfernt (Metadatum).
-      reduced = `${reduced.slice(0, at)}${explanation.replacement !== undefined ? characterStream(explanation.replacement) : ''}${reduced.slice(at + stream.length)}`;
+      reduced = `${reduced.slice(0, at)}${replacement}${reduced.slice(at + stream.length)}`;
+      if (reorder) reorderCursor = at + replacement.length;
+      else if (at < reorderCursor) reorderCursor -= stream.length;
       used.push(explanation.reason);
     }
     if (reduced === canonical) return { ...base, class: 'explained-difference', explanations: [...new Set(used)].sort() };

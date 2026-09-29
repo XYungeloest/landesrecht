@@ -11,7 +11,7 @@ Nordrhein-Westfalen → Land Westdeutschland (`docs/RECHT_NRW_IMPORT.md`,
 | --- | --- |
 | Quellland (Provenienz, nie transformiert) | Schleswig-Holstein (`SOURCE_STATE`) |
 | Zieljurisdiktion | `nsh` – „Land Niedersachsen-Holstein“, Kurzform „NSH“, Verkündungsblatt „GVOBl. NSH“ |
-| Transformerversion | `juris-sh-transformer/1.4.0` (`TRANSFORMER_VERSION` in `transform/rules.ts`); 1.1.0 (Run 7): Abkürzungsregel für bekannte Normabkürzungen, Schutz historischer Eigennamen; 1.2.0 (Run 8): Kürzel in der Mitte, amtliche Kurzbezeichnungen aus Titeln, Fundstellen ohne Blattnamen, weitere Aktenzeichenformen; 1.3.0 (Run 9): Erlassorgane gemeinsamer Verordnungen, Namensvarianten desselben Organs, Normgeber des juris-Kopfs als Entscheid zwischen Formelorganen; 1.4.0 (Run 16): ausgeschriebener Blattname mit Landeskürzel („Amtsblatt für Schl.-H.“, „Amtsblatt SH“) ist geschützte Fundstellenbezeichnung |
+| Transformerversion | `juris-sh-transformer/1.5.0` (`TRANSFORMER_VERSION` in `transform/rules.ts`); 1.1.0 (Run 7): Abkürzungsregel für bekannte Normabkürzungen, Schutz historischer Eigennamen; 1.2.0 (Run 8): Kürzel in der Mitte, amtliche Kurzbezeichnungen aus Titeln, Fundstellen ohne Blattnamen, weitere Aktenzeichenformen; 1.3.0 (Run 9): Erlassorgane gemeinsamer Verordnungen, Namensvarianten desselben Organs, Normgeber des juris-Kopfs als Entscheid zwischen Formelorganen; 1.4.0 (Run 16): ausgeschriebener Blattname mit Landeskürzel („Amtsblatt für Schl.-H.“, „Amtsblatt SH“) ist geschützte Fundstellenbezeichnung; 1.5.0 (Lauf 17): „SH“ mit normativem Landesbezug (an Normabkürzung/Normbezeichnung, „in SH“) → „NSH“, Eigen-, Programm- und Systemnamen geschützt |
 | Reportschema | `juris-sh-transformation-report/1` |
 | Institutionen-Zuordnung | `data/imports/juris-sh/institution-mapping.json` (`juris-sh-institution-mapping/1`) |
 | Tests | `tests/unit/juris-sh-transform.test.ts` |
@@ -59,6 +59,10 @@ sind nie Gegenstand einer Regel. Daraus folgt beides zugleich:
 | `jurisdiction-abbreviation-dotted` | „Schl.-H.“ **nur** nach „Land“, „Landes“, „Lande“ | „NSH“ (Satzpunkt bleibt erhalten) |
 | `jurisdiction-abbreviation` | „SH“ **nur** nach „Land“, „Landes“, „Lande“ | „NSH“ |
 | `jurisdiction-abbreviation-known-law` (1.1.0) | Landeskürzel „SH“/„Schl.-H.“ **nur** an einer bekannten Normabkürzung des Bestands („LVwG SH“, „MBG Schl.-H.“, „LDSG-SH“, auch vorangestellt „SH-…“) | „LVwG NSH“, „MBG NSH“, „LDSG-NSH“ (Satzpunkt bleibt) |
+| `jurisdiction-abbreviation-law-dotted` (1.5.0) | „Schl.-H.“ nach einer normförmigen Abkürzung (`…G`, `…VO`, `…V`, `…O`) oder Normbezeichnung („Mitbestimmungsgesetz Schl.-H.“) | „NSH“ (Satzpunkt bleibt) |
+| `jurisdiction-abbreviation-law-suffix` (1.5.0) | „SH“ nach normförmiger Abkürzung oder Normbezeichnung, getrennt durch Leerzeichen, Bindestrich oder Punkt („DSG SH“, „BeamtVG-SH“, „Landesverordnung SH“) | „… NSH“ |
+| `jurisdiction-abbreviation-law-prefix` (1.5.0) | „SH-“/„SH.“ vor normförmiger Abkürzung („SH-BeamtVG“) | „NSH-BeamtVG“ |
+| `jurisdiction-abbreviation-state-reference` (1.5.0) | „SH“ als Landesbezug nach „in“, „nach“, „für“, „aus“, „von“, „und“, „oder“, „zwischen“ vor Satzzeichen, Ende oder kleingeschriebenem Wort („Wohnsitz in SH.“) | „NSH“ |
 
 **Schreibvarianten.** Zwischen den Namensteilen werden Bindestrich, geschützter Bindestrich,
 Gedankenstriche (U+2010–U+2015), Minuszeichen, Leerzeichen und Zeilenumbruch erkannt
@@ -122,6 +126,17 @@ Anwendung ist eine Erkennung mit Regel, Fundstelle und `from`/`to` im Report.
 * Weiter Review (kein Beleg): Einrichtungs-, System- und Regionskürzel ohne Einführung („Krankenhausgesellschaft SH“,
   „Landesnetz SH“, „SH-Tarif“, „Helgoland SH“), Kurzformen fremder Titel („Mitbestimmungsgesetz Schl.-H.“) und
   Tippfehler der Quelle („Schleswig-Holsteinigen“).
+
+**Normativer Landesbezug (1.5.0, Lauf 17).** Zentrale Regel: Wo „SH“ das Land als Normgeber oder Geltungsraum
+bezeichnet, wird es „NSH“ – an einer normförmigen Abkürzung oder Normbezeichnung auch ohne Eintrag in der belegten
+Liste, und als Landesbezug nach einer Präposition. Die reale Abkürzung bleibt als Quellform (Alias, Provenienz) erhalten.
+Geschützt bleiben (Kategorien `external-name`, `historical-name`, `file-reference`, `gazette`, `source-defect`):
+Organisations-, Programm-, System- und Vereinsnamen („Krebsregister SH“, „Standard-IT SH“, „BOB-SH“, „IB SH“,
+„Investitionsbank Schl.-H.“, „Schleswig-Holsteiner … e.V.“), Normen Dritter („DIN 18065 Schl.-H.“), Aktenzeichen,
+Fundstellen, Blattnamen, Quellzitate, historische Behördennamen, externe Kennungen und fehlerhafte Quellformen
+(„…Schleswig-Holsteinigen“, zusammengeschriebenes „…nSchleswig-Holstein“). „SH“ ohne normförmige Umgebung bleibt in
+Quellform und wird nur noch als Information (`state-abbreviation-source-form`) gemeldet; in normförmiger, aber nicht
+eindeutiger Umgebung bleibt die Warnung `undecidable-source-state-abbreviation`. Es werden keine Sim-Behörden erfunden.
 
 **Historische Eigennamen (1.1.0).** Historische Staaten, Organe und Namen werden nie rückwirkend
 übergeleitet (BayWü-Regel): „Provinz Schleswig-Holstein“, „Provinzialverband“, „Provinziallandtag“,
@@ -259,8 +274,8 @@ Falschbefund. Scheitert die Nachprüfung, entsteht der Befund `post-transform-au
    wäre „niedersächsisch-holsteinisch“. Eine Änderung beträfe jede Fundstelle des Adjektivs und
    erforderte eine neue Transformerversion.
 2. **Amtliche Kurzbezeichnungen.** Entschieden in 1.1.0 (Run 7): Landeskürzel belegter Normabkürzungen
-   werden „NSH“ (`knownStateLawAbbreviations`, NRW-Muster). Offen bleiben Kürzel ohne Beleg im Bestand
-   (Einrichtungen, Programme, Regionen) – sie bleiben Review.
+   werden „NSH“ (`knownStateLawAbbreviations`, NRW-Muster); 1.5.0 (Lauf 17) erweitert das auf normförmige
+   Abkürzungen und den Landesbezug. Einrichtungs-, Programm- und Regionskürzel bleiben in Quellform.
 3. **Kommunen und Geographie.** Ortsnamen, Kreise, Inseln und Gewässer bleiben unverändert und
    erzeugen Review-Einträge. Ob die Simulation eigene Ortsnamen führt, ist nicht entschieden.
 4. **Ressortzuschnitt.** Ohne festgelegte Ministerien im Land Niedersachsen-Holstein bleibt jedes

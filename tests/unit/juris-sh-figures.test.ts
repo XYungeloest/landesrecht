@@ -90,6 +90,15 @@ describe('juris-PDF: Abbildungen als Assets', () => {
     expect(bodyText(parsed.body)).not.toMatch(/seite-2/u);
   });
 
+  it('Lauf 17: eine 1×1-Pixel-Füllfläche ist Satzmittel, keine Abbildung; ein kleines echtes Bild bleibt verzerrt ein Befund', () => {
+    const fill = parseJurisPdf(mapNorm(), { images: [png('e', { width: 1, height: 1 })] });
+    expect(figures(fill.body)).toEqual([]);
+    expect(fill.findings.filter((finding) => finding.code === 'figure')).toEqual([]);
+    expect(fill.findings.some((finding) => finding.code === 'figure-fill')).toBe(true);
+    const small = parseJurisPdf(mapNorm(), { images: [png('f', { width: 3, height: 9 })] });
+    expect(small.findings.some((finding) => finding.code === 'figure')).toBe(true);
+  });
+
   it('nimmt eine um 90° gedreht gesetzte Karte aufrecht, eine verzerrte nie', () => {
     const rotated = parseJurisPdf(mapNorm(), { images: [png('c', { width: 400, height: 600 })] });
     expect(figures(rotated.body)).toHaveLength(1);

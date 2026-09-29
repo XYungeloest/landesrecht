@@ -48,8 +48,27 @@ export const REVIEW_CATEGORIES = [
 ] as const;
 export type ReviewCategory = (typeof REVIEW_CATEGORIES)[number];
 
-export const REVIEW_ITEM_STATUSES = ['open', 'accepted', 'resolved', 'excluded', 'deferred', 'superseded'] as const;
+/**
+ * Status eines Falls. Seit Lauf 17 ausdrücklich: `resolved-imported` (fachlich entschieden, Norm/Fassung übernommen) und
+ * `resolved-excluded` (fachlich entschieden, wegen unzureichender Evidenz bewusst nicht veröffentlicht; mit `reasonCode`).
+ * Beide zählen nicht mehr als offene Entscheidung; der Fall bleibt mit Historie erhalten und auditierbar. Die älteren
+ * Status (`accepted`, `resolved`, `excluded`, `deferred`) bleiben lesbar.
+ */
+export const REVIEW_ITEM_STATUSES = ['open', 'accepted', 'resolved', 'excluded', 'deferred', 'superseded', 'resolved-imported', 'resolved-excluded'] as const;
 export type ReviewItemStatus = (typeof REVIEW_ITEM_STATUSES)[number];
+
+/** Begründungsklasse eines bewussten Ausschlusses (`resolved-excluded`). */
+export const REVIEW_REASON_CODES = [
+  'unsafe-table-structure',
+  'missing-normative-annex',
+  'missing-normative-text',
+  'annex-parent-unresolved',
+  'baseline-validity-unresolved',
+  'source-deficiency',
+  'not-at-baseline',
+  'baseline-seed-authoritative',
+] as const;
+export type ReviewReasonCode = (typeof REVIEW_REASON_CODES)[number];
 
 export const IMPORTER_DECIDER = 'importer';
 
@@ -65,6 +84,10 @@ export interface ReviewItemInput {
 
 export interface ReviewDecision {
   decision: Exclude<ReviewItemStatus, 'open'>;
+  /** Pflicht bei `resolved-excluded`. */
+  reasonCode?: ReviewReasonCode;
+  /** Klassenentscheidung, aus der die Entscheidung stammt (`data/imports/juris-sh/review-class-decisions.json`). */
+  classDecision?: string;
   reason: string;
   decidedAt: string;
   decidedBy?: string;
@@ -133,6 +156,8 @@ export function validateReviewItem(value: unknown, where = 'Review-Fall'): strin
   if (item.severity !== 'blocking' && item.severity !== 'non-blocking') problems.push(`${where}: severity ist ${String(item.severity)}`);
   if (typeof item.summary !== 'string' || item.summary.trim() === '') problems.push(`${where}: summary fehlt`);
   if (!Array.isArray(item.details)) problems.push(`${where}: details fehlt`);
+  const decision = item.decision as ReviewDecision | undefined;
+  if (item.status === 'resolved-excluded' && !(REVIEW_REASON_CODES as readonly string[]).includes(String(decision?.reasonCode))) problems.push(`${where}: resolved-excluded ohne gültigen reasonCode`);
   return problems;
 }
 
@@ -258,6 +283,7 @@ export function decideReviewItem(queue: ReviewQueue, id: string, decision: Revie
   if (!item) throw new Error(`Review-Fall ${id} existiert nicht`);
   if (!(REVIEW_ITEM_STATUSES as readonly string[]).includes(decision.decision) || (decision.decision as string) === 'open') throw new Error(`Unbekannte Entscheidung ${decision.decision}`);
   if (!decision.reason.trim()) throw new Error('Eine Entscheidung braucht eine Begründung');
+  if (decision.decision === 'resolved-excluded' && !(REVIEW_REASON_CODES as readonly string[]).includes(decision.reasonCode ?? '')) throw new Error(`resolved-excluded braucht einen reasonCode (${REVIEW_REASON_CODES.join(', ')})`);
   if (!/^\d{4}-\d{2}-\d{2}/u.test(decision.decidedAt)) throw new Error('decidedAt muss ein ISO-Datum sein');
   const history = item.decision ? [...(item.history ?? []), item.decision] : item.history;
   const next: ReviewItem = { ...item, status: decision.decision, decision, updatedAt: decision.decidedAt, ...(history ? { history } : {}) };

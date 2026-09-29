@@ -518,13 +518,15 @@ export function parseJurisPdf(layout: PdfLayout, options: ParseOptions = {}): Pa
   if (options.images === null) findings.push({ severity: 'warning', code: 'figure', message: 'Eingebettete Bilder nicht auslesbar (pdftohtml) – Abbildungen nicht prüfbar' });
   else if (options.images) figures = placeFigures(options.images, { before: all[cursor - 1], bodyLines, after: editorialLines[0], layout, findings });
   const reorders: RelocatedLine[] = [];
-  let body = dropEmptyFootnotes([...titleFootnotes, ...buildBody(bodyLines, layout, findings, isVwv, figures, reorders)], findings);
+  const emptyFootnotes: RelocatedLine[] = [];
+  let body = dropEmptyFootnotes([...titleFootnotes, ...buildBody(bodyLines, layout, findings, isVwv, figures, reorders)], findings, emptyFootnotes);
   let vwvMetadata: VwvLeadMetadata | undefined;
   let relocated: RelocatedLine[] = [];
   {
     const cleaned = removeEditorialNotes(body, findings);
     body = cleaned.body;
-    relocated.push(...cleaned.relocated, ...reorders);
+    // Leere Fußnotenzeichen zuletzt: ihre Stelle bestimmt der schon angeglichene Text davor und danach.
+    relocated.push(...cleaned.relocated, ...reorders, ...emptyFootnotes);
   }
   if (isVwv) {
     const extracted = extractVwvLeadMetadata(body, title);
@@ -1250,6 +1252,12 @@ export function placeFigures(images: readonly PdfImage[], context: { before?: Pd
     const placedWidth = image.x1 - image.x0;
     const placedHeight = image.y1 - image.y0;
     if (placedWidth * placedHeight < FIGURE_MIN_AREA) continue;
+    // Lauf 17: Ein Bild aus höchstens 2 × 2 Pixeln trägt keinen Inhalt – es ist eine Füllfläche bzw. Linie (Satzmittel),
+    // auch wenn die Ausgabe es großflächig setzt (1 × 1 Pixel auf 342 × 514 pt).
+    if (image.width * image.height <= 4) {
+      findings.push({ severity: 'info', code: 'figure-fill', message: `${where}: Füllfläche aus ${image.width}×${image.height} Pixeln (Satzmittel, keine Abbildung) nicht übernommen`, page: image.page });
+      continue;
+    }
     const pageLines = bodyLines.filter((line) => line.page === image.page);
     // juris-Symbol vor „Es ist Text als PDF-Datei vorhanden“.
     const next = pageLines.find((line) => line.y0 >= image.y1 - 2);
@@ -1719,14 +1727,16 @@ export function removeEditorialNotes(blocks: NormBodyBlock[], findings: ParseFin
  * Fußnotenzeichen ohne Fußnotentext (Quelle: „*)“ allein) ergeben keinen gültigen Block. Sie werden nicht
  * erfunden oder aufgefüllt, sondern entfernt und als Befund `empty-footnote` gemeldet (führt in den Review).
  */
-function dropEmptyFootnotes(blocks: NormBodyBlock[], findings: ParseFinding[]): NormBodyBlock[] {
+function dropEmptyFootnotes(blocks: NormBodyBlock[], findings: ParseFinding[], removed: RelocatedLine[] = []): NormBodyBlock[] {
   const kept: NormBodyBlock[] = [];
   for (const block of blocks) {
     if (block.type === 'footnote' && !(block.text ?? '').trim() && !(block.children?.length)) {
       findings.push({ severity: 'warning', code: 'empty-footnote', message: `Fußnotenzeichen ${block.label ?? '?'} ohne Fußnotentext in der Quelle` });
+      // Das Zeichen selbst steht in der Quelle; seine Entfernung ist erklärt (Textintegrität, Run 17).
+      if (block.label) removed.push({ reason: 'Fußnotenzeichen ohne Fußnotentext in der Quelle (entfernt, Befund empty-footnote)', text: block.label });
       continue;
     }
-    if (block.children) block.children = dropEmptyFootnotes(block.children, findings);
+    if (block.children) block.children = dropEmptyFootnotes(block.children, findings, removed);
     kept.push(block);
   }
   return kept;

@@ -14,7 +14,9 @@ import { SIMULATION_BASELINE_DATE } from '@landesrecht/legal-core/config/jurisdi
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 
 import { AUDIT_DIR, CACHE_DIR, SOURCE_AREAS, SOURCE_STATE, TARGET_JURISDICTION, type SourceArea } from './common/constants.ts';
-import { decideReviewItem, openReviewItems, readReviewQueue, REVIEW_CATEGORIES, REVIEW_ITEM_STATUSES, writeReviewShard, type ReviewDecision, type ReviewItemStatus } from './common/review.ts';
+import { decideReviewItem, openReviewItems, readReviewQueue, REVIEW_CATEGORIES, REVIEW_ITEM_STATUSES, REVIEW_REASON_CODES, writeReviewShard, type ReviewDecision, type ReviewItemStatus, type ReviewReasonCode } from './common/review.ts';
+import { annexGapGroupsFromCache } from './reports/annex-gaps.ts';
+import { applyClassDecisions, CLASS_DECISIONS_PATH, readClassDecisions } from './reports/review-classes.ts';
 import { buildEventLedger, writeEventLedger, LEDGER_PATH, REPORT_PATH, VWV_INVENTORY_PATH } from './events/build.ts';
 import { COVERAGE_PATH, RECONSTRUCTION_QUEUE_PATH } from './common/paths.ts';
 import { ENUMERABLE_AREAS } from './enumerate/enumeration.ts';
@@ -69,6 +71,10 @@ export interface CliOptions {
   decide?: string;
   status?: string;
   reason?: string;
+  /** review --decide … --status resolved-excluded --reason-code <code> */
+  reasonCode?: string;
+  /** review --apply-class-decisions: Klassenentscheidungen auf offene Fälle anwenden */
+  applyClassDecisions?: boolean;
   by?: string;
   override?: string;
   /** r2-sync: nur stagen (kein Netz), Staging-Verzeichnis, Transport, gleichzeitige Normen. */
@@ -124,6 +130,8 @@ export function parseCliArguments(argv: readonly string[]): CliOptions {
       case '--decide': options.decide = take(); break;
       case '--status': options.status = take(); break;
       case '--reason': options.reason = take(); break;
+      case '--reason-code': options.reasonCode = take(); break;
+      case '--apply-class-decisions': options.applyClassDecisions = true; break;
       case '--by': options.by = take(); break;
       case '--override': options.override = take(); break;
       case '--stage-only': options.stageOnly = true; break;
@@ -215,10 +223,14 @@ export const COMMAND_HELP: Readonly<Record<Command, string>> = {
   übernommen, Review, nicht am Stichtag.
   Ziele: data/audits/juris-sh/coverage.json, data/audits/juris-sh/COVERAGE.md`,
   review: `review [--area ${SOURCE_AREAS.join('|')}] [--json] [--limit n]
-review --decide <id> --status <s> --reason <text> [--by <name>] [--override <id>] [--write]
+review --decide <id> --status <s> [--reason-code <code>] --reason <text> [--by <name>] [--override <id>] [--write]
+review --apply-class-decisions [--write]
   Ohne --decide: offene Review-Fälle des NSH-Bestands (optional je Bereich). Mit --decide: Entscheidung
   zu einem Fall (Status ${REVIEW_ITEM_STATUSES.filter((status) => status !== 'open').join('|')});
-  --reason ist Pflicht, --override verweist auf data/imports/juris-sh/overrides.json.
+  --reason ist Pflicht, --override verweist auf data/imports/juris-sh/overrides.json. resolved-excluded braucht
+  --reason-code (${REVIEW_REASON_CODES.join('|')}).
+  --apply-class-decisions: Klassenentscheidungen aus data/imports/juris-sh/review-class-decisions.json auf offene
+  Fälle anwenden (Gruppen aus reports/review-classes.ts; Anlagenfälle nach der PDF-Ausgabe im Cache).
   Gespeichert nur mit --write. Kategorien: ${REVIEW_CATEGORIES.join(', ')}`,
   readiness: `readiness [--write] [--json]
   Maschinelle Bereitschaftsprüfung: erste Zeile READY oder NOT READY (Exit 0/1), danach Prüfungen und
@@ -292,6 +304,28 @@ function notImplemented(command: Command, io: Io): number {
 /** review: offene Fälle anzeigen oder genau einen Fall entscheiden. Liest den Bestand, schreibt nur mit --write. */
 async function runReviewCommand(options: CliOptions, root: string, io: Io): Promise<number> {
   const queue = await readReviewQueue(root);
+  if (options.applyClassDecisions) {
+    const file = await readClassDecisions(root);
+    if (!file) {
+      io.error(`${CLASS_DECISIONS_PATH} fehlt.`);
+      return 1;
+    }
+    const { readManifest } = await import('./common/manifest.ts');
+    const manifest = await readManifest(root);
+    const annexGroups = new Map([...annexGapGroupsFromCache(root, openReviewItems(queue), manifest.entries).entries()].map(([id, entry]) => [id, entry.group]));
+    const { queue: updated, decided } = applyClassDecisions(queue, file, annexGroups);
+    const byRule = new Map<string, number>();
+    for (const entry of decided) byRule.set(entry.rule, (byRule.get(entry.rule) ?? 0) + 1);
+    io.print(`Klassenentscheidungen: ${decided.length} offene Fälle entschieden (${[...byRule].map(([rule, count]) => `${rule} ${count}`).join(', ') || 'keine'})`);
+    if (!options.write) {
+      io.print('Dry-run. Mit --write speichern.');
+      return 0;
+    }
+    const shards = new Map(decided.map((entry) => [entry.sourceIdentity, updated.items.find((item) => item.id === entry.id)!.sourceArea]));
+    for (const [identity, area] of shards) await writeReviewShard(root, updated, area, identity);
+    io.print(`Geschrieben: ${shards.size} Review-Dateien.`);
+    return 0;
+  }
   if (options.decide) {
     const status = options.status ?? '';
     if (!(REVIEW_ITEM_STATUSES as readonly string[]).includes(status) || status === 'open') {
@@ -307,8 +341,13 @@ async function runReviewCommand(options: CliOptions, root: string, io: Io): Prom
       io.error(`Review-Fall ${options.decide} existiert nicht.`);
       return 1;
     }
+    if (status === 'resolved-excluded' && !(REVIEW_REASON_CODES as readonly string[]).includes(options.reasonCode ?? '')) {
+      io.error(`resolved-excluded braucht --reason-code ${REVIEW_REASON_CODES.join('|')}`);
+      return 1;
+    }
     const decision: ReviewDecision = {
       decision: status as Exclude<ReviewItemStatus, 'open'>,
+      ...(options.reasonCode ? { reasonCode: options.reasonCode as ReviewReasonCode } : {}),
       reason: options.reason,
       decidedAt: new Date().toISOString().slice(0, 10),
       ...(options.by ? { decidedBy: options.by } : {}),

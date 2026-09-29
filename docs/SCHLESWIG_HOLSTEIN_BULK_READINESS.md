@@ -230,6 +230,34 @@ blieben unberührt; alle Sim-Rezepte reproduzierbar (G4). Freigaben: `data/conte
   (Status, Blocker, Human Decisions; kein Freeze gesetzt). Seed-Konflikt: weiterhin nur `lbo-nsh` (Einzelfassungs-
   Baseline weicht ab, seit Run 9, durch Run 16 unverändert).
 
+## 8f Lauf 17 (2026-09-29): technische Blocker beseitigt, Restfälle klassifiziert
+
+`bulk --write`: import-ready 2 671, review 300, reconstruction 9; Normen geschrieben 61 (alle neu), keine veröffentlichte
+Ausgangsfassung geändert oder zurückgenommen → **2 672 Baseline-Normen**. Freeze-Readiness **READY WITH HUMAN REVIEW**
+(`docs/NSH_BASELINE_FREEZE_READINESS.md`, Freigabeübersicht mit Fingerabdruck `docs/NSH_BASELINE_HUMAN_APPROVAL.md`;
+kein Freeze gesetzt). Offene Fälle 412 → 1.
+
+- **Textintegrität:** Umordnungen werden in Dokumentreihenfolge angewandt (Cursor); bei wiederholtem Text (Tabellenkopf je
+  Seite) gilt das Vorkommen, an dem der kanonische Text tatsächlich fortsetzt. Leere Fußnotenzeichen werden als erklärte
+  Entfernung (`empty-footnote`) zuletzt und nur an der Stelle mit passendem Umfeld verrechnet. Füllgrafiken (≤ 4 px²) sind
+  keine Abbildungen. Ergebnis: `integrity:mismatch` 3 → 0 (2B0A, 32B5, 7921).
+- **Fassungsauswahl aus Einzelfassungen:** Eine jüngere, offene, am Stichtag verkündete Fassung löst eine ältere mit nicht
+  nachgeführtem Ende ab; bei Ressort-Zwillingen gilt der nahtlos fortgeführte; eingefügte Paragraphen werden nur innerhalb
+  eines umschlossenen §-Laufs eingeordnet (AD5, BD8, AC2, AE9 übernommen). Tests: `tests/unit/juris-sh-run9.test.ts`.
+- **Transformer 1.5.0:** normativer Landesbezug „SH“ → „NSH“ (`docs/SCHLESWIG_HOLSTEIN_TRANSFORMATION.md`); 64 von 64
+  Kürzelfällen und 10 von 11 Eigennamen- und Restfällen per Regel gelöst. Offen bleibt nur `VVSH-VVSH000002248`: Die
+  Landesfassung „DIN 1999-100 Schl.-H.“ ist dort nicht selbst belegt, und ihr Verhältnis zur Einführung von 2022 ist
+  ungeklärt.
+- **Review-Modell:** `open`, `resolved-imported`, `resolved-excluded` (Pflicht-`reasonCode`: `unsafe-table-structure`,
+  `missing-normative-annex`, `missing-normative-text`, `annex-parent-unresolved`, `baseline-validity-unresolved`,
+  `source-deficiency`, `not-at-baseline`, `baseline-seed-authoritative`), `superseded` (Befund tritt nicht mehr auf) sowie die
+  bisherigen Entscheidungen. Ausgeschlossene Fälle bleiben mit Begründung in den Shards (auditierbar, nicht offen, bei neuer
+  Evidenz neu zu öffnen). Klassenentscheidungen stehen in `data/imports/juris-sh/review-class-decisions.json` (Gruppen aus
+  `reports/review-classes.ts`, einzeln geprüfte Geltungsfälle mit `sourceIdentities` und `evidence`) und werden mit
+  `review --apply-class-decisions --write` angewandt, nur auf offene Fälle. Einzelentscheidung:
+  `review --decide <id> --status resolved-excluded --reason-code <code> --reason … --write`.
+- **LBO:** Der Seed bleibt maßgeblich, die Bulk-Ausgabe ist nicht autoritativ (`data/simulation/nsh/lbo-baseline-seed-decision.md`).
+
 ## 8c Run 9 (2026-09-28): Regeln umgesetzt, Schreiblauf zunächst offen
 
 Alle Regeln sind im Adapter mit Tests (`tests/unit/juris-sh-run9.test.ts`) umgesetzt und im Dry-run geprüft; der
@@ -288,6 +316,7 @@ Simulation fortgeschriebenen Normen (`sftg-nsh`, `gdg-nsh`, `laplag-nsh`, `lbo-n
 
 1. **Quellenrechte** (TDM-Vorbehalt, Weiterveröffentlichung der juris-Konsolidierung): menschliche Entscheidung;
    einzige Voraussetzung der Remote-Freigabe.
-2. **Fachliche Review-Fälle** (752 offen): Tabellen ohne sicheres Raster (308), Anlagen nur als gesonderte PDF-Datei
-   in juris (94), Anlagendokumente ohne eindeutige Stammnorm (84), Kürzel ohne Beleg (103), widersprüchliche
-   Erlassformeln (30), Einzelfassungen nicht eindeutig (44), Rekonstruktion (56).
+2. **Fachliche Review-Fälle** (Stand Lauf 17): 1 offen (`VVSH-VVSH000002248`, Landesfassung „DIN 1999-100 Schl.-H.“);
+   329 bewusst ausgeschlossen mit ReasonCode (Tabellen 182, fehlende Anlagen 79, Anlagen ohne Stammnorm 12, fehlender
+   Text 18, Quellmangel 16, Geltung am Stichtag nicht belegt 19, nicht am Stichtag 2, Seed maßgeblich 1) – Übersicht
+   `docs/NSH_BASELINE_FREEZE_READINESS.md`.

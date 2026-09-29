@@ -15,7 +15,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { JURISDICTION_IDS, isJurisdictionId, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { JURISDICTION_IDS, JURISDICTIONS, isJurisdictionId, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { loadJurisdictionNorms, loadJurisdictionPublications } from '@landesrecht/legal-core/lib/loader.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { isSyntheticFixtureNorm } from '@landesrecht/legal-core/lib/schema.ts';
@@ -28,7 +28,8 @@ const appDir = join(root, 'apps', 'web');
 const runtimeDir = join(root, 'data', 'runtime');
 const onlyIndex = process.argv.indexOf('--jurisdiction');
 const only = onlyIndex >= 0 ? process.argv[onlyIndex + 1] : undefined;
-const jurisdictions: JurisdictionId[] = only && isJurisdictionId(only) ? [only] : [...JURISDICTION_IDS];
+// Nur Länder mit eigener Projektion; Ost liest die OstRecht-D1 (`runtimeSource: 'ostrecht-d1'`), es gibt keine eigene Ost-D1.
+const jurisdictions: JurisdictionId[] = (only && isJurisdictionId(only) ? [only] : [...JURISDICTION_IDS]).filter((id) => JURISDICTIONS[id].runtimeSource === 'landesrecht-d1');
 
 await mkdir(runtimeDir, { recursive: true });
 const migrations = await listMigrations(join(root, 'data', 'd1'));

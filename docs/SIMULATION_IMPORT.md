@@ -467,6 +467,20 @@ REVIEW`, `BASELINE READY`); Sim-Quellenlücken (`SIM SOURCES PARTIAL`) sind davo
 Ausgangsrechtsstands. Oberfläche und Dokumentation unterscheiden entsprechend **Baseline-Status** (Teilbestand,
 eingefroren, Freeze-Readiness) und **Sim-Quellenstatus** (Vollständigkeit der Sim-Verkündungsblätter).
 
+### 6.2 Rückwirkende Normen und der Ausgangsrechtsstand
+
+Für den Ausgangsrechtsstand zum 01.12.2023 gilt, was an diesem Tag **verkündet** war. Eine erst nach dem Stichtag
+ausgefertigte bzw. erlassene Norm gehört nicht zum Ausgangsrechtsbestand, auch wenn sie ihre Rechtswirkung rückwirkend
+auf einen Zeitpunkt vor dem Stichtag anordnet (Ausfertigungs- bzw. Erlassdatum nach dem Stichtag ⇒ `enacted-after-baseline`,
+`packages/importers/juris-sh/src/parse/source-law.ts`). Ebenso trägt eine erst nach dem Stichtag verkündete, rückwirkend
+geltende Einzelfassung keine Stichtagsfassung, solange am Stichtag eine andere Fassung verkündet war
+(`pipeline/historical.ts`). Nach dem Stichtag gilt allein Simulationsrecht; reale spätere Rechtsakte werden nicht
+übernommen – auch nicht mittelbar über ihre Rückwirkung. Auf dieser Regel beruhen die zurückgenommenen NSH-Normen
+Spielbankabgabenverordnung 2025 und EFGSH 2024 sowie die zwölf aus der Rekonstruktionsqueue genommenen, 2024 erlassenen
+Verwaltungsvorschriften; sie bleiben mit dieser Begründung reproduzierbar ausgeschlossen. Ob eine juris-Einzelfassung
+mit „Fassung vom“ nach dem Stichtag echte Rückwirkung oder nur eine Neubekanntmachung ist, entscheidet nicht juris
+allein: ohne amtliche Veröffentlichung bleibt der Fall `baseline-validity-unresolved` (nicht importiert).
+
 ## 7 Vollständigkeit
 
 Je Land wird in `data/simulation/<land>/completeness.json` getrennt bewertet: bekannte Ausgaben (aus Nummernfolgen,

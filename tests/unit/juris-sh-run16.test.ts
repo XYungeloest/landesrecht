@@ -296,3 +296,24 @@ describe('Run 16: Anlagenbezeichnung mit abgesetztem Buchstaben', () => {
     expect(labels).toEqual(['Anlage 1 a', 'Anlage 2']);
   });
 });
+
+describe('Run 17: Textintegrität bei wiederholtem Tabellenkopf und leerem Fußnotenzeichen', () => {
+  it('ordnet eine Tabellenumordnung dem Vorkommen zu, an dem der Normtext sie trägt (jlr-NNLSH000032B5)', async () => {
+    const { compareIntegrity } = await import('@landesrecht/importer-juris-sh/parse/integrity.ts');
+    // Derselbe Kopf steht zweimal: zuerst als Fließtext (Seite ohne Raster), dann als Tabelle (Zellen zusammengefügt).
+    const head = 'Lfd. Register- Angelegenheit\nNr. zeichen';
+    const source = `Teil 1\n${head}\n1.1 Akten\nTeil 2\n${head}\n2.1 Akten`;
+    const canonical = `Teil 1 ${head.replace('\n', ' ')} 1.1 Akten Teil 2 Lfd. Nr. Registerzeichen Angelegenheit 2.1 Akten`;
+    const result = compareIntegrity(source, canonical, [{ reason: 'Tabelle', text: head, replacement: 'Lfd. Nr.\nRegisterzeichen\nAngelegenheit' }]);
+    expect(result.class).toBe('explained-difference');
+  });
+
+  it('erklärt das entfernte leere Fußnotenzeichen an seiner Stelle, nicht am ersten gleichen Zeichen (VVSH-VVSH000007928)', async () => {
+    const { compareIntegrity } = await import('@landesrecht/importer-juris-sh/parse/integrity.ts');
+    const source = 'Anlage 1 Einzelheiten\nprotokolliert werden.\n1)\n2) Bei HTTPS Zugriffen';
+    const canonical = 'Anlage 1 Einzelheiten protokolliert werden. 2) Bei HTTPS Zugriffen';
+    expect(compareIntegrity(source, canonical, [{ reason: 'leeres Fußnotenzeichen', text: '1)' }]).class).toBe('explained-difference');
+    // Gegenbeispiel: ohne Erklärung bleibt der Verlust ein Befund.
+    expect(compareIntegrity(source, canonical, []).class).not.toBe('explained-difference');
+  });
+});

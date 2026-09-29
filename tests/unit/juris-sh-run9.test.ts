@@ -504,3 +504,34 @@ describe('Run 9: Verzeichnis und Überschriften', () => {
     expect(parsed.findings.filter((finding) => /toc-unit-missing|body-unit-not-in-toc|toc-order/u.test(finding.code))).toEqual([]);
   });
 });
+
+describe('Lauf 17: Einzelfassungen – Ablösung, Zwillinge, eingefügte Paragraphen', () => {
+  it('die jüngere, am Stichtag verkündete Fassung löst die ältere mit nicht nachgeführtem Ende ab (Rundfunkfinanzierungsstaatsvertrag § 9)', () => {
+    const selection = selectBaselineUnits([unit(49, '§ 9', { version: '2016-12-08', from: '2017-01-01', to: '2025-11-30', text: '71,7068' }), unit(50, '§ 9', { version: '2020-06-17', from: '2021-01-01', text: '70,9842' })]);
+    expect(selection.problems).toEqual([]);
+    expect(selection.selected.map((entry) => entry.nn)).toEqual([50]);
+    // Gegenbeispiel: eine rückwirkende (erst nach dem Stichtag verkündete) Fassung löst nichts ab.
+    const retro = selectBaselineUnits([unit(1, '§ 9', { version: '2016-12-08', from: '2017-01-01', text: 'alt' }), unit(2, '§ 9', { version: '2024-07-19', from: '2023-01-01', text: 'neu' })]);
+    expect(retro.selected.map((entry) => entry.nn)).toEqual([1]);
+  });
+
+  it('bei Zwillingen gleichen Datums gilt der nahtlos fortgeführte, nicht der offene (Landwirtschaftskammergesetz § 2)', () => {
+    const units = [unit(10, '§ 2', { version: '2023-10-27', from: '2023-11-17', text: 'Ministerium für Energiewende, Landwirtschaft' }), unit(11, '§ 2', { version: '2023-10-27', from: '2023-11-17', to: '2024-12-05', text: 'Ministerium für Energiewende, Klimaschutz' }), unit(12, '§ 2', { version: '2024-11-22', from: '2024-12-06', text: 'neu' })];
+    const selection = selectBaselineUnits(units);
+    expect(selection.problems).toEqual([]);
+    expect(selection.selected.map((entry) => entry.nn)).toEqual([11]);
+    // Gegenbeispiel: zwei offene Zwillinge ohne Kette bleiben Befund.
+    const open = selectBaselineUnits([unit(18, '§ 10', { version: '2023-10-27', from: '2023-11-17', text: 'A' }), unit(19, '§ 10', { version: '2023-10-27', from: '2023-11-17', text: 'B' })]);
+    expect(open.problems[0]).toMatch(/2 Fassungen gelten zugleich/u);
+  });
+
+  it('ordnet eingefügte Paragraphen innerhalb eines zusammenhängenden §-Laufs, nie über eine Überschrift hinweg (StrWG § 40d)', () => {
+    const units = [unit(1, 'Erster Abschnitt', { from: '2003-01-01' }), unit(2, '§ 40', { from: '2003-01-01' }), unit(3, '§ 40c', { from: '2003-01-01' }), unit(4, '§ 40e', { from: '2022-06-24' }), unit(5, '§ 40f', { from: '2022-06-24' }), unit(6, '§ 40d', { from: '2022-06-24' }), unit(7, 'Zweiter Abschnitt', { from: '2003-01-01' }), unit(8, '§ 41', { from: '2003-01-01' })];
+    const selection = selectBaselineUnits(units);
+    expect(selection.problems).toEqual([]);
+    expect(selection.selected.map((entry) => entry.key)).toEqual(['Erster Abschnitt', '§ 40', '§ 40c', '§ 40d', '§ 40e', '§ 40f', 'Zweiter Abschnitt', '§ 41']);
+    // Gegenbeispiel: steht der Paragraph hinter einer Überschrift, bleibt die Abweichung ein Befund.
+    const across = selectBaselineUnits([unit(1, '§ 40', { from: '2003-01-01' }), unit(2, '§ 40e', { from: '2003-01-01' }), unit(3, 'Zweiter Abschnitt', { from: '2003-01-01' }), unit(4, '§ 40d', { from: '2003-01-01' })]);
+    expect(across.problems.some((problem) => /Reihenfolge nicht aufsteigend/u.test(problem))).toBe(true);
+  });
+});

@@ -13,7 +13,7 @@ Je Dokument aus der öffentlichen PDF-Ausgabe (Kopf „Gültig ab/bis“, Ausgab
 
 `undetermined` (→ Review): sonstige 70 · nicht im Cache 2 · Ausgabe ohne Normtext 1
 
-Historische Fassungen: Stichtagsfassungen aus den am Stichtag geltenden Einzelfassungen der juris-Historie (PDF-Ausgabe „genau dieses Dokument“) zusammengesetzt und übernahmefähig: 328; zusammengesetzt, aber aus anderen Gründen im Review: 64. Der heutige Text ersetzt nie die Stichtagsfassung.
+Historische Fassungen: Stichtagsfassungen aus den am Stichtag geltenden Einzelfassungen der juris-Historie (PDF-Ausgabe „genau dieses Dokument“) zusammengesetzt und übernahmefähig: 342; zusammengesetzt, aber aus anderen Gründen im Review: 54. Der heutige Text ersetzt nie die Stichtagsfassung.
 
 Rangfolge für jede Stichtagsfassung (unverändert): 1. öffentlich erreichbare historische juris-Fassung (Einzelfassungen „genau dieses Dokument“ mit Gültigkeitszeitraum) · 2. amtliche vollständige Veröffentlichung · 3. sichere Rekonstruktion · 4. Review. Der heutige Text ersetzt nie die Stichtagsfassung.
 
@@ -23,7 +23,7 @@ Ereignisse gesamt 5857, davon nach dem Stichtag 528. Zuordnung Ereignis → DOKN
 
 ## 3 baseline-only-Kandidaten
 
-Register (Systematische Übersicht) Stand 2024-12-13. Kandidaten **54**: Dubletten 0 · Ende vor dem Registerstand (durch das Register belegt) 21 · Ende nach dem Registerstand (nur angekündigt, Entfristung nicht ausschließbar) 33 · einem juris-Dokument zugeordnet 49 · Stichtagsfassung übernahmefähig 36.
+Register (Systematische Übersicht) Stand 2024-12-13. Kandidaten **54**: Dubletten 0 · Ende vor dem Registerstand (durch das Register belegt) 21 · Ende nach dem Registerstand (nur angekündigt, Entfristung nicht ausschließbar) 33 · einem juris-Dokument zugeordnet 49 · Stichtagsfassung übernahmefähig 37.
 
 Zugeordnete Kandidaten sind in juris als nach dem Stichtag aufgehobene Normen geführt; ihre Stichtagsfassung entsteht aus den Einzelfassungen (sonst Review). Nicht zugeordnete stehen in der Rekonstruktionsqueue.
 
@@ -33,7 +33,7 @@ Zugeordnete Kandidaten sind in juris als nach dem Stichtag aufgehobene Normen ge
 | 2023-12-31 | expire | 2013-2-63 | Landesverordnung über Verwaltungsgebühren für Pflanzenschutzangelegenheiten | GVOBl. S. 841 | confirmed-by-register | jlr-NNLSH00002FCD | import-ready |
 | 2023-12-31 | expire | 2020-3-37 | Landesverordnung über die Kassenführung der Gemeinden mit einer Haushaltswirtschaft nach den Grundsä | GVOBl. S. 623 | confirmed-by-register | – | – |
 | 2023-12-31 | expire | 2020-3-41 | Landesverordnung über die Aufstellung und Ausführung eines kameralen Haushaltsplanes der Gemeinden ( | GVOBl. S. 623 | confirmed-by-register | jlr-NNLSH00002DE1 | import-ready |
-| 2023-12-31 | expire | 2120-22-1 | Landesverordnung zur Durchführung des Schleswig-Holsteinischen Rettungsdienstgesetzes (SHRDG-DVO) | GVOBl. S. 830 | confirmed-by-register | jlr-NNLSH00003088 | review |
+| 2023-12-31 | expire | 2120-22-1 | Landesverordnung zur Durchführung des Schleswig-Holsteinischen Rettungsdienstgesetzes (SHRDG-DVO) | GVOBl. S. 830 | confirmed-by-register | jlr-NNLSH00003088 | import-ready |
 | 2023-12-31 | expire | 2131-2-7 | Landesverordnung über die Entschädigung der Wehrführungen der freiwilligen Feuerwehren und ihrer Ste | GVOBl. S. 832 | confirmed-by-register | jlr-NNLSH00002BCE | import-ready |
 | 2023-12-31 | expire | B 865-1-1 | Landesverordnung über Inhalte des Rahmenvertrags nach § 131 SGB IX zur Erbringung von Leistungen der | GVOBl. S. 1518 | confirmed-by-register | jlr-NNLSH00003283 | review |
 | 2024-01-31 | expire | 2030-16-34 | Landesverordnung über die Laufbahn der Laufbahngruppe 2 in der Fachrichtung Bildung (LVO-Bildung) | GVOBl. S. 32 | confirmed-by-register | jlr-NNLSH00002D66 | import-ready |

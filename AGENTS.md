@@ -64,7 +64,8 @@ Prioritäten:
   Evidenzhierarchie (`docs/SIMULATION_IMPORT.md` 2.1): Sekundärquellen (Wiki-Verzeichnisse, Presse) nie als Wortlaut-,
   Verkündungs- oder alleinige Rechtswirkungsgrundlage (Gate G11); nichts aus Dateinamen ableiten.
   Ein Baseline-Freeze fixiert nur den realen Ausgangsrechtsstand samt Provenienz, nie die Sim-Fortschreibung
-  (`docs/SIMULATION_IMPORT.md` 6.1); Freeze nur auf ausdrückliche Entscheidung, Bereitschaft NSH:
+  (`docs/SIMULATION_IMPORT.md` 6.1); nach dem Stichtag ausgefertigte, nur rückwirkend geltende Normen gehören nie
+  zum Ausgangsrechtsstand (6.2); Freeze nur auf ausdrückliche Entscheidung, Bereitschaft NSH:
   `node scripts/nsh-freeze-readiness.ts`. Tabellenänderungen gespeicherter Fassungen nur mit Freigabe
   (`npm run content:tables`, `data/content-table-changes.json`).
 - Bundesrecht (`gesetze-sim-internet.de`) wird nicht importiert; Anbindungsplan und Mapping in

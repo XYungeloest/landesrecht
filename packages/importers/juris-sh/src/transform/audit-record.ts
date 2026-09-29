@@ -16,7 +16,7 @@
 import type { ImportFinding } from '@landesrecht/importer-common/pipeline.ts';
 import type { NormBodyBlock, NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
 import { DOUBLED_TARGET_NAME, SOURCE_STATE_REFERENCE } from './detection.ts';
-import { findProtectedSpans } from './rules.ts';
+import { findProtectedSpans, LAW_SHAPED_STATE_ABBREVIATION } from './rules.ts';
 
 export interface RecordAuditField {
   path: string;
@@ -106,6 +106,14 @@ export function auditRecord(record: NormRecord): ImportFinding[] {
         continue;
       }
       if (BARE_ABBREVIATION.test(match[0])) {
+        // 1.5.0 (Lauf 17): Normabkürzung und Landesbezug leiten die Regeln über. Ein verbleibendes Kürzel, das nicht an
+        // einer Normbezeichnung steht (Eigen-, Programm-, Systemname, unklarer Bezug), bleibt in Quellform – dokumentiert,
+        // nicht sperrend. Nur ein nicht übergeleitetes Kürzel an einer Normbezeichnung bleibt Befund.
+        const window = field.text.slice(Math.max(0, start - 40), Math.min(field.text.length, end + 40));
+        if (!LAW_SHAPED_STATE_ABBREVIATION.test(window)) {
+          findings.push({ severity: 'info', code: 'state-abbreviation-source-form', message: `${field.path}: Kürzel „SH“ in Quellform erhalten (Eigenname oder nicht eindeutiger Bezug, keine Normbezeichnung; Kontext: „${contextOf(field.text, start, end)}“)` });
+          continue;
+        }
         findings.push({
           severity: 'warning',
           code: 'undecidable-source-state-abbreviation',

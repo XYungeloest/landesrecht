@@ -1,16 +1,25 @@
 {
-  "schemaVersion": "juris-sh-freeze-readiness/1",
+  "schemaVersion": "juris-sh-freeze-readiness/2",
   "jurisdiction": "nsh",
   "baselineDate": "2023-12-01",
   "freezeSet": false,
-  "status": "NOT READY",
+  "status": "READY WITH HUMAN REVIEW",
+  "baselineFingerprint": "1b92d06468585d5d6bbb241b470638939520d96b1b7a7e0fffea514950548cf9",
   "counts": {
-    "open": 414,
-    "openDocuments": 374,
-    "technicalBlockers": 3,
-    "humanDecisions": 411,
+    "openBefore": 412,
+    "open": 1,
+    "openDocuments": 1,
+    "technicalBlockers": 0,
+    "openHumanDecisions": 1,
     "nonBlocking": 0,
-    "before": 451
+    "resolvedExcluded": 329,
+    "resolvedExcludedDocuments": 312,
+    "missingSourceExclusions": 125,
+    "resolvedSinceBase": {
+      "imported": 62,
+      "excluded": 327,
+      "byRule": 22
+    }
   },
   "gates": [
     {
@@ -26,7 +35,7 @@
     {
       "id": "search-audit-full",
       "ok": true,
-      "detail": "2.642 Normen, 85.911 Sucheinheiten"
+      "detail": "2.703 Normen, 87.070 Sucheinheiten"
     },
     {
       "id": "d1-remote",
@@ -36,7 +45,12 @@
     {
       "id": "r2",
       "ok": true,
-      "detail": "2.611 Einträge, 10.372 Objekte, Konflikte 0"
+      "detail": "2.672 Einträge, 11.526 Objekte, Konflikte 0"
+    },
+    {
+      "id": "published-integrity",
+      "ok": true,
+      "detail": "übernommen nur exact oder erklärt; Manifest 2.672 = Bestand 2.672"
     },
     {
       "id": "contradictory-evidence",
@@ -44,285 +58,69 @@
       "detail": "0 offen (muss 0 sein)"
     }
   ],
-  "technicalBlockers": [
+  "technicalBlockers": [],
+  "openHumanDecisions": [
     {
-      "group": "Textintegrität: Abweichung",
-      "cases": 3,
-      "documents": 3,
-      "decision": "Zeichenverlust im Parser beheben",
+      "group": "state-name",
+      "label": "Landesbezeichnung oder Kürzel ohne Regel",
+      "cases": 1,
+      "documents": 1,
+      "decision": "Transformationsregel festlegen",
       "examples": [
-        "jlr-NNLSH00002B0A",
-        "jlr-NNLSH000032B5",
-        "VVSH-VVSH000007921"
-      ]
-    }
-  ],
-  "humanDecisions": [
-    {
-      "group": "Tabelle ohne sicheres Raster",
-      "cases": 179,
-      "documents": 179,
-      "decision": "Tabellenstruktur manuell bestätigen oder Fassung ohne Tabellenstruktur freigeben",
-      "examples": [
-        "jlr-NNLSH00002A8B",
-        "jlr-NNLSH00002A8C",
-        "jlr-NNLSH00002A90",
-        "jlr-NNLSH00002A9B",
-        "jlr-NNLSH00002AA7",
-        "jlr-NNLSH00002AB0"
-      ]
-    },
-    {
-      "group": "normative Anlage nur als nicht zugängliche PDF-Datei",
-      "cases": 79,
-      "documents": 79,
-      "decision": "normative Anlage fehlt: amtliche Veröffentlichung beschaffen oder Norm im Review lassen (keine OCR-Automatik)",
-      "examples": [
-        "jlr-NNLSH00002A7D",
-        "jlr-NNLSH00002A8A",
-        "jlr-NNLSH00002A8B",
-        "jlr-NNLSH00002A8C",
-        "jlr-NNLSH00002B46",
-        "jlr-NNLSH00002BCC"
-      ]
-    },
-    {
-      "group": "Einrichtung, Programm oder System mit Landeskürzel",
-      "cases": 30,
-      "documents": 30,
-      "decision": "Kürzel „SH“: amtliche Abkürzung belegen (dann Überleitung nach bestehender Regel) oder als Quellbezeichnung (Provenienz) stehen lassen",
-      "examples": [
-        "jlr-NNLSH00002B0A",
-        "jlr-NNLSH00003021",
-        "jlr-NNLSH0000315B",
-        "jlr-NNLSH000033FC",
-        "VVSH-VVSH000000106",
-        "VVSH-VVSH000000215"
-      ]
-    },
-    {
-      "group": "Normabkürzung mit Landeskürzel (ohne amtlichen Beleg)",
-      "cases": 18,
-      "documents": 18,
-      "decision": "Kürzel „SH“: amtliche Abkürzung belegen (dann Überleitung nach bestehender Regel) oder als Quellbezeichnung (Provenienz) stehen lassen",
-      "examples": [
-        "jlr-NNLSH00002AA7",
-        "jlr-NNLSH00002AB9",
-        "jlr-NNLSH00002AEE",
-        "jlr-NNLSH00002B49",
-        "jlr-NNLSH00002E83",
-        "jlr-NNLSH00003283"
-      ]
-    },
-    {
-      "group": "Landeskürzel als Landesbezeichnung",
-      "cases": 16,
-      "documents": 16,
-      "decision": "Kürzel „SH“: amtliche Abkürzung belegen (dann Überleitung nach bestehender Regel) oder als Quellbezeichnung (Provenienz) stehen lassen",
-      "examples": [
-        "jlr-NNLSH00002A82",
-        "jlr-NNLSH00002AC6",
-        "jlr-NNLSH00002B40",
-        "jlr-NNLSH00002BB6",
-        "jlr-NNLSH00003012",
-        "jlr-NNLSH0000301E"
-      ]
-    },
-    {
-      "group": "technischer Vermerk: Text unvollständig",
-      "cases": 16,
-      "documents": 16,
-      "decision": "Abbildung bzw. fehlenden Text anhand der Quelle bestätigen",
-      "examples": [
-        "jlr-NNLSH00002C03",
-        "jlr-NNLSH00002DC4",
-        "jlr-NNLSH00002E3E",
-        "jlr-NNLSH000033C6",
-        "jlr-NNLSH000033C8",
-        "jlr-NNLSH000033DA"
-      ]
-    },
-    {
-      "group": "Abbildung nicht sicher zuzuordnen",
-      "cases": 14,
-      "documents": 14,
-      "decision": "Abbildung bzw. fehlenden Text anhand der Quelle bestätigen",
-      "examples": [
-        "jlr-NNLSH00002A9B",
-        "jlr-NNLSH00002B24",
-        "jlr-NNLSH00003022",
-        "jlr-NNLSH00003086",
-        "jlr-NNLSH000030EF",
-        "jlr-NNLSH00003148"
-      ]
-    },
-    {
-      "group": "Zuordnung unklar",
-      "cases": 12,
-      "documents": 12,
-      "decision": "Stammnorm der Anlage bestimmen",
-      "examples": [
-        "VVSH-VVSH000003938",
-        "VVSH-VVSH000003939",
-        "VVSH-VVSH000003940",
-        "VVSH-VVSH000009113",
-        "VVSH-VVSH000009120",
-        "VVSH-VVSH000009121"
-      ]
-    },
-    {
-      "group": "Landesbezeichnung im Eigennamen oder Quelltextfehler",
-      "cases": 11,
-      "documents": 11,
-      "decision": "Schutzmuster (Eigenname, historische Bezeichnung) oder Überleitung festlegen – keine Sim-Behörde erfinden",
-      "examples": [
-        "jlr-NNLSH00002B14",
-        "jlr-NNLSH00002BEC",
-        "jlr-NNLSH00003019",
-        "VVSH-VVSH000001798",
-        "VVSH-VVSH000002117",
         "VVSH-VVSH000002248"
-      ]
-    },
-    {
-      "group": "nur rückwirkende Einzelfassung am Stichtag",
-      "cases": 7,
-      "documents": 7,
-      "decision": "Stichtagsfassung aus juris-Einzelfassung, amtlicher historischer Veröffentlichung oder sicherer Ereignisrekonstruktion bestimmen",
-      "examples": [
-        "jlr-NNLSH00002A85",
-        "jlr-NNLSH00002B50",
-        "jlr-NNLSH00002D16",
-        "jlr-NNLSH00002D19",
-        "jlr-NNLSH00002D1E",
-        "jlr-NNLSH00002D2F"
-      ]
-    },
-    {
-      "group": "Register (Ende) gegen Fortbestand",
-      "cases": 7,
-      "documents": 7,
-      "decision": "Geltung am 01.12.2023 aus „Gültig ab/bis“ oder amtlicher Quelle entscheiden",
-      "examples": [
-        "jlr-NNLSH00002AB7",
-        "jlr-NNLSH00002C62",
-        "jlr-NNLSH00002EE1",
-        "jlr-NNLSH00003220",
-        "jlr-NNLSH00003378",
-        "jlr-NNLSH000033F7"
-      ]
-    },
-    {
-      "group": "zwei Einzelfassungen am Stichtag",
-      "cases": 4,
-      "documents": 4,
-      "decision": "Stichtagsfassung aus juris-Einzelfassung, amtlicher historischer Veröffentlichung oder sicherer Ereignisrekonstruktion bestimmen",
-      "examples": [
-        "jlr-NNLSH00002AD5",
-        "jlr-NNLSH00002BD8",
-        "jlr-NNLSH00002CBA",
-        "jlr-NNLSH00002D5C"
-      ]
-    },
-    {
-      "group": "Geltung am Stichtag unbestimmt",
-      "cases": 4,
-      "documents": 4,
-      "decision": "Geltung am 01.12.2023 aus „Gültig ab/bis“ oder amtlicher Quelle entscheiden",
-      "examples": [
-        "jlr-NNLSH00002E40",
-        "VVSH-VVSH000000254",
-        "VVSH-VVSH000002029",
-        "VVSH-VVSH000002031"
-      ]
-    },
-    {
-      "group": "Quelle: Fußnotenzeichen ohne Text",
-      "cases": 3,
-      "documents": 3,
-      "decision": "Übernahme ohne Fußnotentext bestätigen",
-      "examples": [
-        "jlr-NNLSH00002CDF",
-        "jlr-NNLSH00003481",
-        "VVSH-VVSH000007921"
-      ]
-    },
-    {
-      "group": "zurückgenommen: Tabellenstruktur nicht belegt",
-      "cases": 3,
-      "documents": 3,
-      "decision": "Tabellenstruktur manuell bestätigen oder als Text übernehmen",
-      "examples": [
-        "jlr-NNLSH00002D5A",
-        "jlr-NNLSH00002FEB",
-        "VVSH-VVSH000007767"
-      ]
-    },
-    {
-      "group": "Einheitenfolge der Einzelfassungen",
-      "cases": 2,
-      "documents": 2,
-      "decision": "Stichtagsfassung aus juris-Einzelfassung, amtlicher historischer Veröffentlichung oder sicherer Ereignisrekonstruktion bestimmen",
-      "examples": [
-        "jlr-NNLSH00002AC2",
-        "jlr-NNLSH00002AE9"
-      ]
-    },
-    {
-      "group": "Textintegrität: Einzelzeichen prüfen",
-      "cases": 2,
-      "documents": 2,
-      "decision": "Abweichung von einem Zeichen bestätigen",
-      "examples": [
-        "jlr-NNLSH00002B5D",
-        "jlr-NNLSH00003481"
-      ]
-    },
-    {
-      "group": "zurückgenommen: am Stichtag nicht geltend",
-      "cases": 2,
-      "documents": 2,
-      "decision": "Rücknahme bestätigen (nach dem Stichtag ausgefertigt bzw. davor außer Kraft; kein Ausgangsrechtsstand)",
-      "examples": [
-        "jlr-NNLSH00002B9A",
-        "jlr-NNLSH00002BDA"
-      ]
-    },
-    {
-      "group": "Normtext vollständig fehlend",
-      "cases": 1,
-      "documents": 1,
-      "decision": "normative Anlage fehlt: amtliche Veröffentlichung beschaffen oder Norm im Review lassen (keine OCR-Automatik)",
-      "examples": [
-        "jlr-NNLSH00002B17"
-      ]
-    },
-    {
-      "group": "Seed-Konflikt (fortgeschriebene Norm)",
-      "cases": 1,
-      "documents": 1,
-      "decision": "Baselinekorrektur einer durch die Simulation fortgeschriebenen Norm: Seed neu annehmen oder Korrektur verwerfen (Konfliktbericht)",
-      "examples": [
-        "jlr-NNLSH00002D48"
       ]
     }
   ],
   "nonBlocking": [],
+  "exclusions": {
+    "unsafe-table-structure": {
+      "cases": 182,
+      "documents": 179
+    },
+    "missing-normative-annex": {
+      "cases": 79,
+      "documents": 79
+    },
+    "missing-normative-text": {
+      "cases": 18,
+      "documents": 17
+    },
+    "annex-parent-unresolved": {
+      "cases": 12,
+      "documents": 12
+    },
+    "baseline-validity-unresolved": {
+      "cases": 19,
+      "documents": 19
+    },
+    "source-deficiency": {
+      "cases": 16,
+      "documents": 16
+    },
+    "not-at-baseline": {
+      "cases": 2,
+      "documents": 2
+    },
+    "baseline-seed-authoritative": {
+      "cases": 1,
+      "documents": 1
+    }
+  },
   "content": {
-    "baselineNorms": 2611,
+    "baselineNorms": 2672,
     "simulationNorms": 33,
     "byType": [
       [
         "verwaltungsvorschrift",
-        1134
+        1173
       ],
       [
         "verordnung",
-        936
+        949
       ],
       [
         "gesetz",
-        493
+        502
       ],
       [
         "zustimmungsgesetz",
@@ -333,21 +131,22 @@
         1
       ]
     ],
-    "tableNorms": 288,
-    "tables": 712,
-    "lockedBySimulation": [
+    "tableNorms": 306,
+    "tables": 767,
+    "withSimulationVersions": [
       "gdg-nsh",
       "laplag-nsh",
       "lbo-nsh",
       "lkhg-nsh",
       "sftg-nsh"
-    ]
+    ],
+    "fingerprint": "1b92d06468585d5d6bbb241b470638939520d96b1b7a7e0fffea514950548cf9"
   },
   "manifest": {
     "statuses": [
       [
         "imported-with-warnings",
-        2065
+        2120
       ],
       [
         "not-at-baseline",
@@ -355,7 +154,7 @@
       ],
       [
         "imported",
-        546
+        552
       ],
       [
         "excluded",
@@ -363,35 +162,53 @@
       ],
       [
         "needs-review",
-        369
+        308
       ]
     ],
     "recovery": [
       [
         "current-source",
-        2282
+        2329
       ],
       [
         "historical-juris-version",
-        329
+        343
       ]
     ]
   },
-  "annexGroups": {
-    "non-normative-missing": 0,
-    "normative-separate": 0,
-    "normative-pdf-only": 79,
-    "assignment-unclear": 12,
-    "completely-missing": 1
-  },
   "seeds": [
-    "gdg-nsh",
-    "laplag-nsh",
-    "lbo-nsh",
-    "lkhg-nsh",
-    "pog-nsh",
-    "sftg-nsh"
+    {
+      "slug": "gdg-nsh",
+      "sha256": "a083633e30f66aab0f126812a40936e516fe623384f8dee43fc5cb73df1e9799",
+      "sourceCommit": "21bab36ec5c035943b07b63b87c13f1274e0616b"
+    },
+    {
+      "slug": "laplag-nsh",
+      "sha256": "9c606dad20fa86187de7d8c5072174f6635edcbeebd44795b53e0a96c8da33c9",
+      "sourceCommit": "21bab36ec5c035943b07b63b87c13f1274e0616b"
+    },
+    {
+      "slug": "lbo-nsh",
+      "sha256": "23b2f1e6cc606f2c5e981af429d743afc910d585f0cee80fa1ae22754812811a",
+      "sourceCommit": "21bab36ec5c035943b07b63b87c13f1274e0616b"
+    },
+    {
+      "slug": "lkhg-nsh",
+      "sha256": "47afa6995f9ef2c615b61f21d4c0822785e6ba9d87ee3293d7960fabbf0b2075",
+      "sourceCommit": "f96e48df99035f7be96b2e1be983d4c0f931fab4"
+    },
+    {
+      "slug": "pog-nsh",
+      "sha256": "18b9d657df04cbf590dfd1a2dd163a9381fecc3287cb16e45205dfca71bc0b43",
+      "sourceCommit": "21bab36ec5c035943b07b63b87c13f1274e0616b"
+    },
+    {
+      "slug": "sftg-nsh",
+      "sha256": "2a184ff6902f18034fc3673c7235799f43c2d70a6f39a731d3517099cb216aa7",
+      "sourceCommit": "21bab36ec5c035943b07b63b87c13f1274e0616b"
+    }
   ],
+  "transformerVersion": "juris-sh-transformer/1.5.0",
   "simulationSources": "SIM SOURCES PARTIAL",
   "generatedFrom": "HEAD"
 }

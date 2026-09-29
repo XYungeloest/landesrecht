@@ -2,7 +2,7 @@
 
 Erzeugt von `node scripts/import-juris-sh.ts inventory --write`. Stichtag **2023-12-01**. Quelle: Bürgerservice Schleswig-Holstein (juris), Simulationsland Niedersachsen-Holstein (`nsh`).
 
-Netzfrei aus dem Cache von `fetch-corpus` (öffentliche PDF-Ausgabe). Je Dokument der Vollweg der Stichprobe: Parser → SH-Modell → Stichtag (bei späteren Änderungen die am Stichtag geltenden Einzelfassungen) → Überleitung SH → NSH → `validateNormRecord` → Textintegrität, dazu Stichtagsbelege mit dem bestehenden Ereignisregister (Regeln A/B/C). Parser `juris-sh-parser/1.0.0`, Überleitung `juris-sh-transformer/1.4.0`.
+Netzfrei aus dem Cache von `fetch-corpus` (öffentliche PDF-Ausgabe). Je Dokument der Vollweg der Stichprobe: Parser → SH-Modell → Stichtag (bei späteren Änderungen die am Stichtag geltenden Einzelfassungen) → Überleitung SH → NSH → `validateNormRecord` → Textintegrität, dazu Stichtagsbelege mit dem bestehenden Ereignisregister (Regeln A/B/C). Parser `juris-sh-parser/1.0.0`, Überleitung `juris-sh-transformer/1.5.0`.
 
 ## 1 Ausgänge
 
@@ -10,13 +10,13 @@ Netzfrei aus dem Cache von `fetch-corpus` (öffentliche PDF-Ausgabe). Je Dokumen
 | --- | --- |
 | Enumeriert | 5197 |
 | Verarbeitet | 5197 |
-| Ausgänge | import-ready 2610 · not-at-baseline 1739 · part-of-main 476 · review 357 · reconstruction 13 · not-cached 2 |
-| Landesrecht | import-ready 1476 · not-at-baseline 1119 · review 198 · reconstruction 13 · not-cached 2 |
-| Verwaltungsvorschriften | import-ready 1134 · not-at-baseline 620 · part-of-main 476 · review 159 |
-| Manifeststatus | imported-with-warnings 2065 · not-at-baseline 1739 · imported 546 · excluded 476 · needs-review 369 |
+| Ausgänge | import-ready 2671 · not-at-baseline 1739 · part-of-main 476 · review 300 · reconstruction 9 · not-cached 2 |
+| Landesrecht | import-ready 1498 · not-at-baseline 1119 · review 180 · reconstruction 9 · not-cached 2 |
+| Verwaltungsvorschriften | import-ready 1173 · not-at-baseline 620 · part-of-main 476 · review 120 |
+| Manifeststatus | imported-with-warnings 2120 · not-at-baseline 1739 · imported 552 · excluded 476 · needs-review 308 |
 | Stichtagseinordnung der Ausgabe | unchanged-since-baseline 3047 · repealed-before-baseline 962 · enacted-after-baseline 777 · changed-after-baseline 250 · repealed-after-baseline 88 · undetermined 71 |
 | Stichtagsregel (A/B/C) | B-strong-begin-and-continuity 3445 · A-strong-end-before-baseline 962 · C-undetermined 788 |
-| Textintegrität | exact 2898 · explained-difference 2291 · mismatch 3 · review 3 |
+| Textintegrität | exact 2898 · explained-difference 2297 |
 | Normtyp | verwaltungsvorschrift 2389 · verordnung 2025 · gesetz 728 · zustimmungsgesetz 51 · verfassung 2 |
 
 ## 2 Sperrgründe (Dokumente je Grund)
@@ -25,19 +25,16 @@ Netzfrei aus dem Cache von `fetch-corpus` (öffentliche PDF-Ausgabe). Je Dokumen
 | --- | --- |
 | `parse:table-layout` | 135 |
 | `parse:incomplete-source-text` | 86 |
-| `transform:undecidable-source-state-abbreviation` | 64 |
 | `parse-units:table-layout` | 44 |
-| `historical:unit-selection` | 13 |
-| `parse:figure` | 12 |
-| `transform:residual-source-state-reference` | 11 |
+| `parse:figure` | 11 |
 | `parse-units:incomplete-source-text` | 10 |
+| `historical:unit-selection` | 9 |
 | `parse:vwv-annex-document` | 8 |
 | `baseline:undetermined` | 4 |
 | `parse:annex-separate-document` | 4 |
-| `integrity:mismatch` | 3 |
 | `parse:empty-footnote` | 3 |
 | `parse-units:figure` | 2 |
-| `integrity:review` | 2 |
+| `transform:residual-source-state-reference` | 1 |
 
 `parse:table-layout` und `pdf-only`-Abbildungen gehen in den Review, weil der Textlayer Tabellen- und Bildinhalte nicht sicher trägt; `units-missing` heißt: Am Stichtag galt eine andere Fassung, die Einzelfassungen sind noch nicht (vollständig) im Cache (`npm run import:juris-sh:fetch-corpus -- --phase units`); `baseline:ledger-contradiction`: Das Ereignisregister belegt eine Änderung nach dem Stichtag, die Ausgabe nicht.
 
@@ -406,7 +403,7 @@ Zählbasis sind die Köpfe des vollen amtlichen Registers (Audit „NSH-Audit“
 
 ## 4 baseline-only-Kandidaten des Ereignisregisters
 
-54 Kandidaten (Vorschrift endete nach dem Stichtag), 49 einem juris-Dokument zugeordnet (Gliederungsnummer + Ausfertigungsdatum bzw. eindeutige Gliederungsnummer). Ausgänge: import-ready 36 · review 6 · not-matched 5 · reconstruction 5 · not-at-baseline 2.
+54 Kandidaten (Vorschrift endete nach dem Stichtag), 49 einem juris-Dokument zugeordnet (Gliederungsnummer + Ausfertigungsdatum bzw. eindeutige Gliederungsnummer). Ausgänge: import-ready 37 · not-matched 5 · review 5 · reconstruction 5 · not-at-baseline 2.
 
 | Ereignis | Datum | Gl.Nr. | Titel | juris | Ausgang |
 | --- | --- | --- | --- | --- | --- |
@@ -414,7 +411,7 @@ Zählbasis sind die Köpfe des vollen amtlichen Registers (Audit „NSH-Audit“
 | gvobl-systematische-uebersicht-p0050-l02 | 2023-12-31 | 2013-2-63 | Landesverordnung über Verwaltungsgebühren für Pflanzenschutzangelegenh | jlr-NNLSH00002FCD | import-ready |
 | gvobl-systematische-uebersicht-p0052-l03 | 2023-12-31 | 2020-3-37 | Landesverordnung über die Kassenführung der Gemeinden mit einer Hausha | – | nicht zugeordnet |
 | gvobl-systematische-uebersicht-p0052-l05 | 2023-12-31 | 2020-3-41 | Landesverordnung über die Aufstellung und Ausführung eines kameralen H | jlr-NNLSH00002DE1 | import-ready |
-| gvobl-systematische-uebersicht-p0083-l04 | 2023-12-31 | 2120-22-1 | Landesverordnung zur Durchführung des Schleswig-Holsteinischen Rettung | jlr-NNLSH00003088 | review |
+| gvobl-systematische-uebersicht-p0083-l04 | 2023-12-31 | 2120-22-1 | Landesverordnung zur Durchführung des Schleswig-Holsteinischen Rettung | jlr-NNLSH00003088 | import-ready |
 | gvobl-systematische-uebersicht-p0105-l00 | 2023-12-31 | 2131-2-7 | Landesverordnung über die Entschädigung der Wehrführungen der freiwill | jlr-NNLSH00002BCE | import-ready |
 | gvobl-systematische-uebersicht-p0273-l03 | 2023-12-31 | B 865-1-1 | Landesverordnung über Inhalte des Rahmenvertrags nach § 131 SGB IX zur | jlr-NNLSH00003283 | review |
 | gvobl-systematische-uebersicht-p0066-l03 | 2024-01-31 | 2030-16-34 | Landesverordnung über die Laufbahn der Laufbahngruppe 2 in der Fachric | jlr-NNLSH00002D66 | import-ready |

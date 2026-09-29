@@ -143,6 +143,29 @@ export function selectBaselineUnits(units: readonly UnitVersion[], baseline = BA
       }
     }
     if (valid.length > 1) {
+      // Lauf 17: Von mehreren am Stichtag verkündeten Fassungen gilt die mit dem jüngsten Beginn und jüngsten „Fassung
+      // vom“ – sie hat die ältere abgelöst, auch wenn juris deren „Gültig bis“ nicht nachgeführt hat (Rundfunkfinanzierungs-
+      // staatsvertrag: 2017-01-01 bis „2025-11-30“ neben 2021-01-01 offen).
+      const promulgated = valid.filter((unit) => unit.versionDate && unit.versionDate <= baseline);
+      const byStart = [...promulgated].sort((left, right) => right.validFrom!.localeCompare(left.validFrom!) || (right.versionDate ?? '').localeCompare(left.versionDate ?? ''));
+      const newest = byStart[0];
+      if (newest && !newest.validTo && byStart.slice(1).every((unit) => unit.validFrom! < newest.validFrom! && (unit.versionDate ?? '') < (newest.versionDate ?? ''))) {
+        for (const unit of valid.filter((candidate) => candidate !== newest)) notes.push(`${key}: Fassung vom ${unit.versionDate} (gültig ab ${unit.validFrom}${unit.validTo ? ` bis ${unit.validTo}` : ''}) durch die jüngere Fassung vom ${newest.versionDate} (ab ${newest.validFrom}) abgelöst – nicht gewählt`);
+        valid = [newest];
+      } else {
+        // Zwillinge gleichen Datums und Beginns (Ressortbezeichnungen): maßgeblich ist der Zwilling, dessen Ende nahtlos an
+        // die nächste Fassung derselben Einheit anschließt; ein offener, nie abgelöster Zwilling ist ein nicht
+        // fortgeführter Datensatz (Lauf 17).
+        const nextDay = (date: string): string => new Date(Date.parse(`${date}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
+        const chained = valid.filter((unit) => unit.validTo && rawGroup.some((later) => later.validFrom === nextDay(unit.validTo!)));
+        const twins = valid.every((unit) => unit.validFrom === valid[0]!.validFrom && unit.versionDate === valid[0]!.versionDate);
+        if (twins && chained.length === 1 && valid.filter((unit) => unit !== chained[0]).every((unit) => !unit.validTo)) {
+          for (const unit of valid.filter((candidate) => candidate !== chained[0])) notes.push(`${key}: offener Zwilling ${unit.documentId} (Fassung vom ${unit.versionDate}) nicht fortgeführt – maßgeblich ${chained[0]!.documentId}, dessen Ende an die Folgefassung anschließt`);
+          valid = [chained[0]!];
+        }
+      }
+    }
+    if (valid.length > 1) {
       problems.push(`${key}: ${valid.length} Fassungen gelten zugleich am Stichtag (${valid.map((unit) => unit.documentId).join(', ')})`);
       continue;
     }
@@ -309,10 +332,10 @@ export function orderedByNumber<T extends Pick<UnitVersion, 'key'>>(units: reado
   const lead = units.slice(0, first);
   const middle = units.slice(first, last + 1);
   const tail = units.slice(last + 1);
-  if (kinds.size !== 1 || middle.some((unit) => unitOrdinal(unit.key) === undefined)) return [...units];
+  if (kinds.size !== 1 || middle.some((unit) => unitOrdinal(unit.key) === undefined)) return orderedWithinRuns(units);
   // Davor stehen nur nicht nummerierte Einheiten (Eingangsformel, Inhaltsübersicht, Vorspann-Überschriften); dahinter
   // höchstens Schlussformel und Anlagen – beides bleibt beim Sortieren an seinem Platz.
-  if (!tail.every((unit) => /^(?:Anlage|Anhang|Schlussformel)/u.test(unit.key))) return [...units];
+  if (!tail.every((unit) => /^(?:Anlage|Anhang|Schlussformel)/u.test(unit.key))) return orderedWithinRuns(units);
   void lead;
   const sorted = [...middle].sort((left, right) => {
     const a = unitOrdinal(left.key)!;
@@ -320,6 +343,67 @@ export function orderedByNumber<T extends Pick<UnitVersion, 'key'>>(units: reado
     return a.number - b.number || a.suffix.localeCompare(b.suffix);
   });
   return [...lead, ...sorted, ...tail];
+}
+
+/**
+ * Lauf 17: Liegen zwischen nummerierten Einheiten Gliederungsüberschriften (Abschnitte ohne Nummer), wird nur innerhalb
+ * jedes zusammenhängenden Laufs von Einheiten derselben Art sortiert – juris legt eingefügte Paragraphen hinter die
+ * Einheiten ihres Einfügungsdatums („§ 40e, § 40f, § 40d“). Über eine Überschrift hinweg wird nichts verschoben.
+ */
+function orderedWithinRuns<T extends Pick<UnitVersion, 'key'>>(units: readonly T[]): T[] {
+  const result: T[] = [];
+  let run: T[] = [];
+  const compare = (left: T, right: T): number => {
+    const a = unitOrdinal(left.key)!;
+    const b = unitOrdinal(right.key)!;
+    return a.number - b.number || a.suffix.localeCompare(b.suffix);
+  };
+  const flush = (): void => {
+    const kinds = new Set(run.map((unit) => unitOrdinal(unit.key)!.kind));
+    // Nur Einheiten außerhalb der längsten aufsteigenden Folge werden bewegt, und nur, wenn sie danach zwischen zwei
+    // Einheiten desselben Laufs stehen („§ 40d“ zwischen § 40c und § 40e). Wäre eine bewegte Einheit Anfang oder Ende
+    // des Laufs, könnte sie ebenso zum Abschnitt davor bzw. danach gehören – dann bleibt die Abweichung ein Befund.
+    const sorted = [...run].sort(compare);
+    const keep = longestIncreasing(run, compare);
+    const moved = run.filter((unit) => !keep.has(unit));
+    const enclosed = moved.every((unit) => {
+      const index = sorted.indexOf(unit);
+      return index > 0 && index < sorted.length - 1;
+    });
+    result.push(...(kinds.size === 1 && enclosed ? sorted : run));
+    run = [];
+  };
+  for (const unit of units) {
+    if (unitOrdinal(unit.key)) {
+      run.push(unit);
+      continue;
+    }
+    flush();
+    result.push(unit);
+  }
+  flush();
+  return result;
+}
+
+/** Längste streng aufsteigende Teilfolge (Menge ihrer Elemente). */
+function longestIncreasing<T>(items: readonly T[], compare: (left: T, right: T) => number): Set<T> {
+  const length: number[] = [];
+  const previous: number[] = [];
+  for (let index = 0; index < items.length; index += 1) {
+    length[index] = 1;
+    previous[index] = -1;
+    for (let before = 0; before < index; before += 1) {
+      if (compare(items[before]!, items[index]!) < 0 && length[before]! + 1 > length[index]!) {
+        length[index] = length[before]! + 1;
+        previous[index] = before;
+      }
+    }
+  }
+  let best = -1;
+  for (let index = 0; index < items.length; index += 1) if (best < 0 || length[index]! > length[best]!) best = index;
+  const result = new Set<T>();
+  for (let index = best; index >= 0; index = previous[index]!) result.add(items[index]!);
+  return result;
 }
 
 export function unitOrderProblems(units: readonly Pick<UnitVersion, 'key'>[]): string[] {

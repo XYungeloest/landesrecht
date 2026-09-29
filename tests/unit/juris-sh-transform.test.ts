@@ -72,7 +72,7 @@ describe('Zielbezeichnungen stammen aus dem Jurisdiktionsregister', () => {
   });
 
   it('nennt eine eigene Transformerversion für die Staleness-Erkennung', () => {
-    expect(TRANSFORMER_VERSION).toBe('juris-sh-transformer/1.4.0');
+    expect(TRANSFORMER_VERSION).toBe('juris-sh-transformer/1.5.0');
   });
 });
 
@@ -175,14 +175,17 @@ describe('Kürzel „Schl.-H.“ und „SH“', () => {
     expect(apply(ambiguous)).toBe(ambiguous);
   });
 
-  it('lässt amtliche Kurzbezeichnungen mit „SH“ unverändert und meldet sie zur Prüfung', () => {
-    const text = 'Nach § 3 des Landesverwaltungsgesetzes (LVwG SH) und nach § 8 LBO SH gilt Folgendes.';
-    expect(apply(text)).toBe(text);
-    const detections = detectReferences([{ path: 'body[0].text', text }]);
-    const abbreviations = detections.filter((entry) => entry.category === 'official-abbreviation');
-    expect(abbreviations).toHaveLength(2);
-    expect(abbreviations.every((entry) => entry.decision === 'manual-review' && entry.term === 'SH')).toBe(true);
-    expect(abbreviations[0]!.reason).toContain('amtlichen Kurzbezeichnung');
+  it('1.5.0 (Lauf 17): Normabkürzung und Landesbezug mit „SH“ werden „NSH“, Eigen- und Programmnamen bleiben Quellform', () => {
+    expect(apply('Nach § 3 des Landesverwaltungsgesetzes (LVwG SH) und nach § 8 LBO SH gilt Folgendes.')).toBe('Nach § 3 des Landesverwaltungsgesetzes (LVwG NSH) und nach § 8 LBO NSH gilt Folgendes.');
+    expect(apply('nach § 4 SH-BeamtVG, § 29 SH.LVO, Abs. 3 AVV-SH und dem Kindertagesstättengesetz-SH')).toBe('nach § 4 NSH-BeamtVG, § 29 NSH.LVO, Abs. 3 AVV-NSH und dem Kindertagesstättengesetz-NSH');
+    expect(apply('die im KatS in SH eingesetzten Boote; Ausgleich zwischen FHH und SH hinsichtlich')).toBe('die im KatS in NSH eingesetzten Boote; Ausgleich zwischen FHH und NSH hinsichtlich');
+    expect(apply('nach § 59 des Mitbestimmungsgesetzes Schl.-H. vom 26. September 2007')).toBe('nach § 59 des Mitbestimmungsgesetzes NSH vom 26. September 2007');
+    // Gegenbeispiele: Eigen-, Programm- und Systemnamen, Aktenzeichen, verschmolzene Formen.
+    for (const text of ['Das Krebsregister SH nimmt teil', 'die Standard-IT SH und das Landesnetz SH', 'Beteiligungsinfrastruktur (BOB-SH)', 'Online Pinnwand SH (OP.SH)', 'durch die IB SH', '§ 16 Abs. 3 S. 3 SH- SHBeamtVG', 'Erl. – V 210/4005 – 70 d. SH –', 'Sonderprogramme der Investitionsbank Schl.-H.', 'Landesverband Schleswig-Holsteiner Buckfastimker e.V.']) expect(apply(text)).toBe(text);
+    const record = (text: string) => ({ meta: { title: 'x', subjects: [], keywords: [], initialCitation: 'x' }, versions: [{ citation: 'x', body: [{ type: 'paragraphText', text }] }] }) as never;
+    expect(auditRecord(record('Das Krebsregister SH nimmt teil')).map((finding) => `${finding.severity}:${finding.code}`)).toEqual(['info:state-abbreviation-source-form']);
+    // Ein nicht übergeleitetes Kürzel an einer Normbezeichnung bleibt Befund.
+    expect(auditRecord(record('nach dem DSG SH')).map((finding) => finding.code)).toContain('undecidable-source-state-abbreviation');
   });
 });
 
@@ -195,10 +198,12 @@ describe('Abkürzungen mit Landeskürzel (Version 1.1.0/1.2.0) und historische N
     expect(convert('nach § 80 MBG Schl.- H., erhöht')).toBe('nach § 80 MBG NSH, erhöht');
     expect(convert('gemäß MBG Schl.-H. Die Frist')).toBe('gemäß MBG NSH. Die Frist');
     expect(convert('LStVollzG SH und GVFG-SH, SH AbgG sowie GlüStV 2021 AG SH)')).toBe('LStVollzG NSH und GVFG-NSH, NSH AbgG sowie GlüStV 2021 AG NSH)');
+    // Lauf 17: eine im Bestand eingeführte Landesfassung einer technischen Norm ist Normabkürzung, kein externer Name.
+    expect(convert('Sachkunde gemäß DIN 1999-100 Schl.-H. besitzt', ['DIN 1999-100 Schl.-H.'])).toBe('Sachkunde gemäß DIN 1999-100 NSH besitzt');
   });
 
   it('lässt Fundstellen, Aktenzeichen, verschmolzene und unbekannte Abkürzungen unverändert', () => {
-    for (const text of ['GVOBl. Schl.-H. S. 3, GVOBl.-Schl.-H. S. 79, GS Schl.-H. II, Gl.Nr. 2186-13', 'Amtsblatt Schl.-H. S. 674, NBl. HS MBWK Schl.-H. S. 56', 'JM v. 2. 3. 1993 – V 340 a/5607 – 19 SH –', 'FINISHG und SHBesG', 'nach LBO SH']) {
+    for (const text of ['GVOBl. Schl.-H. S. 3, GVOBl.-Schl.-H. S. 79, GS Schl.-H. II, Gl.Nr. 2186-13', 'Amtsblatt Schl.-H. S. 674, NBl. HS MBWK Schl.-H. S. 56', 'JM v. 2. 3. 1993 – V 340 a/5607 – 19 SH –', 'FINISHG und SHBesG']) {
       expect(convert(text)).toBe(text);
     }
   });
@@ -235,10 +240,10 @@ describe('Abkürzungen mit Landeskürzel (Version 1.1.0/1.2.0) und historische N
 
   it('1.4.0: ausgeschriebener Blattname mit Landeskürzel bleibt unverändert, das Kürzel allein nicht geschützt', () => {
     for (const text of ['tritt nach Bekanntgabe im Amtsblatt für Schl.-H. in Kraft', 'die Veröffentlichung im Amtsblatt SH in der Ausgabe']) expect(apply(text)).toBe(text);
-    const record = { meta: { title: 'x', subjects: [], keywords: [], initialCitation: 'x' }, versions: [{ citation: 'x', body: [{ type: 'paragraphText', text: 'Bekanntgabe im Amtsblatt für Schl.-H.; Förderung in SH' }] }] } as never;
+    const record = { meta: { title: 'x', subjects: [], keywords: [], initialCitation: 'x' }, versions: [{ citation: 'x', body: [{ type: 'paragraphText', text: 'Bekanntgabe im Amtsblatt für Schl.-H.; Förderung durch das Krebsregister SH' }] }] } as never;
     const codes = auditRecord(record).map((finding) => finding.code);
     expect(codes).not.toContain('residual-source-state-reference');
-    expect(codes).toContain('undecidable-source-state-abbreviation');
+    expect(codes).toContain('state-abbreviation-source-form');
   });
 
   it('leitet die preußische Provinz nicht über und meldet eine übergeleitete historische Bezeichnung', () => {
@@ -337,7 +342,7 @@ describe('Prüfung nach der Transformation (fail-closed)', () => {
   });
 
   it('akzeptiert geschützte und dokumentierte Restvorkommen', () => {
-    const field = { path: 'body[0].text', source: 'Fundstelle GVOBl. Schl.-H. S. 5 und § 3 LVwG SH.', transformed: 'Fundstelle GVOBl. Schl.-H. S. 5 und § 3 LVwG SH.' };
+    const field = { path: 'body[0].text', source: 'Fundstelle GVOBl. Schl.-H. S. 5 und das Krebsregister SH.', transformed: 'Fundstelle GVOBl. Schl.-H. S. 5 und das Krebsregister SH.' };
     const detections = detectReferences([{ path: field.path, text: field.source }]);
     const audit = auditTransformation([field], detections, []);
     expect(audit.residuals.map((entry) => entry.status).sort()).toEqual(['documented', 'protected']);
@@ -397,7 +402,7 @@ describe('Transformation einer Norm', () => {
     const body = JSON.stringify(record.versions[0]!.body);
     expect(body).not.toContain('Land Schleswig-Holstein');
     expect(body).toContain('GVOBl. Schl.-H. S. 512');
-    expect(body).toContain('LVwG SH');
+    expect(body).toContain('LVwG NSH');
     expect(body).toContain(`Behörden des Landes ${targetProperName()}`);
     expect(body).toContain(`${targetAdjective(false, false)}en Gemeinden`);
   });
@@ -415,7 +420,8 @@ describe('Transformation einer Norm', () => {
     expect(report.changes.length).toBeGreaterThanOrEqual(4);
     expect(report.changes.every((change) => change.path && change.rule && change.from !== change.to)).toBe(true);
     expect(report.detections.every((entry) => entry.context.includes(entry.term) && entry.reason.length > 0)).toBe(true);
-    expect(report.unresolved.map((entry) => entry.term)).toEqual(expect.arrayContaining(['SH', 'Ministerium für Inneres, Kommunales, Wohnen und Sport']));
+    expect(report.unresolved.map((entry) => entry.term)).toEqual(expect.arrayContaining(['Ministerium für Inneres, Kommunales, Wohnen und Sport']));
+    expect(report.changes.map((change) => change.rule)).toContain('jurisdiction-abbreviation-law-suffix');
     expect(report.unresolved.every((entry) => entry.manualDecisionRequired)).toBe(true);
     expect(report.postTransformAudit.ok).toBe(true);
     expect(report.postTransformAudit.doubledNames).toEqual([]);
@@ -488,23 +494,18 @@ describe('Restpostenprüfung auf der fertigen Norm', () => {
     expect(info?.message).toMatch(/geschützten Bereichen/u);
   });
 
-  it('meldet für die unveränderte Norm keine geschützte Restnennung, weil Provenienz gar nicht geprüft wird', () => {
-    // Fundstelle, Quellzitat und Fußnote liegen außerhalb der geprüften Felder – die einzige
-    // verbliebene Nennung ist das unentscheidbare Kürzel.
-    const codes = auditRecord(record).map((finding) => finding.code);
-    expect(codes).toEqual(['undecidable-source-state-abbreviation']);
+  it('meldet für die fertige Norm keine Restnennung: Fundstelle, Quellzitat und Fußnote liegen außerhalb, „LVwG SH“ ist übergeleitet', () => {
+    expect(auditRecord(record).map((finding) => finding.code)).toEqual([]);
   });
 
-  it('stuft ein bloßes Kürzel als unentscheidbar ein, nicht als Fehler', () => {
-    // „LVwG SH“ ist die amtliche Abkürzung eines fremden Gesetzes; sie bleibt bewusst stehen und ist
-    // in der Transformation als manual-review erfasst. An der fertigen Norm allein ist das nicht
-    // vom echten Rest zu unterscheiden – also warning mit Verweis auf den Bericht, nicht error.
-    const findings = auditRecord(record);
+  it('stuft ein nicht übergeleitetes Kürzel an einer Normbezeichnung als unentscheidbar ein, nicht als Fehler', () => {
+    // Nur eine Norm, deren Text „LVwG SH“ unübergeleitet enthält (etwa aus einer älteren Transformation), fällt auf.
+    const stale = { meta: { title: 'x', subjects: [], keywords: [], initialCitation: 'x' }, versions: [{ citation: 'x', body: [{ type: 'paragraphText', text: '§ 3 des Landesverwaltungsgesetzes (LVwG SH) bleibt unberührt.' }] }] } as never;
+    const findings = auditRecord(stale);
     const undecidable = findings.filter((finding) => finding.code === 'undecidable-source-state-abbreviation');
     expect(undecidable).toHaveLength(1);
     expect(undecidable[0]!.severity).toBe('warning');
     expect(undecidable[0]!.message).toContain('LVwG SH');
-    expect(undecidable[0]!.message).toMatch(/unresolved/u);
     expect(findings.some((finding) => finding.severity === 'error')).toBe(false);
   });
 

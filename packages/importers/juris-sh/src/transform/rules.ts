@@ -32,7 +32,7 @@ import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts
 import { TARGET_JURISDICTION } from '../common/constants.ts';
 
 /** Version der Transformationsregeln; der Bulk-Runner erkennt daran veraltete Übernahmen. */
-export const TRANSFORMER_VERSION = 'juris-sh-transformer/1.4.0';
+export const TRANSFORMER_VERSION = 'juris-sh-transformer/1.5.0';
 
 export interface TransformationRule {
   id: string;
@@ -54,7 +54,7 @@ export interface TransformationOptions {
   knownStateLawAbbreviations?: ReadonlySet<string>;
 }
 
-export const PROTECTED_CATEGORIES = ['source-citation', 'external-name', 'historical-name'] as const;
+export const PROTECTED_CATEGORIES = ['source-citation', 'external-name', 'historical-name', 'source-defect'] as const;
 export type ProtectedCategory = (typeof PROTECTED_CATEGORIES)[number];
 
 export interface ProtectedPattern {
@@ -254,9 +254,31 @@ function buildTransformationRules(options: TransformationOptions): Transformatio
         return `${targetShortName()}${SENTENCE_CONTINUATION_AFTER_DOT.test(after) ? '.' : ''}`;
       },
     },
+    // 1.5.0 (Lauf 17, Nutzerentscheidung): „SH“ an einer Normabkürzung („DSG SH“, „SH-BeamtVG“, „SH.LVO“, „AVV-SH“)
+    // oder an einer Gesetzes-/Verordnungsbezeichnung („Kindertagesstättengesetz-SH“) ist die Normbezeichnung des Landes:
+    // kanonisch „NSH“ (die reale Form bleibt im Transformationsbericht und als Quellabkürzung erhalten).
+    { id: 'jurisdiction-abbreviation-law-suffix', pattern: new RegExp(String.raw`(?<=(?<![\p{L}\d])(?:${LAW_ABBREVIATION}|${LAW_WORD})(?:\s?-\s?|\s+|\.\s?))SH(?![\p{L}\d-])`, 'gu'), replacement: targetShortName() },
+    // „Mitbestimmungsgesetz Schl.-H.“, „Korruptionsrichtlinie Schl.-H.“: Punktform an einer Normbezeichnung.
+    {
+      id: 'jurisdiction-abbreviation-law-dotted',
+      pattern: new RegExp(String.raw`(?<=(?<![\p{L}\d])(?:${LAW_ABBREVIATION}|${LAW_WORD})\s+)${DOTTED_ABBREVIATION}`, 'gu'),
+      replace: (match, source) => `${targetShortName()}${SENTENCE_CONTINUATION_AFTER_DOT.test(source.slice((match.index ?? 0) + match[0].length)) ? '.' : ''}`,
+    },
+    { id: 'jurisdiction-abbreviation-law-prefix', pattern: new RegExp(String.raw`(?<![\p{L}\d.])SH(?=(?:\.\s?|\s?-\s?)(?!SH)${LAW_ABBREVIATION}(?![\p{L}\d]))`, 'gu'), replacement: targetShortName() },
+    // „SH“ nach Präposition oder Konjunktion vor Satzzeichen oder kleingeschriebenem Wort („Förderung in SH:“, „in SH
+    // eingesetzten“, „Hamburg und SH hinsichtlich“): Landesbezug.
+    { id: 'jurisdiction-abbreviation-state-reference', pattern: new RegExp(String.raw`(?<=(?<![\p{L}])(?:in|nach|für|aus|von|und|oder|zwischen)\s)SH(?=\s*(?:[,.;:)]|$)|\s+\p{Ll})`, 'gu'), replacement: targetShortName() },
     { id: 'jurisdiction-abbreviation', pattern: new RegExp(String.raw`${STATE_FORM_BEFORE}SH(?![\p{L}\d])`, 'gu'), replacement: targetShortName() },
   ];
 }
+
+/** Normabkürzung: Großbuchstabe am Anfang, Endung G, VO, V oder O („DSG“, „KitaG“, „SHBeamtVG“, „LVO“, „AVV“). */
+const LAW_ABBREVIATION = String.raw`[A-ZÄÖÜ][A-Za-zÄÖÜäöü]*(?:G|VO|V|O)`;
+/** Ausgeschriebene Normbezeichnung („Studienakkreditierungsverordnung“, „Kindertagesstättengesetz“). */
+const LAW_WORD = String.raw`[A-ZÄÖÜ][a-zäöüß]*(?:gesetz|verordnung|ordnung|richtlinie)(?:es|s|en|n)?`;
+
+/** Kürzel „SH“ an einer Normabkürzung oder Normbezeichnung (für die Prüfung nach der Transformation). */
+export const LAW_SHAPED_STATE_ABBREVIATION = new RegExp(String.raw`(?:(?<![\p{L}\d])(?:${LAW_ABBREVIATION}|${LAW_WORD})(?:\s?-\s?|\s+|\.\s?)SH(?![\p{L}\d-])|(?<![\p{L}\d.])SH(?:\.\s?|\s?-\s?)(?!SH)${LAW_ABBREVIATION}(?![\p{L}\d]))`, 'u');
 
 /** Regelsatz ohne Optionen (Kompatibilität, Berichte). */
 export const TRANSFORMATION_RULES: readonly TransformationRule[] = transformationRules();
@@ -320,6 +342,10 @@ export const PROTECTED_PATTERNS: readonly ProtectedPattern[] = [
   },
   { id: 'gazette-federal', category: 'source-citation', pattern: /\bBGBl\.\s*[IVX]*\s*(?:\d{4}\s*)?S\.\s*\d+/gu, reason: 'Fundstelle im Bundesgesetzblatt bleibt unverändert' },
   { id: 'external-proper-names', category: 'external-name', pattern: /\b(?:IB\.SH|HSH|NDR|SH\.Netz)\b/gu, reason: 'Eigenname eines externen Trägers bleibt unverändert' },
+  // 1.5.0 (Lauf 17): Eigennamen und Quelltextfehler bleiben in Quellform – keine Sim-Behörde, kein geratener Text.
+  { id: 'external-proper-names-dotted', category: 'external-name', pattern: /\bInvestitionsbank\s+Schl\.\s?-\s?H\./gu, reason: 'Eigenname eines externen Trägers bleibt unverändert (eine im Bestand eingeführte Landesfassung einer technischen Norm wie „DIN 1999-100 Schl.-H.“ ist dagegen Normabkürzung)' },
+  { id: 'association-name', category: 'external-name', pattern: new RegExp(String.raw`Schleswig${NAME_SEPARATOR}Holsteiner(?=(?:\s+[\p{L}-]+){1,5}\s+e\.\s?V\.)`, 'gu'), reason: 'Name eines eingetragenen Vereins bleibt unverändert' },
+  { id: 'source-defect-state-name', category: 'source-defect', pattern: new RegExp(String.raw`(?<=\p{Ll})Schleswig${NAME_SEPARATOR}Holstein(?![\p{L}])|Schleswig${NAME_SEPARATOR}Holsteini(?:gen\b|-(?=\s*$))`, 'gu'), reason: 'Landesname in fehlerhafter Quellform (zusammengeschrieben, verschrieben oder am Blockende getrennt) bleibt unverändert – nicht geraten' },
 ];
 
 export interface ProtectedSpan {

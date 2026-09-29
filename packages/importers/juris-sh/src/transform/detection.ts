@@ -32,6 +32,7 @@ export const REFERENCE_CATEGORIES = [
   'source-citation',
   'external-name',
   'historical-name',
+  'source-defect',
   'other',
 ] as const;
 export type ReferenceCategory = (typeof REFERENCE_CATEGORIES)[number];
