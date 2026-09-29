@@ -1,5 +1,9 @@
 # Bereitschaft und Stand des NSH-Ausgangsimports
 
+> **Seit 2026-09-29 eingefroren** (Freeze-Commit `eeeca2cd…`, 2 672 Baseline-Normen, `docs/NSH_BASELINE_FREEZE.md`). Ein
+> Bulk-Lauf schreibt, nimmt zurück oder ergänzt keine Ausgangsfassung ohne dokumentierte Freigabe; jede Abweichung
+> endet mit Exit 1 und Review-Fall `baseline-frozen`.
+
 **Stand 2026-09-19 (Release) · Readiness: TECHNICALLY READY · Remote: REMOTE RELEASE APPROVED (Nutzungsfreigabe von
 juris laut Nutzer; Release vom Nutzer freigegeben; Raw-/Provenienzregeln unverändert) · Bestand: 2 450 Normen live
 (Worker `3d606854`, Run 8) · R2: `nsh/` 17 024 Objekte, über das Listing verifiziert · D1 `landesrecht-nsh`:

@@ -24,7 +24,8 @@ import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-ro
 interface ExceptionBlock {
   baseCommit: string;
   description: string;
-  entries: Array<{ key: string; kind: 'regenerated' | 'removed'; reason: string }>;
+  /** `added`: neue Baseline-Fassung in einem Freeze-Land (nur Gate G2; eine neue Datei verletzt die Unveränderlichkeit nicht). */
+  entries: Array<{ key: string; kind: 'regenerated' | 'removed' | 'added'; reason: string }>;
 }
 
 interface ExceptionFile extends ExceptionBlock {

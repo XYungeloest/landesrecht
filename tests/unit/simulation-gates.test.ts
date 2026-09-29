@@ -149,11 +149,45 @@ describe('G3 Normidentität additiv', () => {
   });
 });
 
+describe('G2 im Freeze-Land (West, NSH seit 2026-09-29)', () => {
+  it('eine neue Baseline-Norm nach dem Freeze-Commit verletzt das Lock, außer mit Freigabe kind "added" zum Freeze-Commit', async () => {
+    for (const [path, value] of normFiles('c-nsh', 'Gesetz C')) await write(path, value);
+    // Ohne Freeze (Referenz-Commit): eine spätere Baseline-Norm ist zulässig.
+    expect((await checkBaselineLock(root, 'nsh', lockCommit)).problems).toEqual([]);
+    expect((await checkBaselineLock(root, 'nsh', lockCommit, { freeze: true })).problems).toEqual([expect.stringMatching(/c-nsh.*neue Baseline-Fassung nach dem Freeze-Commit/u)]);
+    // Freigabe zu einem anderen Commit gilt nicht; zum Freeze-Commit schon.
+    await write('data/content-immutability-exceptions.json', { schemaVersion: 'landesrecht-immutability-exceptions/1', baseCommit: '0123456789ab', description: 'alt', entries: [{ key: 'nsh/c-nsh/2023-12-01', kind: 'added', reason: 'Test' }] });
+    expect((await checkBaselineLock(root, 'nsh', lockCommit, { freeze: true })).problems).toHaveLength(1);
+    await write('data/content-immutability-exceptions.json', { schemaVersion: 'landesrecht-immutability-exceptions/1', baseCommit: lockCommit.slice(0, 12), description: 'Freeze-Freigabe', entries: [{ key: 'nsh/c-nsh/2023-12-01', kind: 'added', reason: 'neue Primärevidenz' }] });
+    expect((await checkBaselineLock(root, 'nsh', lockCommit, { freeze: true })).problems).toEqual([]);
+    // „added“ gibt keine Änderung einer bestehenden Baseline frei.
+    await write('data/content-immutability-exceptions.json', { schemaVersion: 'landesrecht-immutability-exceptions/1', baseCommit: lockCommit.slice(0, 12), description: 'x', entries: [{ key: 'nsh/b-nsh/2023-12-01', kind: 'added', reason: 'falsch' }, { key: 'nsh/c-nsh/2023-12-01', kind: 'added', reason: 'ok' }] });
+    const baseline = 'content/norms/nsh/b-nsh/versions/2023-12-01.json';
+    await write(baseline, (await readFile(file(baseline), 'utf8')).replace('Ausgangsfassung', 'still geändert'));
+    expect((await checkBaselineLock(root, 'nsh', lockCommit, { freeze: true })).problems).toEqual([expect.stringMatching(/b-nsh.*verändert/u)]);
+    await restore();
+  });
+
+  it('ältere Freigabeblöcke (anderer baseCommit) geben nichts frei und sperren auch nichts', async () => {
+    await write('content/norms/nsh/a-nsh/versions/2026-05-18.json', { versionId: '2026-05-18', simulationValidFrom: '2026-05-18', simulationValidTo: null, citation: 'Z', changeNote: 'Sim', body: [] });
+    await write('data/content-immutability-exceptions.json', { schemaVersion: 'landesrecht-immutability-exceptions/1', baseCommit: '0123456789ab', description: 'Lauf 9', entries: [{ key: 'nsh/a-nsh/2023-12-01', kind: 'regenerated', reason: 'historisch' }] });
+    expect((await checkBaselineLock(root, 'nsh', lockCommit, { freeze: true })).problems).toEqual([]);
+    // Ein geltender Block mit Freigabe für eine fortgeschriebene Norm bleibt unzulässig.
+    await write('data/content-immutability-exceptions.json', { schemaVersion: 'landesrecht-immutability-exceptions/1', baseCommit: lockCommit.slice(0, 12), description: 'x', entries: [{ key: 'nsh/a-nsh/2023-12-01', kind: 'regenerated', reason: 'x' }] });
+    expect((await checkBaselineLock(root, 'nsh', lockCommit, { freeze: true })).problems).toEqual([expect.stringMatching(/Norm mit Sim-Fassungen ist unzulässig/u)]);
+    await restore();
+  });
+});
+
 describe('Lock-Datei des Repositorys', () => {
-  it('nennt für West den Freeze-Commit und für NSH/BayWü den Baseline-Commit', async () => {
+  it('nennt für West und NSH den Freeze-Commit und für BayWü den Baseline-Commit', async () => {
     const locks = await readBaselineLocks(resolveRepositoryRoot());
     expect(locks.west).toBe('ff1b1f43e209390a0dd610e5a06b5c5e07efa27a');
-    expect(locks.nsh).toMatch(/^[0-9a-f]{40}$/u);
+    expect(locks.nsh).toBe('eeeca2cdc5596a602db4332e59a4b252df2b8ea0');
+    const file = parseBaselineLockFile(JSON.parse(await readFile(join(resolveRepositoryRoot(), 'data/simulation/baseline-locks.json'), 'utf8')));
+    expect(file.jurisdictions.west?.freeze).toBe(true);
+    expect(file.jurisdictions.nsh?.freeze).toBe(true);
+    expect(file.jurisdictions.baywue?.freeze).toBe(false);
     expect(locks.baywue).toMatch(/^[0-9a-f]{40}$/u);
     expect(locks.ost).toBeUndefined();
     await write('data/simulation/baseline-locks.json', { sachsen: 'abc' });

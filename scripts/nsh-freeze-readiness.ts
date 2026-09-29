@@ -174,6 +174,30 @@ function contentStats(): ContentStats {
   return stats;
 }
 
+/** Fingerabdruck derselben Art aus einem Commit (Freeze-Commit): gleiche Pfade, SHA-256 der gespeicherten Blobs. */
+function fingerprintAt(reference: string): { fingerprint: string; norms: number } {
+  const paths = git('ls-tree', '-r', '--name-only', reference, '--', 'content/norms/nsh').split('\n').filter((path) => /\/meta\.json$|\/versions\/2023-12-01\.json$/u.test(path));
+  const output = execFileSync('git', ['cat-file', '--batch'], { cwd: root, input: `${paths.map((path) => `${reference}:${path}`).join('\n')}\n`, maxBuffer: 2 * 1024 * 1024 * 1024 });
+  const blobs = new Map<string, Buffer>();
+  let offset = 0;
+  for (const path of paths) {
+    const headerEnd = output.indexOf(0x0a, offset);
+    const size = Number(output.subarray(offset, headerEnd).toString('utf8').split(' ')[2]);
+    blobs.set(path, output.subarray(headerEnd + 1, headerEnd + 1 + size));
+    offset = headerEnd + 1 + size + 1;
+  }
+  const lines: string[] = [];
+  for (const slug of [...new Set(paths.map((path) => path.split('/')[3]!))].sort()) {
+    const meta = blobs.get(`content/norms/nsh/${slug}/meta.json`);
+    const baseline = blobs.get(`content/norms/nsh/${slug}/versions/2023-12-01.json`);
+    if (!meta || !baseline) continue;
+    const identifiers = (JSON.parse(meta.toString('utf8')) as { externalIdentifiers?: Array<{ system: string }> }).externalIdentifiers ?? [];
+    if (!identifiers.some((identifier) => identifier.system === 'juris-sh')) continue;
+    lines.push(`content/norms/nsh/${slug}/versions/2023-12-01.json ${createHash('sha256').update(baseline).digest('hex')}`);
+  }
+  return { fingerprint: createHash('sha256').update(`${lines.join('\n')}\n`).digest('hex'), norms: lines.length };
+}
+
 /* ------------------------------------------------------------------------------------------------ */
 
 const manifest = readManifestEntries();
@@ -226,6 +250,16 @@ const gates: Array<{ id: string; ok: boolean; detail: string }> = [
   { id: 'published-integrity', ok: (coverage?.imported ?? 0) === content.baselineNorms, detail: `übernommen nur exact oder erklärt; Manifest ${number.format(coverage?.imported ?? 0)} = Bestand ${number.format(content.baselineNorms)}` },
   { id: 'contradictory-evidence', ok: !open.some((item) => item.category === 'contradictory-evidence'), detail: `${open.filter((item) => item.category === 'contradictory-evidence').length} offen (muss 0 sein)` },
 ];
+// Freeze (docs/NSH_BASELINE_FREEZE.md): Freeze-Commit, dokumentierter Fingerabdruck (Lock-Notiz) und Arbeitskopie stimmen überein.
+const frozenState = nshLock?.freeze ? (() => {
+  const atCommit = fingerprintAt(nshLock.commit);
+  const documented = /\b([0-9a-f]{64})\b/u.exec(nshLock.note ?? '')?.[1];
+  return { commit: nshLock.commit, atCommit, documented };
+})() : undefined;
+if (frozenState) {
+  const ok = frozenState.atCommit.fingerprint === content.fingerprint && frozenState.documented === content.fingerprint && frozenState.atCommit.norms === content.baselineNorms;
+  gates.push({ id: 'freeze-fingerprint', ok, detail: `Freeze-Commit ${frozenState.commit.slice(0, 12)}: ${number.format(frozenState.atCommit.norms)} Normen, ${frozenState.atCommit.fingerprint.slice(0, 16)}… · Arbeitskopie ${number.format(content.baselineNorms)} Normen, ${content.fingerprint.slice(0, 16)}… · dokumentiert ${frozenState.documented?.slice(0, 16) ?? 'fehlt'}…` });
+}
 
 const byClass = (klass: CaseClass): typeof classified => classified.filter((entry) => entry.klass.class === klass);
 const technical = byClass('technical-blocker');
@@ -248,6 +282,9 @@ const result = {
   jurisdiction: 'nsh',
   baselineDate: '2023-12-01',
   freezeSet: nshLock?.freeze === true,
+  /** Baseline-Status: FROZEN (Freeze gesetzt, Fingerabdruck konsistent) oder die Bereitschaftsbewertung. */
+  baselineStatus: frozenState ? (gates.every((gate) => gate.id !== 'freeze-fingerprint' || gate.ok) ? 'FROZEN' : 'FROZEN – ABWEICHUNG') : status,
+  ...(frozenState ? { freezeCommit: frozenState.commit } : {}),
   status,
   baselineFingerprint: content.fingerprint,
   counts: {
@@ -276,7 +313,7 @@ const result = {
 
 if (asJson) console.log(JSON.stringify(result, null, 2));
 else {
-  console.log(`NSH-Freeze-Readiness: ${status} (Freeze ${result.freezeSet ? 'gesetzt' : 'nicht gesetzt'}) · Baseline-Fingerabdruck ${content.fingerprint.slice(0, 16)}…`);
+  console.log(`NSH-Baseline-Status: ${result.baselineStatus}${result.freezeSet ? ` (Freeze-Commit ${nshLock!.commit.slice(0, 12)}; Bewertung ${status})` : ' (Freeze nicht gesetzt)'} · Baseline-Fingerabdruck ${content.fingerprint.slice(0, 16)}…`);
   console.log(`  offen ${open.length}${beforeOpen ? ` (vorher ${beforeOpen.length})` : ''}: technische Blocker ${technical.length}, offene fachliche Entscheidungen ${human.length}, nicht sperrend ${nonBlocking.length}; bewusst ausgeschlossen ${excluded.length} (${documents(excluded)} Dokumente)`);
   console.log(`  seit Basis erledigt: übernommen ${resolvedImported.length}, ausgeschlossen ${resolvedExcluded.length}, durch Regel abgelöst ${resolvedOther.length}`);
   for (const gate of gates) console.log(`  Gate ${gate.id}: ${gate.ok ? 'ok' : 'ROT'} – ${gate.detail}`);
@@ -296,7 +333,9 @@ if (write) {
     '',
     `Automatisch erzeugt von \`node scripts/nsh-freeze-readiness.ts --write\` (Arbeitskopie; Vorher-Stand: Review-Fälle im Commit \`${baseShort}\`). Nicht von Hand bearbeiten; Freeze-Semantik: \`docs/SIMULATION_IMPORT.md\` 6.1, Rückwirkung 6.2. Freigabeübersicht: \`docs/NSH_BASELINE_HUMAN_APPROVAL.md\`.`,
     '',
-    `**Status: ${status}** · Freeze ${result.freezeSet ? 'gesetzt' : '**nicht gesetzt**'} · Baseline-Fingerabdruck \`${content.fingerprint}\` · Sim-Quellenstatus getrennt: \`${result.simulationSources}\` (kein Blocker des Ausgangsrechtsstands)`,
+    frozenState
+      ? `**Baseline-Status: ${result.baselineStatus}** · Freeze-Commit \`${frozenState.commit}\` (Human Approval 2026-09-29, \`docs/NSH_BASELINE_FREEZE.md\`) · Baseline-Fingerabdruck \`${content.fingerprint}\` · Bewertung der Restfälle: \`${status}\` · Sim-Quellenstatus getrennt: \`${result.simulationSources}\` (kein Blocker des Ausgangsrechtsstands)`
+      : `**Status: ${status}** · Freeze **nicht gesetzt** · Baseline-Fingerabdruck \`${content.fingerprint}\` · Sim-Quellenstatus getrennt: \`${result.simulationSources}\` (kein Blocker des Ausgangsrechtsstands)`,
     '',
     'Regel: `NOT READY`, solange ein technischer Blocker offen oder ein Gate rot ist. `READY WITH HUMAN REVIEW`: keine technischen Blocker, veröffentlichte Baseline konsistent, alle offenen Fälle klassifiziert. `BASELINE READY`: zusätzlich kein offener Fall – jeder Restfall ist übernommen, mit ReasonCode bewusst ausgeschlossen (`resolved-excluded`) oder durch eine Regel abgelöst. Nicht belegbare Inhalte bleiben ausgeschlossen; das ist kein Blocker. Der Freeze selbst wird nur auf ausdrückliche Entscheidung gesetzt.',
     '',
@@ -425,7 +464,8 @@ if (write) {
   ];
   await mkdir(dirname(join(root, DOC_PATH)), { recursive: true });
   await writeFile(join(root, DOC_PATH), `${readinessDoc.join('\n')}\n`);
-  await writeFile(join(root, APPROVAL_PATH), `${approval.join('\n')}\n`);
+  // Nach dem Freeze ist die Freigabeübersicht Beleg der Entscheidung und wird nicht mehr neu erzeugt.
+  if (!frozenState) await writeFile(join(root, APPROVAL_PATH), `${approval.join('\n')}\n`);
   await mkdir(dirname(join(root, JSON_PATH)), { recursive: true });
   await writeFile(join(root, JSON_PATH), `${JSON.stringify({ ...result, generatedFrom: base }, null, 2)}\n`);
   const statusPath = join(root, 'packages/legal-core/src/config/inventory-status.json');
@@ -437,5 +477,5 @@ if (write) {
     entry.baselineFreeze = lock.freeze ? { frozen: true, assessedAt } : jurisdiction === 'nsh' ? { frozen: false, readiness: status, assessedAt } : { frozen: false, assessedAt };
   }
   await writeFile(statusPath, `${JSON.stringify(statusFile, null, 2)}\n`);
-  console.log(`Geschrieben: ${DOC_PATH}, ${APPROVAL_PATH}, ${JSON_PATH}, Baseline-Status in packages/legal-core/src/config/inventory-status.json`);
+  console.log(`Geschrieben: ${DOC_PATH}, ${frozenState ? '' : `${APPROVAL_PATH}, `}${JSON_PATH}, Baseline-Status in packages/legal-core/src/config/inventory-status.json`);
 }

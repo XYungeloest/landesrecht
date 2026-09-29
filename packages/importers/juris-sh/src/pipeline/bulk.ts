@@ -17,13 +17,14 @@
  *   - Kein Netzzugriff: Fehlt ein PDF im Cache, ist das `not-cached` und Sache von `fetch-corpus`.
  */
 import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { jsonText, readJsonFile, writeFileAtomic, writeJsonAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
-import { inspectBaselineLock, readStoredBaseline } from '@landesrecht/importer-common/baseline-lock.ts';
+import { inspectBaselineLock, readBaselineFreeze, readStoredBaseline, type BaselineFreeze } from '@landesrecht/importer-common/baseline-lock.ts';
 import { cacheKey, RechtNrwFetchError } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
 
-import { validateNormRecord } from '@landesrecht/legal-core/lib/schema.ts';
+import { validateNormRecord, type NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
 
 import { permaUrl } from '../access/policy.ts';
 import { AUDIT_DIR, BASELINE_DATE, CACHE_DIR, IMPORT_DATA_DIR, PARSER_VERSION, TARGET_JURISDICTION } from '../common/constants.ts';
@@ -190,6 +191,39 @@ export interface BulkResult {
   normsUnchanged: number;
   normsRemoved: number;
   stop?: 'limit' | 'interrupted';
+  /** Baseline-Freeze (NSH eingefroren): Abweichungen, die nicht geschrieben wurden (fail-closed; `bulk` endet mit Fehler). */
+  frozen?: { commit: string; deviations: Array<{ sourceIdentity: string; slug?: string; kind: 'changed' | 'withdrawn' | 'added'; message: string }> };
+}
+
+/** Speichert eine eingefrorene Norm genau das, was der Lauf erzeugen würde (Meta, Historie, Ausgangsfassung)? */
+async function frozenNormIdentical(root: string, slug: string, record: NormRecord): Promise<boolean> {
+  const directory = join(normsDirectory(root), slug);
+  const meta = record.meta.slug === slug ? record.meta : { ...record.meta, id: `${TARGET_JURISDICTION}:${slug}`, slug };
+  for (const [file, value] of [['meta.json', meta], ['history.json', record.history], [`versions/${BASELINE_DATE}.json`, record.versions[0]]] as Array<[string, unknown]>) {
+    if ((await readFile(join(directory, file), 'utf8').catch(() => undefined)) !== jsonText(value)) return false;
+  }
+  return true;
+}
+
+function frozenReleased(freeze: BaselineFreeze, slug: string, kind: 'regenerated' | 'removed' | 'added'): boolean {
+  return freeze.released[kind].has(`${TARGET_JURISDICTION}/${slug}/${BASELINE_DATE}`);
+}
+
+/**
+ * Entscheidung des Baseline-Freeze für ein Dokument: `frozen` – die übernommene Norm ist gesperrt (nichts schreiben, nichts
+ * zurücknehmen); `deviation` – der Lauf weicht ab (Review-Fall, Lauf scheitert). Eine Sim-Sperre (`simLocked`) hat Vorrang
+ * (eigene Seed-Logik); dokumentierte Freigaben für den Freeze-Commit heben die Sperre für genau diese Norm auf.
+ */
+export function baselineFreezeDecision(input: { freeze: BaselineFreeze | undefined; previousSlug?: string; previousImported: boolean; simLocked: boolean; importable: boolean; identical: boolean; candidateSlug?: string }): { frozen: boolean; deviation?: 'changed' | 'withdrawn' | 'added' } {
+  const { freeze } = input;
+  if (!freeze) return { frozen: false };
+  if (input.previousImported && input.previousSlug) {
+    if (input.simLocked || frozenReleased(freeze, input.previousSlug, 'regenerated') || frozenReleased(freeze, input.previousSlug, 'removed')) return { frozen: false };
+    if (!input.importable) return { frozen: true, deviation: 'withdrawn' };
+    return input.identical ? { frozen: true } : { frozen: true, deviation: 'changed' };
+  }
+  if (input.importable && input.candidateSlug && !frozenReleased(freeze, input.candidateSlug, 'added')) return { frozen: false, deviation: 'added' };
+  return { frozen: false };
 }
 
 const increment = (counts: Record<string, number>, key: string): void => {
@@ -310,6 +344,10 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
   const log = options.log ?? ((): void => undefined);
   const now = options.now ?? new Date().toISOString();
   const writeNorms = options.mode === 'bulk' && options.write;
+  // Baseline-Freeze (docs/NSH_BASELINE_FREEZE.md): Keine Ausgangsfassung wird ohne dokumentierte Freigabe neu geschrieben,
+  // zurückgenommen oder neu aufgenommen; jede solche Abweichung ist ein Review-Fall und lässt den Lauf scheitern.
+  const freeze = await readBaselineFreeze(root, TARGET_JURISDICTION);
+  const frozenDeviations: NonNullable<BulkResult['frozen']>['deviations'] = [];
   if (writeNorms) {
     const recovered = await recoverInterruptedNormWrites(root);
     for (const action of recovered) log(`Wiederherstellung: ${action}`);
@@ -483,9 +521,34 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
     // nach dem Stichtag), bleibt ihre veröffentlichte Ausgangsfassung eingefroren – der Lauf nimmt sie weder zurück noch
     // schreibt er sie neu; Manifeststatus und Slug bleiben. Ergäbe der Lauf eine andere Ausgangsfassung oder wäre die
     // Norm nicht mehr übernahmefähig, ist das ein Review-Fall (Entscheidung außerhalb des Bulks), kein Schreibvorgang.
-    const lock = previous && isImportedStatus(previous.importStatus) ? await inspectBaselineLock(join(normsDirectory(root), previous.targetSlug), BASELINE_DATE) : undefined;
+    const simLock = previous && isImportedStatus(previous.importStatus) ? await inspectBaselineLock(join(normsDirectory(root), previous.targetSlug), BASELINE_DATE) : undefined;
+    // Freeze: jede übernommene Norm ist gesperrt (Sim-Sperre hat Vorrang, dort tragen meta/history additive Sim-Ergänzungen),
+    // außer ihre Neuerzeugung bzw. Rücknahme ist für den Freeze-Commit dokumentiert freigegeben.
+    const previousImported = Boolean(previous && isImportedStatus(previous.importStatus));
+    const importable = isImportedStatus(manifestStatusFor(result, inputs.some((input) => input.severity === 'blocking'))) && Boolean(result.record);
+    const decision = baselineFreezeDecision({
+      freeze,
+      ...(previous ? { previousSlug: previous.targetSlug } : {}),
+      previousImported,
+      simLocked: simLock?.locked ?? false,
+      importable,
+      identical: Boolean(freeze && previous && previousImported && result.record && (await frozenNormIdentical(root, previous.targetSlug, result.record))),
+      ...(result.record ? { candidateSlug: slugCandidates.get(item.id) ?? result.record.meta.slug } : {}),
+    });
+    const frozen = decision.frozen;
+    const lock = frozen ? { locked: true, foreignVersions: [], reasons: [`Ausgangsrechtsstand eingefroren (Freeze-Commit ${freeze!.commit.slice(0, 12)})`] } : simLock;
     const lockedPrevious = lock?.locked ? previous : undefined;
-    if (lock?.locked && previous) {
+    if (decision.deviation) {
+      const commit = freeze!.commit.slice(0, 12);
+      const slugOf = decision.deviation === 'added' ? slugCandidates.get(item.id) ?? result.record!.meta.slug : previous!.targetSlug;
+      const message = decision.deviation === 'added'
+        ? `Neue Ausgangsfassung ${slugOf} nach dem Baseline-Freeze (Freeze-Commit ${commit}) – nicht aufgenommen; Aufnahme nur mit dokumentierter Freigabe (kind "added", baseCommit ${commit})`
+        : `Ausgangsfassung von ${slugOf} eingefroren (Freeze-Commit ${commit}); ${decision.deviation === 'changed' ? 'der Lauf ergäbe eine abweichende Norm' : `in diesem Lauf nicht mehr übernahmefähig (${result.reasons.slice(0, 2).join('; ') || result.outcome})`} – nicht geschrieben; Änderung nur mit dokumentierter Freigabe (data/content-immutability-exceptions.json, baseCommit ${commit})`;
+      result.findings.push({ severity: 'warning', code: 'baseline-frozen', message });
+      inputs.push({ category: 'import-regression', key: decision.deviation === 'added' ? 'baseline-frozen-addition' : 'baseline-frozen', severity: 'blocking', summary: message.slice(0, 400), details: [decision.deviation, ...result.reasons.slice(0, 3)] });
+      frozenDeviations.push({ sourceIdentity: item.id, slug: slugOf, kind: decision.deviation, message });
+    }
+    if (!frozen && lock?.locked && previous) {
       const stored = await readStoredBaseline(join(normsDirectory(root), previous.targetSlug), BASELINE_DATE);
       const identical = Boolean(result.record) && stored !== undefined && stored === jsonText(result.record!.versions[0]);
       const stillImportable = isImportedStatus(manifestStatusFor(result, inputs.some((input) => input.severity === 'blocking')));
@@ -620,7 +683,7 @@ export async function runBulk(options: BulkOptions): Promise<BulkResult> {
       if (await writeFileAtomic(join(root, INVENTORY_REPORT_PATH), renderCorpusInventory(report))) written.push(INVENTORY_REPORT_PATH);
     }
   }
-  return { report, written, normsWritten, normsUnchanged, normsRemoved, ...(stop ? { stop } : {}) };
+  return { report, written, normsWritten, normsUnchanged, normsRemoved, ...(stop ? { stop } : {}), ...(freeze ? { frozen: { commit: freeze.commit, deviations: frozenDeviations } } : {}) };
 }
 
 /** Registereinträge ohne eigene konsolidierte Fassung: Änderungs-, Aufhebungs- und Mantelgesetze, Tarifverträge. */

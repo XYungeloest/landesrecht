@@ -32,6 +32,7 @@ export function classifyReviewCase(item: Pick<ReviewItem, 'category' | 'key' | '
   if (item.category === 'contradictory-evidence') return as('technical-blocker', 'contradictory-evidence', 'widersprüchliche Belege', 'Belege auflösen (muss 0 sein)');
   if (item.category === 'import-regression') {
     if (item.key === 'baseline-locked') return as('human-decision', 'seed-conflict', 'Seed-Konflikt (fortgeschriebene Norm)', 'Seed-Entscheidung (Konfliktbericht)');
+    if (item.key === 'baseline-frozen' || item.key === 'baseline-frozen-addition') return as('technical-blocker', 'frozen-deviation', 'Abweichung vom eingefrorenen Ausgangsrechtsstand', 'dokumentierte Freigabe (Bugfix, neue Evidenz, Review, Schema) oder Adapter korrigieren');
     if (/table-layout/u.test(details)) return as('human-decision', 'unsafe-table', 'Tabelle ohne sicheres Raster (zurückgenommen)', 'Tabellenstruktur nicht belegt');
     if (/enacted-after-baseline|repealed-before-baseline/u.test(details)) return as('human-decision', 'withdrawal-not-at-baseline', 'zurückgenommen: am Stichtag nicht geltend', 'Rücknahme bestätigen');
     return as('technical-blocker', 'technical-regression', 'technische Regression', 'Ursache im Adapter beheben');

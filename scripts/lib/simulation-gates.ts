@@ -6,10 +6,11 @@
  *      (`data/simulation/baseline-locks.json`). Normen, die im Referenz-Commit fehlen (neue Sim-Normen, spätere
  *      Baseline-Importe), sind ausgenommen. Für Normen **mit** Sim-Fassungen gilt keine Freigabe aus
  *      `data/content-immutability-exceptions.json`; für Normen ohne Sim-Fassungen gelten dokumentierte
- *      Freigaben nur, wenn ihr `baseCommit` der Referenz-Commit ist.
+ *      Freigaben nur, wenn ihr `baseCommit` der Referenz-Commit ist. Im Freeze-Land (West, NSH) kommt eine Baseline-Norm
+ *      nach dem Freeze-Commit nur mit dokumentierter Freigabe `kind: "added"` hinzu (kein stilles Wachsen durch Bulk-Läufe).
  *      Lock-Datei Schema 2: Jede fortgeschriebene Norm (Sim-Fassung oder Rezept auf die Baseline) braucht einen
  *      akzeptierten Baseline-Seed (SHA-256 der Datei); für Normen mit Seed ersetzt der Seed den Commit-Vergleich –
- *      außer im Freeze-Land (West), wo beides gilt. G3 vergleicht dann gegen `sourceCommit` des Seeds.
+ *      außer im Freeze-Land (West, NSH), wo beides gilt. G3 vergleicht dann gegen `sourceCommit` des Seeds.
  *   G3 Normidentität additiv: `meta.json`/`history.json` von Normen mit Sim-Fassungen enthalten gegenüber dem
  *      Referenz-Commit alle alten Historieneinträge, Beziehungen und Schlagworte unverändert; alle übrigen
  *      Meta-Felder sind gleich – außer `status`, `expiryDate`, `successor`, `successorTarget`, `relations`,
@@ -211,8 +212,11 @@ export async function checkBaselineLock(root: string, jurisdiction: Jurisdiction
   const exceptions = await readImmutabilityExceptions(root);
   const blocks: ImmutabilityExceptionBlock[] = exceptions ? [exceptions, ...(exceptions.releases ?? [])] : [];
   const applies = (block: ImmutabilityExceptionBlock): boolean => block.baseCommit !== undefined && block.baseCommit !== '' && (commit.startsWith(block.baseCommit) || block.baseCommit.startsWith(commit));
-  const released = new Set(blocks.filter(applies).flatMap((block) => block.entries ?? []).map((entry) => entry.key));
-  for (const entry of blocks.flatMap((block) => block.entries ?? [])) {
+  const released = new Set(blocks.filter(applies).flatMap((block) => block.entries ?? []).filter((entry) => entry.kind !== 'added').map((entry) => entry.key));
+  // Im Freeze-Land darf eine Baseline-Norm nach dem Freeze-Commit nur mit dokumentierter Freigabe (`kind: added`) hinzukommen.
+  const releasedAdditions = new Set(blocks.filter(applies).flatMap((block) => block.entries ?? []).filter((entry) => entry.kind === 'added').map((entry) => entry.key));
+  // Nur Blöcke, die für diesen Referenz-Commit gelten, geben etwas frei; ältere Blöcke bleiben als Beleg stehen.
+  for (const entry of blocks.filter(applies).flatMap((block) => block.entries ?? [])) {
     const match = /^([^/]+)\/(.+)\/([^/]+)$/u.exec(entry.key);
     if (match && match[1] === jurisdiction && withSimVersions.has(match[2]!) && !seeded(match[2]!)) {
       report.problems.push(`${IMMUTABILITY_EXCEPTIONS_PATH}: Freigabe ${entry.key} (${entry.kind}) für eine Norm mit Sim-Fassungen ist unzulässig`);
@@ -250,6 +254,13 @@ export async function checkBaselineLock(root: string, jurisdiction: Jurisdiction
   }
   const outsideReference = norms.filter((norm) => !known.has(norm.slug));
   const newBaselines = outsideReference.filter((norm) => norm.hasBaseline).length;
+  if (options.freeze) {
+    for (const norm of outsideReference.filter((entry) => entry.hasBaseline)) {
+      const key = `${jurisdiction}/${norm.slug}/${SIMULATION_BASELINE_DATE}`;
+      if (releasedAdditions.has(key)) releasedCount += 1;
+      else report.problems.push(`content/norms/${jurisdiction}/${norm.slug}/versions/${baselineFile}: neue Baseline-Fassung nach dem Freeze-Commit ${commit.slice(0, 12)} (eingefrorener Ausgangsrechtsstand; Aufnahme nur dokumentiert in ${IMMUTABILITY_EXCEPTIONS_PATH}, kind "added", baseCommit ${commit.slice(0, 12)})`);
+    }
+  }
   const simNorms = outsideReference.filter((norm) => !norm.hasBaseline).length;
   report.notes.push(`${jurisdiction}: ${checked} Baseline-Fassungen gegen ${commit.slice(0, 12)} geprüft, ${releasedCount} dokumentiert freigegeben, ${withSimVersions.size} Norm(en) mit Sim-Fassungen, ${simNorms} eigene Sim-Norm(en), ${newBaselines} Baseline-Norm(en) nach dem Referenz-Commit`);
   return report;

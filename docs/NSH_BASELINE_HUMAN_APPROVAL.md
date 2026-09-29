@@ -1,6 +1,9 @@
 # NSH-Ausgangsrechtsstand – Freigabeübersicht für den Baseline-Freeze
 
-Automatisch erzeugt von `node scripts/nsh-freeze-readiness.ts --write`. Freeze-Readiness: **READY WITH HUMAN REVIEW**. Der Freeze ist **nicht gesetzt**; er wird mit einer einzigen Entscheidung freigegeben (unten).
+**FREIGEGEBEN UND EINGEFROREN** – Human Approval vom 2026-09-29, Freeze-Commit `eeeca2cdc5596a602db4332e59a4b252df2b8ea0`
+(Status und Regeln: `docs/NSH_BASELINE_FREEZE.md`). Diese Übersicht wurde mit `node scripts/nsh-freeze-readiness.ts --write` vor
+dem Freeze erzeugt (Freeze-Readiness **READY WITH HUMAN REVIEW**). Seit dem Freeze ist sie der Beleg der Entscheidung und wird
+nicht mehr neu erzeugt.
 
 ## Freizugebender Bestand
 
@@ -20,7 +23,11 @@ Automatisch erzeugt von `node scripts/nsh-freeze-readiness.ts --write`. Freeze-R
 | --- | --- | --- | --- |
 | `VVSH-VVSH000002248` | Einführung der DIN 1999 – 100 "Abscheideranlagen für Leichtflüssigkeit | Landesbezeichnung oder Kürzel ohne Regel | versions[0].body[1].children[0].text: „Schl.-H.“ blieb unverändert stehen (Kontext: „IN EN 858 – 2" die Worte "(DIN 1999-100 Schl.-H.)" eingefügt.“) / versions[0].body[8].children[1].text: „Schl.-H.“ blieb unverändert st |
 
-Diese Dokumente sind nicht veröffentlicht; sie sperren den Freeze nicht, bleiben aber offen, bis entschieden ist.
+Diese Dokumente sind nicht veröffentlicht und nicht Bestandteil des freigegebenen Bestands. Sie haben den Freeze nicht gesperrt
+und bleiben offene, nicht sperrende Human-Review- bzw. Quellenfälle. Beim DIN-Fall (`VVSH-VVSH000002248`, Einführung 2008)
+ist die Landesfassung „DIN 1999-100 Schl.-H.“ im Dokument nicht selbst belegt. Das Verhältnis zur veröffentlichten Einführung
+von 2022 (`VVSH-VVSH000008422`) ist ungeklärt. Er kann bei neuer Evidenz wieder geöffnet werden, eine Aufnahme wäre dann eine
+dokumentierte Freigabe (`kind: added`).
 
 ## Bewusst ausgeschlossen (nicht veröffentlicht, auditierbar, bei neuer Evidenz wieder offen)
 
@@ -92,5 +99,14 @@ Nach dem 01.12.2023 ausgefertigte, nur rückwirkend in Kraft gesetzte Normen geh
 
 ## Entscheidung
 
-Mit der Freigabe gilt: `data/simulation/baseline-locks.json` → `jurisdictions.nsh` = `{ "commit": "<Commit dieses Stands>", "freeze": true }` für den Bestand mit dem Fingerabdruck `1b92d06468585d5d6bbb241b470638939520d96b1b7a7e0fffea514950548cf9`. Danach ändert sich eine NSH-Ausgangsfassung nur noch als Bugfix, mit neuer Evidenz, als Review-Entscheidung oder Schema-Upgrade (wie West); Sim-Fortschreibung bleibt davon unberührt.
+**Erteilt am 2026-09-29 (Human Approval):** Der NSH-Ausgangsrechtsstand ist fachlich freigegeben und eingefroren.
+`data/simulation/baseline-locks.json` → `jurisdictions.nsh` = `{ "commit": "eeeca2cdc5596a602db4332e59a4b252df2b8ea0", "freeze": true }`
+für 2 672 Baseline-Normen mit dem Fingerabdruck `1b92d06468585d5d6bbb241b470638939520d96b1b7a7e0fffea514950548cf9`.
+Vorher geprüft: HEAD = Freeze-Commit, Fingerabdruck exakt, alle sechs NSH-Sim-Rezepte reproduzierbar, alle sechs Seeds stimmen.
 
+Seitdem ändert sich eine NSH-Ausgangsfassung nur noch als dokumentierter Sonderfall: echter Import- oder Parser-Bug, neue
+bessere Primärevidenz, ausdrückliche Human-Review-Entscheidung oder Schema-Migration ohne fachliche Änderung. Die
+Sim-Fortschreibung bleibt additiv zulässig.
+
+**Der NSH-Freeze bestätigt den veröffentlichten Baselinebestand. Bewusst ausgeschlossene oder mangels Evidenz nicht
+veröffentlichte Quellenfälle werden dadurch nicht nachträglich als materiell richtig oder vollständig bestätigt.**

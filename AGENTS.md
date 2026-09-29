@@ -60,12 +60,13 @@ Prioritäten:
   `meta.json`/`history.json` werden nur additiv geändert, Sim-Belege (`simulation-*`) bleiben von realen getrennt;
   das Fassungsende wird abgeleitet, nie in ältere Dateien geschrieben (`npm run content:simulation-gates`).
   Fortschreibungen sind an einen akzeptierten Baseline-Seed je Norm gebunden (`data/simulation/baseline-locks.json`,
-  Schema 2: SHA-256 der Ausgangsfassung, `decision`); neue Seeds nur mit ausdrücklicher Freigabe, West-Freeze bleibt.
+  Schema 2: SHA-256 der Ausgangsfassung, `decision`); neue Seeds nur mit ausdrücklicher Freigabe, West- und NSH-Freeze bleiben
+  (`docs/WEST_REFERENCE_BASELINE.md`, `docs/NSH_BASELINE_FREEZE.md`; Freeze-Commit nie automatisch verschieben).
   Evidenzhierarchie (`docs/SIMULATION_IMPORT.md` 2.1): Sekundärquellen (Wiki-Verzeichnisse, Presse) nie als Wortlaut-,
   Verkündungs- oder alleinige Rechtswirkungsgrundlage (Gate G11); nichts aus Dateinamen ableiten.
   Ein Baseline-Freeze fixiert nur den realen Ausgangsrechtsstand samt Provenienz, nie die Sim-Fortschreibung
   (`docs/SIMULATION_IMPORT.md` 6.1); nach dem Stichtag ausgefertigte, nur rückwirkend geltende Normen gehören nie
-  zum Ausgangsrechtsstand (6.2); Freeze nur auf ausdrückliche Entscheidung, Bereitschaft NSH:
+  zum Ausgangsrechtsstand (6.2); Freeze nur auf ausdrückliche Entscheidung; Stand und Fingerabdruck NSH:
   `node scripts/nsh-freeze-readiness.ts`. Tabellenänderungen gespeicherter Fassungen nur mit Freigabe
   (`npm run content:tables`, `data/content-table-changes.json`).
 - Bundesrecht (`gesetze-sim-internet.de`) wird nicht importiert; Anbindungsplan und Mapping in

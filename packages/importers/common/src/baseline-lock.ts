@@ -69,3 +69,34 @@ export async function storedBaselineEquals(normDir: string, baseline: string, ve
     return false;
   }
 }
+
+/**
+ * Baseline-Freeze eines Landes (`data/simulation/baseline-locks.json`, `freeze: true`): Der Ausgangsrechtsstand ist
+ * gegen den Freeze-Commit eingefroren. Ein Quelladapter schreibt dann keine Ausgangsfassung neu, nimmt keine zurück und
+ * nimmt keine neue auf – außer mit dokumentierter Freigabe in `data/content-immutability-exceptions.json` (Block mit
+ * `baseCommit` = Freeze-Commit; `regenerated`/`removed` für bestehende, `added` für neue Normen). Die Validierung der
+ * Lock-Datei selbst leisten die Gates (`content:simulation-gates`); hier wird nur gelesen.
+ */
+export interface BaselineFreeze {
+  commit: string;
+  /** Freigegebene Schlüssel `<land>/<slug>/<Stichtag>` je Art. */
+  released: { regenerated: Set<string>; removed: Set<string>; added: Set<string> };
+}
+
+export async function readBaselineFreeze(root: string, jurisdiction: string): Promise<BaselineFreeze | undefined> {
+  const locks = await readJson<{ jurisdictions?: Record<string, { commit?: string; freeze?: boolean }> }>(join(root, 'data', 'simulation', 'baseline-locks.json'));
+  const lock = locks?.jurisdictions?.[jurisdiction];
+  if (!lock?.freeze || typeof lock.commit !== 'string') return undefined;
+  const commit = lock.commit;
+  type Block = { baseCommit?: string; entries?: Array<{ key: string; kind: string }> };
+  const exceptions = await readJson<Block & { releases?: Block[] }>(join(root, 'data', 'content-immutability-exceptions.json'));
+  const blocks = exceptions ? [exceptions, ...(exceptions.releases ?? [])] : [];
+  const released: BaselineFreeze['released'] = { regenerated: new Set(), removed: new Set(), added: new Set() };
+  for (const block of blocks) {
+    if (!block.baseCommit || !(commit.startsWith(block.baseCommit) || block.baseCommit.startsWith(commit))) continue;
+    for (const entry of block.entries ?? []) {
+      if (entry.key.startsWith(`${jurisdiction}/`) && (entry.kind === 'regenerated' || entry.kind === 'removed' || entry.kind === 'added')) released[entry.kind].add(entry.key);
+    }
+  }
+  return { commit, released };
+}

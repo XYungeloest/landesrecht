@@ -650,7 +650,7 @@ async function runBulkCommand(command: 'inventory' | 'bulk', options: CliOptions
       log: options.json ? undefined : io.print,
     });
     const totals = result.report.totals;
-    if (options.json) io.print(JSON.stringify({ totals, registerCrosscheck: result.report.registerCrosscheck.map(({ missing, ...rest }) => ({ ...rest, missing: missing.length })), baselineOnly: { ...result.report.baselineOnly, entries: undefined }, norms: { written: result.normsWritten, unchanged: result.normsUnchanged, removed: result.normsRemoved }, stop: result.stop ?? null }, null, 2));
+    if (options.json) io.print(JSON.stringify({ totals, registerCrosscheck: result.report.registerCrosscheck.map(({ missing, ...rest }) => ({ ...rest, missing: missing.length })), baselineOnly: { ...result.report.baselineOnly, entries: undefined }, norms: { written: result.normsWritten, unchanged: result.normsUnchanged, removed: result.normsRemoved }, frozen: result.frozen ?? null, stop: result.stop ?? null }, null, 2));
     else {
       io.print(`${command}: ${totals.processed}/${totals.enumerated} Dokumente · ${Object.entries(totals.byOutcome).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
       io.print(`  Manifeststatus: ${Object.entries(totals.byManifestStatus).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
@@ -658,6 +658,15 @@ async function runBulkCommand(command: 'inventory' | 'bulk', options: CliOptions
       for (const check of result.report.registerCrosscheck) io.print(`  Register ${check.source}: ${check.registerNumbers} Registerköpfe · nur Gliederungsnummer ${check.idOnly.found} (${(check.idOnly.rate * 100).toFixed(1)} %) · streng ${check.found} (${(check.coverage * 100).toFixed(1)} %) · nicht gefunden ${check.missing.length} (klassifiziert)`);
       io.print(`  baseline-only: ${result.report.baselineOnly.matched}/${result.report.baselineOnly.candidates} zugeordnet · ${Object.entries(result.report.baselineOnly.byOutcome).map(([key, value]) => `${key} ${value}`).join(' · ')}`);
       io.print(`  Normen: ${command === 'bulk' && options.write ? 'geschrieben' : 'würden geschrieben'} ${result.normsWritten} · unverändert ${result.normsUnchanged} · zurückgenommen ${result.normsRemoved}${result.stop ? ` · Halt: ${result.stop}` : ''}`);
+    }
+    const deviations = result.frozen?.deviations ?? [];
+    if (deviations.length > 0) {
+      // Baseline-Freeze: fail-closed – keine eingefrorene Ausgangsfassung wurde geschrieben, zurückgenommen oder neu aufgenommen.
+      io.error(`BASELINE FROZEN (Freeze-Commit ${result.frozen!.commit.slice(0, 12)}): ${deviations.length} nicht freigegebene Abweichung(en) – nicht geschrieben, als Review-Fall erfasst:`);
+      for (const deviation of deviations.slice(0, 20)) io.error(`  ${deviation.kind} ${deviation.sourceIdentity}${deviation.slug ? ` (${deviation.slug})` : ''}`);
+      if (deviations.length > 20) io.error(`  … (+${deviations.length - 20})`);
+      io.error('Änderungen nur als dokumentierte Freigabe (data/content-immutability-exceptions.json, baseCommit = Freeze-Commit; docs/NSH_BASELINE_FREEZE.md).');
+      return 1;
     }
     if (options.json) return 0;
     if (!options.write) io.print('Dry-run: nichts geschrieben. Mit --write speichern.');

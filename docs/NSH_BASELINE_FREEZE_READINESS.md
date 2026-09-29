@@ -1,8 +1,8 @@
 # Freeze-Readiness des NSH-Ausgangsrechtsstands
 
-Automatisch erzeugt von `node scripts/nsh-freeze-readiness.ts --write` (Arbeitskopie; Vorher-Stand: Review-Fälle im Commit `a8f0c395b`). Nicht von Hand bearbeiten; Freeze-Semantik: `docs/SIMULATION_IMPORT.md` 6.1, Rückwirkung 6.2. Freigabeübersicht: `docs/NSH_BASELINE_HUMAN_APPROVAL.md`.
+Automatisch erzeugt von `node scripts/nsh-freeze-readiness.ts --write` (Arbeitskopie; Vorher-Stand: Review-Fälle im Commit `eeeca2cdc`). Nicht von Hand bearbeiten; Freeze-Semantik: `docs/SIMULATION_IMPORT.md` 6.1, Rückwirkung 6.2. Freigabeübersicht: `docs/NSH_BASELINE_HUMAN_APPROVAL.md`.
 
-**Status: READY WITH HUMAN REVIEW** · Freeze **nicht gesetzt** · Baseline-Fingerabdruck `1b92d06468585d5d6bbb241b470638939520d96b1b7a7e0fffea514950548cf9` · Sim-Quellenstatus getrennt: `SIM SOURCES PARTIAL` (kein Blocker des Ausgangsrechtsstands)
+**Baseline-Status: FROZEN** · Freeze-Commit `eeeca2cdc5596a602db4332e59a4b252df2b8ea0` (Human Approval 2026-09-29, `docs/NSH_BASELINE_FREEZE.md`) · Baseline-Fingerabdruck `1b92d06468585d5d6bbb241b470638939520d96b1b7a7e0fffea514950548cf9` · Bewertung der Restfälle: `READY WITH HUMAN REVIEW` · Sim-Quellenstatus getrennt: `SIM SOURCES PARTIAL` (kein Blocker des Ausgangsrechtsstands)
 
 Regel: `NOT READY`, solange ein technischer Blocker offen oder ein Gate rot ist. `READY WITH HUMAN REVIEW`: keine technischen Blocker, veröffentlichte Baseline konsistent, alle offenen Fälle klassifiziert. `BASELINE READY`: zusätzlich kein offener Fall – jeder Restfall ist übernommen, mit ReasonCode bewusst ausgeschlossen (`resolved-excluded`) oder durch eine Regel abgelöst. Nicht belegbare Inhalte bleiben ausgeschlossen; das ist kein Blocker. Der Freeze selbst wird nur auf ausdrückliche Entscheidung gesetzt.
 
@@ -15,8 +15,8 @@ Regel: `NOT READY`, solange ein technischer Blocker offen oder ein Gate rot ist.
 | bewusst ausgeschlossene Fälle (resolved-excluded) | 329 |
 | davon fehlende Quellen (Anlage, Text, Quellmangel, Zuordnung) | 125 |
 | Baseline-Normen im Bestand (übernommen) | 2.672 |
-| offene Fälle vorher → jetzt | 412 → 1 |
-| seit Basis erledigt: übernommen / ausgeschlossen / durch Regel abgelöst | 62 / 327 / 22 |
+| offene Fälle vorher → jetzt | 1 → 1 |
+| seit Basis erledigt: übernommen / ausgeschlossen / durch Regel abgelöst | 0 / 0 / 0 |
 
 ## 2 Bestand
 
@@ -34,13 +34,7 @@ Normtypen: verwaltungsvorschrift 1.173 · verordnung 949 · gesetz 502 · zustim
 
 | Kategorie | vorher | jetzt |
 | --- | ---: | ---: |
-| historical-gap | 13 | 0 |
-| import-regression | 4 | 0 |
-| incomplete-annex | 92 | 0 |
-| institution-mapping | 75 | 1 |
-| pdf-only | 30 | 0 |
-| unknown-structure | 187 | 0 |
-| validity | 11 | 0 |
+| institution-mapping | 1 | 1 |
 
 ### 3.1 Technische Blocker
 
@@ -82,10 +76,11 @@ Anlagen-Untergruppen der offenen Fälle: Stammnorm vollständig, nur nichtnormat
 | r2 | grün | 2.672 Einträge, 11.526 Objekte, Konflikte 0 |
 | published-integrity | grün | übernommen nur exact oder erklärt; Manifest 2.672 = Bestand 2.672 |
 | contradictory-evidence | grün | 0 offen (muss 0 sein) |
+| freeze-fingerprint | grün | Freeze-Commit eeeca2cdc559: 2.672 Normen, 1b92d06468585d5d… · Arbeitskopie 2.672 Normen, 1b92d06468585d5d… · dokumentiert 1b92d06468585d5d… |
 
 ## 6 Seeds, Ausnahmen, Sim-Quellen
 
-- Baseline-Lock NSH: Referenz-Commit `a7325a736e2c`, Freeze nicht gesetzt; Seeds: `gdg-nsh`, `laplag-nsh`, `lbo-nsh`, `lkhg-nsh`, `pog-nsh`, `sftg-nsh`. LBO: `data/simulation/nsh/lbo-baseline-seed-decision.md`.
+- Baseline-Lock NSH: Referenz-Commit `eeeca2cdc559`, Freeze gesetzt; Seeds: `gdg-nsh`, `laplag-nsh`, `lbo-nsh`, `lkhg-nsh`, `pog-nsh`, `sftg-nsh`. LBO: `data/simulation/nsh/lbo-baseline-seed-decision.md`.
 - Freigabeblöcke der Unveränderlichkeit (NSH-Einträge): `21bab36ec` 219 · `7d584576b` 0 · `a7325a736` 22.
 - Sim-Quellenstatus `SIM SOURCES PARTIAL`: 2/2 Ausgaben; 1/1 Ausgaben; 2/2 Ausgaben – betrifft die Fortschreibung, nicht den Ausgangsrechtsstand.
 
