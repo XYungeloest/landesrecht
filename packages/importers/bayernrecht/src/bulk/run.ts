@@ -474,6 +474,7 @@ export function bulkSummary(result: BulkRunResult): string[] {
   if (summary.outcomes['skipped-unclassified'] > 0) {
     lines.push(`  Hinweis: ${summary.outcomes['skipped-unclassified']} Kandidaten haben keine Stichtagsentscheidung. Der Cache ist seit der letzten Klassifikation gewachsen – zuerst „baseline --write“ erneut ausführen.`);
   }
+  if ((summary.warnings['baseline-frozen'] ?? 0) > 0) lines.push(`  BASELINE FROZEN: ${summary.warnings['baseline-frozen']} nicht freigegebene Abweichung(en) vom eingefrorenen Ausgangsrechtsstand – nicht geschrieben, als Review-Fall baseline-frozen erfasst; Änderungen nur als dokumentierte Freigabe zum Freeze-Commit (data/content-immutability-exceptions.json).`);
   if (summary.stopReason) lines.push(`  Halt (${summary.runStatus}): ${summary.stopReason}`);
   for (const failure of summary.failures.slice(0, 5)) lines.push(`  Fehler ${failure.documentId}: ${failure.code} – ${failure.message.slice(0, 160)}`);
   lines.push(summary.mode === 'write' ? `  Geschrieben: ${summary.written.norms} Normen, ${summary.written.files} Dateien berührt, ${summary.written.changed} Kandidaten mit Änderung · Laufbericht ${result.reportPath}` : `  Dry-run: nichts geschrieben (Laufbericht wäre ${result.reportPath}). Mit --write übernehmen.`);
@@ -483,7 +484,7 @@ export function bulkSummary(result: BulkRunResult): string[] {
 /** Für den Aufrufer: Hat der Lauf einen Zustand hinterlassen, der Aufmerksamkeit verlangt? */
 export function bulkExitCode(result: BulkRunResult): number {
   if (result.summary.runStatus === 'aborted-systemic') return 2;
-  if (result.summary.outcomes.failed > 0 || result.summary.outcomes['kept-existing'] > 0) return 1;
+  if (result.summary.outcomes.failed > 0 || result.summary.outcomes['kept-existing'] > 0 || (result.summary.warnings['baseline-frozen'] ?? 0) > 0) return 1;
   return 0;
 }
 

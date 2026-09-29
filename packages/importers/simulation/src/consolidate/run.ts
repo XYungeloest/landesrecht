@@ -634,6 +634,22 @@ async function consolidateTarget(context: RunContext, target: string, loadedReci
     || left.file.localeCompare(right.file));
 
   const norm = await getNorm(context, target);
+  // Aufhebung einer sicher identifizierten Norm, deren Ausgangsfassung bewusst nicht veröffentlicht ist (`targetExcluded`):
+  // nur Identitäts-/Statusoperation – Beziehung am Akt, Manifest mit Zielidentität und Entscheidung. Kein Zieltext, kein
+  // Seed, keine leere oder erfundene Fassung.
+  const excludedTarget = recipes.filter((loaded) => loaded.recipe.targetExcluded !== undefined);
+  if (excludedTarget.length > 0) {
+    if (norm) return failRecipes(context, recipes, `${relative}: Zielnorm ist veröffentlicht, das Rezept führt sie aber als ausgeschlossene Ausgangsfassung (targetExcluded)`);
+    if (excludedTarget.length !== recipes.length || corrections.length > 0) return failRecipes(context, recipes, `${relative}: an einer ausgeschlossenen Zielfassung ist nur eine Aufhebung zulässig`);
+    for (const loaded of recipes) {
+      const act = await getNorm(context, loaded.recipe.amendmentAct);
+      if (!act) return failRecipes(context, recipes, `${loaded.file}: Änderungsakt ${loaded.recipe.amendmentAct} ist nicht vorhanden`);
+      ensureRelation(act, { type: 'repeals', target: { slug: target }, date: loaded.recipe.effectiveDate });
+      context.recipeOutcomes.push({ file: loaded.file, amendmentAct: loaded.recipe.amendmentAct, target, effectiveDate: loaded.recipe.effectiveDate, status: 'repeal', versionId: null, detail: `Zielfassung ausgeschlossen (${loaded.recipe.targetExcluded!.reasonCode}): Aufhebung nur als Identitäts-/Statusoperation` });
+      context.manifestRecipes.push({ recipe: loaded.file, amendmentAct: loaded.recipe.amendmentAct, target, effectiveDate: loaded.recipe.effectiveDate, repealsLaw: true, seedVersionId: null, seedHash: null, versionId: null, versionSha256: null, targetExcluded: loaded.recipe.targetExcluded! });
+    }
+    return;
+  }
   if (!norm) {
     for (const loaded of recipes) block(context, loaded, 'target-missing', `Zielnorm ${target} ist nicht im Bestand (${relative} fehlt); der heutige Realtext wird nicht verwendet`);
     return;

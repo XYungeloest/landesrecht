@@ -62,7 +62,9 @@ const checks: Check[] = [
   { path: '/bayern-wuerttemberg/verkuendungen/', status: 200, expect: 'GVBl' },
   { path: '/bayern-wuerttemberg/norm/ftg-baywue/', status: 200, expect: 'Feiertag' },
   { path: '/bayern-wuerttemberg/norm/ftg-baywue/version/2023-12-01/', status: 200, expect: 'Fassung' },
-  { path: '/bayern-wuerttemberg/norm/strgvv-baywue/', status: 200, expect: 'außer Kraft' },
+  // StRGVV (Lauf 19, Regel 6.2): Ausgangsfassung nicht belegt, nicht veröffentlicht; die Sim-Aufhebung 2025 steht am Akt.
+  { path: '/bayern-wuerttemberg/norm/strgvv-baywue/', status: 404, expect: null },
+  { path: '/bayern-wuerttemberg/norm/strgvv-2025-baywue/', status: 200, expect: 'Geschäftsverteilung' },
   { path: '/bayern-wuerttemberg/norm/staatsverfassung-2025-baywue/', status: 200, expect: 'Staatsverfassung' },
   { path: '/bayern-wuerttemberg/norm/staatsverfassung-2025-baywue/version/2025-01-12/', status: 200, expect: 'Hauptstadt ist München' },
   { path: '/bayern-wuerttemberg/norm/staatsverfassung-2025-baywue/historie/', status: 200, expect: '2026-08-29' },

@@ -100,3 +100,32 @@ export async function readBaselineFreeze(root: string, jurisdiction: string): Pr
   }
   return { commit, released };
 }
+
+/**
+ * Aktive per-Norm-Seeds eines Landes (`data/simulation/baseline-locks.json`, `seeds[]`): Slugs, deren Ausgangsfassung die
+ * Sim-Fortschreibung trägt. Eine Sim-Sperre ohne aktiven Seed ist gegenstandslos (Seed per Evidenzentscheidung
+ * abgelöst, `supersededSeeds[]`) – der Quelladapter darf die Norm dann nach seinen Regeln zurücknehmen.
+ */
+export async function readActiveSeedSlugs(root: string, jurisdiction: string): Promise<Set<string>> {
+  const locks = await readJson<{ seeds?: Array<{ jurisdiction?: string; slug?: string }> }>(join(root, 'data', 'simulation', 'baseline-locks.json'));
+  return new Set((locks?.seeds ?? []).filter((seed) => seed.jurisdiction === jurisdiction && typeof seed.slug === 'string').map((seed) => seed.slug!));
+}
+
+/**
+ * Entscheidung des Baseline-Freeze für ein Dokument, gemeinsam für alle Quelladapter (NSH, BayWü): `frozen` – die
+ * übernommene Norm ist gesperrt (nichts schreiben, nichts zurücknehmen); `deviation` – der Lauf weicht ab (Review-Fall
+ * `baseline-frozen`, Lauf scheitert). Eine Sim-Sperre (`simLocked`) hat Vorrang (eigene Seed-Logik); dokumentierte
+ * Freigaben zum Freeze-Commit heben die Sperre für genau diese Norm auf.
+ */
+export function freezeDecision(input: { freeze: BaselineFreeze | undefined; jurisdiction: string; baselineDate: string; previousSlug?: string; previousImported: boolean; simLocked: boolean; importable: boolean; identical: boolean; candidateSlug?: string }): { frozen: boolean; deviation?: 'changed' | 'withdrawn' | 'added' } {
+  const { freeze } = input;
+  if (!freeze) return { frozen: false };
+  const released = (slug: string, kind: 'regenerated' | 'removed' | 'added'): boolean => freeze.released[kind].has(`${input.jurisdiction}/${slug}/${input.baselineDate}`);
+  if (input.previousImported && input.previousSlug) {
+    if (input.simLocked || released(input.previousSlug, 'regenerated') || released(input.previousSlug, 'removed')) return { frozen: false };
+    if (!input.importable) return { frozen: true, deviation: 'withdrawn' };
+    return input.identical ? { frozen: true } : { frozen: true, deviation: 'changed' };
+  }
+  if (input.importable && input.candidateSlug && !released(input.candidateSlug, 'added')) return { frozen: false, deviation: 'added' };
+  return { frozen: false };
+}

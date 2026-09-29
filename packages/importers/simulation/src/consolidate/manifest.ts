@@ -66,8 +66,11 @@ export interface ManifestRecipe {
   /** `correction`: deklaratorische Berichtigung der Fassung `versionId` (kein Fassungswechsel). */
   kind?: 'correction';
   repealsLaw: boolean;
-  seedVersionId: string;
-  seedHash: string;
+  /** `null` bei einer Aufhebung mit ausgeschlossener Zielfassung (`targetExcluded`): kein Seed, kein Text. */
+  seedVersionId: string | null;
+  seedHash: string | null;
+  /** Ausgeschlossene Zielidentität (Aufhebung als Identitäts-/Statusoperation). */
+  targetExcluded?: { sourceIdentity: string; externalIdentifiers: Array<{ system: string; value: string }>; reasonCode: string; decision: string; decidedAt: string };
   /** Erzeugte Fassung; `null` bei einer Aufhebung (keine neue Fassung). */
   versionId: string | null;
   versionSha256: string | null;

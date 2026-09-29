@@ -21,7 +21,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { jsonText, readJsonFile, writeFileAtomic, writeJsonAtomic } from '@landesrecht/importer-recht-nrw/common/atomic.ts';
-import { inspectBaselineLock, readBaselineFreeze, readStoredBaseline, type BaselineFreeze } from '@landesrecht/importer-common/baseline-lock.ts';
+import { freezeDecision, inspectBaselineLock, readBaselineFreeze, readStoredBaseline, type BaselineFreeze } from '@landesrecht/importer-common/baseline-lock.ts';
 import { cacheKey, RechtNrwFetchError } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
 
 import { validateNormRecord, type NormRecord } from '@landesrecht/legal-core/lib/schema.ts';
@@ -215,15 +215,7 @@ function frozenReleased(freeze: BaselineFreeze, slug: string, kind: 'regenerated
  * (eigene Seed-Logik); dokumentierte Freigaben für den Freeze-Commit heben die Sperre für genau diese Norm auf.
  */
 export function baselineFreezeDecision(input: { freeze: BaselineFreeze | undefined; previousSlug?: string; previousImported: boolean; simLocked: boolean; importable: boolean; identical: boolean; candidateSlug?: string }): { frozen: boolean; deviation?: 'changed' | 'withdrawn' | 'added' } {
-  const { freeze } = input;
-  if (!freeze) return { frozen: false };
-  if (input.previousImported && input.previousSlug) {
-    if (input.simLocked || frozenReleased(freeze, input.previousSlug, 'regenerated') || frozenReleased(freeze, input.previousSlug, 'removed')) return { frozen: false };
-    if (!input.importable) return { frozen: true, deviation: 'withdrawn' };
-    return input.identical ? { frozen: true } : { frozen: true, deviation: 'changed' };
-  }
-  if (input.importable && input.candidateSlug && !frozenReleased(freeze, input.candidateSlug, 'added')) return { frozen: false, deviation: 'added' };
-  return { frozen: false };
+  return freezeDecision({ ...input, jurisdiction: TARGET_JURISDICTION, baselineDate: BASELINE_DATE });
 }
 
 const increment = (counts: Record<string, number>, key: string): void => {

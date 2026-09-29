@@ -1,6 +1,6 @@
 # R2-Rohquellenarchiv BayWü
 
-Bucket `landesrecht-quellen` (privat), Präfix `baywue/bayernrecht/2023-12-01/`. Lauf 2026-09-29T10:14:02.713Z – 2026-09-29T10:17:12.019Z (189 s), Transport `wrangler-api`.
+Bucket `landesrecht-quellen` (privat), Präfix `baywue/bayernrecht/2023-12-01/`. Lauf 2026-09-29T10:56:19.816Z – 2026-09-29T10:59:31.449Z (192 s), Transport `wrangler-api`.
 
 Status: **verified**
 
@@ -9,16 +9,16 @@ Status: **verified**
 | Kennzahl | Wert |
 | --- | --- |
 | Manifesteinträge | 2.404 |
-| übernommene Normen (imported, imported-with-warnings) | 1.619 |
-| Rohquellen der übernommenen Normen | 2.355 (461.6 MiB, 484.039.051 Bytes) |
-| Archivstatus im Manifest | verified 2.355 |
-| Staging `.cache/bayernrecht-r2-staging` | 2.355 Rohobjekte + 2.355 Umschläge |
+| übernommene Normen (imported, imported-with-warnings) | 1.618 |
+| Rohquellen der übernommenen Normen | 2.354 (461.6 MiB, 484.028.737 Bytes) |
+| Archivstatus im Manifest | verified 2.354 |
+| Staging `.cache/bayernrecht-r2-staging` | 2.354 Rohobjekte + 2.354 Umschläge |
 | fehlende erwartete Objekte im Staging | 0 |
 | Größe / SHA-256 abweichend (nachgerechnet) | 0 / 0 |
 | Umschläge abweichend | 0 |
 | Manifestbefunde (Bucket, Schlüssel, Status) | 0 |
 | Schlüssel außerhalb des Präfixes | 0 |
-| nur im Staging (kein Upload-Soll) | 174 |
+| nur im Staging (kein Upload-Soll) | 176 |
 | Staging-Audit | bestanden |
 
 ## Sync
@@ -35,19 +35,19 @@ Status: **verified**
 | Byte-Rücklesungen im Sync (SHA-256) | 33 |
 | Listings | 8 |
 | auf verified gesetzt | 2.060 |
-| Dauer Sync | 64 s |
+| Dauer Sync | 65 s |
 
 ## Nachprüfung (nur lesend)
 
 | Kennzahl | Wert |
 | --- | --- |
 | Objekte unter `baywue/bayernrecht/2023-12-01/` | 4.884 (469.5 MiB, 492.281.702 Bytes) |
-| davon Rohobjekte / Umschläge | 2.355 (461.6 MiB) / 2.355 |
-| erwartet (Rohobjekte + Umschläge) | 4.710 |
+| davon Rohobjekte / Umschläge | 2.354 (461.6 MiB) / 2.354 |
+| erwartet (Rohobjekte + Umschläge) | 4.708 |
 | fehlend / noch offen | 0 / 0 |
 | Größe abweichend / Etag (MD5) abweichend | 0 / 0 |
 | unerwartet unter dem Präfix | 0 |
-| archiviert, Norm aus dem Stichtagsbestand zurückgenommen (bleibt, kein Widerspruch) | 174 |
+| archiviert, Norm aus dem Stichtagsbestand zurückgenommen (bleibt, kein Widerspruch) | 176 |
 | Manifest nicht verified | 0 |
 | deterministische Byte-Stichprobe (Saat `2023-12-01`, SHA-256 nach Download) | 150 von 150 geprüft, 0 Fehler, 25.6 MiB |
 | Umschlag-Stichprobe (Kernfelder; bytegleich außer archiviertem Stand mit abweichendem Titel) | 25 geprüft, 0 Fehler, 1 mit archiviertem Titel |
@@ -57,7 +57,7 @@ Status: **verified**
 
 | Kennzahl | vorher | nachher |
 | --- | --- | --- |
-| Zeitpunkt | 2026-09-29T10:15:07.563Z | 2026-09-29T10:17:12.011Z |
+| Zeitpunkt | 2026-09-29T10:57:26.559Z | 2026-09-29T10:59:31.437Z |
 | Objekte gesamt | 51.104 (2305.7 MiB) | 51.104 (2305.7 MiB) |
 | unter `baywue/` | 4.968 (484.7 MiB) | 4.968 (484.7 MiB) |
 | außerhalb `baywue/` | 46.136 | 46.136 |
@@ -70,7 +70,7 @@ Außerhalb von `baywue/` ist der Bucket unverändert (gleicher Fingerabdruck üb
 
 ## Läufe dieses Archivs
 
-19 Läufe, 2026-09-18T06:44:37.545Z – 2026-09-29T10:17:12.019Z (963154 s Wanduhr, 2933 s Laufzeit). Vor dem ersten Lauf: 22.712 Objekte im Bucket, 0 unter `baywue/`; nach dem letzten Lauf: 51.104 Objekte, 4.968 unter `baywue/`. Fingerabdruck außerhalb `baywue/` über alle Messungen: **verändert**.
+20 Läufe, 2026-09-18T06:44:37.545Z – 2026-09-29T10:59:31.449Z (965694 s Wanduhr, 3125 s Laufzeit). Vor dem ersten Lauf: 22.712 Objekte im Bucket, 0 unter `baywue/`; nach dem letzten Lauf: 51.104 Objekte, 4.968 unter `baywue/`. Fingerabdruck außerhalb `baywue/` über alle Messungen: **verändert**.
 
 | Beginn | Ende | Status | hochgeladen Roh / Umschlag | bereits vorhanden | Bucket vorher (gesamt / baywue) | Bucket nachher (gesamt / baywue) | Befund |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -93,6 +93,7 @@ Außerhalb von `baywue/` ist der Bucket unverändert (gleicher Fingerabdruck üb
 | 2026-09-19T14:00:32.705Z | 2026-09-19T14:03:36.150Z | verified | 0 / 0 | 2.057 | 42.870 / 4.704 | 42.870 / 4.704 | – |
 | 2026-09-29T10:05:14.010Z | 2026-09-29T10:08:42.985Z | failed | 90 / 90 | 1.971 | 50.924 / 4.788 | 51.104 / 4.968 | – |
 | 2026-09-29T10:14:02.713Z | 2026-09-29T10:17:12.019Z | verified | 0 / 0 | 2.060 | 51.104 / 4.968 | 51.104 / 4.968 | – |
+| 2026-09-29T10:56:19.816Z | 2026-09-29T10:59:31.449Z | verified | 0 / 0 | 2.060 | 51.104 / 4.968 | 51.104 / 4.968 | – |
 
 ## Regeln dieses Laufs
 

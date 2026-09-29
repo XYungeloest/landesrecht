@@ -411,7 +411,7 @@ sind Fehler (Exit 1); gesperrte Ziele sind dokumentierter Zustand (Exit 0).
 | Gate | Prüfung | Befehl |
 | --- | --- | --- |
 | G1 | Fassungen write-once gegen HEAD | `npm run content:immutability` |
-| G2 | Baseline-Lock (Lock-Datei Schema 2, s. u.): jede fortgeschriebene Norm (Sim-Fassung neben der Baseline oder Rezept auf die Baseline) hat einen akzeptierten Seed, dessen SHA-256 der gespeicherten Datei `versions/2023-12-01.json` entspricht (und dem `sourceCommit`; im Freeze-Land zusätzlich dem Freeze-Commit); die Konsolidierung sperrt Rezepte auf eine Baseline ohne passenden Seed (`seed-unaccepted`). Für Normen ohne Seed gilt weiter der Referenz-Commit: `versions/2023-12-01.json` jeder Norm byteidentisch gegen den Referenz-Commit des Landes aus `data/simulation/baseline-locks.json` (`{ "west": "ff1b1f43…", "nsh": "eeeca2cd…", "baywue": "e0727c86…" }`; West und NSH = Freeze-Commit, BayWü = letzter Commit, dessen Baseline-Fassungen unverändert gelten (seit Lauf 18 nach dem BayWü-Baseline-Schreiblauf) – wird nur in einem Land ohne Freeze nach einem Baseline-Schreiblauf mit dokumentierten Freigaben auf den Commit gesetzt, gegen den `content:immutability` prüft, sofern beide Bestände byteidentisch sind; ein Freeze-Commit wird nie automatisch verschoben). Normen, die im Referenz-Commit fehlen, sind ausgenommen – im Freeze-Land ist eine neue Baseline-Norm dagegen ein Verstoß, außer mit Freigabe `kind: "added"` zum Freeze-Commit. Für Normen mit Sim-Fassungen gilt keine Freigabe aus `data/content-immutability-exceptions.json` (auch nicht dokumentiert), für Normen ohne Sim-Fassungen nur mit `baseCommit` = Referenz-Commit; nur Blöcke zum Referenz-Commit geben etwas frei | `npm run content:simulation-gates` |
+| G2 | Baseline-Lock (Lock-Datei Schema 2, s. u.): jede fortgeschriebene Norm (Sim-Fassung neben der Baseline oder Rezept auf die Baseline) hat einen akzeptierten Seed, dessen SHA-256 der gespeicherten Datei `versions/2023-12-01.json` entspricht (und dem `sourceCommit`; im Freeze-Land zusätzlich dem Freeze-Commit); die Konsolidierung sperrt Rezepte auf eine Baseline ohne passenden Seed (`seed-unaccepted`). Für Normen ohne Seed gilt weiter der Referenz-Commit: `versions/2023-12-01.json` jeder Norm byteidentisch gegen den Referenz-Commit des Landes aus `data/simulation/baseline-locks.json` (`{ "west": "ff1b1f43…", "nsh": "eeeca2cd…", "baywue": "63527012…" }`; West und NSH = Freeze-Commit, BayWü = letzter Commit, dessen Baseline-Fassungen unverändert gelten (seit Lauf 19 nach der StRGVV-Entscheidung) – wird nur in einem Land ohne Freeze nach einem Baseline-Schreiblauf mit dokumentierten Freigaben auf den Commit gesetzt, gegen den `content:immutability` prüft, sofern beide Bestände byteidentisch sind; ein Freeze-Commit wird nie automatisch verschoben). Normen, die im Referenz-Commit fehlen, sind ausgenommen – im Freeze-Land ist eine neue Baseline-Norm dagegen ein Verstoß, außer mit Freigabe `kind: "added"` zum Freeze-Commit. Für Normen mit Sim-Fassungen gilt keine Freigabe aus `data/content-immutability-exceptions.json` (auch nicht dokumentiert), für Normen ohne Sim-Fassungen nur mit `baseCommit` = Referenz-Commit; nur Blöcke zum Referenz-Commit geben etwas frei | `npm run content:simulation-gates` |
 | G3 | `meta.json`/`history.json` von Normen mit Sim-Fassungen nur additiv gegenüber dem Referenz-Commit: alle alten Historieneinträge (in alter Reihenfolge), Beziehungen und Schlagworte unverändert enthalten, `initialVersionId` gleich, alle übrigen Meta-Felder gleich außer `status`, `expiryDate`, `successor`, `successorTarget`, `relations`, `keywords` | `npm run content:simulation-gates` |
 | G4 | Konsolidierung reproduzierbar (`consolidate --check` je Land, s. o.) | `npm run content:simulation-gates` |
 | G5 | Provenienztrennung (Sim-Fassung nur Sim-Belege, keine reale Quellprovenienz; Baseline nie Sim-Belege; eigene Sim-Norm ohne reale Kennung) – im Loader (`assertSimulationProvenance`) | `npm run content:validate` |
@@ -446,6 +446,23 @@ Freeze-Land (West, NSH) gegen den Freeze-Commit. Die frühere flache Form `{ "<l
 keine Seeds. Weitere Freigaben in `data/content-immutability-exceptions.json` stehen als eigene Blöcke in `releases[]`
 (je `baseCommit`, dieselbe Regel wie der Hauptblock).
 
+**Abgelöste Seeds** (`supersededSeeds[]`, Lauf 19): Ein Seed, der sich als sachlich falsch erweist, wird nicht gelöscht.
+Er wandert mit `supersededAt`, `reason` und `supersededBy` (Entscheidung) aus `seeds[]` nach `supersededSeeds[]`. Ein
+abgelöster Seed ist nicht aktiv: Er bindet keine Konsolidierung und berechtigt keine Sim-Sperre. Beispiel: `strgvv-baywue`,
+dessen Seed eine erst 2024 ausgefertigte, rückwirkende Änderung enthielt (6.2; `data/simulation/baywue/strgvv-baseline-seed-decision.md`).
+
+**Aufhebung einer ausgeschlossenen Zielfassung** (Rezeptfeld `targetExcluded`, nur mit `repealsLaw`): Eine sicher
+identifizierte Norm, deren Ausgangswortlaut bewusst nicht veröffentlicht ist (`resolved-excluded`), kann trotzdem durch einen
+Sim-Akt aufgehoben oder ersetzt werden. Die Aufhebung ist dann eine reine Identitäts- und Statusoperation:
+- `targetExcluded` nennt Quellidentität, externe Kennungen (Quellidentität, Gliederungsnummer), ReasonCode, Entscheidung
+  und Datum;
+- `repealLaw` trägt keinen `expectedHash`;
+- die Konsolidierung schreibt keinen Zieltext und verlangt keinen Seed. Sie setzt `repeals` am Akt und führt das Rezept im
+  Manifest mit `seedVersionId: null` und der Zielidentität;
+- ist die Zielnorm doch veröffentlicht, scheitert sie (fail-closed).
+
+Eine leere oder erfundene Fassung entsteht nie.
+
 ### 6.1 Baseline-Freeze: Semantik
 
 Ein Baseline-Freeze (`jurisdictions.<land>.freeze: true` in `data/simulation/baseline-locks.json`: West seit 2026-09-17,
@@ -456,8 +473,8 @@ fixiert **ausschließlich den realen Ausgangsrechtsstand zum 01.12.2023** einsch
 - jede unbegründete Änderung einer eingefrorenen Ausgangsfassung (`versions/2023-12-01.json`) – eine Änderung braucht
   eine dokumentierte Entscheidung (Bugfix, neue Evidenz, Review-Entscheidung, Schema-Upgrade) samt Freigabe;
 - ein stilles Neuimportieren, Zurücknehmen oder Erweitern des Ausgangsbestands (Importer schreiben eingefrorene Baselines
-  nie neu; der NSH-Bulk endet bei jeder nicht freigegebenen Abweichung mit Exit 1 und erfasst sie als Review-Fall
-  `baseline-frozen`);
+  nie neu; der NSH- und der BayWü-Bulk enden bei jeder nicht freigegebenen Abweichung mit Exit 1 und erfassen sie als
+  Review-Fall `baseline-frozen` – gemeinsame Entscheidung `freezeDecision` in `packages/importers/common/src/baseline-lock.ts`);
 - jede Veränderung der realen Baseline-Provenienz.
 
 Er verhindert **nicht** die Simulationsrechtsfortschreibung: neue Sim-Normen, neue Sim-Fassungen, Sim-Aufhebungen,

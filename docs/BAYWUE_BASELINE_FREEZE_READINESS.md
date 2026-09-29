@@ -1,8 +1,8 @@
 # Freeze-Readiness des BayWü-Ausgangsrechtsstands
 
-Automatisch erzeugt von `node scripts/baywue-freeze-readiness.ts --write` (Arbeitskopie; Vorher-Stand: Commit `e0727c86d`). Nicht von Hand bearbeiten. Freeze-Semantik wie West/NSH: `docs/SIMULATION_IMPORT.md` 6.1 (nur der reale Ausgangsrechtsstand zum 01.12.2023; Sim-Normen, Sim-Fassungen, Aufhebungen, Verkündungen und additive Historie/Beziehungen bleiben zulässig), Rückwirkung 6.2.
+Automatisch erzeugt von `node scripts/baywue-freeze-readiness.ts --write` (Arbeitskopie; Vorher-Stand: Commit `635270129`). Nicht von Hand bearbeiten. Freeze-Semantik wie West/NSH: `docs/SIMULATION_IMPORT.md` 6.1 (nur der reale Ausgangsrechtsstand zum 01.12.2023; Sim-Normen, Sim-Fassungen, Aufhebungen, Verkündungen und additive Historie/Beziehungen bleiben zulässig), Rückwirkung 6.2.
 
-**Status: NOT READY** · Freeze **nicht gesetzt** · Baseline-Fingerabdruck `2f596f6d3bd13e14700102242d3ab6382c8f0ef6aebc488fe8842c03b1438446` · Sim-Quellenstatus getrennt: `SIM SOURCES PARTIAL` (kein Blocker des Ausgangsrechtsstands)
+**Status: BASELINE READY** · Freeze **nicht gesetzt** · Baseline-Fingerabdruck `07c7fec745054453cb2c333526beb887c626d2d41a16bd642c4a4a480e58a5a2` · Sim-Quellenstatus getrennt: `SIM SOURCES PARTIAL` (kein Blocker des Ausgangsrechtsstands)
 
 Regel: `NOT READY`, solange ein technischer Blocker offen oder ein Gate rot ist (Integritätsfehler veröffentlichter Normen, veröffentlichter Text nachweislich nicht der Stichtagstext, nicht reproduzierbare Rezepte, Seed-Konflikte, Regressionen). `READY WITH HUMAN REVIEW`: keine technischen Blocker, offene Fälle klassifiziert. `BASELINE READY`: zusätzlich kein offener Fall.
 
@@ -10,34 +10,30 @@ Regel: `NOT READY`, solange ein technischer Blocker offen oder ein Gate rot ist 
 
 | Kennzahl | Wert |
 | --- | --- |
-| Baseline-Normen vorher → jetzt | 1.701 → 1.619 |
-| technische Blocker | 1 |
-| offene fachliche Entscheidungen | 1 |
-| bewusst ausgeschlossene Fälle (resolved-excluded) | 538 |
-| offene Fälle vorher → jetzt | 456 → 2 |
+| Baseline-Normen vorher → jetzt | 1.619 → 1.618 |
+| technische Blocker | 0 |
+| offene fachliche Entscheidungen | 0 |
+| bewusst ausgeschlossene Fälle (resolved-excluded) | 539 |
+| offene Fälle vorher → jetzt | 2 → 0 |
 | Rekonstruktion nicht möglich (Queue ohne Rezept) | 526 |
 
 ## 2 Bestand
 
 | Herkunft der Stichtagsfassung | vorher | jetzt |
 | --- | ---: | ---: |
-| exakt (heutiger Text = Stichtagstext) | 1.569 | 1.444 |
-| rekonstruiert (Rückrechnung, Rundlauf exakt) | 71 | 114 |
+| exakt (heutiger Text = Stichtagstext) | 1.444 | 1.443 |
+| rekonstruiert (Rückrechnung, Rundlauf exakt) | 114 | 114 |
 | wiederhergestellt aus Verkündungen (heute nicht geführt) | 61 | 61 |
 
 Normen mit Tabellen / Tabellen: 540 / 1.490 · davon durch die Simulation fortgeschrieben: 2 · eigene Sim-Normen: 46.
 
 ## 3 Technische Blocker
 
-| Art | Quelle | Slug | Befund |
-| --- | --- | --- | --- |
-| seed-conflict | `BayStRGVV` | `strgvv-baywue` | Per-Norm-Seed: veröffentlichter heutiger Text, Stichtagsklassifikation amended-after-baseline-portal-date-stale – Stichtagstext nicht belegt; Seed-Verschiebung nur mit Evidenzentscheidung (data/simulation/baywue/strgvv-baseline-seed-decision.md) |
+keine
 
 ## 4 Offene fachliche Entscheidungen
 
-| Gruppe | Fälle |
-| --- | ---: |
-| Rekonstruktion: heutiger Text nach dem Stichtag geändert (Paketdatum veraltet), Stichtagsfassung nicht rückrechenbar | 1 |
+keine
 
 ## 5 Bewusst ausgeschlossen (resolved-excluded)
 
@@ -52,7 +48,7 @@ Normen mit Tabellen / Tabellen: 540 / 1.490 · davon durch die Simulation fortge
 | `missing-normative-annex` | normative Anlage nicht rekonstruierbar | 49 | 49 |
 | `unsafe-table-structure` | normative Tabelle nicht rekonstruierbar | 8 | 8 |
 | `missing-normative-image` | normative Abbildung nicht rekonstruierbar | 4 | 4 |
-| `text-unproven-after-baseline` | heutiger Text nach dem Stichtag geändert (Paketdatum veraltet), Stichtagsfassung nicht rückrechenbar | 83 | 83 |
+| `text-unproven-after-baseline` | heutiger Text nach dem Stichtag geändert (Paketdatum veraltet), Stichtagsfassung nicht rückrechenbar | 84 | 84 |
 
 Ausgeschlossene Fälle bleiben mit Begründung in den Review-Shards (auditierbar, nicht offen, bei neuer Evidenz neu zu öffnen). OCR erzeugt keine kanonische Fassung.
 
@@ -80,7 +76,6 @@ Rezeptaudit: 114 Rezepte, Vorwärtsprobe 114/114, Quellen 114/114, Wiederherstel
 | --- | --- | --- | --- |
 | `baygvfg-baywue` | `b5e036ad7f5f6051…` | `21bab36ec` | gültig |
 | `ftg-baywue` | `149e7be706a018fd…` | `21bab36ec` | gültig |
-| `strgvv-baywue` | `89184e10d1638334…` | `21bab36ec` | **Konflikt** |
 | `verfassung-des-freistaates-bayern-wuerttemberg` | `b68a7b434129c0f5…` | `21bab36ec` | gültig |
 
 ## 8 Sim-blockierte Zielnormen (unresolved source dependencies)
@@ -107,13 +102,21 @@ Keine dieser Baselines wird erzwungen. Solange die Stichtagsfassung nicht sicher
 
 | Gate | Ergebnis | Detail |
 | --- | --- | --- |
-| manifest-content | grün | Manifest 1.619 übernommen = Bestand 1.619 |
+| manifest-content | grün | Manifest 1.618 übernommen = Bestand 1.618 |
 | reconstruction-recipes | grün | 114 Rezepte, Vorwärtsprobe 114, Quellen 114, Wiederherstellung 28/28 |
 | r2 | grün | verified, 4.884 Objekte, fehlend 0 (2026-09-29) |
 | d1-remote | grün | landesrecht-baywue, Stichprobe 30, 0 Abweichungen (2026-09-29) |
-| search-audit-full | grün | 1.661 Normen, 85.073 Sucheinheiten |
+| search-audit-full | grün | 1.661 Normen, 85.054 Sucheinheiten |
 
-## 10 Sim-Quellenstatus (getrennt, kein Baseline-Blocker)
+## 10 Post-Stichtags-Änderungen mit veraltetem Paketdatum
+
+Klassifikation 3b (Lauf 18/19) hat 127 früher als „heutiger Text = Stichtagstext“ geführte bzw. geprüfte Normen umgestellt: 42 sicher zurückgerechnet (korrigierte Stichtagsfassung), 1 neu rekonstruiert, 84 zurückgenommen (einschließlich StRGVV). Persistentes Regressionsset mit Evidenzgrund je Norm: `data/audits/bayernrecht/post-baseline-amendment-regression.json` (Test `tests/unit/bayernrecht-freeze-guard.test.ts`).
+
+## 11 StRGVV (Human Decision 2026-09-29: Regel 6.2 strikt)
+
+`strgvv-baywue`: Seed `89184e10d163…` (akzeptiert 2026-09-28) am 2026-09-29 abgelöst – Human Decision 2026-09-29 (Auftrag Lauf 19): Regel 6.2 strikt, keine Ausnahme wie lbo-nsh; Norm aus dem Ausgangsrechtsstand ausgeschlossen (data/simulation/baywue/strgvv-baseline-seed-decision.md). Die Norm ist nicht veröffentlicht; die Sim-Aufhebung vom 13.04.2025 wirkt als Identitäts-/Statusoperation (Rezeptfeld `targetExcluded`, Beziehungen am Sim-Akt).
+
+## 12 Sim-Quellenstatus (getrennt, kein Baseline-Blocker)
 
 Status `SIM SOURCES PARTIAL`: Reihe 1/1 Ausgaben; Reihe 7/7 Ausgaben. Bekannte Lücken: Originalverkündungsblatt der Staatsverfassung 2025, Organisationserlass vom 14.02.2025, Erdbebenhilfegesetz 2026 (nur als Entwurf belegt; kein Baselinefall), fehlende oder unklare Einzelverkündungen und Lücken der Gazette-Reihen (`data/simulation/baywue/completeness.json`).
 

@@ -75,6 +75,12 @@ export interface SimulationRecipe {
   kind: 'amendment' | 'correction' | 'adoption';
   /** Weitere Akte, die dieselbe Folgefassung mittragen (je Akt Historieneintrag und Beziehung). */
   contributingActs?: Array<{ slug: string; changeNote: string; citation: string }>;
+  /**
+   * Nur Aufhebung (`repealsLaw`): Die Zielnorm ist sicher identifiziert, ihre Ausgangsfassung aber bewusst nicht
+   * veröffentlicht (`resolved-excluded`, z. B. Stichtagswortlaut nicht belegt). Die Aufhebung wirkt dann nur als
+   * Identitäts-/Statusoperation: Beziehung am Akt, Manifest mit Provenienz – kein Zieltext, kein Seed, kein Fake-Wortlaut.
+   */
+  targetExcluded?: RecipeTargetExclusion;
   /** Nur `correction`: berichtigte Fassung; das Wirkdatum des Rezepts ist deren Geltungsbeginn. */
   targetVersionId?: string;
   correctionPublicationDate?: string;
@@ -103,6 +109,15 @@ export interface SimulationRecipe {
   /** Sim-Belege des Rezepts (kanonisch geparst); sie werden in die erzeugte Fassung übernommen. */
   sourceReferences: SourceReference[];
   operations: ConsolidationOperation[];
+}
+
+/** Ausgeschlossene Zielidentität eines Aufhebungsrezepts (Quellidentität, externe Kennungen, Entscheidung). */
+export interface RecipeTargetExclusion {
+  sourceIdentity: string;
+  externalIdentifiers: Array<{ system: string; value: string }>;
+  reasonCode: string;
+  decision: string;
+  decidedAt: string;
 }
 
 /** Metadaten eines Sim-Akts; Identität (`id`, `slug`, `jurisdiction`) und reale Provenienz sind nicht zulässig. */
@@ -321,9 +336,10 @@ export function parseConsolidationOperation(value: unknown, path: string): Conso
     if (typeof object.expectedOld !== 'string') fail(`${path}.expectedOld`, 'muss ein String sein');
     operation.expectedOld = object.expectedOld;
   }
-  if (operation.expectedHash === undefined && operation.expectedOld === undefined && op !== 'renameLaw') fail(path, `${op}: expectedHash oder expectedOld fehlt`);
+  if (operation.expectedHash === undefined && operation.expectedOld === undefined && op !== 'renameLaw' && op !== 'repealLaw') fail(path, `${op}: expectedHash oder expectedOld fehlt`);
   if (op === 'renameLaw' && operation.expectedOld === undefined) fail(`${path}.expectedOld`, 'renameLaw braucht den bisherigen Normtitel');
-  if ((op === 'repealLaw' || op === 'replaceBody' || op === 'replaceSiblingRange') && operation.expectedHash === undefined) fail(`${path}.expectedHash`, `${op} braucht expectedHash`);
+  // repealLaw: Pflicht des expectedHash prüft das Rezept (entfällt nur bei ausgeschlossener Zielfassung, `targetExcluded`).
+  if ((op === 'replaceBody' || op === 'replaceSiblingRange') && operation.expectedHash === undefined) fail(`${path}.expectedHash`, `${op} braucht expectedHash`);
   if ((op === 'designationReplacement' || op === 'designationReplacementBody') && operation.expectedOld === undefined) fail(`${path}.expectedOld`, `${op} braucht die zu ersetzende Bezeichnung`);
 
   if (OPERATIONS_WITH_TEXT_VALUE.includes(op)) {
@@ -343,7 +359,7 @@ export function parseConsolidationOperation(value: unknown, path: string): Conso
   return operation;
 }
 
-const RECIPE_KEYS = ['schemaVersion', 'kind', 'amendmentAct', 'effectiveDate', 'versionId', 'sameDayOrder', 'repealsLaw', 'amendmentCitation', 'resultCitation', 'changeNote', 'commandCoverage', 'sourceReferences', 'operations', 'targetVersionId', 'correctionPublicationDate', 'resultAssertions', 'metaPatch', 'resultTitle', 'resultShortTitle', 'resultAbbr', 'sourceNotes', 'contributingActs', 'migration'] as const;
+const RECIPE_KEYS = ['schemaVersion', 'kind', 'amendmentAct', 'effectiveDate', 'versionId', 'sameDayOrder', 'repealsLaw', 'amendmentCitation', 'resultCitation', 'changeNote', 'commandCoverage', 'sourceReferences', 'operations', 'targetVersionId', 'correctionPublicationDate', 'resultAssertions', 'metaPatch', 'resultTitle', 'resultShortTitle', 'resultAbbr', 'sourceNotes', 'contributingActs', 'migration', 'targetExcluded'] as const;
 
 function parseResultAssertion(value: unknown, path: string): RecipeResultAssertion {
   const object = expectObject(value, path, ['scope', 'target', 'field', 'equals', 'expectedMatches']);
@@ -407,6 +423,20 @@ export function parseSimulationRecipe(value: unknown, path = 'recipe.json'): Sim
     });
   }
   if (object.migration !== undefined) recipe.migration = expectObject(object.migration, `${path}.migration`);
+  if (object.targetExcluded !== undefined) {
+    const exclusion = expectObject(object.targetExcluded, `${path}.targetExcluded`, ['sourceIdentity', 'externalIdentifiers', 'reasonCode', 'decision', 'decidedAt']);
+    if (!Array.isArray(exclusion.externalIdentifiers) || exclusion.externalIdentifiers.length === 0) fail(`${path}.targetExcluded.externalIdentifiers`, 'mindestens eine externe Kennung (Quellidentität, Gliederungsnummer)');
+    recipe.targetExcluded = {
+      sourceIdentity: expectString(exclusion.sourceIdentity, `${path}.targetExcluded.sourceIdentity`),
+      externalIdentifiers: (exclusion.externalIdentifiers as unknown[]).map((entry, index) => {
+        const identifier = expectObject(entry, `${path}.targetExcluded.externalIdentifiers[${index}]`, ['system', 'value']);
+        return { system: expectString(identifier.system, `${path}.targetExcluded.externalIdentifiers[${index}].system`), value: expectString(identifier.value, `${path}.targetExcluded.externalIdentifiers[${index}].value`) };
+      }),
+      reasonCode: expectString(exclusion.reasonCode, `${path}.targetExcluded.reasonCode`),
+      decision: expectString(exclusion.decision, `${path}.targetExcluded.decision`),
+      decidedAt: expectIsoDate(exclusion.decidedAt, `${path}.targetExcluded.decidedAt`),
+    };
+  }
   if (kind === 'correction') {
     if (recipe.repealsLaw) fail(`${path}.repealsLaw`, 'eine Berichtigung hebt nicht auf');
     recipe.targetVersionId = expectVersionId(object.targetVersionId, `${path}.targetVersionId`);
@@ -433,6 +463,10 @@ export function parseSimulationRecipe(value: unknown, path = 'recipe.json'): Sim
   const repealOperations = recipe.operations.filter((operation) => operation.op === 'repealLaw');
   if (recipe.repealsLaw && (repealOperations.length !== 1 || recipe.operations.length !== 1)) fail(`${path}.operations`, 'ein Aufhebungsrezept (repealsLaw) besteht aus genau einer repealLaw-Operation');
   if (!recipe.repealsLaw && repealOperations.length > 0) fail(`${path}.repealsLaw`, 'eine repealLaw-Operation verlangt repealsLaw: true');
+  if (recipe.targetExcluded && !recipe.repealsLaw) fail(`${path}.targetExcluded`, 'nur für eine Aufhebung (repealsLaw) zulässig');
+  // Gegen eine ausgeschlossene Ausgangsfassung gibt es keinen Hash; sonst ist er Pflicht.
+  if (recipe.targetExcluded && repealOperations[0]?.expectedHash !== undefined) fail(`${path}.operations[0].expectedHash`, 'eine Aufhebung mit ausgeschlossener Zielfassung prüft keinen Text (kein expectedHash)');
+  if (recipe.repealsLaw && !recipe.targetExcluded && repealOperations[0]?.expectedHash === undefined) fail(`${path}.operations[0].expectedHash`, 'repealLaw braucht expectedHash');
   return recipe;
 }
 

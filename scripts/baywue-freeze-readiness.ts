@@ -168,6 +168,10 @@ const baywueLock = lockFile?.jurisdictions.baywue;
 const ledger = readJson<{ events: Array<{ id: string; status: string; reasonCode?: string; targets: Array<{ slug: string; title?: string }>; note?: string }> }>('data/simulation/baywue/ledger.json');
 const completeness = readJson<{ status: string; series?: Array<{ series?: string; knownIssues: string[]; presentIssues: string[]; missingIssues: string[] }>; notes?: string[] }>('data/simulation/baywue/completeness.json');
 
+const regressionSet = readJson<{ totals: Record<string, number>; rule: string }>('data/audits/bayernrecht/post-baseline-amendment-regression.json');
+const consolidation = readJson<{ recipes: Array<{ recipe: string; amendmentAct: string; target: string; effectiveDate: string; repealsLaw: boolean; versionId: string | null; targetExcluded?: { reasonCode: string } }> }>('data/simulation/baywue/consolidation-manifest.json');
+const superseded = (lockFile?.supersededSeeds ?? []).filter((seed) => seed.jurisdiction === 'baywue');
+
 /* Technische Blocker ----------------------------------------------------------------------------- */
 
 interface Blocker { kind: string; sourceIdentity: string; slug?: string; detail: string }
@@ -296,6 +300,9 @@ const result = {
   reconstruction: { byState: queue?.totals.byState ?? {}, audit: recipeAudit ?? null },
   gates,
   seeds: seeds.map((seed) => ({ slug: seed.slug, sha256: seed.sha256, sourceCommit: seed.sourceCommit, conflict: blockers.some((blocker) => blocker.kind === 'seed-conflict' && blocker.slug === seed.slug) })),
+  supersededSeeds: superseded.map((seed) => ({ slug: seed.slug, sha256: seed.sha256, acceptedAt: seed.acceptedAt, supersededAt: seed.supersededAt, supersededBy: seed.supersededBy })),
+  postBaselineAmendmentRegression: regressionSet?.totals ?? null,
+  simulationRecipes: (consolidation?.recipes ?? []).map((recipe) => ({ target: recipe.target, act: recipe.amendmentAct, effectiveDate: recipe.effectiveDate, kind: recipe.repealsLaw ? (recipe.targetExcluded ? 'repeal-target-excluded' : 'repeal') : 'version' })),
   simTargets,
   simulationSources: completeness?.status ?? 'unbekannt',
   content: { tableNorms: content.tableNorms, tables: content.tables, simulationNorms: content.simulationNorms, withSimulationVersions: content.withSimulationVersions.length },
@@ -318,6 +325,12 @@ if (write) {
   const simTable = table(['Sim-Ziel', 'Quelle', 'Baseline veröffentlicht', 'Rekonstruktion', 'sicher rekonstruierbar', 'Sim-Ereignisse'], simTargets.map((target) => [`\`${target.slug}\``, target.source, target.baselinePublished ? 'ja' : 'nein', target.reconstruction, target.safelyReconstructable ? 'ja' : 'nein', target.events.length === 0 ? '–' : `${target.events.length} (${target.blocked ? 'gesperrt/Review' : 'angewandt'})`]));
   const seedTable = table(['Seed', 'SHA-256', 'Quell-Commit', 'Stand'], result.seeds.map((seed) => [`\`${seed.slug}\``, `\`${seed.sha256.slice(0, 16)}…\``, seed.sourceCommit ? `\`${seed.sourceCommit.slice(0, 9)}\`` : '–', seed.conflict ? '**Konflikt**' : 'gültig']));
   const simSources = completeness ? `Status \`${completeness.status}\`${completeness.series ? `: ${completeness.series.map((series) => `${series.series ?? 'Reihe'} ${series.presentIssues.length}/${series.knownIssues.length} Ausgaben`).join('; ')}` : ''}` : 'unbekannt';
+  const regressionText = regressionSet
+    ? `Klassifikation 3b (Lauf 18/19) hat ${number.format(Object.values(regressionSet.totals).reduce((sum, value) => sum + value, 0))} früher als „heutiger Text = Stichtagstext“ geführte bzw. geprüfte Normen umgestellt: ${number.format(regressionSet.totals['corrected-reconstructed'] ?? 0)} sicher zurückgerechnet (korrigierte Stichtagsfassung), ${number.format(regressionSet.totals['newly-reconstructed'] ?? 0)} neu rekonstruiert, ${number.format(regressionSet.totals.withdrawn ?? 0)} zurückgenommen (einschließlich StRGVV). Persistentes Regressionsset mit Evidenzgrund je Norm: \`data/audits/bayernrecht/post-baseline-amendment-regression.json\` (Test \`tests/unit/bayernrecht-freeze-guard.test.ts\`).`
+    : 'Regressionsset fehlt.';
+  const strgvvText = superseded.length === 0 ? 'keine abgelösten Seeds' : superseded.map((seed) => `\`${seed.slug}\`: Seed \`${seed.sha256.slice(0, 12)}…\` (akzeptiert ${seed.acceptedAt}) am ${seed.supersededAt} abgelöst – ${seed.supersededBy}. Die Norm ist nicht veröffentlicht; die Sim-Aufhebung vom 13.04.2025 wirkt als Identitäts-/Statusoperation (Rezeptfeld \`targetExcluded\`, Beziehungen am Sim-Akt).`).join('\n\n');
+  const recipeTable = table(['Zielnorm', 'Sim-Akt', 'Wirkdatum', 'Art'], (consolidation?.recipes ?? []).map((recipe) => [`\`${recipe.target}\``, `\`${recipe.amendmentAct}\``, recipe.effectiveDate, recipe.repealsLaw ? (recipe.targetExcluded ? 'Aufhebung (Zielfassung ausgeschlossen)' : 'Aufhebung') : 'neue Fassung']));
+  const missingSources = exclusionsByCode.filter(([code]) => ['missing-primary-source', 'source-scan-unreadable', 'old-text-missing', 'missing-normative-annex', 'missing-normative-image', 'unsafe-table-structure'].includes(code)).map(([code, list]) => `\`${code}\` ${number.format(list.length)}`).join(' · ');
   const doc = [
     '# Freeze-Readiness des BayWü-Ausgangsrechtsstands',
     '',
@@ -378,7 +391,15 @@ if (write) {
     '',
     table(['Gate', 'Ergebnis', 'Detail'], gates.map((gate) => [gate.id, gate.ok ? 'grün' : '**rot**', gate.detail])),
     '',
-    '## 10 Sim-Quellenstatus (getrennt, kein Baseline-Blocker)',
+    '## 10 Post-Stichtags-Änderungen mit veraltetem Paketdatum',
+    '',
+    regressionText,
+    '',
+    '## 11 StRGVV (Human Decision 2026-09-29: Regel 6.2 strikt)',
+    '',
+    strgvvText,
+    '',
+    '## 12 Sim-Quellenstatus (getrennt, kein Baseline-Blocker)',
     '',
     `${simSources}. Bekannte Lücken: Originalverkündungsblatt der Staatsverfassung 2025, Organisationserlass vom 14.02.2025, Erdbebenhilfegesetz 2026 (nur als Entwurf belegt; kein Baselinefall), fehlende oder unklare Einzelverkündungen und Lücken der Gazette-Reihen (\`data/simulation/baywue/completeness.json\`).`,
     '',
@@ -408,13 +429,35 @@ if (write) {
       '',
       seedTable,
       '',
+      '## Korrigierte Post-Stichtags-Fälle',
+      '',
+      regressionText,
+      '',
+      '## StRGVV-Entscheidung',
+      '',
+      strgvvText,
+      '',
       '## Sim-blockierte Zielnormen',
       '',
       simTable,
       '',
+      'Sie bleiben ausgeschlossen bzw. gesperrt, bis neue amtliche Evidenz vorliegt; ihr Ausgangswortlaut ist bewusst und nachvollziehbar ausgeschlossen. Der Sim-Rechtsstand bleibt davon getrennt unvollständig.',
+      '',
+      '## Sim-Rezepte',
+      '',
+      recipeTable,
+      '',
+      '## Fehlende Quellen',
+      '',
+      `Nicht veröffentlicht mangels belastbarer Quelle: ${missingSources || 'keine'}; dazu heute nicht mehr geführte Stichtagsnormen ohne elektronische Verkündung (\`docs/BAYWUE_BASELINE_ONLY.md\`). Sim-Quellenlücken (Originalblatt der Staatsverfassung 2025, Organisationserlass 14.02.2025, Erdbebenhilfegesetz, Gazette-Lücken) sind davon getrennt.`,
+      '',
       '## Was der Freeze nicht bestätigt',
       '',
-      'Der Freeze bestätigt ausschließlich den veröffentlichten Baselinebestand. Bewusst ausgeschlossene, mangels Evidenz nicht veröffentlichte oder nicht rekonstruierbare Stichtagsnormen, heute nicht mehr geführte Stichtagsnormen ohne Verkündungsbeleg und die Vollständigkeit der Sim-Verkündungsblätter bestätigt er nicht.',
+      '**Der Freeze bestätigt ausschließlich die veröffentlichten und belegten Baselinefassungen. Bewusst ausgeschlossene Normen mit nicht sicher rekonstruierbarem Wortlaut werden dadurch nicht als vollständig oder materiell richtig bestätigt.** Ebenso wenig bestätigt er heute nicht mehr geführte Stichtagsnormen ohne Verkündungsbeleg oder die Vollständigkeit der Sim-Verkündungsblätter.',
+      '',
+      '## Entscheidung für den Freeze',
+      '',
+      `Mit der Freigabe gilt: \`data/simulation/baseline-locks.json\` → \`jurisdictions.baywue\` = \`{ "commit": "<Commit dieses Stands>", "freeze": true }\` für den Bestand mit dem Fingerabdruck \`${content.fingerprint}\`. Danach ändert sich eine BayWü-Ausgangsfassung nur noch als dokumentierter Sonderfall (Bug, neue Primärevidenz, Human Review, Schema-Migration); der BayWü-Bulk sperrt jede andere Abweichung (\`baseline-frozen\`, Exit 1). Sim-Fortschreibung bleibt additiv zulässig.`,
       '',
     ];
     await writeFile(join(root, APPROVAL_PATH), `${approval.join('\n')}\n`);

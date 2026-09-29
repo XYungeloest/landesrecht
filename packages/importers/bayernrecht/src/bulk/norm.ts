@@ -74,7 +74,7 @@ import { loadMergedAnnexes } from './annex.ts';
 import { figureRawDocuments, type FigurePackage } from './figures.ts';
 import { reversedAmendmentsText } from './trace.ts';
 import { isCachedPackageProblem, readCachedPackage, type CachedPackage } from './cache.ts';
-import { inspectBaselineLock } from '@landesrecht/importer-common/baseline-lock.ts';
+import { freezeDecision, inspectBaselineLock, readActiveSeedSlugs, readBaselineFreeze } from '@landesrecht/importer-common/baseline-lock.ts';
 
 import { normsDirectory, removeRetiredNormDirectory, writeNormRecord } from './persist.ts';
 import { baselineGate, type BulkCandidate, type GateVerdict } from './select.ts';
@@ -762,7 +762,38 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
     return { ...empty, result: 'failed', phase: 'parse', code: 'no-source-valid-from', message: `${candidate.documentId}: Die Quelle nennt keinen Geltungsbeginn des Textes; ohne ihn entsteht kein Manifesteintrag` };
   }
 
-  const imported = Boolean(record) && blocking.length === 0 && !failure && gate.admit;
+  // Baseline-Freeze (Lauf 19, wie NSH): Mit `jurisdictions.baywue.freeze` schreibt, ergänzt oder nimmt der Bulk keine
+  // Ausgangsfassung zurück, außer mit dokumentierter Freigabe zum Freeze-Commit. Eine Abweichung wird Review-Fall
+  // `baseline-frozen` und der Lauf endet mit Exit 1; der bisherige Stand bleibt (Regressionspfad: kept-existing).
+  const importable = Boolean(record) && blocking.length === 0 && !failure && gate.admit;
+  const freeze = await readBaselineFreeze(root, TARGET_JURISDICTION);
+  let frozen: { frozen: boolean; deviation?: 'changed' | 'withdrawn' | 'added' } = { frozen: false };
+  if (freeze) {
+    const prior = options.previous;
+    const previousImported = prior !== undefined && isImportedStatus(prior.importStatus) && prior.targetSlug !== '';
+    const simLocked = previousImported ? (await inspectBaselineLock(join(normsDirectory(root), prior!.targetSlug), BASELINE_DATE)).locked : false;
+    const probe = importable && record && previousImported ? await writeNormRecord({ root, record, baselineDate: options.baselineDate, write: false }) : undefined;
+    frozen = freezeDecision({
+      freeze,
+      jurisdiction: TARGET_JURISDICTION,
+      baselineDate: BASELINE_DATE,
+      ...(previousImported ? { previousSlug: prior!.targetSlug } : {}),
+      previousImported,
+      simLocked,
+      importable,
+      identical: Boolean(probe && !probe.changed && !probe.finding && record!.meta.slug === prior!.targetSlug),
+      ...(record ? { candidateSlug: record.meta.slug } : {}),
+    });
+    if (frozen.deviation) {
+      const commit = freeze.commit.slice(0, 12);
+      const summary = frozen.deviation === 'added'
+        ? `Neue Ausgangsfassung ${record?.meta.slug ?? candidate.documentId} nach dem Baseline-Freeze (Freeze-Commit ${commit}) – nicht aufgenommen; nur mit dokumentierter Freigabe (kind "added", baseCommit ${commit})`
+        : `Ausgangsfassung von ${prior!.targetSlug} eingefroren (Freeze-Commit ${commit}); ${frozen.deviation === 'changed' ? 'der Lauf ergäbe eine abweichende Norm' : 'in diesem Lauf nicht mehr übernahmefähig'} – nicht geschrieben, nicht zurückgenommen; nur mit dokumentierter Freigabe (data/content-immutability-exceptions.json, baseCommit ${commit})`;
+      reviewItems.push({ category: 'import-regression', key: frozen.deviation === 'added' ? 'baseline-frozen-addition' : 'baseline-frozen', severity: 'blocking', summary, details: [frozen.deviation] });
+      findings.push({ severity: 'warning', code: 'baseline-frozen', message: summary });
+    }
+  }
+  const imported = importable && !frozen.deviation;
   const status: ImportStatus = failure
     ? 'failed'
     : imported
@@ -866,16 +897,18 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
   // Einzige zugelassene Rücknahme einer übernommenen Norm: Die amtliche Verkündung selbst belegt ein Inkrafttreten nach
   // dem Stichtag, und sie setzt keinen Vorgänger außer Kraft (Stichtagsklasse `official-commencement-after-baseline`).
   // Der Slug bleibt der Quellidentität dauerhaft zugeordnet und wird nie neu vergeben.
-  const withdrawal = previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status)
+  const withdrawal = !frozen.frozen && previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status)
     && candidate.baseline?.status === 'not-at-baseline' && candidate.baseline.reason === 'official-commencement-after-baseline';
   // Lauf 18: Galt die Norm am Stichtag, belegt aber eine nach dem Stichtag ausgefertigte, am Quellstand wirksame Änderung
   // (Register oder Vollzitat), dass der übernommene heutige Text nicht der Stichtagstext ist, und gelingt keine sichere
   // Rückrechnung, wird die Veröffentlichung zurückgenommen – ohne den Slug stillzulegen: Er bleibt der Quellidentität
   // reserviert, eine spätere belegte Stichtagsfassung erscheint unter derselben Adresse. Nie bei einer durch die Simulation
   // fortgeschriebenen Norm (Baseline-Lock); die bleibt als Review-Fall stehen.
-  const textUnproven = previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status)
+  const textUnproven = !frozen.frozen && previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status)
     && candidate.baseline?.class === 'changed-after-baseline' && candidate.baseline.reason === 'amended-after-baseline-portal-date-stale'
-    && previous.targetSlug !== '' && !(await inspectBaselineLock(join(normsDirectory(root), previous.targetSlug), BASELINE_DATE)).locked;
+    && previous.targetSlug !== '' && (!(await inspectBaselineLock(join(normsDirectory(root), previous.targetSlug), BASELINE_DATE)).locked
+      // Lauf 19: Eine Sim-Sperre ohne aktiven Seed ist gegenstandslos (Seed per Evidenzentscheidung abgelöst, StRGVV).
+      || !(await readActiveSeedSlugs(root, TARGET_JURISDICTION)).has(previous.targetSlug));
   const regression = !withdrawal && !textUnproven && previous !== undefined && isImportedStatus(previous.importStatus) && !isImportedStatus(status);
   // Eine früher zurückgenommene Norm bleibt als solche erkennbar (R2-Audit: archivierte Objekte kein Widerspruch).
   const withdrawnBefore = !withdrawal && !isImportedStatus(status)

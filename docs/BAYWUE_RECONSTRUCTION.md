@@ -1292,7 +1292,15 @@ Tourismus“) in Texten mit Paketdatum 2007 bis 2021.
     Stichtagsfassung, eine (BayVV_2230_7_1_K_10450) ist neu.
   - 83 Veröffentlichungen sind zurückgenommen (`withdrawn-text-unproven`). Ihr Slug bleibt reserviert, ihr R2-Archiv
     bleibt erhalten, der Review-Fall ist `resolved-excluded` / `text-unproven-after-baseline`.
-  - `strgvv-baywue` (Seed) bleibt gesperrt und offen, siehe `data/simulation/baywue/strgvv-baseline-seed-decision.md`.
+  - `strgvv-baywue`: Nach der Human Decision vom 2026-09-29 gilt Regel 6.2 strikt, eine belegte Fassung vor
+    GVBl. 2024 S. 86 gibt es nicht. Die Norm ist zurückgenommen, ihr Seed abgelöst, die Sim-Aufhebung 2025 wirkt als
+    Identitätsoperation (`data/simulation/baywue/strgvv-baseline-seed-decision.md`).
+- **Dauerhaft abgesichert**: `data/audits/bayernrecht/post-baseline-amendment-regression.json` führt alle 127 umgestellten
+  Normen (42 korrigiert, 1 neu, 84 zurückgenommen) mit Evidenzgrund. `tests/unit/bayernrecht-freeze-guard.test.ts` prüft,
+  dass keine davon wieder als „heutiger Text = Stichtagstext“ erscheint.
+- **Freeze-Sperre des BayWü-Bulks** (Lauf 19, noch ohne gesetzten Freeze): Mit `jurisdictions.baywue.freeze` schreibt,
+  ergänzt oder nimmt der Bulk keine Ausgangsfassung zurück, außer mit Freigabe zum Freeze-Commit. Eine Abweichung wird zum
+  Review-Fall `baseline-frozen`, der Lauf endet mit Exit 1.
 - **Nicht umgesetzt** (kein neuer Parser für Einzelfälle): die Reihenfolge von Inkrafttreten innerhalb eines Gesetzes
   (`chain-commencement-order`). Ein Probelauf ohne diese Prüfung machte keinen der 21 Fälle rekonstruierbar; sie scheitern
   danach an fehlenden Vorgängerverkündungen, Neufassungen ohne Alttext oder Paketdaten. Ebenso nicht umgesetzt: exotische
