@@ -876,6 +876,15 @@ export async function processCandidate(options: ProcessCandidateOptions): Promis
     reviewItems.push({ category: 'unknown-structure', key: failure.code, severity: 'blocking', summary: failure.message, details: ['Die Überleitung oder die Schemaprüfung der Zielnorm ist gescheitert; es wurde nichts übernommen.'] });
   }
 
+  // Determinismus (Lauf 20): Der Archivstand gleicher Rohquellen (Rolle, Adresse, SHA-256) bleibt erhalten – ihn pflegt
+  // der R2-Sync, nicht der Bulk. Sonst wiche jeder Wiederholungslauf vom gespeicherten Eintrag ab, schriebe ihn mit neuen
+  // Laufdaten (`importedAt`, `runId`) neu, und der nächste R2-Sync stellte den Archivstand wieder her. So bleibt ein
+  // semantisch gleicher Lauf ein No-op (writeManifestEntry behält dann auch die Laufdaten).
+  for (const raw of entry.rawDocuments) {
+    const archived = options.previous?.rawDocuments.find((candidateRaw) => candidateRaw.role === raw.role && candidateRaw.url === raw.url && candidateRaw.sha256 === raw.sha256 && candidateRaw.archiveStatus !== undefined);
+    if (archived) Object.assign(raw, { ...(archived.bucket ? { bucket: archived.bucket } : {}), ...(archived.objectKey ? { objectKey: archived.objectKey } : {}), archiveStatus: archived.archiveStatus });
+  }
+
   // Der Eintrag wird **immer** geprüft, auch im Dry-run: Sonst behauptete der Dry-run eine Übernahme,
   // die der Schreiblauf an der Schemaprüfung ablehnte – und die Probe wäre wertlos.
   const manifestProblems = [

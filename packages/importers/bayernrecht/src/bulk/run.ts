@@ -198,6 +198,25 @@ export async function runBulk(options: BulkRunOptions): Promise<BulkRunResult> {
 
   let resumed = 0;
   const stateEntries = new Map<string, BulkStateEntry>();
+  // Determinismus (Lauf 20): Stand des Checkpoints vor dem Lauf. Ein Eintrag mit fachlich gleichem Ergebnis behält am Ende
+  // seine Laufdaten (`attempts`, `lastRunId`); ist kein Eintrag anders, bleibt die Datei byteidentisch – Laufdaten stehen
+  // im Laufbericht (data/audits/bayernrecht/runs/), nicht als Churn im Arbeitsbaum.
+  let stateBefore: BulkStateFile | undefined;
+  const semantic = (entry: BulkStateEntry): string => JSON.stringify([entry.sourceArea, entry.status, entry.result ?? null, entry.phase ?? null, entry.code ?? null, entry.message ?? null, entry.reviewCategories ?? null, entry.targetSlug ?? null]);
+  const stabilize = async (): Promise<void> => {
+    if (!options.write || !stateBefore || runStatus !== 'completed') return;
+    const before = new Map(stateBefore.entries.map((entry) => [entry.documentId, entry]));
+    let differs = stateEntries.size !== before.size;
+    for (const [id, entry] of stateEntries) {
+      const previous = before.get(id);
+      // „unchanged“ heißt: der übernommene Stand trägt – fachlich gleich einem früheren „imported(-with-warnings)“.
+      const same = previous !== undefined && (semantic(previous) === semantic(entry)
+        || (entry.result === 'unchanged' && (previous.result === 'imported' || previous.result === 'imported-with-warnings' || previous.result === 'unchanged') && semantic({ ...previous, result: 'unchanged' }) === semantic(entry)));
+      if (same) stateEntries.set(id, { ...previous! });
+      else differs = true;
+    }
+    await writeBulkState(options.root, differs ? buildBulkState({ entries: [...stateEntries.values()], updatedAt: now().toISOString(), runId }) : stateBefore);
+  };
 
   const checkpoint = async (): Promise<void> => {
     if (!options.write) return;
@@ -205,6 +224,7 @@ export async function runBulk(options: BulkRunOptions): Promise<BulkRunResult> {
   };
 
   const finish = async (): Promise<BulkRunResult> => {
+    await stabilize();
     const endedAt = now();
     const state = buildBulkState({ entries: [...stateEntries.values()], updatedAt: endedAt.toISOString(), runId });
     const summary: BulkRunSummary = {
@@ -264,6 +284,7 @@ export async function runBulk(options: BulkRunOptions): Promise<BulkRunResult> {
   const slugMigrations: SlugMigration[] = await readSlugMigrations(options.root);
   try {
     const previousState = await readBulkState(options.root);
+    if (previousState) stateBefore = structuredClone(previousState);
     for (const entry of previousState?.entries ?? []) stateEntries.set(entry.documentId, entry);
     const manifest = await readManifest(options.root);
     manifestByIdentity = new Map<string, ManifestEntry>(manifest.entries.map((entry) => [entry.sourceIdentity, entry]));

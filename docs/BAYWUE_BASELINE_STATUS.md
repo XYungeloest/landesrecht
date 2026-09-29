@@ -3,7 +3,7 @@
 > **Aktueller Stand (Lauf 19, 2026-09-29):** 1 618 Baseline-Normen (1 443 exakt, 114 zurückgerechnet, 61 aus Verkündungen
 > wiederhergestellt). 84 früher als „unverändert“ übernommene Normen sind zurückgenommen, darunter StRGVV (Regel 6.2), weil ihr
 > Text nach dem Stichtag geändert wurde und sich nicht sicher zurückrechnen ließ (`docs/BAYWUE_RECONSTRUCTION.md` §25).
-> Freeze-Bewertung: `BASELINE READY`, kein Freeze gesetzt. Die Freeze-Bewertung steht in
+> **Seit 2026-09-29 eingefroren** (Freeze-Commit `018752ab…`, Fingerabdruck `07c7fec7…`, `docs/BAYWUE_BASELINE_FREEZE.md`). Die Freeze-Bewertung steht in
 > `docs/BAYWUE_BASELINE_FREEZE_READINESS.md`. Die Zahlen unten beschreiben den Stand von Lauf 10.
 
 ## Status: DEPLOYED (Teilbestand) · Stand 2026-09-19 (Run 10)

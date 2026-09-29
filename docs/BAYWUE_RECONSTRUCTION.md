@@ -1298,7 +1298,7 @@ Tourismus“) in Texten mit Paketdatum 2007 bis 2021.
 - **Dauerhaft abgesichert**: `data/audits/bayernrecht/post-baseline-amendment-regression.json` führt alle 127 umgestellten
   Normen (42 korrigiert, 1 neu, 84 zurückgenommen) mit Evidenzgrund. `tests/unit/bayernrecht-freeze-guard.test.ts` prüft,
   dass keine davon wieder als „heutiger Text = Stichtagstext“ erscheint.
-- **Freeze-Sperre des BayWü-Bulks** (Lauf 19, noch ohne gesetzten Freeze): Mit `jurisdictions.baywue.freeze` schreibt,
+- **Freeze-Sperre des BayWü-Bulks** (Lauf 19; Freeze seit 2026-09-29 gesetzt, `docs/BAYWUE_BASELINE_FREEZE.md`): Mit `jurisdictions.baywue.freeze` schreibt,
   ergänzt oder nimmt der Bulk keine Ausgangsfassung zurück, außer mit Freigabe zum Freeze-Commit. Eine Abweichung wird zum
   Review-Fall `baseline-frozen`, der Lauf endet mit Exit 1.
 - **Nicht umgesetzt** (kein neuer Parser für Einzelfälle): die Reihenfolge von Inkrafttreten innerhalb eines Gesetzes

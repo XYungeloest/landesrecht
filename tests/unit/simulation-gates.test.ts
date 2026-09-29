@@ -180,15 +180,17 @@ describe('G2 im Freeze-Land (West, NSH seit 2026-09-29)', () => {
 });
 
 describe('Lock-Datei des Repositorys', () => {
-  it('nennt für West und NSH den Freeze-Commit und für BayWü den Baseline-Commit', async () => {
+  it('nennt für West, NSH und BayWü den Freeze-Commit (alle eingefroren)', async () => {
     const locks = await readBaselineLocks(resolveRepositoryRoot());
     expect(locks.west).toBe('ff1b1f43e209390a0dd610e5a06b5c5e07efa27a');
     expect(locks.nsh).toBe('eeeca2cdc5596a602db4332e59a4b252df2b8ea0');
     const file = parseBaselineLockFile(JSON.parse(await readFile(join(resolveRepositoryRoot(), 'data/simulation/baseline-locks.json'), 'utf8')));
     expect(file.jurisdictions.west?.freeze).toBe(true);
     expect(file.jurisdictions.nsh?.freeze).toBe(true);
-    expect(file.jurisdictions.baywue?.freeze).toBe(false);
-    expect(locks.baywue).toMatch(/^[0-9a-f]{40}$/u);
+    expect(file.jurisdictions.baywue?.freeze).toBe(true);
+    expect(locks.baywue).toBe('018752abcd5cba9a4824410277e9dd7bd37698a4');
+    // Der dokumentierte Fingerabdruck steht in der Lock-Notiz (docs/BAYWUE_BASELINE_FREEZE.md).
+    expect(file.jurisdictions.baywue?.note).toContain('07c7fec745054453cb2c333526beb887c626d2d41a16bd642c4a4a480e58a5a2');
     expect(locks.ost).toBeUndefined();
     await write('data/simulation/baseline-locks.json', { sachsen: 'abc' });
     await expect(readBaselineLocks(root)).rejects.toThrow(/unbekannter Schlüssel/u);

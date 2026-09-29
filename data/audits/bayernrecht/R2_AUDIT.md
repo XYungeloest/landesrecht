@@ -1,6 +1,6 @@
 # R2-Rohquellenarchiv BayWü
 
-Bucket `landesrecht-quellen` (privat), Präfix `baywue/bayernrecht/2023-12-01/`. Lauf 2026-09-29T10:56:19.816Z – 2026-09-29T10:59:31.449Z (192 s), Transport `wrangler-api`.
+Bucket `landesrecht-quellen` (privat), Präfix `baywue/bayernrecht/2023-12-01/`. Lauf 2026-09-29T12:08:09.483Z – 2026-09-29T12:10:04.894Z (115 s), Transport `wrangler-api`.
 
 Status: **verified**
 
@@ -27,15 +27,15 @@ Status: **verified**
 | --- | --- |
 | Prüfregime | etag (Listing: Existenz, Größe, Etag = MD5; deterministische Byte-Stichprobe je Charge) |
 | Parallelität | 8 |
-| offen vor dem Lauf (staged/uploaded) | 2.060 |
+| offen vor dem Lauf (staged/uploaded) | 0 |
 | hochgeladen: Rohobjekte / Umschläge | 0 / 0 (0.0 MiB) |
-| bereits vorhanden (gleicher Inhalt): Rohobjekte / Umschläge | 2.060 / 2.060 |
+| bereits vorhanden (gleicher Inhalt): Rohobjekte / Umschläge | 0 / 0 |
 | davon Umschläge mit archiviertem Stand beibehalten (Kernfelder gleich, beschreibende Felder abweichend) | 0 |
-| per Listing nachgeprüft (Größe + MD5) | 4.120 |
-| Byte-Rücklesungen im Sync (SHA-256) | 33 |
-| Listings | 8 |
-| auf verified gesetzt | 2.060 |
-| Dauer Sync | 65 s |
+| per Listing nachgeprüft (Größe + MD5) | 0 |
+| Byte-Rücklesungen im Sync (SHA-256) | 0 |
+| Listings | 0 |
+| auf verified gesetzt | 0 |
+| Dauer Sync | 0 s |
 
 ## Nachprüfung (nur lesend)
 
@@ -57,7 +57,7 @@ Status: **verified**
 
 | Kennzahl | vorher | nachher |
 | --- | --- | --- |
-| Zeitpunkt | 2026-09-29T10:57:26.559Z | 2026-09-29T10:59:31.437Z |
+| Zeitpunkt | 2026-09-29T12:09:00.885Z | 2026-09-29T12:10:04.886Z |
 | Objekte gesamt | 51.104 (2305.7 MiB) | 51.104 (2305.7 MiB) |
 | unter `baywue/` | 4.968 (484.7 MiB) | 4.968 (484.7 MiB) |
 | außerhalb `baywue/` | 46.136 | 46.136 |
@@ -70,7 +70,7 @@ Außerhalb von `baywue/` ist der Bucket unverändert (gleicher Fingerabdruck üb
 
 ## Läufe dieses Archivs
 
-20 Läufe, 2026-09-18T06:44:37.545Z – 2026-09-29T10:59:31.449Z (965694 s Wanduhr, 3125 s Laufzeit). Vor dem ersten Lauf: 22.712 Objekte im Bucket, 0 unter `baywue/`; nach dem letzten Lauf: 51.104 Objekte, 4.968 unter `baywue/`. Fingerabdruck außerhalb `baywue/` über alle Messungen: **verändert**.
+21 Läufe, 2026-09-18T06:44:37.545Z – 2026-09-29T12:10:04.894Z (969927 s Wanduhr, 3240 s Laufzeit). Vor dem ersten Lauf: 22.712 Objekte im Bucket, 0 unter `baywue/`; nach dem letzten Lauf: 51.104 Objekte, 4.968 unter `baywue/`. Fingerabdruck außerhalb `baywue/` über alle Messungen: **verändert**.
 
 | Beginn | Ende | Status | hochgeladen Roh / Umschlag | bereits vorhanden | Bucket vorher (gesamt / baywue) | Bucket nachher (gesamt / baywue) | Befund |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -94,6 +94,7 @@ Außerhalb von `baywue/` ist der Bucket unverändert (gleicher Fingerabdruck üb
 | 2026-09-29T10:05:14.010Z | 2026-09-29T10:08:42.985Z | failed | 90 / 90 | 1.971 | 50.924 / 4.788 | 51.104 / 4.968 | – |
 | 2026-09-29T10:14:02.713Z | 2026-09-29T10:17:12.019Z | verified | 0 / 0 | 2.060 | 51.104 / 4.968 | 51.104 / 4.968 | – |
 | 2026-09-29T10:56:19.816Z | 2026-09-29T10:59:31.449Z | verified | 0 / 0 | 2.060 | 51.104 / 4.968 | 51.104 / 4.968 | – |
+| 2026-09-29T12:08:09.483Z | 2026-09-29T12:10:04.894Z | verified | 0 / 0 | 0 | 51.104 / 4.968 | 51.104 / 4.968 | – |
 
 ## Regeln dieses Laufs
 

@@ -1,6 +1,8 @@
 # BayWü-Ausgangsrechtsstand – Freigabeübersicht für den Baseline-Freeze
 
-Automatisch erzeugt von `node scripts/baywue-freeze-readiness.ts --write`. Freeze-Readiness: **BASELINE READY**. Der Freeze ist **nicht gesetzt**; er wird nur auf ausdrückliche Entscheidung gesetzt.
+**FREIGEGEBEN UND EINGEFROREN** – Human Approval vom 2026-09-29, Freeze-Commit `018752abcd5cba9a4824410277e9dd7bd37698a4`
+(`docs/BAYWUE_BASELINE_FREEZE.md`). Die Übersicht wurde vor dem Freeze mit `node scripts/baywue-freeze-readiness.ts --write`
+erzeugt (Freeze-Readiness **BASELINE READY**). Seit dem Freeze ist sie Beleg der Entscheidung und wird nicht mehr neu erzeugt.
 
 | Kennzahl | Wert |
 | --- | ---: |
@@ -90,5 +92,15 @@ Nicht veröffentlicht mangels belastbarer Quelle: `old-text-missing` 189 · `sou
 
 ## Entscheidung für den Freeze
 
-Mit der Freigabe gilt: `data/simulation/baseline-locks.json` → `jurisdictions.baywue` = `{ "commit": "<Commit dieses Stands>", "freeze": true }` für den Bestand mit dem Fingerabdruck `07c7fec745054453cb2c333526beb887c626d2d41a16bd642c4a4a480e58a5a2`. Danach ändert sich eine BayWü-Ausgangsfassung nur noch als dokumentierter Sonderfall (Bug, neue Primärevidenz, Human Review, Schema-Migration); der BayWü-Bulk sperrt jede andere Abweichung (`baseline-frozen`, Exit 1). Sim-Fortschreibung bleibt additiv zulässig.
+**Erteilt am 2026-09-29 (Human Approval):** Der BayWü-Ausgangsrechtsstand ist fachlich freigegeben und eingefroren.
+`data/simulation/baseline-locks.json` → `jurisdictions.baywue` = `{ "commit": "018752abcd5cba9a4824410277e9dd7bd37698a4", "freeze": true }`
+für 1 618 Baseline-Normen (1 443 exakt, 114 rekonstruiert, 61 wiederhergestellt) mit dem Fingerabdruck
+`07c7fec745054453cb2c333526beb887c626d2d41a16bd642c4a4a480e58a5a2`.
 
+Vorher geprüft:
+- HEAD entsprach dem Freeze-Commit, der Fingerabdruck war exakt, 1 618 Fassungen;
+- alle 114 Rekonstruktionsrezepte bestehen den Rundlauf, alle 9 Sim-Rezepte sind reproduzierbar;
+- die drei aktiven Seeds stimmen, StRGVV ist nur unter `supersededSeeds` dokumentiert.
+
+Die 539 `resolved-excluded`-Fälle sind ausdrücklich als bewusst nicht veröffentlichte Quellen- und Rekonstruktionsfälle
+akzeptiert. Der Freeze bestätigt sie nicht als vollständig oder materiell richtig.

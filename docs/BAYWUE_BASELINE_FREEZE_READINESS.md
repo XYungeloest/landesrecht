@@ -1,8 +1,8 @@
 # Freeze-Readiness des BayWü-Ausgangsrechtsstands
 
-Automatisch erzeugt von `node scripts/baywue-freeze-readiness.ts --write` (Arbeitskopie; Vorher-Stand: Commit `635270129`). Nicht von Hand bearbeiten. Freeze-Semantik wie West/NSH: `docs/SIMULATION_IMPORT.md` 6.1 (nur der reale Ausgangsrechtsstand zum 01.12.2023; Sim-Normen, Sim-Fassungen, Aufhebungen, Verkündungen und additive Historie/Beziehungen bleiben zulässig), Rückwirkung 6.2.
+Automatisch erzeugt von `node scripts/baywue-freeze-readiness.ts --write` (Arbeitskopie; Vorher-Stand: Commit `018752abc`). Nicht von Hand bearbeiten. Freeze-Semantik wie West/NSH: `docs/SIMULATION_IMPORT.md` 6.1 (nur der reale Ausgangsrechtsstand zum 01.12.2023; Sim-Normen, Sim-Fassungen, Aufhebungen, Verkündungen und additive Historie/Beziehungen bleiben zulässig), Rückwirkung 6.2.
 
-**Status: BASELINE READY** · Freeze **nicht gesetzt** · Baseline-Fingerabdruck `07c7fec745054453cb2c333526beb887c626d2d41a16bd642c4a4a480e58a5a2` · Sim-Quellenstatus getrennt: `SIM SOURCES PARTIAL` (kein Blocker des Ausgangsrechtsstands)
+**Baseline-Status: FROZEN** · Freeze-Commit `018752abcd5cba9a4824410277e9dd7bd37698a4` (Human Approval 2026-09-29, `docs/BAYWUE_BASELINE_FREEZE.md`) · Bewertung der Restfälle: `BASELINE READY` · Baseline-Fingerabdruck `07c7fec745054453cb2c333526beb887c626d2d41a16bd642c4a4a480e58a5a2` · Sim-Quellenstatus getrennt: `SIM SOURCES PARTIAL` (kein Blocker des Ausgangsrechtsstands)
 
 Regel: `NOT READY`, solange ein technischer Blocker offen oder ein Gate rot ist (Integritätsfehler veröffentlichter Normen, veröffentlichter Text nachweislich nicht der Stichtagstext, nicht reproduzierbare Rezepte, Seed-Konflikte, Regressionen). `READY WITH HUMAN REVIEW`: keine technischen Blocker, offene Fälle klassifiziert. `BASELINE READY`: zusätzlich kein offener Fall.
 
@@ -10,18 +10,18 @@ Regel: `NOT READY`, solange ein technischer Blocker offen oder ein Gate rot ist 
 
 | Kennzahl | Wert |
 | --- | --- |
-| Baseline-Normen vorher → jetzt | 1.619 → 1.618 |
+| Baseline-Normen vorher → jetzt | 1.618 → 1.618 |
 | technische Blocker | 0 |
 | offene fachliche Entscheidungen | 0 |
 | bewusst ausgeschlossene Fälle (resolved-excluded) | 539 |
-| offene Fälle vorher → jetzt | 2 → 0 |
+| offene Fälle vorher → jetzt | 0 → 0 |
 | Rekonstruktion nicht möglich (Queue ohne Rezept) | 526 |
 
 ## 2 Bestand
 
 | Herkunft der Stichtagsfassung | vorher | jetzt |
 | --- | ---: | ---: |
-| exakt (heutiger Text = Stichtagstext) | 1.444 | 1.443 |
+| exakt (heutiger Text = Stichtagstext) | 1.443 | 1.443 |
 | rekonstruiert (Rückrechnung, Rundlauf exakt) | 114 | 114 |
 | wiederhergestellt aus Verkündungen (heute nicht geführt) | 61 | 61 |
 
@@ -107,6 +107,7 @@ Keine dieser Baselines wird erzwungen. Solange die Stichtagsfassung nicht sicher
 | r2 | grün | verified, 4.884 Objekte, fehlend 0 (2026-09-29) |
 | d1-remote | grün | landesrecht-baywue, Stichprobe 30, 0 Abweichungen (2026-09-29) |
 | search-audit-full | grün | 1.661 Normen, 85.054 Sucheinheiten |
+| freeze-fingerprint | grün | Freeze-Commit 018752abcd5c: 1.618 Normen, 07c7fec745054453… · Arbeitskopie 1.618 Normen, 07c7fec745054453… · dokumentiert 07c7fec745054453… |
 
 ## 10 Post-Stichtags-Änderungen mit veraltetem Paketdatum
 

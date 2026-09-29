@@ -570,6 +570,25 @@ describe('Unveränderlichkeit: ein zweiter Lauf ändert nichts still', () => {
     expect(await readFile(join(root, 'content', 'norms', 'baywue', slug, 'versions', `${BASELINE}.json`), 'utf8')).toBe(before);
   });
 
+  it('Lauf 20: ein semantisch gleicher Lauf ist ein No-op – Manifeste (mit Archivstand des R2-Sync) und Checkpoint bleiben byteidentisch', async () => {
+    const root = await fixtureRoot([{ id: 'BayAbmG', bytes: abmarkungsgesetz() }, { id: 'BayRadG', bytes: radverkehrsgesetz() }]);
+    await run(root, { write: true });
+    const manifestDir = join(root, IMPORT_DATA_DIR, 'manifest', 'landesrecht');
+    const manifestFiles = (await readdir(manifestDir)).filter((file) => file.endsWith('.json'));
+    // Der R2-Sync trägt den Archivstand nach; der Bulk darf ihn nicht wieder entfernen.
+    for (const file of manifestFiles) {
+      const shard = JSON.parse(await readFile(join(manifestDir, file), 'utf8')) as { entry: { rawDocuments: Array<Record<string, unknown>> } };
+      for (const raw of shard.entry.rawDocuments) Object.assign(raw, { bucket: 'landesrecht-quellen', objectKey: `baywue/bayernrecht/2023-12-01/test/${String(raw.sha256).slice(0, 16)}`, archiveStatus: 'verified' });
+      await writeFile(join(manifestDir, file), `${JSON.stringify(shard, null, 2)}\n`, 'utf8');
+    }
+    await run(root, { write: true });
+    const snapshot = async (): Promise<string[]> => Promise.all([...manifestFiles.map((file) => readFile(join(manifestDir, file), 'utf8')), readFile(join(root, IMPORT_DATA_DIR, 'bulk-state.json'), 'utf8')]);
+    const before = await snapshot();
+    const third = await run(root, { write: true });
+    expect(third.summary.written.changed).toBe(0);
+    expect(await snapshot()).toEqual(before);
+  });
+
   it('behält den übernommenen Stand, wenn ein Reimport schlechter ausfällt', async () => {
     const root = await fixtureRoot([{ id: 'BayAbmG', bytes: abmarkungsgesetz() }]);
     const first = await run(root, { write: true });

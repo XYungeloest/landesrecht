@@ -243,6 +243,32 @@ const gates = [
   { id: 'search-audit-full', ok: search?.ok === true, detail: search ? `${number.format(search.norms)} Normen, ${number.format(search.searchUnits)} Sucheinheiten` : 'kein Bericht' },
 ];
 
+// Freeze (docs/BAYWUE_BASELINE_FREEZE.md): Freeze-Commit, dokumentierter Fingerabdruck (Lock-Notiz) und Arbeitskopie stimmen überein.
+function fingerprintAt(reference: string): { fingerprint: string; norms: number } {
+  const entries = [...manifestAt(reference).values()].filter((entry) => isImported(entry.importStatus) && entry.targetSlug);
+  const slugs = [...new Set(entries.map((entry) => entry.targetSlug!))].sort();
+  const paths = slugs.map((slug) => `content/norms/baywue/${slug}/versions/${BASELINE}.json`);
+  const output = execFileSync('git', ['cat-file', '--batch'], { cwd: root, input: `${paths.map((path) => `${reference}:${path}`).join('\n')}\n`, maxBuffer: 1024 * 1024 * 1024 });
+  const lines: string[] = [];
+  let offset = 0;
+  for (const path of paths) {
+    const headerEnd = output.indexOf(0x0a, offset);
+    const size = Number(output.subarray(offset, headerEnd).toString('utf8').split(' ')[2]);
+    lines.push(`${path} ${createHash('sha256').update(output.subarray(headerEnd + 1, headerEnd + 1 + size)).digest('hex')}`);
+    offset = headerEnd + 1 + size + 1;
+  }
+  return { fingerprint: createHash('sha256').update(`${lines.join('\n')}\n`).digest('hex'), norms: lines.length };
+}
+const frozenState = baywueLock?.freeze ? (() => {
+  const atCommit = fingerprintAt(baywueLock.commit);
+  const documented = /\b([0-9a-f]{64})\b/u.exec(baywueLock.note ?? '')?.[1];
+  return { commit: baywueLock.commit, atCommit, documented };
+})() : undefined;
+if (frozenState) {
+  const ok = frozenState.atCommit.fingerprint === content.fingerprint && frozenState.documented === content.fingerprint && frozenState.atCommit.norms === content.baselineNorms;
+  gates.push({ id: 'freeze-fingerprint', ok, detail: `Freeze-Commit ${frozenState.commit.slice(0, 12)}: ${number.format(frozenState.atCommit.norms)} Normen, ${frozenState.atCommit.fingerprint.slice(0, 16)}… · Arbeitskopie ${number.format(content.baselineNorms)} Normen, ${content.fingerprint.slice(0, 16)}… · dokumentiert ${frozenState.documented?.slice(0, 16) ?? 'fehlt'}…` });
+}
+
 const technical = blockers;
 const human = classified.filter((entry) => entry.klass.class === 'human-decision');
 const failedGates = gates.filter((gate) => !gate.ok);
@@ -280,6 +306,9 @@ const result = {
   jurisdiction: 'baywue',
   baselineDate: BASELINE,
   freezeSet: baywueLock?.freeze === true,
+  /** Baseline-Status: FROZEN (Freeze gesetzt, Fingerabdruck konsistent) oder die Bereitschaftsbewertung. */
+  baselineStatus: frozenState ? (gates.every((gate) => gate.id !== 'freeze-fingerprint' || gate.ok) ? 'FROZEN' : 'FROZEN – ABWEICHUNG') : status,
+  ...(frozenState ? { freezeCommit: frozenState.commit } : {}),
   status,
   baselineFingerprint: content.fingerprint,
   counts: {
@@ -310,7 +339,7 @@ const result = {
 
 if (asJson) console.log(JSON.stringify(result, null, 2));
 else {
-  console.log(`BayWü-Freeze-Readiness: ${status} (Freeze ${result.freezeSet ? 'gesetzt' : 'nicht gesetzt'}) · Baseline ${number.format(content.baselineNorms)} Normen · Fingerabdruck ${content.fingerprint.slice(0, 16)}…`);
+  console.log(`BayWü-Baseline-Status: ${result.baselineStatus}${result.freezeSet ? ` (Freeze-Commit ${baywueLock!.commit.slice(0, 12)}; Bewertung ${status})` : ' (Freeze nicht gesetzt)'} · Baseline ${number.format(content.baselineNorms)} Normen · Fingerabdruck ${content.fingerprint.slice(0, 16)}…`);
   console.log(`  offen ${open.length}${beforeOpen ? ` (vorher ${beforeOpen.length})` : ''}: technische Blocker ${technical.length}, offene fachliche Entscheidungen ${human.length}; bewusst ausgeschlossen ${excluded.length}`);
   for (const blocker of technical) console.log(`  Blocker ${blocker.kind}: ${blocker.sourceIdentity}${blocker.slug ? ` (${blocker.slug})` : ''} – ${blocker.detail}`);
   for (const gate of gates) console.log(`  Gate ${gate.id}: ${gate.ok ? 'ok' : 'ROT'} – ${gate.detail}`);
@@ -336,7 +365,9 @@ if (write) {
     '',
     `Automatisch erzeugt von \`node scripts/baywue-freeze-readiness.ts --write\` (Arbeitskopie; Vorher-Stand: Commit \`${baseShort}\`). Nicht von Hand bearbeiten. Freeze-Semantik wie West/NSH: \`docs/SIMULATION_IMPORT.md\` 6.1 (nur der reale Ausgangsrechtsstand zum 01.12.2023; Sim-Normen, Sim-Fassungen, Aufhebungen, Verkündungen und additive Historie/Beziehungen bleiben zulässig), Rückwirkung 6.2.`,
     '',
-    `**Status: ${status}** · Freeze ${result.freezeSet ? 'gesetzt' : '**nicht gesetzt**'} · Baseline-Fingerabdruck \`${content.fingerprint}\` · Sim-Quellenstatus getrennt: \`${result.simulationSources}\` (kein Blocker des Ausgangsrechtsstands)`,
+    frozenState
+      ? `**Baseline-Status: ${result.baselineStatus}** · Freeze-Commit \`${frozenState.commit}\` (Human Approval 2026-09-29, \`docs/BAYWUE_BASELINE_FREEZE.md\`) · Bewertung der Restfälle: \`${status}\` · Baseline-Fingerabdruck \`${content.fingerprint}\` · Sim-Quellenstatus getrennt: \`${result.simulationSources}\` (kein Blocker des Ausgangsrechtsstands)`
+      : `**Status: ${status}** · Freeze **nicht gesetzt** · Baseline-Fingerabdruck \`${content.fingerprint}\` · Sim-Quellenstatus getrennt: \`${result.simulationSources}\` (kein Blocker des Ausgangsrechtsstands)`,
     '',
     'Regel: `NOT READY`, solange ein technischer Blocker offen oder ein Gate rot ist (Integritätsfehler veröffentlichter Normen, veröffentlichter Text nachweislich nicht der Stichtagstext, nicht reproduzierbare Rezepte, Seed-Konflikte, Regressionen). `READY WITH HUMAN REVIEW`: keine technischen Blocker, offene Fälle klassifiziert. `BASELINE READY`: zusätzlich kein offener Fall.',
     '',
@@ -407,7 +438,8 @@ if (write) {
   await writeFile(join(root, DOC_PATH), `${doc.join('\n')}\n`);
   await mkdir(dirname(join(root, JSON_PATH)), { recursive: true });
   await writeFile(join(root, JSON_PATH), `${JSON.stringify({ ...result, generatedFrom: base }, null, 2)}\n`);
-  if (technical.length === 0 && failedGates.length === 0) {
+  // Nach dem Freeze ist die Freigabeübersicht Beleg der Entscheidung und wird nicht mehr neu erzeugt.
+  if (!frozenState && technical.length === 0 && failedGates.length === 0) {
     const approval = [
       '# BayWü-Ausgangsrechtsstand – Freigabeübersicht für den Baseline-Freeze',
       '',
@@ -461,7 +493,7 @@ if (write) {
       '',
     ];
     await writeFile(join(root, APPROVAL_PATH), `${approval.join('\n')}\n`);
-  } else if (existsSync(join(root, APPROVAL_PATH))) {
+  } else if (!frozenState && existsSync(join(root, APPROVAL_PATH))) {
     await rm(join(root, APPROVAL_PATH));
   }
   const statusPath = join(root, 'packages/legal-core/src/config/inventory-status.json');
@@ -469,5 +501,5 @@ if (write) {
   const entry = statusFile.jurisdictions.baywue;
   if (entry) entry.baselineFreeze = baywueLock?.freeze ? { frozen: true, assessedAt: new Date().toISOString().slice(0, 10) } : { frozen: false, readiness: status, assessedAt: new Date().toISOString().slice(0, 10) };
   await writeFile(statusPath, `${JSON.stringify(statusFile, null, 2)}\n`);
-  console.log(`Geschrieben: ${DOC_PATH}, ${JSON_PATH}${technical.length === 0 && failedGates.length === 0 ? `, ${APPROVAL_PATH}` : ''}, Baseline-Status BayWü in inventory-status.json`);
+  console.log(`Geschrieben: ${DOC_PATH}, ${JSON_PATH}${!frozenState && technical.length === 0 && failedGates.length === 0 ? `, ${APPROVAL_PATH}` : ''}, Baseline-Status BayWü in inventory-status.json`);
 }

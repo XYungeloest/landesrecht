@@ -138,6 +138,7 @@ den Dateistore über `content/` zurück (`apps/web/src/lib/runtime/context.ts`).
 | `docs/RECHT_NRW_BULK_IMPORT.md` | Vollständiger Ausgangsimport: Enumeration, Bulk-Runner, Checkpoints, Budgets, Cache, R2, Phasen und Audit |
 | `docs/RECHT_NRW_BULK_READINESS.md` | Bereitschaft: Policies (undatierte LRMB-Datensätze, PDF), GO/No-Go-Checkliste, Befehle und Reihenfolge des Bulk-Laufs |
 | `docs/WEST_REFERENCE_BASELINE.md` | Eingefrorener West-Referenzstand: Kennzahlen, Auditstände, Human Approval, Freeze-Regeln |
+| `docs/BAYWUE_BASELINE_FREEZE.md` | Eingefrorener BayWü-Ausgangsrechtsstand: Freeze-Commit, Fingerabdruck, 539 ausgeschlossene Fälle, StRGVV, Freeze-Regeln (Freigabe: `docs/BAYWUE_BASELINE_HUMAN_APPROVAL.md`) |
 | `docs/NSH_BASELINE_FREEZE.md` | Eingefrorener NSH-Ausgangsrechtsstand: Freeze-Commit, Fingerabdruck, Restfälle, Freeze-Regeln (Freigabe: `docs/NSH_BASELINE_HUMAN_APPROVAL.md`) |
 | `docs/NEW_JURISDICTION_IMPORT_CHECKLIST.md` | Wiederverwendbare Checkliste für den Import einer weiteren Jurisdiktion |
 | `docs/SCHLESWIG_HOLSTEIN_ACCESS_CONSTRAINT.md` | Zugriffspolitik juris SH (robots.txt advisory), öffentlicher PDF-Ausgabeweg ohne interne Schnittstelle, TDM-Vorbehalt |
