@@ -49,7 +49,7 @@ const publicationLink = (source: SourceReference): string | undefined => (source
             {source.pageRange && <><dt>Seiten</dt><dd>{source.pageRange}</dd></>}
             {(source.sourceValidFrom || source.sourceValidTo) && <><dt>Geltung der Quellfassung</dt><dd>{source.sourceValidFrom ? `ab ${formatDate(source.sourceValidFrom)}` : ''}{source.sourceValidTo ? ` bis ${formatDate(source.sourceValidTo)}` : source.sourceValidFrom ? '' : 'offen'}</dd></>}
             {source.retrievedAt && <><dt>Stand der Quelle</dt><dd>{formatDate(source.retrievedAt.slice(0, 10))}</dd></>}
-            {source.url && source.availability === 'external' && <><dt>Originalquelle</dt><dd><a href={source.url} rel="noopener noreferrer">{source.url}</a></dd></>}
+            {source.url && source.availability === 'external' && <><dt>Originalquelle</dt><dd><a href={source.url} rel="noopener noreferrer">Originalquelle öffnen</a></dd></>}
             {publicNote(source.note) && <><dt>Hinweis</dt><dd>{publicNote(source.note)}</dd></>}
           </dl>
         )}

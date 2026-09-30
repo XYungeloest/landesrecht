@@ -3,51 +3,25 @@
  * Informationsseite zum Rechtsbestand: Ausgangsrechtsstand, Änderungen in der Simulation, frühere Fassungen,
  * Quellenlage – in Nutzersprache. Die Zahlen kommen aus der Statusdatei; Arbeitsbegriffe und Technik bleiben außen vor.
  */
-import { getInventoryNotice, getJurisdictionStatusSummary } from '@landesrecht/legal-core/config/inventory-status.ts';
-import { JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
-import { getJurisdictionUrl, getPublicationsUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-
-const number = new Intl.NumberFormat('de-DE');
-const lands = JURISDICTION_LIST.map((jurisdiction) => {
-  const notice = getInventoryNotice(jurisdiction.id);
-  const summary = getJurisdictionStatusSummary(jurisdiction.id);
-  return {
-    jurisdiction,
-    external: jurisdiction.upstreamSourceOfTruth !== undefined,
-    published: notice?.entry.published,
-    baselineIncomplete: notice?.baselinePartial === true,
-    sourcesIncomplete: (summary?.missingSourceCount ?? 0) + (summary?.evidenceIncompleteCount ?? 0) > 0,
-  };
-});
 ---
 <BaseLayout title="Über den Rechtsbestand" canonical={PORTAL_PATHS.about} description={`Wie der Rechtsbestand der Simulation entsteht: Ausgangsrechtsstand vom ${formatBaselineDate(SIMULATION_BASELINE_DATE)}, Änderungen in der Simulation, frühere Fassungen und Quellen.`}>
   <nav class="breadcrumbs" aria-label="Brotkrumen"><ol><li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li><li>Über den Rechtsbestand</li></ol></nav>
-  <h1>Über den Rechtsbestand</h1>
-  <p class="lead">{VOCABULARY.simulationNotice}</p>
-  <h2>Ausgangsrechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)}</h2>
-  <p>Alle vier Länder beginnen mit demselben Ausgangsrechtsstand: dem Recht, das am {formatBaselineDate(SIMULATION_BASELINE_DATE)} galt. Für {JURISDICTION_LIST.filter((jurisdiction) => !jurisdiction.upstreamSourceOfTruth).map((jurisdiction) => jurisdiction.name).join(', ')} wurde dafür das Recht des jeweiligen realen Landes übernommen und auf die Bezeichnungen der Simulation übertragen; für {JURISDICTION_LIST.filter((jurisdiction) => jurisdiction.upstreamSourceOfTruth).map((jurisdiction) => jurisdiction.name).join(', ')} wird der Bestand aus dem eigenen Rechtsportal des Landes ausgeliefert. Vorschriften, die seither nicht geändert wurden, gelten unverändert weiter und tragen keine besondere Kennzeichnung.</p>
-  <h2>Änderungen in der Simulation</h2>
-  <p>Alles, was nach dem Ausgangsrechtsstand geschieht, entsteht in der Politiksimulation: Landtage beschließen Gesetze, Regierungen erlassen Verordnungen, Vorschriften werden geändert oder aufgehoben. Das Portal kennzeichnet solche Vorschriften als <strong>{VOCABULARY.simulationChange.byKind['baseline-changed']}</strong> (übernommene Vorschrift mit späterer Änderung) oder <strong>{VOCABULARY.simulationChange.byKind['simulation-new']}</strong> (erst in der Simulation erlassen). Eine Übersicht über alle Länder bietet die Seite <a href={PORTAL_PATHS.changes}>Änderungen in der Simulation</a>. Der Rechtsstand des Portals wird fortgeschrieben; derzeit gilt der {formatDate(EDITORIAL_REFERENCE_DATE)} als Stichtag.</p>
-  <h2>Frühere Fassungen</h2>
-  <p>Jede Vorschrift führt ihre Fassungen: die Ausgangsfassung vom {formatBaselineDate(SIMULATION_BASELINE_DATE)}, jede Änderung mit ihrem Geltungsbeginn und die geltende Fassung. Frühere Fassungen bleiben dauerhaft unter einer eigenen Adresse abrufbar; der Vergleich zeigt, was sich seit dem Ausgangsstand geändert hat. Die Suche findet standardmäßig die geltenden Fassungen, kann aber auch frühere Fassungen oder den an einem bestimmten Tag geltenden Stand ermitteln.</p>
-  <h2>Quellen und Nachweise</h2>
-  <p>Zu jeder Fassung sind die Quellen genannt: amtliche Verkündungsblätter der Simulation, Einzelverkündungen, Änderungsakte und – für den Ausgangsrechtsstand – die amtliche Fassung des realen Landes. {VOCABULARY.officialNote} Wo der Wortlaut zum Ausgangsrechtsstand aus späteren amtlichen Fassungen zurückgerechnet werden musste, ist das bei der Vorschrift vermerkt.</p>
-  <h2>Stand je Land</h2>
-  <table>
-    <caption class="visually-hidden">Rechtsbestand je Land</caption>
-    <thead><tr><th scope="col">Land</th><th scope="col">Ausgangsrechtsstand</th><th scope="col">Quellenlage</th></tr></thead>
-    <tbody>
-      {lands.map((entry) => (
-        <tr>
-          <th scope="row"><a href={getJurisdictionUrl(entry.jurisdiction.id)}>{entry.jurisdiction.name}</a></th>
-          <td>{entry.external ? 'Aus dem Rechtsportal des Landes ausgeliefert.' : `${entry.published !== undefined ? `${number.format(entry.published)} Vorschriften` : 'Vorschriften'} mit belegter Fassung vom ${formatBaselineDate(entry.jurisdiction.baselineDate)}.${entry.baselineIncomplete ? ' Einzelne am Stichtag geltende Vorschriften sind noch nicht veröffentlicht, weil ihr damaliger Wortlaut nicht sicher belegt ist.' : ''}`}</td>
-          <td>{entry.external ? 'Wird im Rechtsportal des Landes gepflegt.' : entry.sourcesIncomplete ? <>Einzelne historische oder veröffentlichte Quellen sind noch nicht vollständig erschlossen; die <a href={getPublicationsUrl(entry.jurisdiction.id)}>Verkündungen</a> nennen den Stand jeder Ausgabe.</> : 'Alle bekannten Quellen sind erschlossen.'}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-  <p class="muted">Fragen zur Schnittstelle beantwortet die <a href={PORTAL_PATHS.simrecht}>maschinenlesbare Beschreibung</a>; die <a href={PORTAL_PATHS.help}>Hilfe</a> erklärt Suche und Adressen.</p>
+  <article class="reading-page">
+    <h1>Über den Rechtsbestand</h1>
+    <p class="lead">{VOCABULARY.simulationNotice}</p>
+    <h2>Ein gemeinsamer Ausgangspunkt</h2>
+    <p>Ausgangspunkt ist der Rechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)}. Das übernommene Landesrecht wurde auf die Bezeichnungen der Simulation übertragen. Spätere Änderungen entstehen in der Politiksimulation; spätere Änderungen des realen Rechts werden nicht automatisch übernommen.</p>
+    <h2>Änderungen erkennen</h2>
+    <p>Übernommene Vorschriften mit späteren Änderungen tragen den Hinweis <strong>„In der Simulation geändert“</strong>. Erst in der Simulation erlassene Vorschriften sind als <strong>„Neu in der Simulation“</strong> gekennzeichnet. Alle erfassten Änderungen finden Sie in der <a href={PORTAL_PATHS.changes}>Änderungsübersicht</a>. Der redaktionelle Stichtag ist der {formatDate(EDITORIAL_REFERENCE_DATE)}.</p>
+    <h2>Frühere Fassungen nachlesen</h2>
+    <p>Gespeicherte Fassungen bleiben abrufbar. Die Historie zeigt ihren Geltungszeitraum; der Vergleich stellt unterschiedliche Fassungen gegenüber. Bei neuen Vorschriften gibt es keine Ausgangsfassung vom {formatBaselineDate(SIMULATION_BASELINE_DATE)}. Die Suche nach früheren Fassungen kann je Land eingeschränkt sein und weist darauf hin.</p>
+    <h2>Quellen werden ergänzt</h2>
+    <p>Die Quellen und Nachweise stehen bei der jeweiligen Vorschrift. Einzelne Quellen sind noch nicht vollständig erschlossen; das Portal erhebt deshalb keinen Anspruch auf vollständige Erfassung aller Änderungen der Simulation. Wo eine Ausgangsfassung aus amtlichen Quellen rekonstruiert wurde, ist dies vermerkt.</p>
+    <p class="muted">{VOCABULARY.officialNote} Hinweise zur Nutzung bietet die <a href={PORTAL_PATHS.help}>Hilfe</a>.</p>
+  </article>
 </BaseLayout>

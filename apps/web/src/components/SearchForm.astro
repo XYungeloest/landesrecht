@@ -1,5 +1,6 @@
 ---
 import { JURISDICTION_LIST } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { STAND_VALUES } from '../lib/norm-listing.ts';
 import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import type { SearchState } from '@landesrecht/search/query.ts';
 
@@ -13,6 +14,11 @@ const selected = state.jurisdictions ?? [];
 const allSelected = selected.length === 0 || selected.length === JURISDICTION_LIST.length;
 ---
 <form class="search-form" action={PORTAL_PATHS.search} method="get" role="search">
+  {state.simulationChange && <input type="hidden" name="stand" value={STAND_VALUES[state.simulationChange]} />}
+  {state.types?.map((type) => <input type="hidden" name="type" value={type} />)}
+  {state.versionScope && state.versionScope !== 'current' && <input type="hidden" name="versionScope" value={state.versionScope} />}
+  {state.validOn && <input type="hidden" name="validOn" value={state.validOn} />}
+  {state.sort && <input type="hidden" name="sort" value={state.sort} />}
   <label class="visually-hidden" for="suche-q">Suchbegriff</label>
   <input id="suche-q" type="search" name="q" value={state.q ?? ''} placeholder="Gesetz, Abkürzung, § 3 Absatz 2, Stichwort" />
   {!compact && (

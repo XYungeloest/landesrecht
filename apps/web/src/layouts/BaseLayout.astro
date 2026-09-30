@@ -2,7 +2,7 @@
 import { JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { referenceDateLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
-import { getJurisdictionUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { getJurisdictionUrl, getPublicationsUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import '../styles/base.css';
 import ResponsiveDisclosure from '../components/ResponsiveDisclosure.astro';
 
@@ -42,12 +42,14 @@ const fullTitle = title === VOCABULARY.portalName ? title : `${title} – ${VOCA
         <ResponsiveDisclosure class="site-menu" label="Menü">
         <nav class="site-nav" aria-label="Hauptnavigation">
           <ul>
-            {JURISDICTION_LIST.map((jurisdiction) => (
-              <li><a href={getJurisdictionUrl(jurisdiction.id)} title={jurisdiction.name} aria-current={isActive(getJurisdictionUrl(jurisdiction.id)) ? 'page' : undefined}>{jurisdiction.shortName}</a></li>
-            ))}
-            <li><a href={PORTAL_PATHS.changes} aria-current={isActive(PORTAL_PATHS.changes) ? 'page' : undefined}>Änderungen</a></li>
             <li><a href={PORTAL_PATHS.search} aria-current={isActive(PORTAL_PATHS.search) ? 'page' : undefined}>Suche</a></li>
-            <li><a href={PORTAL_PATHS.help} aria-current={isActive(PORTAL_PATHS.help) ? 'page' : undefined}>Hilfe</a></li>
+            <li><details class="nav-dropdown"><summary>Länder</summary><ul>
+              {JURISDICTION_LIST.map((jurisdiction) => <li><a href={getJurisdictionUrl(jurisdiction.id)} aria-current={isActive(getJurisdictionUrl(jurisdiction.id)) ? 'page' : undefined}>{jurisdiction.name}</a></li>)}
+            </ul></details></li>
+            <li><a href={PORTAL_PATHS.changes} aria-current={isActive(PORTAL_PATHS.changes) ? 'page' : undefined}>Änderungen</a></li>
+            <li><details class="nav-dropdown"><summary>Verkündungen</summary><ul>
+              {JURISDICTION_LIST.map((jurisdiction) => <li><a href={getPublicationsUrl(jurisdiction.id)}>{jurisdiction.shortName}</a></li>)}
+            </ul></details></li>
           </ul>
         </nav>
         </ResponsiveDisclosure>
@@ -57,9 +59,21 @@ const fullTitle = title === VOCABULARY.portalName ? title : `${title} – ${VOCA
       <slot />
     </main>
     <footer class="site-footer">
-      <p>{VOCABULARY.officialNote}</p>
+      <p><strong>{VOCABULARY.portalName}</strong> · {VOCABULARY.officialNote}</p>
       <p>{VOCABULARY.baselineLabel} aller Länder: {formatBaselineDate(SIMULATION_BASELINE_DATE)} · {referenceDateLabel(EDITORIAL_REFERENCE_DATE)}</p>
-      <p><a href={PORTAL_PATHS.about}>Über den Rechtsbestand</a> · <a href={PORTAL_PATHS.changes}>Änderungen in der Simulation</a> · <a href={PORTAL_PATHS.simrecht}>Schnittstelle</a> · <a href={PORTAL_PATHS.imprint}>Impressum</a></p>
+      <p><a href={PORTAL_PATHS.about}>Über den Rechtsbestand</a> · <a href={PORTAL_PATHS.changes}>Änderungen in der Simulation</a> · <a href={`${PORTAL_PATHS.home}#verkuendungen-heading`}>Verkündungen</a> · <a href={PORTAL_PATHS.help}>Hilfe</a> · <a href={PORTAL_PATHS.imprint}>Impressum</a></p>
     </footer>
   </body>
 </html>
+
+<script>
+  for (const menu of document.querySelectorAll<HTMLDetailsElement>('.nav-dropdown')) {
+    menu.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') { menu.open = false; menu.querySelector('summary')?.focus(); }
+    });
+    menu.addEventListener('toggle', () => {
+      if (menu.open) document.querySelectorAll<HTMLDetailsElement>('.nav-dropdown').forEach((other) => { if (other !== menu) other.open = false; });
+    });
+    document.addEventListener('click', (event) => { if (event.target instanceof Node && !menu.contains(event.target)) menu.open = false; });
+  }
+</script>

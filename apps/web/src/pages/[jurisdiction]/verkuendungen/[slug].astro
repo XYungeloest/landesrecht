@@ -54,29 +54,29 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
     {publication.regime && <p class="norm-head__note">Die Ausgabe erschien unter einer früheren Bezeichnung des Landes; sie gehört heute zum Rechtsbestand des {jurisdictionGenitive(jurisdiction)}.</p>}
   </header>
   <p>
-    {previous && <a class="button-link" href={getPublicationUrl(id, previous.slug)} rel="prev">Vorherige Ausgabe ({getPublicationLabel(previous)})</a>}
+    {previous && <a class="button-link button-secondary" href={getPublicationUrl(id, previous.slug)} rel="prev">Vorherige Ausgabe ({getPublicationLabel(previous)})</a>}
     {' '}
-    {next && <a class="button-link" href={getPublicationUrl(id, next.slug)} rel="next">Nächste Ausgabe ({getPublicationLabel(next)})</a>}
+    {next && <a class="button-link button-secondary" href={getPublicationUrl(id, next.slug)} rel="next">Nächste Ausgabe ({getPublicationLabel(next)})</a>}
   </p>
   <section aria-labelledby="inhalt-heading">
     <h2 id="inhalt-heading">Inhalt der Ausgabe ({publication.entries.length})</h2>
     {publication.entries.length === 0 ? <p class="muted">Keine Einträge.</p> : (
       <div class="norm-table-wrap" tabindex="0" role="region" aria-label="Einträge der Ausgabe">
-        <table>
+        <table class="publication-contents">
           <caption class="visually-hidden">Einträge dieser Ausgabe mit Seite, Gegenstand, Dokumentart und Vorschrift im Portal</caption>
-          <thead><tr><th scope="col">Seite</th><th scope="col">Eintrag</th><th scope="col">Dokumentart</th><th scope="col">Norm im Portal</th></tr></thead>
+          <thead><tr><th scope="col">Seite</th><th scope="col">Eintrag</th><th scope="col">Dokumentart</th><th scope="col">Vorschrift im Portal</th></tr></thead>
           <tbody>
             {publication.entries.map((entry, position) => {
               const link = links.get(entryLinkKey(entry));
               return (
                 <tr id={`eintrag-${position + 1}`}>
-                  <td>{publicationEntryPages(entry) ?? '–'}</td>
-                  <td>
+                  <td data-label="Seite">{publicationEntryPages(entry) ?? '–'}</td>
+                  <td data-label="Eintrag">
                     <strong>{entry.title}</strong>
                     <p class="muted">{entry.citation}{entry.documentDate && ` · vom ${formatDate(entry.documentDate)}`}</p>
                   </td>
-                  <td>{entry.type ? typeLabel(entry.type) : '–'}</td>
-                  <td>{link ? <><a href={link.href}>{link.label}</a>{link.historyUrl && <> · <a href={link.historyUrl}>{VOCABULARY.sections.history}</a></>}</> : <span class="muted">{entryStatusLabel(entry)}</span>}</td>
+                  <td data-label="Art">{entry.type ? typeLabel(entry.type) : '–'}</td>
+                  <td data-label="Im Portal">{link ? <><a href={link.href}>{link.label}</a>{link.historyUrl && <> · <a href={link.historyUrl}>{VOCABULARY.sections.history}</a></>}</> : <span class="muted">{entryStatusLabel(entry)}</span>}</td>
                 </tr>
               );
             })}

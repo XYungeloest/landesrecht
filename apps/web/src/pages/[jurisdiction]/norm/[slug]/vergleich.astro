@@ -5,6 +5,7 @@ import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { collectBlockText } from '@landesrecht/legal-core/lib/body.ts';
 import type { NormBodyBlock, NormVersion } from '@landesrecht/legal-core/lib/schema.ts';
 import NormPageShell from '../../../../components/NormPageShell.astro';
+import { textDiff } from '../../../../lib/text-diff.ts';
 import { buildNormView, jurisdictionFromParam } from '../../../../lib/norm-view.ts';
 import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../../../lib/runtime/context.ts';
 
@@ -22,7 +23,7 @@ const currentId = view.versions.find((entry) => entry.kind === 'current')?.versi
 const fromId = Astro.url.searchParams.get('von') ?? view.baselineVersion?.versionId ?? record.versions[0]!.versionId;
 const toId = Astro.url.searchParams.get('bis') ?? currentId;
 const baselineDate = view.jurisdiction.baselineDate;
-const versionLabel = (version: NormVersion): string => (version.simulationValidFrom === baselineDate ? `${VOCABULARY.simulationChange.baselineVersion} (${formatDate(version.simulationValidFrom)})` : version.versionId === currentId ? `${VOCABULARY.simulationChange.currentVersion} (seit ${formatDate(version.simulationValidFrom)})` : `Fassung vom ${formatDate(version.simulationValidFrom)}`);
+const versionLabel = (version: NormVersion): string => (version.simulationValidFrom === baselineDate ? `Ausgangsstand ${formatDate(version.simulationValidFrom)}` : version.versionId === currentId ? `${VOCABULARY.simulationChange.currentVersion} (seit ${formatDate(version.simulationValidFrom)})` : `Fassung vom ${formatDate(version.simulationValidFrom)}`);
 const from = record.versions.find((version) => version.versionId === fromId);
 const to = record.versions.find((version) => version.versionId === toId);
 
@@ -59,17 +60,21 @@ const changed = keys.filter((key) => left.get(key) !== right.get(key));
   )}
   {!from || !to ? <p class="muted">Unbekannte Fassung.</p> : record.versions.length < 2 ? null : (
     <section>
+      <p class="comparison-direction"><strong>{versionLabel(from)}</strong><span aria-hidden="true"> → </span><span class="visually-hidden">verglichen mit</span><strong>{versionLabel(to)}</strong></p>
       <h3>{changed.length} geänderte {changed.length === 1 ? 'Vorschrift' : 'Vorschriften'} zwischen {versionLabel(from)} und {versionLabel(to)}</h3>
-      <p class="muted">Gegenüberstellung je Paragraf bzw. Artikel; Unterschiede im Wortlaut sind an den Texten selbst erkennbar.</p>
-      {changed.map((key) => (
-        <div class="card">
+      <p class="muted">Nur geänderte Paragrafen, Artikel und Anlagen werden gezeigt. Streichungen sind durchgestrichen, Einfügungen unterstrichen. Die vollständigen Fassungen bleiben über die Historie erreichbar.</p>
+      {changed.map((key) => {
+        const diff = textDiff(left.get(key) ?? '', right.get(key) ?? '');
+        return (
+        <section class="comparison-unit">
           <h4>{key}{!left.has(key) ? ' (neu)' : !right.has(key) ? ' (entfallen)' : ''}</h4>
           <div class="comparison-columns">
-            <div><p class="muted">{versionLabel(from)}</p><p>{left.get(key) ?? '–'}</p></div>
-            <div><p class="muted">{versionLabel(to)}</p><p>{right.get(key) ?? '–'}</p></div>
+            <div class="comparison-side"><h5>{versionLabel(from)}</h5><p class="comparison-text">{left.has(key) ? diff.before.map((part) => part.changed ? <del>{part.text}</del> : part.text) : <span class="muted">In dieser Fassung nicht enthalten.</span>}</p></div>
+            <div class="comparison-side"><h5>{versionLabel(to)}</h5><p class="comparison-text">{right.has(key) ? diff.after.map((part) => part.changed ? <ins>{part.text}</ins> : part.text) : <span class="muted">In dieser Fassung nicht enthalten.</span>}</p></div>
           </div>
-        </div>
-      ))}
+        </section>
+        );
+      })}
     </section>
   )}
 </NormPageShell>

@@ -32,7 +32,7 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
 <BaseLayout title={VOCABULARY.portalName} canonical="/">
   <section class="home-search" aria-labelledby="suche-heading">
     <h1 id="suche-heading">Landesrecht durchsuchen</h1>
-    <p class="lead">Gesetze, Verordnungen und Verwaltungsvorschriften der vier Länder – {number.format(normCount)} Vorschriften, Rechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)} mit allen Änderungen der Simulation.</p>
+    <p class="lead">Gesetze, Verordnungen und Verwaltungsvorschriften der vier Länder – {number.format(normCount)} Vorschriften, Ausgangsrechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)} mit den im Portal erfassten späteren Änderungen der Simulation.</p>
     <SearchForm />
     <nav aria-label="Schnellzugriff">
       <ul class="type-filter">
@@ -45,17 +45,17 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
     </nav>
     <p class="muted">Suchbar sind Titel, Kurzbezeichnungen, Abkürzungen, Normtext und Fundstellen; Angaben wie „§ 3 Absatz 2“ oder „Art. 5“ führen zur Vorschrift.</p>
   </section>
-  <section aria-labelledby="laender-heading">
+  <section id="laender" aria-labelledby="laender-heading">
     <h2 id="laender-heading">Länder</h2>
-    <ul class="card-grid">
+    <ul class="card-grid country-grid">
       {JURISDICTION_LIST.map((jurisdiction) => {
         const facets = facetsByLand.get(jurisdiction.id);
         return (
-          <li class="card">
+          <li class="card country-card">
             <h3><a href={getJurisdictionUrl(jurisdiction.id)}>{jurisdiction.name}</a></h3>
-            <p class="card__meta">{jurisdiction.shortName}{facets && <> · {number.format(facets.byChangeKind['baseline-unchanged'] + facets.byChangeKind['baseline-changed'] + facets.byChangeKind['simulation-new'])} Vorschriften</>}</p>
+            <p class="card__meta"><span class="country-card__short">{jurisdiction.shortName}</span>{facets && <>{number.format(facets.byChangeKind['baseline-unchanged'] + facets.byChangeKind['baseline-changed'] + facets.byChangeKind['simulation-new'])} Vorschriften</>}</p>
             {facets && (facets.byChangeKind['baseline-changed'] > 0 || facets.byChangeKind['simulation-new'] > 0) ? (
-              <p class="card__meta"><a href={changesUrl('baseline-changed', jurisdiction.id)}>{facets.byChangeKind['baseline-changed']} geändert</a> · <a href={changesUrl('simulation-new', jurisdiction.id)}>{facets.byChangeKind['simulation-new']} neu</a></p>
+              <p class="country-card__actions"><a href={changesUrl('baseline-changed', jurisdiction.id)}>{facets.byChangeKind['baseline-changed']} geändert</a> · <a href={changesUrl('simulation-new', jurisdiction.id)}>{facets.byChangeKind['simulation-new']} neu</a></p>
             ) : <p class="card__meta">{facets ? 'Seit dem Ausgangsstand unverändert' : 'Derzeit nicht verfügbar'}</p>}
           </li>
         );
@@ -65,7 +65,7 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
   <section class="home-changes" aria-labelledby="aenderungen-heading">
     <div class="home-changes__lead">
       <h2 id="aenderungen-heading"><a href={changesUrl('baseline-changed')}>{number.format(changedCount)} Vorschriften in der Simulation geändert</a></h2>
-      <p>Seit dem Ausgangsrechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)} hat die Politiksimulation {number.format(changedCount)} übernommene Vorschriften geändert und {number.format(newCount)} neu erlassen. <a href={PORTAL_PATHS.changes}>Alle Änderungen in der Simulation</a></p>
+      <p>Im Portal erfasst: {number.format(changedCount)} geänderte und {number.format(newCount)} neu erlassene Vorschriften seit dem {formatBaselineDate(SIMULATION_BASELINE_DATE)}. <a href={PORTAL_PATHS.changes}>Alle Änderungen in der Simulation</a></p>
     </div>
     <div class="home-columns">
       <section aria-labelledby="zuletzt-heading">

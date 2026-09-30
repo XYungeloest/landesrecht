@@ -30,9 +30,10 @@ const publicationFor = (versionId: string | null | undefined) => {
 const timeline = view.versions.map((entry, index) => {
   const isBaseline = entry.simulationValidFrom === baselineDate;
   const historyEntry = record.history.entries.find((item) => item.affectingVersionId === entry.versionId && item.type !== 'initial');
-  const role = isBaseline ? VOCABULARY.simulationChange.baselineVersion : VOCABULARY.simulationChange.simulationVersion;
+  const isNew = index === 0 && !isBaseline;
+  const role = isBaseline ? VOCABULARY.simulationChange.baselineVersion : isNew ? VOCABULARY.simulationChange.byKind['simulation-new'] : VOCABULARY.simulationChange.simulationVersion;
   const previous = index > 0 ? view.versions[index - 1] : undefined;
-  return { entry, isBaseline, role, historyEntry, publication: publicationFor(entry.versionId), compareUrl: previous ? `${getNormSubpageUrl(resolved.id, record.meta.slug, 'vergleich')}?von=${encodeURIComponent(previous.versionId)}&bis=${encodeURIComponent(entry.versionId)}` : undefined };
+  return { entry, isBaseline, isNew, role, historyEntry, publication: publicationFor(entry.versionId), compareUrl: previous ? `${getNormSubpageUrl(resolved.id, record.meta.slug, 'vergleich')}?von=${encodeURIComponent(previous.versionId)}&bis=${encodeURIComponent(entry.versionId)}` : undefined };
 });
 const repeal = record.history.entries.filter((entry) => entry.type === 'repeal').sort((left, right) => right.date.localeCompare(left.date))[0];
 const notices = record.history.entries.filter((entry) => entry.type === 'notice' || entry.type === 'correction').sort((left, right) => right.date.localeCompare(left.date));
@@ -48,11 +49,11 @@ const notices = record.history.entries.filter((entry) => entry.type === 'notice'
           <div class="version-timeline__marker" aria-hidden="true"></div>
           <div class="version-timeline__body">
             <p class="version-timeline__head">
-              <span class={`tag ${step.isBaseline ? 'tag--baseline' : 'sim-badge sim-badge--changed'}`}>{step.role}</span>
+              <span class={`tag ${step.isBaseline ? 'tag--baseline' : step.isNew ? 'sim-badge sim-badge--new' : 'sim-badge sim-badge--changed'}`}>{step.role}</span>
               {step.entry.kind === 'current' && <span class="tag tag--current">{VOCABULARY.simulationChange.currentVersion}</span>}
               {step.entry.kind === 'future' && <span class="tag tag--future">{step.entry.kindLabel}</span>}
             </p>
-            <h3><a href={step.entry.url}>{step.isBaseline ? `Fassung vom ${formatDate(step.entry.simulationValidFrom)} (Ausgangsrechtsstand)` : `Änderung am ${formatDate(step.entry.simulationValidFrom)}`}</a></h3>
+            <h3><a href={step.entry.url}>{step.isBaseline ? `Fassung vom ${formatDate(step.entry.simulationValidFrom)} (Ausgangsrechtsstand)` : `${step.isNew ? 'Erstmals gültig am' : 'Änderung am'} ${formatDate(step.entry.simulationValidFrom)}`}</a></h3>
             <p class="muted">Gültig {step.entry.simulationValidTo ? `vom ${formatDate(step.entry.simulationValidFrom)} bis ${formatDate(step.entry.simulationValidTo)}` : `seit ${formatDate(step.entry.simulationValidFrom)}`}{step.historyEntry && ` · ${step.historyEntry.title}`}</p>
             {step.historyEntry && <p class="muted">{step.publication ? <a href={step.publication.url} title={`Verkündung: ${step.publication.label}`}>{step.historyEntry.citation}</a> : step.historyEntry.citation}{step.historyEntry.relatedNorm && <> · <a href={getNormUrl(step.historyEntry.relatedNorm.jurisdiction ?? record.meta.jurisdiction, step.historyEntry.relatedNorm.slug)}>Änderungsvorschrift</a></>}</p>}
             {step.compareUrl && <p><a href={step.compareUrl}>Vergleich mit der vorherigen Fassung</a></p>}

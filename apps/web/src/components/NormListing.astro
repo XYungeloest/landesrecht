@@ -48,7 +48,8 @@ const summaryText = facets.total === 0 ? 'Keine Vorschriften für diese Auswahl.
   </ul>
 </nav>
 {view.types.length > 0 && (
-  <nav aria-label="Nach Normtyp filtern">
+  <nav class="type-filter-section" aria-label="Nach Vorschriftenart filtern">
+    <span class="filter-label">Vorschriftenart</span>
     <ul class="type-filter">
       {view.types.map((entry) => (
         <li><a href={entry.url} aria-current={entry.current ? 'true' : undefined}>{entry.label} ({entry.count})</a></li>
@@ -71,12 +72,13 @@ const summaryText = facets.total === 0 ? 'Keine Vorschriften für diese Auswahl.
     {norms.map((norm) => (
       <li class="hit">
         <h3 class="hit__title"><a href={norm.url}>{norm.title}</a></h3>
-        <p class="hit__meta">
+        <p class="hit__short">{norm.abbr ?? (norm.shortTitle !== norm.title ? norm.shortTitle : '')}</p>
+        <p class="hit__meta hit__status">
           <SimulationBadge kind={norm.simulationChangeKind} />
           {showJurisdiction && jurisdictionName && <span class="tag">{jurisdictionName(norm.jurisdiction)}</span>}
-          {norm.abbr ? `${norm.abbr} · ` : norm.shortTitle !== norm.title ? `${norm.shortTitle} · ` : ''}{typeLabel(norm.type)} · {statusLabel(norm.status)}
-          {norm.simulationChangeKind === 'baseline-changed' && norm.lastSimulationChangeDate && <> · {simulationChangeDateText(norm.lastSimulationChangeDate)}</>}
-          {norm.simulationChangeKind === 'simulation-new' && <> · gültig ab {formatDate(norm.currentValidFrom)}</>}
+          <span>{typeLabel(norm.type)}</span>{norm.status !== 'in-force' && <span>{statusLabel(norm.status)}</span>}
+          {norm.simulationChangeKind === 'baseline-changed' && norm.lastSimulationChangeDate && <span>{simulationChangeDateText(norm.lastSimulationChangeDate)}</span>}
+          {norm.simulationChangeKind === 'simulation-new' && <span>Gültig ab {formatDate(norm.currentValidFrom)}</span>}
         </p>
       </li>
     ))}

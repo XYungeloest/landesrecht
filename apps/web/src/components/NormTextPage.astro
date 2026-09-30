@@ -15,6 +15,7 @@ const { view } = Astro.props;
 ---
 <NormPageShell view={view} section="text">
   {view.summary && <p class="lead">{view.summary}</p>}
+  <span class="anchor-feedback" data-anchor-feedback role="status" aria-live="polite"></span>
   <div class="norm-workspace">
     <NormOutline entries={view.outline} />
     <article class="norm-document" id="normtext" aria-labelledby="normtext-title">
@@ -32,3 +33,19 @@ const { view } = Astro.props;
     <NormAside view={view} />
   </div>
 </NormPageShell>
+
+<script>
+  // Keep native fragment navigation even when clipboard access is unavailable.
+  document.querySelectorAll<HTMLAnchorElement>('.norm-unit__link').forEach((link) => {
+    link.addEventListener('click', async () => {
+      const feedback = document.querySelector<HTMLElement>('[data-anchor-feedback]');
+      if (!feedback) return;
+      feedback.textContent = 'Direktlink ausgewählt';
+      try {
+        await navigator.clipboard.writeText(link.href);
+        feedback.textContent = 'Link kopiert';
+      } catch { /* The native URL fragment remains usable without clipboard permission. */ }
+      window.setTimeout(() => { feedback.textContent = ''; }, 2500);
+    });
+  });
+</script>

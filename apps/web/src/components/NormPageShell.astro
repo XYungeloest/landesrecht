@@ -21,25 +21,26 @@ const { view, section, title } = Astro.props;
 const pageTitle = title ?? `${view.identity.shortTitle} (${view.jurisdiction.shortName})`;
 const baselineDate = formatDate(view.jurisdiction.baselineDate);
 const change = view.change;
-const baselineUrl = view.baselineVersion ? view.versions.find((entry) => entry.versionId === view.baselineVersion!.versionId)?.url : undefined;
+const baselineUrl = view.baselineVersion && view.version.versionId !== view.baselineVersion.versionId
+  ? view.versions.find((entry) => entry.versionId === view.baselineVersion!.versionId)?.url
+  : undefined;
 const historyUrl = view.subpages.find((subpage) => subpage.key === 'historie')?.url;
 const citation = `${view.identity.abbr ?? view.identity.shortTitle} (${view.jurisdiction.shortName}), ${view.version.citation}`;
-const siteUrl = import.meta.env.PUBLIC_SITE_URL;
+const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? Astro.url.origin;
 ---
 <BaseLayout title={pageTitle} description={view.summary ?? view.identity.title} canonical={view.canonicalUrl} robots={view.isCurrent ? undefined : 'noindex, follow'}>
   <nav class="breadcrumbs" aria-label="Brotkrumen">
     <ol>
       <li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li>
-      <li><a href={getJurisdictionUrl(view.jurisdiction.id)}>{view.jurisdiction.name}</a></li>
-      <li><a href={view.url}>{view.identity.shortTitle}</a></li>
+      <li><a href={getJurisdictionUrl(view.jurisdiction.id)}>{view.jurisdiction.shortName}</a></li>
+      <li><a href={view.url}>{view.identity.abbr ?? view.identity.shortTitle}</a></li>
       {!view.isCurrent && <li>{VOCABULARY.version.label} vom {formatDate(view.version.simulationValidFrom)}</li>}
     </ol>
   </nav>
-  <header class="norm-head">
+  <header class:list={['norm-head', { 'norm-head--secondary': section !== 'text' }]}>
     <p class="norm-head__tags">
-      <span class="tag">{view.typeLabel}</span>
-      <span class={`tag ${view.record.meta.status === 'repealed' ? 'tag--repealed' : ''}`}>{view.statusLabel}</span>
       <span class={`norm-band norm-band--${view.kind}`}>{view.bandLabel}</span>
+      {!view.isCurrent && <a class="action-link" href={view.url}>Zur geltenden Fassung</a>}
     </p>
     <h1>{view.identity.title}</h1>
     <p class="norm-head__short">
@@ -49,27 +50,30 @@ const siteUrl = import.meta.env.PUBLIC_SITE_URL;
     {change.kind === 'baseline-changed' && (
       <div class="sim-banner sim-banner--changed" role="note" aria-label={simulationChangeLabel('baseline-changed')}>
         <p class="sim-banner__title">{simulationChangeLabel('baseline-changed')}</p>
-        <p>Diese Vorschrift stammt aus dem Ausgangsrechtsstand vom {baselineDate} und wurde danach in der Simulation geändert{change.lastChangeDate && <> ({simulationChangeDateText(change.lastChangeDate)})</>}{change.repealedInSimulation && <> (in der Simulation aufgehoben)</>}.</p>
+        <p>{change.lastChangeDate && <>{simulationChangeDateText(change.lastChangeDate)}.</>}{change.repealedInSimulation && <> In der Simulation aufgehoben.</>}</p>
         <p class="sim-banner__actions">
-          {view.compareUrl && <a class="button-link" href={view.compareUrl}>{VOCABULARY.simulationChange.compareCta}</a>}
-          {baselineUrl && <a class="button-link button-secondary" href={baselineUrl}>{VOCABULARY.simulationChange.baselineVersion} vom {baselineDate}</a>}
-          {historyUrl && <a class="button-link button-secondary" href={historyUrl}>{VOCABULARY.simulationChange.changesSince}</a>}
+          {view.compareUrl && section !== 'vergleich' && <a class="button-link" href={view.compareUrl}>Änderungen ansehen</a>}
+          {baselineUrl && <a class="action-link" href={baselineUrl}>Ausgangsfassung</a>}
+          {historyUrl && <a class="action-link" href={historyUrl}>Frühere Fassungen</a>}
         </p>
       </div>
     )}
     {change.kind === 'simulation-new' && (
       <div class="sim-banner sim-banner--new" role="note" aria-label={simulationChangeLabel('simulation-new')}>
-        <p class="sim-banner__title">{simulationChangeLabel('simulation-new')}</p>
-        <p>Diese Vorschrift wurde nach dem Ausgangsrechtsstand vom {baselineDate} in der Simulation neu erlassen{change.firstSimulationDate && <> (gültig ab {formatDate(change.firstSimulationDate)})</>}.</p>
+        <p><strong>{simulationChangeLabel('simulation-new')}</strong>{change.firstSimulationDate && <> · gültig seit {formatDate(change.firstSimulationDate)}</>}</p>
       </div>
     )}
+    <details class="norm-head__details" open={section === 'text'}>
+    <summary hidden={section === 'text'}>Geltung und Fundstelle</summary>
     <dl class="facts norm-head__facts">
       <dt>{VOCABULARY.validity.label}</dt><dd>{view.statusLabel}</dd>
       <dt>Fundstelle</dt><dd>{view.version.citation}</dd>
       <dt>{VOCABULARY.legalStatus.label}</dt><dd>{view.legalStatusText}</dd>
       <dt>Gültigkeit</dt><dd>{view.validityText}</dd>
     </dl>
+    </details>
     <p class="norm-head__actions">
+      {section === 'text' && <a class="action-link" href="#normtext">Zum Normtext ↓</a>}
       <CopyButton value={citation} label="Fundstelle kopieren" />
       <CopyButton value={`${siteUrl}${view.isCurrent ? view.url : view.versionUrl}`} label="Link kopieren" />
     </p>
