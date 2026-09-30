@@ -28,7 +28,7 @@ describe('Adressen der Verkündungen', () => {
 });
 
 describe('Links der Verkündungseinträge', () => {
-  const summary = (overrides: Partial<NormSummary> = {}): NormSummary => ({ jurisdiction: 'west', slug: 'schulg-west', title: 'Schulgesetz', shortTitle: 'SchulG', type: 'gesetz', status: 'in-force', currentVersionId: '2026-05-18', currentValidFrom: '2026-05-18', versionCount: 2, lastChangeDate: '2026-05-18', subjects: [], url: '/west/norm/schulg-west/', ...overrides });
+  const summary = (overrides: Partial<NormSummary> = {}): NormSummary => ({ jurisdiction: 'west', slug: 'schulg-west', title: 'Schulgesetz', shortTitle: 'SchulG', type: 'gesetz', status: 'in-force', currentVersionId: '2026-05-18', currentValidFrom: '2026-05-18', versionCount: 2, lastChangeDate: '2026-05-18', subjects: [], url: '/west/norm/schulg-west/', simulationChangeKind: 'baseline-changed', lastSimulationChangeDate: '2026-05-18', ...overrides });
 
   it('führt zur geltenden Fassung, zur entstandenen Fassung oder als Vorschrift mit Historie; unbekannte Normen bleiben ohne Link', () => {
     expect(entryLinkFor('west', { normSlug: 'schulg-west', versionId: '2026-05-18' }, summary())).toEqual({ href: '/west/norm/schulg-west/', label: 'Geltende Fassung' });
@@ -61,15 +61,16 @@ describe('Seiten und API (Quelltext-Regressionen)', () => {
     expect(source).toContain('<InventoryNotice jurisdiction={id} />');
   });
 
-  it('die Ausgabe zeigt Einträge mit Seiten und Quellenbelege mit SHA-256, ohne Bilddaten', async () => {
+  it('die Ausgabe zeigt Einträge mit Seiten und Quellen ohne Speichertechnik (kein SHA-256, kein Archivobjekt), ohne Bilddaten', async () => {
     const source = await read('pages/[jurisdiction]/verkuendungen/[slug].astro');
     expect(source).toContain('getPublication(Astro.params.slug)');
-    expect(source).toContain('<SourceList sources={publication.sourceReferences} />');
+    expect(source).toContain('<SourceList sources={publication.sourceReferences} jurisdiction={id} />');
     expect(source).toContain('publicationEntryPages(entry)');
     expect(source).not.toContain('<img');
     expect(source).toContain('getPublicationsUrl(id)}>Verkündungen</a>');
+    expect(source).not.toMatch(/SHA-256|Archivobjekt/u);
     const sources = await read('components/SourceList.astro');
-    expect(sources).toContain('<dt>SHA-256</dt>');
+    expect(sources).not.toMatch(/<dt>SHA-256<\/dt>|<dt>Archivobjekt<\/dt>|objectKey\}|source\.sha256\}/u);
     expect(sources).toContain("'simulation-gazette': 'Verkündungsblatt der Simulation'");
   });
 
@@ -77,26 +78,18 @@ describe('Seiten und API (Quelltext-Regressionen)', () => {
     const historie = await read('pages/[jurisdiction]/norm/[slug]/historie.astro');
     expect(historie).toContain('publicationSlugsByVersion(record.versions)');
     expect(historie).toContain('store.getPublication(slug)');
-    expect(historie).toContain('publicationFor(entry.affectingVersionId)');
+    expect(historie).toContain('publicationFor(entry.versionId)');
     const index = await read('pages/[jurisdiction]/index.astro');
     expect(index).toContain('getPublicationsUrl(id)');
     expect(index).toContain('store.listPublications()');
   });
 
-  it('der Teilbestandshinweis weist Baseline- und Sim-Normzahl getrennt aus und hängt allein an den Daten', async () => {
+  it('der Bestandshinweis ist ein knapper fachlicher Satz ohne Arbeitsbegriffe und hängt allein an den Daten', async () => {
     const notice = await read('components/InventoryNotice.astro');
     expect(notice).toContain('getInventoryNotice(jurisdiction)');
-    expect(notice).toContain('Sicher belegter Rechtsstand zum');
-    expect(notice).toContain('<strong>Sim-Quellenstatus – Simulationsrecht:</strong>');
-    expect(notice).toContain('Baseline-Status');
-    expect(notice).toContain('status?.baselineFreeze');
-    expect(notice).toContain('simulation.simulationNorms');
-    expect(notice).toContain('status.published');
-    // Blattabdeckung und Sim-Gesamtstatus getrennt: „X von Y bekannten Ausgaben“ ist nie die Vollständigkeitsaussage.
-    expect(notice).toContain('summarizeJurisdictionStatus(status)');
-    expect(notice).toContain('Das allein belegt keinen vollständigen Sim-Rechtsstand.');
-    expect(notice).toContain("summary.simulationStatus === 'COMPLETE' ? 'vollständig belegt' : 'unvollständig'");
-    expect(notice).not.toContain('Quellensammlung unvollständig');
-    expect(notice).not.toMatch(/2023-12-01|West|BayWü/u);
+    expect(notice).toContain('Ausgangspunkt der Simulation ist der Rechtsstand vom');
+    expect(notice).toContain('Einzelne historische oder veröffentlichte Quellen sind noch nicht vollständig erschlossen.');
+    expect(notice).toContain('PORTAL_PATHS.about');
+    expect(notice).not.toMatch(/FROZEN|PARTIAL|Baseline-Status|eingefroren|Fingerabdruck|Ausgaben liegen vor|in Prüfung|gesperrt|2023-12-01|West|BayWü/u);
   });
 });

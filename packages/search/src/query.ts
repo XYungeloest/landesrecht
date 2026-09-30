@@ -6,6 +6,7 @@
  */
 import { isJurisdictionId, JURISDICTION_IDS, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { isNormStatus, isNormType, type NormStatus, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
+import { isSimulationChangeKind, type SimulationChangeKind } from '@landesrecht/legal-core/lib/simulation-change.ts';
 import { VERSION_TEMPORAL_KINDS, type VersionTemporalKind } from '@landesrecht/legal-core/lib/versions.ts';
 
 export const SEARCH_SCOPES = ['all', 'title', 'body'] as const;
@@ -43,6 +44,8 @@ export interface SearchState {
   limit: number;
   /** Verknüpfung der Suchwörter; fehlt der Wert, gilt DEFAULT_SEARCH_MATCH_MODE. */
   matchMode?: SearchMatchMode;
+  /** Rechtsstand gegenüber dem Ausgangsrechtsstand (Filter „In der Simulation geändert“ usw.). */
+  simulationChange?: SimulationChangeKind;
 }
 
 export interface QueryToken {
@@ -340,6 +343,11 @@ export function parseSearchState(params: URLSearchParams): SearchState {
   };
   if (validOn && isIsoCalendarDate(validOn)) state.validOn = validOn;
   if ((SEARCH_MATCH_MODES as readonly string[]).includes(matchMode ?? '')) state.matchMode = matchMode as SearchMatchMode;
+  const stand = params.get('stand');
+  if (isSimulationChangeKind(stand)) state.simulationChange = stand;
+  else if (stand === 'changed') state.simulationChange = 'baseline-changed';
+  else if (stand === 'new') state.simulationChange = 'simulation-new';
+  else if (stand === 'unchanged') state.simulationChange = 'baseline-unchanged';
   if (state.jurisdictions.length === 0) state.jurisdictions = [...JURISDICTION_IDS];
   return state;
 }

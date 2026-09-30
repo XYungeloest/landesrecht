@@ -10,6 +10,7 @@ import { anchorSlug } from '@landesrecht/legal-core/lib/body.ts';
 import { getIndexLetter, getNormAliases, getNormSortKey, getNormVersionIdentity, getPublicNormSummary } from '@landesrecht/legal-core/lib/identity.ts';
 import type { NormRecord, NormVersion, Publication, SourceReference } from '@landesrecht/legal-core/lib/schema.ts';
 import { classifyNormVersion, getApplicableVersion, getNormLastActivityDate, getNormLastChangeDate } from '@landesrecht/legal-core/lib/versions.ts';
+import { classifySimulationChange } from '@landesrecht/legal-core/lib/simulation-change.ts';
 import { buildSearchDocument, SEARCH_UNIT_COLUMNS, searchIndexResetStatements, type SearchDocument } from '@landesrecht/search/index.ts';
 
 export interface PlanQuery {
@@ -68,7 +69,8 @@ export const RUNTIME_META_KEYS = {
   schemaVersion: 'schema_version',
 } as const;
 
-export const PROJECTION_SCHEMA_VERSION = '1';
+/** Projektionsschema: 2 seit Migration 0003 (Klassifikation gegenüber dem Ausgangsrechtsstand in `law_norms`). */
+export const PROJECTION_SCHEMA_VERSION = '2';
 
 export function normId(jurisdiction: JurisdictionId, slug: string): string {
   return `${jurisdiction}:${slug}`;
@@ -174,14 +176,16 @@ export function normQueries(record: NormRecord, options: Required<Pick<Projectio
   const current = getApplicableVersion(record, options.asOf);
   const identity = getNormVersionIdentity(record, current);
   const summary = getPublicNormSummary(identity);
+  // Abgeleitete Klassifikation (fail-closed) – Filter- und Sortierspalten der Oberfläche, kein Rechtsinhalt.
+  const change = classifySimulationChange(record);
   const queries: PlanQuery[] = options.full ? [] : deleteNormQueries(id);
   let blocks = 0;
   let blockParts = 0;
   let searchUnits = 0;
 
   queries.push({
-    sql: `INSERT INTO law_norms (id, jurisdiction, slug, title, short_title, abbr, type, status, current_version_id, current_valid_from, document_date, publication_date, effective_date, expiry_date, initial_citation, summary, enacting_body, responsible_body, subjects_json, primary_subject, keywords_json, aliases_json, external_ids_json, sort_key, index_letter, version_count, last_change_date, last_activity_date, meta_json, history_json, updated_at)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    sql: `INSERT INTO law_norms (id, jurisdiction, slug, title, short_title, abbr, type, status, current_version_id, current_valid_from, document_date, publication_date, effective_date, expiry_date, initial_citation, summary, enacting_body, responsible_body, subjects_json, primary_subject, keywords_json, aliases_json, external_ids_json, sort_key, index_letter, version_count, last_change_date, last_activity_date, meta_json, history_json, updated_at, simulation_change_kind, last_simulation_change_date)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     params: [
       id, meta.jurisdiction, meta.slug, identity.title, identity.shortTitle, identity.abbr ?? null, meta.type, meta.status,
       current.versionId, current.simulationValidFrom, meta.documentDate ?? null, meta.publicationDate ?? null,
@@ -190,6 +194,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
       JSON.stringify(getNormAliases(record, identity)), JSON.stringify(meta.externalIdentifiers), getNormSortKey(identity.title),
       getIndexLetter(identity.title), record.versions.length, getNormLastChangeDate(record, options.asOf),
       getNormLastActivityDate(record, options.asOf), JSON.stringify(meta), JSON.stringify(record.history), options.now,
+      change.kind, change.lastChangeDate,
     ],
   });
 

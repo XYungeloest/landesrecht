@@ -1,0 +1,49 @@
+---
+export const prerender = false;
+
+import { getJurisdiction, JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { isJurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import NormListing from '../../components/NormListing.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { changeFacets, listChanges, sumFacets } from '../../lib/changes.ts';
+import { listingTypes, listingUrl, PAGE_SIZE, parseListingState } from '../../lib/norm-listing.ts';
+import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../lib/runtime/context.ts';
+
+const registry = await getStoreRegistry();
+const state = parseListingState(Astro.url.searchParams);
+const changeKind = state.changeKind === 'simulation-new' ? 'simulation-new' : 'baseline-changed';
+const landParam = Astro.url.searchParams.get('land') ?? '';
+const land = isJurisdictionId(landParam) && registry.has(landParam) ? landParam : undefined;
+const jurisdictions = land ? [land] : undefined;
+const types = listingTypes(state.type);
+const [facetsByLand, tabsByLand] = await Promise.all([
+  changeFacets(registry, { ...(jurisdictions ? { jurisdictions } : {}), ...(types ? { types } : {}), changeKind }),
+  changeFacets(registry, { ...(jurisdictions ? { jurisdictions } : {}), changeKind }),
+]);
+const facets = sumFacets(facetsByLand);
+const tabs = sumFacets(tabsByLand);
+const page = Math.max(1, state.page);
+const norms = await listChanges(registry, { ...(jurisdictions ? { jurisdictions } : {}), changeKind, ...(types ? { types } : {}), offset: (page - 1) * PAGE_SIZE, limit: PAGE_SIZE });
+const basePath = land ? `${PORTAL_PATHS.changes}?land=${land}` : PORTAL_PATHS.changes;
+const landUrl = (id?: string): string => listingUrl(id ? `${PORTAL_PATHS.changes}?land=${id}` : PORTAL_PATHS.changes, { changeKind, ...(state.type ? { type: state.type } : {}) });
+Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
+---
+<BaseLayout title="Änderungen in der Simulation" canonical={PORTAL_PATHS.changes} description={`Vorschriften, die seit dem Ausgangsrechtsstand vom ${formatBaselineDate(SIMULATION_BASELINE_DATE)} in der Simulation geändert oder neu erlassen wurden – alle Länder, jüngste Änderung zuerst.`}>
+  <nav class="breadcrumbs" aria-label="Brotkrumen"><ol><li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li><li>Änderungen in der Simulation</li></ol></nav>
+  <h1>Änderungen in der Simulation</h1>
+  <p class="lead">Vorschriften, die seit dem Ausgangsrechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)} in der Politiksimulation geändert oder neu erlassen wurden – jüngste Änderung zuerst. Unverändertes Ausgangsrecht finden Sie über die Länderseiten und die Suche.</p>
+  <nav aria-label="Land wählen">
+    <ul class="type-filter">
+      <li><a href={landUrl()} aria-current={land ? undefined : 'true'}>Alle Länder</a></li>
+      {JURISDICTION_LIST.filter((jurisdiction) => registry.has(jurisdiction.id)).map((jurisdiction) => (
+        <li><a href={landUrl(jurisdiction.id)} aria-current={land === jurisdiction.id ? 'true' : undefined}>{jurisdiction.name}</a></li>
+      ))}
+    </ul>
+  </nav>
+  <section aria-labelledby="liste-heading">
+    <h2 id="liste-heading" class="visually-hidden">Liste</h2>
+    <NormListing basePath={basePath} state={{ ...state, changeKind }} facets={facets} tabCounts={tabs.byChangeKind} norms={norms} showJurisdiction={!land} jurisdictionName={(id) => getJurisdiction(id).shortName} headingId="liste" tabs="changes" showLetters={false} />
+  </section>
+</BaseLayout>

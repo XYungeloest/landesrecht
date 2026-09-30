@@ -15,6 +15,9 @@
 import { readManifest } from '@landesrecht/importer-recht-nrw/common/manifest.ts';
 import { loadJurisdictionNorms } from '@landesrecht/legal-core/lib/loader.ts';
 import { expandNormTypeFilter, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
+import { classifySimulationChange, type SimulationChangeKind } from '@landesrecht/legal-core/lib/simulation-change.ts';
+
+import { PAGE_SIZE } from '../apps/web/src/lib/norm-listing.ts';
 
 import { createPageFetcher, DEPLOYED_SITE_URL, loadWestCorpus, mdTable, parseCliArgs, repositoryRoot, writeAuditReport } from './lib/audit-common.ts';
 import { computeNormStats, currentVersion } from './lib/corpus-stats.ts';
@@ -33,6 +36,21 @@ const warningsBySlug = new Map(manifest.entries.filter((entry) => entry.importSt
 const listedNorms = await loadJurisdictionNorms('west', root);
 const typeCounts = listedNorms.reduce<Record<string, number>>((acc, record) => { acc[record.meta.type] = (acc[record.meta.type] ?? 0) + 1; return acc; }, {});
 const countForFilter = (type: NormType): number => expandNormTypeFilter([type]).reduce((sum, expanded) => sum + (typeCounts[expanded] ?? 0), 0);
+// Länderseite: paginierte Liste (PAGE_SIZE je Seite), Zählwerte aus der Zusammenfassungszeile und den Rechtsstand-Reitern.
+const changeCounts = listedNorms.reduce<Record<SimulationChangeKind, number>>((acc, record) => { acc[classifySimulationChange(record).kind] += 1; return acc; }, { 'baseline-unchanged': 0, 'baseline-changed': 0, 'simulation-new': 0 });
+const listingTotal = (document: HtmlElement): number | undefined => {
+  const summary = queryAll(document, (element) => element.tag === 'p' && element.attrs.id === 'normen-summary')[0];
+  const match = summary ? /^([\d.]+) Vorschrift/u.exec(normalizedText(summary)) : null;
+  return match ? Number(match[1]!.replace(/\./gu, '')) : undefined;
+};
+const listingProblems = (document: HtmlElement, label: string, expected: number): string[] => {
+  const problems: string[] = [];
+  const total = listingTotal(document);
+  if (total !== expected) problems.push(`${label}: Zusammenfassung ${total ?? '–'} statt ${expected} Vorschriften`);
+  const hits = queryAll(document, (element) => element.tag === 'li' && hasClass(element, 'hit')).length;
+  if (hits !== Math.min(PAGE_SIZE, expected)) problems.push(`${label}: Liste zeigt ${hits} statt ${Math.min(PAGE_SIZE, expected)} Vorschriften`);
+  return problems;
+};
 
 const pick = (predicate: (index: number) => boolean, key: keyof Pick<(typeof stats)[number], 'blocks' | 'tables' | 'annexes'>): string => [...stats.keys()].filter(predicate).sort((left, right) => stats[right]![key] - stats[left]![key] || stats[left]!.slug.localeCompare(stats[right]!.slug)).map((index) => stats[index]!.slug)[0]!;
 const selection = {
@@ -72,21 +90,24 @@ const normChecks = (slug: string): PageSpec['check'] => (document) => {
 const specs: PageSpec[] = [
   { key: 'start', path: '/', kind: 'html', expectStatus: 200, check: (document) => (byTag(document, 'form').some((form) => form.attrs.role === 'search') ? [] : ['Suchformular fehlt']) },
   { key: 'west', path: '/west/', kind: 'html', expectStatus: 200, check: (document) => {
-    const problems: string[] = [];
-    const heading = byTag(document, 'h2').map(normalizedText).find((text) => text.startsWith('Vorhandene Normen')) ?? '';
-    if (!heading.includes(`(${listedNorms.length})`)) problems.push(`Normzahl „${heading}“ ≠ ${listedNorms.length}`);
-    const hits = queryAll(document, (element) => element.tag === 'li' && hasClass(element, 'hit')).length;
-    if (hits !== Math.min(500, listedNorms.length)) problems.push(`Liste zeigt ${hits} statt ${Math.min(500, listedNorms.length)} Normen`);
+    const problems = listingProblems(document, 'Alle', listedNorms.length);
+    const tabs = queryAll(document, (element) => element.tag === 'nav' && hasClass(element, 'stand-tabs'))[0];
+    const tabText = tabs ? normalizedText(tabs) : '';
+    if (!tabText.includes(`(${listedNorms.length})`)) problems.push(`Reiter „Alle“ ohne Gesamtzahl ${listedNorms.length}`);
+    if (!tabText.includes(`(${changeCounts['baseline-changed']})`) || !tabText.includes(`(${changeCounts['simulation-new']})`)) problems.push(`Reiter geändert/neu ≠ ${changeCounts['baseline-changed']}/${changeCounts['simulation-new']}`);
+    if (!queryAll(document, (element) => element.tag === 'nav' && hasClass(element, 'pagination'))[0] && listedNorms.length > PAGE_SIZE) problems.push('Seitennavigation fehlt');
+    if (!queryAll(document, (element) => element.tag === 'nav' && hasClass(element, 'letter-nav'))[0]) problems.push('A–Z-Navigation fehlt');
     const filters = queryAll(document, (element) => element.tag === 'ul' && hasClass(element, 'type-filter'))[0];
     if (!filters) problems.push('Typfilter fehlt');
     else if (!byTag(filters, 'a').some((link) => link.attrs['aria-current'] === 'true')) problems.push('Typfilter ohne aria-current');
     return problems;
   } },
+  { key: 'west-changed', path: '/west/?stand=changed', kind: 'html', expectStatus: 200, check: (document) => listingProblems(document, 'geändert', changeCounts['baseline-changed']) },
+  { key: 'west-new', path: '/west/?stand=new', kind: 'html', expectStatus: 200, check: (document) => listingProblems(document, 'neu', changeCounts['simulation-new']) },
   ...(['gesetz', 'verordnung', 'verwaltungsvorschrift', 'runderlass'] as NormType[]).map((type): PageSpec => ({ key: `west-type-${type}`, path: `/west/?type=${type}`, kind: 'html', expectStatus: 200, check: (document) => {
-    const hits = queryAll(document, (element) => element.tag === 'li' && hasClass(element, 'hit')).length;
-    const expected = countForFilter(type);
-    const problems = hits === expected ? [] : [`Filter ${type}: ${hits} statt ${expected} Normen`];
-    const current = queryAll(document, (element) => element.tag === 'a' && element.attrs['aria-current'] === 'true' && (element.attrs.href ?? '').includes(`type=${type}`)).length;
+    const problems = listingProblems(document, `Filter ${type}`, countForFilter(type));
+    const typeFilter = queryAll(document, (element) => element.tag === 'ul' && hasClass(element, 'type-filter'))[0];
+    const current = typeFilter ? byTag(typeFilter, 'a').filter((element) => element.attrs['aria-current'] === 'true' && (element.attrs.href ?? '').includes(`type=${type}`)).length : 0;
     if (current !== 1) problems.push('Filterlink ohne aria-current');
     return problems;
   } })),
@@ -107,13 +128,18 @@ const specs: PageSpec[] = [
   { key: 'norm-most-annexes', path: `/west/norm/${selection.mostAnnexes}/`, kind: 'html', expectStatus: 200, norm: selection.mostAnnexes, check: normChecks(selection.mostAnnexes) },
   { key: 'norm-most-warnings', path: `/west/norm/${selection.mostWarnings}/`, kind: 'html', expectStatus: 200, norm: selection.mostWarnings, check: normChecks(selection.mostWarnings) },
   { key: 'norm-reference', path: `/west/norm/${selection.reference}/`, kind: 'html', expectStatus: 200, norm: selection.reference, check: normChecks(selection.reference) },
+  // Quellenseiten: jede Quelle erscheint als Eintrag in Nutzersprache; Speichertechnik (SHA-256, Archivobjekt) nie.
   { key: 'sources-reconstructed', path: `/west/norm/${selection.reconstructed}/quellen/`, kind: 'html', expectStatus: 200, check: (document) => {
     const record = norms.find((entry) => entry.meta.slug === selection.reconstructed)!;
-    const expected = new Set([...record.meta.sourceReferences, ...(currentVersion(record).sourceReferences ?? [])].map((reference) => reference.sha256).filter(Boolean));
-    const shown = new Set(byTag(document, 'code').map(normalizedText).filter((text) => /^[a-f0-9]{64}$/u.test(text)));
-    return [...expected].every((sha) => shown.has(sha!)) ? [] : ['Nicht alle SHA-256 der Quellen sichtbar'];
+    // Wie NormSourcesPage: Quellen der Vorschrift ohne die schon bei der Fassung genannten (gleiches Label und Adresse).
+    const versionSources = currentVersion(record).sourceReferences ?? [];
+    const expected = versionSources.length + record.meta.sourceReferences.filter((source) => !versionSources.some((entry) => entry.label === source.label && entry.url === source.url)).length;
+    const listed = queryAll(document, (element) => element.tag === 'ul' && hasClass(element, 'source-list')).reduce((sum, list) => sum + list.children.filter((child) => child.type === 'element' && child.tag === 'li').length, 0);
+    const problems = listed >= expected ? [] : [`${listed} von ${expected} Quellen aufgeführt`];
+    if (/\b[a-f0-9]{64}\b/u.test(normalizedText(document))) problems.push('SHA-256 öffentlich sichtbar');
+    return problems;
   } },
-  { key: 'sources-reference', path: `/west/norm/${selection.reference}/quellen/`, kind: 'html', expectStatus: 200, check: (document) => (byTag(document, 'code').some((code) => normalizedText(code).startsWith('west/recht-nrw/')) ? [] : ['Archivobjekt nicht sichtbar']) },
+  { key: 'sources-reference', path: `/west/norm/${selection.reference}/quellen/`, kind: 'html', expectStatus: 200, check: (document) => (normalizedText(document).includes('west/recht-nrw/') ? ['Archivobjekt öffentlich sichtbar'] : []) },
   { key: 'facts-reference', path: `/west/norm/${selection.reference}/daten/`, kind: 'html', expectStatus: 200 },
   { key: 'history-reference', path: `/west/norm/${selection.reference}/historie/`, kind: 'html', expectStatus: 200 },
   { key: 'compare-reference', path: `/west/norm/${selection.reference}/vergleich/`, kind: 'html', expectStatus: 200 },

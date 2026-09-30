@@ -1,6 +1,6 @@
 ---
-/** Quellenbereich: Quellenreferenzen der Norm und der gewählten Fassung mit Provenienz. */
-import { VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+/** Quellen und Nachweise: Herkunft der Norm und der gewählten Fassung, verständlich und ohne Speichertechnik. */
+import { formatDate, publicNote, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import type { NormView } from '../lib/norm-view.ts';
 import NormPageShell from './NormPageShell.astro';
 import SourceList from './SourceList.astro';
@@ -10,21 +10,38 @@ interface Props {
 }
 
 const { view } = Astro.props;
+const { meta } = view.record;
+const jurisdiction = view.jurisdiction.id;
+const sourceStatus = view.version.sourceStatus;
+const originLabel = view.jurisdiction.sourceSystem.portalLabel;
+const versionSources = view.version.sourceReferences ?? [];
+const normSources = meta.sourceReferences.filter((source) => !versionSources.some((entry) => entry.label === source.label && entry.url === source.url));
 ---
 <NormPageShell view={view} section="quellen" title={`${VOCABULARY.sections.sources}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
   <div class="card">
-    <h2>Quellen der Fassung {view.version.versionId}</h2>
-    {view.version.sourceStatus && (
-      <p><strong>{VOCABULARY.sourceStatus.label}:</strong> {VOCABULARY.sourceStatus.validity[view.version.sourceStatus.validity]}; {VOCABULARY.sourceStatus.text[view.version.sourceStatus.text]}.{view.version.sourceStatus.note && <> {view.version.sourceStatus.note}</>}</p>
+    <h2>Herkunft dieser Fassung</h2>
+    <dl class="facts">
+      <dt>Fassung</dt><dd>{view.version.simulationValidFrom === view.jurisdiction.baselineDate ? `${VOCABULARY.simulationChange.baselineVersion} vom ${formatDate(view.version.simulationValidFrom)}` : `Fassung vom ${formatDate(view.version.simulationValidFrom)}`}</dd>
+      <dt>Fundstelle</dt><dd>{view.version.citation}</dd>
+      {(view.version.sourceCitation ?? meta.sourceCitation) && <><dt>Fundstelle der Quelle</dt><dd>{view.version.sourceCitation ?? meta.sourceCitation}</dd></>}
+      {meta.originEnactingBody && <><dt>Erlassorgan der Quelle</dt><dd>{meta.originEnactingBody}</dd></>}
+      {view.sourceValidityText && <><dt>Geltung der Quellfassung</dt><dd>{view.sourceValidityText.replace(/^Die übernommene Quellfassung galt /u, '')}</dd></>}
+    </dl>
+    {view.version.simulationValidFrom === view.jurisdiction.baselineDate && (
+      <p class="muted">Der Ausgangsrechtsstand wurde aus dem Recht des Landes {view.jurisdiction.sourceSystem.realWorldState} ({originLabel}) übernommen; maßgeblich für die Geltung im Portal ist allein die hier angegebene Gültigkeit.</p>
     )}
-    {(view.version.sourceCitation ?? view.record.meta.sourceCitation) && <p><strong>Fundstelle der Quelle:</strong> {view.version.sourceCitation ?? view.record.meta.sourceCitation}</p>}
-    {view.record.meta.originEnactingBody && <p><strong>Erlassorgan der Quelle:</strong> {view.record.meta.originEnactingBody}</p>}
-    {view.sourceValidityText && <p>{view.sourceValidityText}. Maßgeblich für die Geltung im Portal ist allein die Simulationsgeltung ({view.validityText.toLowerCase()}).</p>}
-    <SourceList sources={view.version.sourceReferences ?? []} />
+    {sourceStatus?.text === 'reconstructed' && (
+      <p><strong>Rekonstruierte Fassung:</strong> Der Wortlaut zum {formatDate(view.jurisdiction.baselineDate)} wurde aus späteren amtlichen Fassungen und den dazwischen liegenden Änderungen hergeleitet.{publicNote(sourceStatus.note) && <> {publicNote(sourceStatus.note)}</>}</p>
+    )}
+    {sourceStatus?.text !== 'reconstructed' && sourceStatus?.validity === 'verified-active-at-baseline' && (
+      <p class="muted">Dass diese Fassung am {formatDate(view.jurisdiction.baselineDate)} galt, ist durch amtliche Belege nachgewiesen.{publicNote(sourceStatus.note) && <> {publicNote(sourceStatus.note)}</>}</p>
+    )}
+    <SourceList sources={versionSources} jurisdiction={jurisdiction} />
   </div>
-  <div class="card">
-    <h2>Quellen der Norm</h2>
-    <SourceList sources={view.record.meta.sourceReferences} />
-  </div>
-  <p class="muted">{VOCABULARY.officialNote} Rohquellen werden unverändert im Quellenarchiv aufbewahrt und nie direkt gerendert.</p>
+  {normSources.length > 0 && (
+    <div class="card">
+      <h2>Weitere Quellen der Vorschrift</h2>
+      <SourceList sources={normSources} jurisdiction={jurisdiction} />
+    </div>
+  )}
 </NormPageShell>

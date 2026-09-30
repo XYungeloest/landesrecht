@@ -7,6 +7,7 @@
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { expandNormTypeFilter, type NormStatus, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import type { VersionTemporalKind } from '@landesrecht/legal-core/lib/versions.ts';
+import type { SimulationChangeKind } from '@landesrecht/legal-core/lib/simulation-change.ts';
 import { buildSearchVariants, extractStructuralIntents, normalizeSearchText, rawIdentityKey, type QueryToken, type SearchQueryPlan, type SearchSort, type SearchState, type StructuralIntent } from './query.ts';
 import { isSyntheticUnit, type SearchDocument, type SearchUnit } from './units.ts';
 
@@ -38,6 +39,9 @@ export interface SearchHit {
   simulationValidFrom: string;
   simulationValidTo: string | null;
   lastChangeDate: string | null;
+  /** Klassifikation gegenüber dem Ausgangsrechtsstand (Trefferkennzeichnung); fehlt bei alten Dokumenten. */
+  simulationChangeKind?: SimulationChangeKind;
+  lastSimulationChangeDate?: string | null;
   matchKind: MatchKind;
   matchLabel: string;
   snippet: string;
@@ -172,6 +176,7 @@ export function evaluateDocument(document: SearchDocument, plan: SearchQueryPlan
     simulationValidFrom: document.simulationValidFrom,
     simulationValidTo: document.simulationValidTo,
     lastChangeDate: document.lastChangeDate,
+    ...(document.simulationChangeKind ? { simulationChangeKind: document.simulationChangeKind, lastSimulationChangeDate: document.lastSimulationChangeDate ?? null } : {}),
     matchKind,
     matchLabel: MATCH_LABELS[matchKind],
     snippet: unit ? buildSnippet(unit) : (document.summary ?? buildSnippet({ label: '', heading: '', body: document.citation })),
@@ -211,6 +216,7 @@ export function documentMatchesFilters(document: SearchDocument, state: SearchSt
   if (types.length > 0 && !types.includes(document.type)) return false;
   if (state.statuses.length > 0 && !state.statuses.includes(document.status)) return false;
   if (state.subjects.length > 0 && !state.subjects.some((subject) => document.subjects.includes(subject))) return false;
+  if (state.simulationChange && document.simulationChangeKind !== state.simulationChange) return false;
   if (state.validOn) {
     if (document.simulationValidFrom > state.validOn) return false;
     if (document.simulationValidTo !== null && document.simulationValidTo < state.validOn) return false;

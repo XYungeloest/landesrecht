@@ -28,7 +28,7 @@ import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-ro
 import { isSyntheticFixtureNorm } from '@landesrecht/legal-core/lib/schema.ts';
 import { D1_DATABASE_NAMES } from '@landesrecht/runtime/bindings.ts';
 import { buildProjectionPlan, corpusFingerprint, renderPlanSql, RUNTIME_META_KEYS } from '@landesrecht/runtime/projection.ts';
-import { listMigrations } from '@landesrecht/runtime/sqlite-d1.ts';
+import { isAlreadyAppliedMigrationError, listMigrations } from '@landesrecht/runtime/sqlite-d1.ts';
 
 const root = resolveRepositoryRoot();
 const appDir = join(root, 'apps', 'web');
@@ -44,10 +44,12 @@ const migrations = await listMigrations(join(root, 'data', 'd1'));
 
 const WRANGLER_ENV = { ...process.env, WRANGLER_SEND_METRICS: 'false', WRANGLER_LOG: 'error' };
 
-function wranglerExecute(database: string, file: string): void {
+function wranglerExecute(database: string, file: string, options: { migration?: boolean } = {}): void {
   try {
-    execFileSync('npx', ['wrangler', 'd1', 'execute', database, '--local', '--config', 'wrangler.jsonc', '--file', file, '--yes'], { cwd: appDir, stdio: ['ignore', 'ignore', 'inherit'], env: WRANGLER_ENV });
+    execFileSync('npx', ['wrangler', 'd1', 'execute', database, '--local', '--config', 'wrangler.jsonc', '--file', file, '--yes'], { cwd: appDir, stdio: ['ignore', 'ignore', options.migration ? 'pipe' : 'inherit'], env: WRANGLER_ENV });
   } catch (error) {
+    // Migration mit `ALTER TABLE … ADD COLUMN` auf einer Datenbank, die die Spalte schon trägt: bereits angewandt.
+    if (options.migration && isAlreadyAppliedMigrationError(String((error as { stderr?: Buffer }).stderr ?? ''))) return;
     throw new Error(`Lokale D1 ${database}: wrangler d1 execute --local mit ${file} fehlgeschlagen (${(error as Error).message.split('\n')[0]}). Nur lokal, keine Remote-Datenbank betroffen; erneut mit --force versuchen.`);
   }
 }
@@ -92,7 +94,7 @@ for (const jurisdiction of jurisdictions) {
   const plan = buildProjectionPlan(records, { jurisdiction, full: true, now: new Date().toISOString(), publications });
   const planFile = join(runtimeDir, `${database}.dev.sql`);
   await writeFile(planFile, `${renderPlanSql(plan)}\n`, 'utf8');
-  for (const migration of migrations) wranglerExecute(database, migration);
+  for (const migration of migrations) wranglerExecute(database, migration, { migration: true });
   wranglerExecute(database, planFile);
   await writeFile(stampFile, `${stamp}\n`, 'utf8');
   console.log(`${database}: ${plan.stats.norms} Normen, ${plan.stats.versions} Fassungen, ${plan.stats.searchUnits} Sucheinheiten, ${plan.stats.publications} Verkündungen → lokale Miniflare-D1 (apps/web/.wrangler/state)`);

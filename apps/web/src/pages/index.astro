@@ -1,21 +1,46 @@
 ---
-import { JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
-import { getJurisdictionUrl, getSearchUrl } from '@landesrecht/legal-core/lib/routes.ts';
-import InventoryNotice from '../components/InventoryNotice.astro';
+export const prerender = false;
+
+import { getJurisdiction, JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { formatDate, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { getPublicationLabel } from '@landesrecht/legal-core/lib/publications.ts';
+import { getJurisdictionUrl, getPublicationUrl, getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import SearchForm from '../components/SearchForm.astro';
+import SimulationBadge from '../components/SimulationBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { changeFacets, latestPublications, listChanges, sumFacets } from '../lib/changes.ts';
+import { listingUrl } from '../lib/norm-listing.ts';
+import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../lib/runtime/context.ts';
+
+const registry = await getStoreRegistry();
+const number = new Intl.NumberFormat('de-DE');
+// Alle Zahlen und Listen kommen aus den Stores; nichts ist fest eingetragen.
+const [facetsByLand, changed, fresh, publications, constitutions] = await Promise.all([
+  changeFacets(registry, { changeKind: 'baseline-changed' }),
+  listChanges(registry, { changeKind: 'baseline-changed', limit: 8 }),
+  listChanges(registry, { changeKind: 'simulation-new', excludeAmendments: true, limit: 6 }),
+  latestPublications(registry, 6),
+  Promise.all(JURISDICTION_LIST.filter((jurisdiction) => registry.has(jurisdiction.id)).map(async (jurisdiction) => ({ jurisdiction, norms: (await registry.get(jurisdiction.id).listNormSummaries({ type: 'verfassung', status: 'in-force', limit: 3 })) }))),
+]);
+const totals = sumFacets(facetsByLand);
+const changedCount = totals.byChangeKind['baseline-changed'];
+const newCount = totals.byChangeKind['simulation-new'];
+const normCount = changedCount + newCount + totals.byChangeKind['baseline-unchanged'];
+const changesUrl = (kind: 'baseline-changed' | 'simulation-new', land?: string): string => listingUrl(land ? `${PORTAL_PATHS.changes}?land=${land}` : PORTAL_PATHS.changes, { changeKind: kind });
+Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
 ---
 <BaseLayout title={VOCABULARY.portalName} canonical="/">
   <section class="home-search" aria-labelledby="suche-heading">
     <h1 id="suche-heading">Landesrecht durchsuchen</h1>
-    <p class="lead">Gesetze, Verordnungen und Verwaltungsvorschriften der Länder.</p>
+    <p class="lead">Gesetze, Verordnungen und Verwaltungsvorschriften der vier Länder – {number.format(normCount)} Vorschriften, Rechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)} mit allen Änderungen der Simulation.</p>
     <SearchForm />
-    <nav aria-label="Suche nach Normtyp">
+    <nav aria-label="Schnellzugriff">
       <ul class="type-filter">
         <li><a href={getSearchUrl({ type: 'gesetz' })}>Gesetze</a></li>
         <li><a href={getSearchUrl({ type: 'verordnung' })}>Verordnungen</a></li>
         <li><a href={getSearchUrl({ type: 'verwaltungsvorschrift' })}>Verwaltungsvorschriften</a></li>
+        <li><a href={getSearchUrl({ type: 'verfassung' })}>Verfassungen</a></li>
+        <li><a href={getSearchUrl({ stand: 'changed' })}>{VOCABULARY.simulationChange.filter['baseline-changed']}</a></li>
       </ul>
     </nav>
     <p class="muted">Suchbar sind Titel, Kurzbezeichnungen, Abkürzungen, Normtext und Fundstellen; Angaben wie „§ 3 Absatz 2“ oder „Art. 5“ führen zur Vorschrift.</p>
@@ -23,18 +48,79 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section aria-labelledby="laender-heading">
     <h2 id="laender-heading">Länder</h2>
     <ul class="card-grid">
-      {JURISDICTION_LIST.map((jurisdiction) => (
-        <li class="card">
-          <h3><a href={getJurisdictionUrl(jurisdiction.id)}>{jurisdiction.name}</a></h3>
-          <p class="card__meta">Kurzbezeichnung: {jurisdiction.shortName} <InventoryNotice jurisdiction={jurisdiction.id} variant="badge" /></p>
-          <p>{VOCABULARY.baselineLabel}: {formatBaselineDate(jurisdiction.baselineDate)}</p>
-          {jurisdiction.upstreamSourceOfTruth && (
-            <p class="muted">Rechtsbestand wird in <a href={jurisdiction.upstreamSourceOfTruth.siteUrl} rel="noopener noreferrer">{jurisdiction.upstreamSourceOfTruth.label}</a> geführt und hier unmittelbar ausgeliefert.</p>
-          )}
-        </li>
-      ))}
+      {JURISDICTION_LIST.map((jurisdiction) => {
+        const facets = facetsByLand.get(jurisdiction.id);
+        return (
+          <li class="card">
+            <h3><a href={getJurisdictionUrl(jurisdiction.id)}>{jurisdiction.name}</a></h3>
+            <p class="card__meta">{jurisdiction.shortName}{facets && <> · {number.format(facets.byChangeKind['baseline-unchanged'] + facets.byChangeKind['baseline-changed'] + facets.byChangeKind['simulation-new'])} Vorschriften</>}</p>
+            {facets && (facets.byChangeKind['baseline-changed'] > 0 || facets.byChangeKind['simulation-new'] > 0) ? (
+              <p class="card__meta"><a href={changesUrl('baseline-changed', jurisdiction.id)}>{facets.byChangeKind['baseline-changed']} geändert</a> · <a href={changesUrl('simulation-new', jurisdiction.id)}>{facets.byChangeKind['simulation-new']} neu</a></p>
+            ) : <p class="card__meta">{facets ? 'Seit dem Ausgangsstand unverändert' : 'Derzeit nicht verfügbar'}</p>}
+          </li>
+        );
+      })}
     </ul>
-    <p class="muted">Alle vier Länder beginnen mit demselben Ausgangsrechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)}; spätere Änderungen entstehen ausschließlich innerhalb der Simulation.</p>
   </section>
+  <section class="home-changes" aria-labelledby="aenderungen-heading">
+    <div class="home-changes__lead">
+      <h2 id="aenderungen-heading"><a href={changesUrl('baseline-changed')}>{number.format(changedCount)} Vorschriften in der Simulation geändert</a></h2>
+      <p>Seit dem Ausgangsrechtsstand vom {formatBaselineDate(SIMULATION_BASELINE_DATE)} hat die Politiksimulation {number.format(changedCount)} übernommene Vorschriften geändert und {number.format(newCount)} neu erlassen. <a href={PORTAL_PATHS.changes}>Alle Änderungen in der Simulation</a></p>
+    </div>
+    <div class="home-columns">
+      <section aria-labelledby="zuletzt-heading">
+        <h3 id="zuletzt-heading">Zuletzt in der Simulation geändert</h3>
+        {changed.length === 0 ? <p class="muted">Noch keine Änderungen.</p> : (
+          <ol class="compact-list">
+            {changed.map((norm) => (
+              <li>
+                <a href={norm.url}>{norm.abbr ? `${norm.shortTitle} (${norm.abbr})` : norm.shortTitle}</a>
+                <span class="muted"> · {getJurisdiction(norm.jurisdiction).shortName} · {norm.lastSimulationChangeDate ? formatDate(norm.lastSimulationChangeDate) : typeLabel(norm.type)}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+        <p><a class="button-link button-secondary" href={changesUrl('baseline-changed')}>Alle geänderten Vorschriften</a></p>
+      </section>
+      <section aria-labelledby="neu-heading">
+        <h3 id="neu-heading">{VOCABULARY.simulationChange.byKind['simulation-new']}</h3>
+        {fresh.length === 0 ? <p class="muted">Noch keine neuen Vorschriften.</p> : (
+          <ol class="compact-list">
+            {fresh.map((norm) => (
+              <li>
+                <a href={norm.url}>{norm.abbr ? `${norm.shortTitle} (${norm.abbr})` : norm.shortTitle}</a>
+                <span class="muted"> · {getJurisdiction(norm.jurisdiction).shortName} · {typeLabel(norm.type)} · ab {formatDate(norm.currentValidFrom)}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+        <p><a class="button-link button-secondary" href={changesUrl('simulation-new')}>Alle neuen Vorschriften</a></p>
+      </section>
+    </div>
+  </section>
+  <div class="home-columns">
+    <section aria-labelledby="verkuendungen-heading">
+      <h2 id="verkuendungen-heading">Letzte Verkündungen</h2>
+      {publications.length === 0 ? <p class="muted">Noch keine Ausgaben.</p> : (
+        <ol class="compact-list">
+          {publications.map((publication) => (
+            <li>
+              <a href={getPublicationUrl(publication.jurisdiction, publication.slug)}>{getPublicationLabel(publication)}</a>
+              <span class="muted"> · {getJurisdiction(publication.jurisdiction).shortName} · {formatDate(publication.date)} · {publication.entries.length} {publication.entries.length === 1 ? 'Eintrag' : 'Einträge'}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+    <section aria-labelledby="schnellzugriff-heading">
+      <h2 id="schnellzugriff-heading">Verfassungen</h2>
+      <ul class="compact-list">
+        {constitutions.flatMap(({ jurisdiction, norms }) => norms.map((norm) => (
+          <li><a href={norm.url}>{norm.shortTitle}</a><span class="muted"> · {jurisdiction.shortName}</span> <SimulationBadge kind={norm.simulationChangeKind} /></li>
+        )))}
+      </ul>
+      <p><a href={PORTAL_PATHS.about}>Über den Rechtsbestand</a> · <a href={PORTAL_PATHS.help}>Hilfe zur Suche</a></p>
+    </section>
+  </div>
   <p class="inventory-notice"><strong>Simulation:</strong> {VOCABULARY.simulationNotice}</p>
 </BaseLayout>

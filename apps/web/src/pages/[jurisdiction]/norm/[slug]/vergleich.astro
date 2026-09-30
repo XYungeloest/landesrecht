@@ -17,8 +17,12 @@ const view = record ? buildNormView(record) : null;
 if (!record || !view) return Astro.rewrite('/404');
 Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
 
-const fromId = Astro.url.searchParams.get('von') ?? record.versions.at(-2)?.versionId ?? record.versions[0]!.versionId;
-const toId = Astro.url.searchParams.get('bis') ?? record.versions.at(-1)!.versionId;
+// Standardvergleich: Ausgangsfassung (Ausgangsrechtsstand) ↔ geltende Fassung; Einzelvergleiche bleiben über „von“/„bis“ wählbar.
+const currentId = view.versions.find((entry) => entry.kind === 'current')?.versionId ?? record.versions.at(-1)!.versionId;
+const fromId = Astro.url.searchParams.get('von') ?? view.baselineVersion?.versionId ?? record.versions[0]!.versionId;
+const toId = Astro.url.searchParams.get('bis') ?? currentId;
+const baselineDate = view.jurisdiction.baselineDate;
+const versionLabel = (version: NormVersion): string => (version.simulationValidFrom === baselineDate ? `${VOCABULARY.simulationChange.baselineVersion} (${formatDate(version.simulationValidFrom)})` : version.versionId === currentId ? `${VOCABULARY.simulationChange.currentVersion} (seit ${formatDate(version.simulationValidFrom)})` : `Fassung vom ${formatDate(version.simulationValidFrom)}`);
 const from = record.versions.find((version) => version.versionId === fromId);
 const to = record.versions.find((version) => version.versionId === toId);
 
@@ -43,21 +47,26 @@ const keys = [...new Set([...left.keys(), ...right.keys()])];
 const changed = keys.filter((key) => left.get(key) !== right.get(key));
 ---
 <NormPageShell view={view} section="vergleich" title={`${VOCABULARY.sections.compare}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
-  <form class="search-form" method="get">
-    <label>Von <select name="von">{record.versions.map((version) => <option value={version.versionId} selected={version.versionId === fromId}>{formatDate(version.simulationValidFrom)}</option>)}</select></label>
-    <label>Bis <select name="bis">{record.versions.map((version) => <option value={version.versionId} selected={version.versionId === toId}>{formatDate(version.simulationValidFrom)}</option>)}</select></label>
-    <button type="submit">Vergleichen</button>
-  </form>
-  {!from || !to ? <p class="muted">Unbekannte Fassung.</p> : record.versions.length < 2 ? <p class="muted">Diese Norm hat nur eine gespeicherte Fassung.</p> : (
+  <h2>{VOCABULARY.simulationChange.changesSince}</h2>
+  {view.change.kind === 'baseline-unchanged' && <p class="muted">Diese Vorschrift gilt seit dem Ausgangsrechtsstand vom {formatDate(baselineDate)} unverändert; es gibt nichts zu vergleichen.</p>}
+  {view.change.kind === 'simulation-new' && record.versions.length < 2 && <p class="muted">Diese Vorschrift wurde in der Simulation neu erlassen und seither nicht geändert.</p>}
+  {record.versions.length >= 2 && (
+    <form class="search-form compare-form" method="get" aria-label="Fassungen zum Vergleich wählen">
+      <label>Von <select name="von">{record.versions.map((version) => <option value={version.versionId} selected={version.versionId === fromId}>{versionLabel(version)}</option>)}</select></label>
+      <label>Bis <select name="bis">{record.versions.map((version) => <option value={version.versionId} selected={version.versionId === toId}>{versionLabel(version)}</option>)}</select></label>
+      <button type="submit">Vergleichen</button>
+    </form>
+  )}
+  {!from || !to ? <p class="muted">Unbekannte Fassung.</p> : record.versions.length < 2 ? null : (
     <section>
-      <h2>{changed.length} geänderte {changed.length === 1 ? 'Einheit' : 'Einheiten'} zwischen {formatDate(from.simulationValidFrom)} und {formatDate(to.simulationValidFrom)}</h2>
-      <p class="muted">Vorbereitende Gegenüberstellung je Gliederungseinheit; ein wortgenauer Vergleich folgt.</p>
+      <h3>{changed.length} geänderte {changed.length === 1 ? 'Vorschrift' : 'Vorschriften'} zwischen {versionLabel(from)} und {versionLabel(to)}</h3>
+      <p class="muted">Gegenüberstellung je Paragraf bzw. Artikel; Unterschiede im Wortlaut sind an den Texten selbst erkennbar.</p>
       {changed.map((key) => (
         <div class="card">
-          <h3>{key}{!left.has(key) ? ' (neu)' : !right.has(key) ? ' (entfallen)' : ''}</h3>
+          <h4>{key}{!left.has(key) ? ' (neu)' : !right.has(key) ? ' (entfallen)' : ''}</h4>
           <div class="comparison-columns">
-            <div><p class="muted">{formatDate(from.simulationValidFrom)}</p><p>{left.get(key) ?? '–'}</p></div>
-            <div><p class="muted">{formatDate(to.simulationValidFrom)}</p><p>{right.get(key) ?? '–'}</p></div>
+            <div><p class="muted">{versionLabel(from)}</p><p>{left.get(key) ?? '–'}</p></div>
+            <div><p class="muted">{versionLabel(to)}</p><p>{right.get(key) ?? '–'}</p></div>
           </div>
         </div>
       ))}

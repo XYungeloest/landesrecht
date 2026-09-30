@@ -15,6 +15,7 @@ import { getNormAliases, getNormVersionIdentity, getPublicNormSummary } from '@l
 import { getNormUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import type { NormBodyBlock, NormRecord, NormStatus, NormType, NormVersion, StructureType } from '@landesrecht/legal-core/lib/schema.ts';
 import { classifyNormVersion, getNormLastChangeDate, type VersionTemporalKind } from '@landesrecht/legal-core/lib/versions.ts';
+import { classifySimulationChange, type SimulationChangeKind } from '@landesrecht/legal-core/lib/simulation-change.ts';
 
 export const SYNTHETIC_UNIT_TYPES = ['metadata', 'supplement'] as const;
 
@@ -70,6 +71,9 @@ export interface SearchDocument {
   simulationValidFrom: string;
   simulationValidTo: string | null;
   lastChangeDate: string | null;
+  /** Klassifikation gegenüber dem Ausgangsrechtsstand (legal-core `classifySimulationChange`); im Dateistore gesetzt, in D1 aus `law_norms` ergänzt. */
+  simulationChangeKind?: SimulationChangeKind;
+  lastSimulationChangeDate?: string | null;
   units: SearchUnit[];
 }
 
@@ -147,6 +151,7 @@ export function buildSearchDocument(record: NormRecord, version: NormVersion, as
   if (supplement) allUnits.push({ index: allUnits.length, type: 'supplement', anchor: '', label: '', heading: '', body: supplement });
   allUnits.push({ index: allUnits.length, type: 'metadata', anchor: '', label: '', heading: '', body: metadataBody });
 
+  const change = classifySimulationChange(record);
   const document: SearchDocument = {
     id: `${record.meta.jurisdiction}:${record.meta.slug}:${version.versionId}`,
     jurisdiction: record.meta.jurisdiction,
@@ -166,6 +171,8 @@ export function buildSearchDocument(record: NormRecord, version: NormVersion, as
     simulationValidFrom: version.simulationValidFrom,
     simulationValidTo: version.simulationValidTo,
     lastChangeDate: getNormLastChangeDate(record, asOf),
+    simulationChangeKind: change.kind,
+    lastSimulationChangeDate: change.lastChangeDate,
     units: allUnits,
   };
   if (identity.abbr !== undefined) document.abbr = identity.abbr;

@@ -448,7 +448,7 @@ describe('Skalierung: Basisprüfung, Rückfall auf die Vollprojektion und Identi
     expect(JSON.stringify(none.plan)).toBe(JSON.stringify(fullPlan(small)));
     const cases: Array<[Record<string, string>, RegExp]> = [
       [{ asOf: '2026-01-01' }, new RegExp(`^redaktioneller Stichtag 2026-01-01 → ${EDITORIAL_REFERENCE_DATE}$`, 'u')],
-      [{ projectionSchemaVersion: '0' }, /^Projektionsschema 0 → 1$/u],
+      [{ projectionSchemaVersion: '0' }, /^Projektionsschema 0 → 2$/u],
       [{ baselineDate: '2020-01-01' }, /^Ausgangsrechtsstand 2020-01-01 → 2023-12-01$/u],
       [{ jurisdiction: 'nsh' }, /^Jurisdiktion nsh ≠ west$/u],
       [{ schemaVersion: 'landesrecht-projection-state/0' }, /^Zustandsschema landesrecht-projection-state\/0$/u],

@@ -19,7 +19,7 @@ Repositories) und mit Rezept `data/imports/recht-nrw/reconstructions/term-23528.
 | Endgültiger Normkörper (nach Transformation) = Bestand | bestanden | 590f761fc4f66c9c27baff7b8d4f0667b3df44ab7d7d9b9142da2f5e0700cc87 vs. 590f761fc4f66c9c27baff7b8d4f0667b3df44ab7d7d9b9142da2f5e0700cc87 |
 | Rohquellen-Hashes = Manifest des Bestands | bestanden | gazette-amendment:2eb849e23affc1f0246589c683083d633bc8ad6581d0efcd84ee23be96b2f838, gazette-amendment:8b2cfa8c4f681218626c59302ce5b870b85d296c5e066bf86fd9316d603f49cb, gazette-amendment:978325d257c5fbc45abb8b5d9cfb0d96dadef5b16eb049ba1931937a2cba045c, version-page:1febb67789d814c35b49076a862216e854fb2e66e27a7ea175d799d51574ef35 |
 | Determinismus: Lauf 2 identisch (Basis, Schritte, Ergebnis, Normkörper) | bestanden | imported-with-warnings |
-| Bestand nicht berührt (Ausgaberoot ≠ Repository) | bestanden | /var/folders/lz/48dsvnvs7b78prwlj_xbbzmr0000gn/T/landesrecht-reconstruction-lauf-1-QkwZIi |
+| Bestand nicht berührt (Ausgaberoot ≠ Repository) | bestanden | /var/folders/lz/48dsvnvs7b78prwlj_xbbzmr0000gn/T/landesrecht-reconstruction-lauf-1-xOKu8k |
 | Quellenlage der Fassung im Bestand: reconstructed/reconstructed | bestanden | {"validity":"reconstructed","text":"reconstructed","note":"Stichtagsfassung rekonstruiert: konsolidierter Portaltext abzüglich der nach dem Stichtag in Kraft getretenen Änderung(en) (Runderlass vom 16. Juli 2024, MBl. NRW. 2024 S. 805); jeder Schritt ist im Quellenbereich belegt."} |
 
 **Gesamt: alle Prüfungen bestanden.**

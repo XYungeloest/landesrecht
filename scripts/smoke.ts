@@ -39,6 +39,7 @@ const checks: Check[] = [
   { path: '/west/norm/lnatschg-west/historie/', status: 200, expect: '2026-05-18' },
   { path: '/west/norm/lnatschg-west/version/2023-12-01/', status: 200, expect: 'Fassung' },
   { path: '/west/norm/mietschvo-west/', status: 200, expect: 'außer Kraft' },
+  { path: '/west/norm/abgg-west/', status: 200, expect: (body: string) => (/sim-banner|sim-badge/u.test(body) ? 'unveränderte Ausgangsnorm mit Simulationskennzeichnung' : null) },
   { path: '/api/v1/publications/west', status: 200, expect: '"gv-west-2024-1-20240223"' },
   { path: '/api/v1/norms/west/lnatschg-west/versions', status: 200, expect: version('2023-12-01', { from: '2023-12-01', kind: 'historical' }) },
   { path: '/api/v1/norms/west/kjrg-west', status: 200, expect: json((payload) => (payload.meta?.status === 'in-force' ? null : `status ${payload.meta?.status}`)) },
@@ -71,8 +72,9 @@ const checks: Check[] = [
   { path: '/bayern-wuerttemberg/norm/verfassung-des-freistaates-bayern-wuerttemberg/', status: 200, expect: 'außer Kraft' },
   // Evidenzregel: Verordnungen, deren Verkündung nur ein Verzeichnis behauptet, sind nicht im Bestand.
   { path: '/bayern-wuerttemberg/norm/baywuewolfv-baywue/', status: 404, expect: null },
-  { path: '/bayern-wuerttemberg/norm/staatsverfassung-2025-baywue/daten/', status: 200, expect: 'Original-Verkündungsblatt fehlt' },
-  { path: '/bayern-wuerttemberg/norm/erstes-gesetz-zur-aenderung-der-staatsverfassung-baywue/daten/', status: 200, expect: (body: string) => (body.includes('maßgeblich ist das angewandte Konsolidierungsrezept') && /<s>[^<]*Rezept gesperrt<\/s>/u.test(body) ? null : 'überholte Notiz nicht als überholt gekennzeichnet') },
+  { path: '/bayern-wuerttemberg/norm/staatsverfassung-2025-baywue/daten/', status: 200, expect: 'Neu in der Simulation' },
+  // Redaktionelle Arbeitsnotizen (Rezept, Sperre, Bestand) bleiben gespeichert, erscheinen aber nicht öffentlich (publicNote).
+  { path: '/bayern-wuerttemberg/norm/erstes-gesetz-zur-aenderung-der-staatsverfassung-baywue/daten/', status: 200, expect: (body: string) => (body.includes('Beziehungen') && !/Rezept|gesperrt|Baseline/u.test(body) ? null : 'redaktionelle Arbeitsnotiz öffentlich sichtbar') },
   { path: '/api/v1/norms/baywue/staatsverfassung-2025-baywue/versions', status: 200, expect: json((payload) => {
     const ids = (payload.versions ?? []).map((entry: any) => entry.versionId).join(',');
     if (ids !== '2025-01-12,2026-05-29,2026-06-26,2026-06-27,2026-08-29') return `Fassungen ${ids}`;
@@ -119,6 +121,22 @@ const checks: Check[] = [
     return null;
   }) },
   { path: '/.well-known/simrecht.json', status: 200, expect: json((payload) => (typeof payload === 'object' && payload !== null ? null : 'keine Deklaration')) },
+  // Öffentliche Oberfläche: Einstieg „In der Simulation geändert“, Reiter, Kennzeichnungen, Ausgangsfassung, keine Arbeitsbegriffe.
+  { path: '/', status: 200, expect: (body: string) => (body.includes('Vorschriften in der Simulation geändert') && body.includes('href="/aenderungen/') ? null : 'Einstieg „In der Simulation geändert“ fehlt') },
+  { path: '/aenderungen/', status: 200, expect: (body: string) => (body.includes('Änderungen in der Simulation') && /sim-badge--changed/u.test(body) ? null : 'Änderungsliste ohne gekennzeichnete Treffer') },
+  { path: '/aenderungen/?stand=new', status: 200, expect: 'sim-badge--new' },
+  { path: '/west/?stand=changed', status: 200, expect: (body: string) => (/stand-tabs/u.test(body) && /aria-current="true">In der Simulation geändert/u.test(body) && /sim-badge--changed/u.test(body) ? null : 'Reiter „geändert“ ohne Kennzeichnung') },
+  { path: '/west/?stand=new', status: 200, expect: (body: string) => (/aria-current="true">Neu in der Simulation/u.test(body) && /sim-badge--new/u.test(body) && !/sim-badge--changed/u.test(body) ? null : 'Reiter „neu“ zeigt falsche Kennzeichnung') },
+  { path: '/nsh/?seite=2', status: 200, expect: (body: string) => (/class="pagination"/u.test(body) && !/Liste zeigt die ersten/u.test(body) ? null : 'Seitennavigation fehlt oder Listenlimit sichtbar') },
+  { path: '/west/norm/lnatschg-west/', status: 200, expect: (body: string) => (/sim-banner--changed/u.test(body) && body.includes('Ausgangsfassung vom') && body.includes('Was hat sich geändert?') ? null : 'geänderte Norm ohne Hinweis/Ausgangsfassung') },
+  { path: '/west/norm/lnatschg-west/vergleich/', status: 200, expect: (body: string) => (body.includes('Ausgangsfassung (1. Dezember 2023)') && body.includes('Geltende Fassung (seit') ? null : 'Vergleich nicht auf Ausgangsfassung ↔ geltende Fassung') },
+  { path: '/bayern-wuerttemberg/norm/staatsverfassung-2025-baywue/', status: 200, expect: 'sim-banner--new' },
+  { path: '/nsh/norm/lbo-nsh/', status: 200, expect: 'sim-banner--changed' },
+  { path: '/west/norm/kjrg-west/', status: 200, expect: 'sim-banner--new' },
+  { path: '/api/v1/norms/west/lnatschg-west', status: 200, expect: json((payload) => (payload.simulationChangeKind === 'baseline-changed' && typeof payload.lastSimulationChangeDate === 'string' ? null : `simulationChangeKind ${payload.simulationChangeKind}`)) },
+  { path: '/suche?q=Gesetz&stand=changed', status: 200, expect: (body: string) => (/sim-badge--changed/u.test(body) && !/sim-badge--new/u.test(body) ? null : 'Suchfilter „geändert“ ohne passende Kennzeichnung') },
+  { path: '/api/v1/search?q=Gesetz&stand=new&jurisdiction=west', status: 200, expect: json((payload) => ((payload.hits ?? []).length > 0 && (payload.hits as Array<{ simulationChangeKind?: string }>).every((hit) => hit.simulationChangeKind === 'simulation-new') ? null : 'Suchfilter „neu“ liefert fremde Treffer')) },
+  { path: '/ueber-den-rechtsbestand/', status: 200, expect: 'Ausgangsrechtsstand vom 1. Dezember 2023' },
   { path: '/west/verkuendungen/gibt-es-nicht/', status: 404, expect: null },
   { path: '/api/v1/norms/west/gibt-es-nicht', status: 404, expect: null },
   { path: '/api/v1/publications/west/gv-west-2024-1-20240223', status: 200, expect: '"gv-west-2024-1-20240223"' },
@@ -134,7 +152,7 @@ const checks: Check[] = [
     if (!coverage) return 'coverage für Ost fehlt';
     return payload.total > 0 && slugs.size >= 2 ? null : `Treffer aus ${[...slugs].join(',') || 'keinem Land'}`;
   }) },
-  { path: '/suche?q=Gemeindeordnung&jurisdiction=ost&versionScope=all', status: 200, expect: 'nur für die geltende Fassung durchsuchbar' },
+  { path: '/suche?q=Gemeindeordnung&jurisdiction=ost&versionScope=all', status: 200, expect: 'ist die Volltextsuche eingeschränkt' },
   { path: '/suche?q=Gemeindeordnung', status: 200, expect: 'Gemeindeordnung' },
 ];
 
@@ -171,6 +189,19 @@ const report = (ok: boolean, line: string): void => {
     if (!healthy && attempt < 3) await new Promise((resolve) => setTimeout(resolve, 3_000));
   }
   report(healthy, `/health [${attempts.join(' → ')}] ${detail}`);
+}
+
+// Öffentliche Kernseiten ohne Arbeits- und Technikbegriffe (Code- und Konfigurationssprache bleibt intern).
+const TECHNICAL_TERMS = /FROZEN|SIM SOURCES PARTIAL|BASELINE READY|\bSHA-256\b|Fingerabdruck|Fingerprint|\bSeed\b|\bR2\b|\bD1\b|Archivobjekt|objectKey|Ledger|Konsolidierung gesperrt|in Prüfung|Baseline-Status|dokumentierte Entscheidung/u;
+const publicPages = ['/', '/west/', '/nsh/', '/bayern-wuerttemberg/', '/ost/', '/aenderungen/', '/ueber-den-rechtsbestand/', '/hilfe/', '/west/norm/lnatschg-west/', '/west/norm/lnatschg-west/daten/', '/west/norm/lnatschg-west/quellen/', '/west/norm/lnatschg-west/historie/', '/west/verkuendungen/', '/west/verkuendungen/mbl-west-2025-2-20251110/', '/suche?q=Gesetz'];
+for (const path of publicPages) {
+  try {
+    const result = await get(path, 30_000);
+    const match = TECHNICAL_TERMS.exec(result.body);
+    report(result.status === 200 && !match, `${path} ohne Technikbegriffe${match ? ` – gefunden: „${match[0]}“` : ''}`);
+  } catch (error) {
+    report(false, `${path} ohne Technikbegriffe – ${(error as Error).message}`);
+  }
 }
 
 for (const check of checks) {

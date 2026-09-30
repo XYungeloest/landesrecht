@@ -1,88 +1,24 @@
 ---
 /**
- * Hinweis zum Bestand eines Landes: „Teilbestand“, solange der Stichtagsbestand nicht vollständig veröffentlicht
- * ist, und der Stand der Simulationsrechtsfortschreibung (Rechtsakte, Ausgaben, Prüfung, Quellensammlung). Die
- * Ein eingefrorener Ausgangsrechtsstand (`baselineFreeze.frozen`) wird als solcher gekennzeichnet, ohne nicht belegte
- * Stichtagsnormen oder Sim-Verkündungen als vollständig auszugeben. Zahlen stammen aus `@landesrecht/legal-core/config/inventory-status.json` (von Importer und
- * `import-simulation completeness --write` erzeugt). Meldet die Datei den Stichtagsbestand als vollständig und den
- * Simulationsstand als `SIM LEGAL STATE COMPLETE`, verschwindet der Hinweis ohne Codeänderung. Baseline-Normzahl
- * (`published`) und Sim-Normzahl (`simulation.simulationNorms`) werden getrennt ausgewiesen. Blattabdeckung und
- * Sim-Gesamtstatus stehen getrennt nebeneinander (docs/SIMULATION_IMPORT.md, Abschnitt 7.2): „alle bekannten Ausgaben
- * liegen vor“ wird nie als vollständiger Sim-Rechtsstand ausgegeben.
+ * Knapper fachlicher Hinweis zum Rechtsbestand eines Landes: Ausgangspunkt ist der Rechtsstand vom Ausgangsrechtsstand,
+ * spätere Änderungen stammen aus der Simulation; sind Quellen noch nicht vollständig erschlossen, ein Satz dazu.
+ * Kennzahlen, Prüfstände und Arbeitsbegriffe gehören nicht auf öffentliche Seiten – Einzelheiten stehen auf der
+ * Informationsseite `/ueber-den-rechtsbestand/`. Die Daten kommen aus `inventory-status.json` (nur zur Entscheidung,
+ * ob der Quellenhinweis nötig ist).
  */
-import { baselineFreezeText, getInventoryNotice, summarizeJurisdictionStatus, type SimulationInventoryStatus } from '@landesrecht/legal-core/config/inventory-status.ts';
+import { getInventoryNotice } from '@landesrecht/legal-core/config/inventory-status.ts';
 import { formatBaselineDate, getJurisdiction, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 
 interface Props {
   jurisdiction: JurisdictionId;
-  /** `badge`: nur die Kennzeichnung (Übersichten); `full`: Kennzeichnung mit Zahlen (Länderseite, Suche). */
-  variant?: 'badge' | 'full';
 }
 
-const { jurisdiction, variant = 'full' } = Astro.props;
+const { jurisdiction } = Astro.props;
 const notice = getInventoryNotice(jurisdiction);
-const status = notice?.entry;
-const simulation = status?.simulation;
-const number = new Intl.NumberFormat('de-DE');
-const outstanding = status ? status.pending.atBaseline + status.pending.baselineOnly : 0;
-const shortName = getJurisdiction(jurisdiction).shortName;
-const plural = (value: number, one: string, many: string): string => `${number.format(value)} ${value === 1 ? one : many}`;
-
-/** Baseline-Status (eingefroren, bewertet oder noch nicht bewertet; getrennt vom Sim-Quellenstatus). */
-const freezeText = (): string | undefined => baselineFreezeText(status?.baselineFreeze);
-
-function sourcesText(entry: SimulationInventoryStatus): string {
-  if (entry.status === 'SIM SOURCES PARTIAL') return `Sim-Quellen unvollständig (${number.format(entry.presentIssues)} von ${number.format(entry.knownIssues)} bekannten Blattausgaben liegen vor; Einzelverkündungen und Belege können fehlen); der Rechtsstand nach dem Stichtag kann Lücken haben.`;
-  if (entry.status === 'SIM SOURCES COMPLETE FOR KNOWN INVENTORY') return `Quellensammlung vollständig für das bekannte Inventar (${plural(entry.presentIssues, 'Ausgabe', 'Ausgaben')}); der Rechtsstand wird noch geprüft.`;
-  return 'Simulationsrechtsstand vollständig belegt.';
-}
-const summary = summarizeJurisdictionStatus(status);
-const sources = simulation?.sources;
-const openSourceCases = summary ? summary.missingSourceCount + summary.evidenceIncompleteCount : 0;
-const frozen = status?.baselineFreeze?.frozen === true;
-const badgeTitle = notice?.baselinePartial
-  ? frozen
-    ? `${shortName}: eingefrorener Ausgangsrechtsstand – nicht jede am Stichtag geltende Norm ist belegt und veröffentlicht`
-    : `${shortName}: Teilbestand – weitere Normen zum Stichtag werden ergänzt`
-  : `${shortName}: Simulationsrecht noch nicht vollständig belegt`;
+const baselineDate = formatBaselineDate(getJurisdiction(jurisdiction).baselineDate);
+const sourcesIncomplete = notice !== undefined && (notice.baselinePartial || notice.simulationPartial);
 ---
-{notice && variant === 'badge' && <span class="tag tag--partial" title={badgeTitle}>Teilbestand</span>}
-{notice && status && variant === 'full' && (
-  <aside class="inventory-notice" aria-label={`Hinweis zum Bestand ${shortName}`}>
-    {notice.baselinePartial && frozen ? (
-      <p>
-        <strong>Baseline-Status: eingefrorener Ausgangsrechtsstand.</strong> Veröffentlicht sind {number.format(status.published)} Normen, deren Fassung vom {formatBaselineDate(status.baselineDate)} aus amtlichen Quellen belegt ist; dieser Bestand ist eingefroren (Änderungen nur mit dokumentierter Entscheidung).
-        {outstanding > 0 && <> Weitere {number.format(outstanding)} Normen, die an diesem Tag galten, sind nicht veröffentlicht, weil ihre Stichtagsfassung nicht sicher belegt ist; der Freeze bestätigt sie weder als vollständig noch als richtig.</>}
-      </p>
-    ) : notice.baselinePartial ? (
-      <p>
-        <strong>Baseline-Status: Teilbestand.</strong> Veröffentlicht sind {number.format(status.published)} Normen, deren Fassung vom {formatBaselineDate(status.baselineDate)} aus amtlichen Quellen belegt ist.
-        {outstanding > 0 && <> Für weitere {number.format(outstanding)} Normen, die an diesem Tag galten, wird die Stichtagsfassung noch nachgewiesen; sie werden danach ergänzt.</>}
-        {freezeText() && <> {freezeText()}</>}
-      </p>
-    ) : (
-      <p><strong>Baseline-Status: Sicher belegter Rechtsstand zum {formatBaselineDate(status.baselineDate)}:</strong> {number.format(status.published)} Normen aus amtlichen Quellen.{freezeText() && <> {freezeText()}</>}</p>
-    )}
-    {simulation && summary && sources ? (
-      <>
-        <p class="inventory-notice__summary">
-          <strong>Simulationsrecht:</strong> Ausgangsrechtsstand {summary.baselineStatus === 'FROZEN' ? 'eingefroren' : 'nicht eingefroren'} · Gesetzblätter {number.format(summary.gazetteCoverage.presentIssues)}/{number.format(summary.gazetteCoverage.knownIssues)} bekannte Ausgaben · Sim-Quellen {summary.simulationStatus === 'COMPLETE' ? 'vollständig belegt' : 'unvollständig'} · {plural(openSourceCases, 'Quellen-/Verkündungsfall', 'Quellen-/Verkündungsfälle')} offen · {number.format(summary.blockedCount)} gesperrt / {number.format(summary.reviewCount)} in Prüfung
-        </p>
-        <details class="inventory-notice__details">
-          <summary>Einzelheiten zum Sim-Quellenstatus</summary>
-          <ul>
-            <li>Gesetzblätter: {summary.gazetteCoverage.status === 'COMPLETE' ? `alle ${number.format(summary.gazetteCoverage.knownIssues)} bekannten Ausgaben liegen vor` : `${number.format(summary.gazetteCoverage.presentIssues)} von ${number.format(summary.gazetteCoverage.knownIssues)} bekannten Ausgaben liegen vor, ${plural(summary.gazetteCoverage.missingIssues, 'Ausgabe fehlt', 'Ausgaben fehlen')}`}. Das allein belegt keinen vollständigen Sim-Rechtsstand.</li>
-            <li>Einzelverkündungen: {summary.standaloneSourceCoverage.missing > 0 ? `${plural(summary.standaloneSourceCoverage.missing, 'belegter Einzelakt fehlt', 'belegte Einzelakte fehlen')}` : 'keine bekannte fehlt'}; {plural(summary.evidenceIncompleteCount, 'Quelle', 'Quellen')} mit unvollständiger Evidenz (Wortlaut, Verkündung, Wirkdatum, Anlage).</li>
-            <li>Rechtsakte: {plural(simulation.secureActs, 'Rechtsakt', 'Rechtsakte')} übernommen ({plural(simulation.simulationNorms, 'eigene Norm der Simulation', 'eigene Normen der Simulation')}); Ereignisse: {number.format(sources.events.applied)} angewandt, {number.format(summary.reviewCount)} in Prüfung, {number.format(summary.blockedCount)} gesperrt{summary.blockedByBaselineTarget.events > 0 && <> (davon {number.format(summary.blockedByBaselineTarget.events)}, weil die Zielnorm nicht im eingefrorenen Ausgangsrechtsstand steht – der Sim-Akt selbst kann verkündet sein)</>}{sources.events.notPromulgated > 0 && <>, {plural(sources.events.notPromulgated, 'Entwurf', 'Entwürfe')} ohne Verkündung</>}.</li>
-            {(summary.possibleGapCount > 0 || summary.knownUnclearPeriods > 0) && <li>Mögliche Lücken: {plural(summary.knownUnclearPeriods, 'ungeklärter Zeitraum', 'ungeklärte Zeiträume')}{summary.possibleGapCount > 0 && <>, {plural(summary.possibleGapCount, 'weitere mögliche Lücke', 'weitere mögliche Lücken')}</>} – nicht als sicher fehlende Quelle gezählt.</li>}
-            <li>Jüngste ausgewertete Quelle: {summary.lastSourceDate ?? '–'}; Stand der Bewertung {summary.updatedAt}.</li>
-          </ul>
-        </details>
-      </>
-    ) : simulation && (
-      <p>
-        <strong>Sim-Quellenstatus – Simulationsrecht:</strong> {plural(simulation.secureActs, 'Rechtsakt', 'Rechtsakte')} aus {plural(simulation.presentIssues, 'Ausgabe', 'Ausgaben')} übernommen ({plural(simulation.simulationNorms, 'eigene Norm der Simulation', 'eigene Normen der Simulation')}), {number.format(simulation.review)} in Prüfung{simulation.draftsWithoutPromulgation > 0 && <>, {plural(simulation.draftsWithoutPromulgation, 'Entwurf ohne Verkündungsbeleg', 'Entwürfe ohne Verkündungsbeleg')}</>}; {sourcesText(simulation)} <span class="muted">Stand {simulation.updatedAt}.</span>
-      </p>
-    )}
-  </aside>
-)}
+<aside class="inventory-notice" aria-label="Hinweis zum Rechtsbestand">
+  <p>Ausgangspunkt der Simulation ist der Rechtsstand vom {baselineDate}. Änderungen danach stammen aus der Politiksimulation.{sourcesIncomplete && <> Einzelne historische oder veröffentlichte Quellen sind noch nicht vollständig erschlossen.</>} <a href={PORTAL_PATHS.about}>Mehr zum Rechtsbestand</a></p>
+</aside>

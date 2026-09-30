@@ -16,8 +16,37 @@ export async function listMigrations(migrationsDir: string): Promise<string[]> {
   return (await readdir(migrationsDir)).filter((file) => MIGRATION_FILE_PATTERN.test(file)).sort().map((name) => join(migrationsDir, name));
 }
 
+/** Anweisungen einer einfachen Migration (Kommentare entfernt, an `;` getrennt); nicht für Trigger-Körper. */
+export function migrationStatements(sql: string): string[] {
+  return sql.replace(/--[^\n]*/gu, '').split(';').map((statement) => statement.trim()).filter(Boolean);
+}
+
+/** Bereits vorhandene Spalte einer `ALTER TABLE … ADD COLUMN`-Anweisung: die Migration wurde schon angewandt. */
+export function isAlreadyAppliedMigrationError(error: unknown): boolean {
+  return /duplicate column name/iu.test(String((error as Error)?.message ?? error));
+}
+
+/**
+ * Wendet alle Migrationen an – idempotent: `CREATE … IF NOT EXISTS` ist es von sich aus; scheitert eine Datei an einer
+ * schon vorhandenen Spalte (SQLite kennt kein `ADD COLUMN IF NOT EXISTS`), wird sie anweisungsweise wiederholt und
+ * die vorhandene Spalte als angewandt übersprungen.
+ */
 export async function applyMigrations(db: DatabaseSync, migrationsDir: string): Promise<void> {
-  for (const file of await listMigrations(migrationsDir)) db.exec(await readFile(file, 'utf8'));
+  for (const file of await listMigrations(migrationsDir)) {
+    const sql = await readFile(file, 'utf8');
+    try {
+      db.exec(sql);
+    } catch (error) {
+      if (!isAlreadyAppliedMigrationError(error)) throw error;
+      for (const statement of migrationStatements(sql)) {
+        try {
+          db.exec(statement);
+        } catch (statementError) {
+          if (!isAlreadyAppliedMigrationError(statementError)) throw statementError;
+        }
+      }
+    }
+  }
 }
 
 function bindable(value: unknown): null | number | string | bigint | Uint8Array {

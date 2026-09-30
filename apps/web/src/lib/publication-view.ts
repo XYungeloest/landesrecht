@@ -6,7 +6,7 @@
  * `normSlug`) steht trotzdem im Inhaltsverzeichnis – mit seinem Stand statt eines Links (`entryStatusLabel`).
  */
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { formatDate } from '@landesrecht/legal-core/lib/display.ts';
+import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { getNormSubpageUrl, getNormUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import type { Publication, PublicationEntry } from '@landesrecht/legal-core/lib/schema.ts';
 import { getNormSummaries, type NormStore, type NormSummary } from '@landesrecht/runtime/store.ts';
@@ -22,12 +22,10 @@ export function entryLinkKey(entry: Pick<PublicationEntry, 'normSlug' | 'version
   return `${entry.normSlug ?? ''}#${entry.versionId ?? ''}`;
 }
 
-/** Spalte „Norm im Portal“ ohne Link: Stand des Akts laut Ledger, sonst „nicht im veröffentlichten Bestand“. */
+/** Spalte „Norm im Portal“ ohne Link: Nutzersprache statt Arbeitsstand – nicht verkündete Akte als Entwurf, sonst „noch nicht im konsolidierten Rechtsbestand“. */
 export function entryStatusLabel(entry: Pick<PublicationEntry, 'normSlug' | 'consolidationStatus'>): string {
-  if (entry.normSlug) return 'nicht im Bestand';
-  if (entry.consolidationStatus === 'review') return 'in Prüfung';
-  if (entry.consolidationStatus === 'blocked') return 'Konsolidierung gesperrt';
-  return 'nicht im veröffentlichten Bestand';
+  if (entry.consolidationStatus === 'not-promulgated') return VOCABULARY.simulationChange.notPromulgated;
+  return VOCABULARY.simulationChange.notConsolidated;
 }
 
 /** Link eines Eintrags aus der Normübersicht; `undefined`, wenn die Norm nicht im Bestand ist oder keine zugeordnet ist. */

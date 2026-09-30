@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import { classifySimulationChange } from '@landesrecht/legal-core/lib/simulation-change.ts';
 import { getApplicableVersion } from '@landesrecht/legal-core/lib/versions.ts';
 
 import { SIMRECHT_SCHEMA_VERSION, type ApiError, type ApiNormResponse } from '../../../../../lib/api-types.ts';
@@ -23,6 +24,7 @@ export const GET: APIRoute = async ({ params }) => {
     return jsonResponse(error, { status: 404, headers: { 'cache-control': 'no-store' } });
   }
   const version = getApplicableVersion(record, EDITORIAL_REFERENCE_DATE);
+  const change = classifySimulationChange(record);
   const payload: ApiNormResponse = {
     schemaVersion: SIMRECHT_SCHEMA_VERSION,
     generatedAt: new Date().toISOString(),
@@ -33,6 +35,8 @@ export const GET: APIRoute = async ({ params }) => {
     history: record.history,
     currentVersionId: version.versionId,
     version,
+    simulationChangeKind: change.kind,
+    lastSimulationChangeDate: change.lastChangeDate,
   };
   return jsonResponse(payload);
 };

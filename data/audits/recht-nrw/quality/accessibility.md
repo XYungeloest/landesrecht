@@ -1,7 +1,7 @@
 # Barrierefreiheits-Smoke – https://landesrecht-online.de
 
 Statische HTML-Prüfung (scripts/lib/html-audit.ts): Überschriftenhierarchie, Landmarks, Sprunglink, Formularbeschriftungen, Tabellen (Kopfzellen, Container, Spaltenzahl), Linktexte/-ziele, ARIA-Referenzen, aria-current, tabindex, Bilder. Kein Browser, keine Kontrast-/Fokusprüfung im Rendering.
-Geprüfte Seiten: 36 (Start, Länderseite mit Filtern, Suche, Normseiten, Unterseiten, Fehlerseiten).
+Geprüfte Seiten: 38 (Start, Länderseite mit Filtern, Suche, Normseiten, Unterseiten, Fehlerseiten).
 
 ## Befunde nach Code
 
@@ -19,14 +19,18 @@ Geprüfte Seiten: 36 (Start, Länderseite mit Filtern, Suche, Normseiten, Unters
 - h3 Land Niedersachsen-Holstein
 - h3 Freistaat Ostdeutschland
 - h3 Freistaat Bayern-Württemberg
+- h2 76 Vorschriften in der Simulation geändert
+- h3 Zuletzt in der Simulation geändert
+- h3 Neu in der Simulation
+- h2 Letzte Verkündungen
+- h2 Verfassungen
 
 Befunde: keine
 
 ### west (/west/)
 
 - h1 Land Westdeutschland
-- h2 Verkündungen (22)
-- h2 Vorhandene Normen (1528)
+- h2 Vorschriften
 - h3 §§ 14a und 14c des Gesetzes zur Förderung der gese
 - h3 Abgabe von Unterlagen an das Landesarchiv West Run
 - h3 Abgeordnetengesetz des Landes Westdeutschland
@@ -36,14 +40,48 @@ Befunde: keine
 - h3 Allgemeine Erlaubnis für Kleine Lotterien und Auss
 - h3 Allgemeine Erlaubnis für kleine Lotterien und Auss
 - h3 Allgemeine Externen-Prüfungsordnung für Bildungsgä
+- h3 Allgemeine Richtlinie zur Förderung von Projekten 
+
+Befunde: keine
+
+### west-changed (/west/?stand=changed)
+
+- h1 Land Westdeutschland
+- h2 Vorschriften
+- h3 Gesetz zur Weiterentwicklung des Landespflegerecht
+- h3 Gesetz über die Beamtinnen und Beamten des Landes 
+- h3 Gesetz zum Schutz der Natur in Westdeutschland
+- h3 Gesetz zur Ausführung des Asylbewerberleistungsges
+- h3 Verordnung zur Festlegung des Anwendungsbereichs b
+- h3 Allgemeine Richtlinie zur Förderung von Projekten 
+- h3 Gesetz über den Brandschutz, die Hilfeleistung und
+- h3 Verordnung über den Betrieb und die Ausgestaltung 
+- h3 Verordnung zur Durchführung des Weinrechts
+- h2 Verkündungen
+
+Befunde: keine
+
+### west-new (/west/?stand=new)
+
+- h1 Land Westdeutschland
+- h2 Vorschriften
+- h3 Gesetz zur Einführung eines westdeutschen Standort
+- h3 Gesetz zur Einführung eines westdeutschen Unterneh
+- h3 Gesetz zur Förderung der Jugendbeteiligung in den 
+- h3 Gesetz zur Modernisierung der westdeutschen Landes
+- h3 Runderlass zur Trauerbeflaggung anlässlich des Tod
+- h3 Gesetz zur Einführung des Westdeutschen Landesgesu
+- h3 Landesgesundheitsgesetz
+- h3 Gesetz zur Änderung der Landesverfassung
+- h3 Gesetz zur Änderung des Gesetzes zur Ausführung de
+- h3 Gesetz zur Beamtenlaufbahnbestimmung
 
 Befunde: keine
 
 ### west-type-gesetz (/west/?type=gesetz)
 
 - h1 Land Westdeutschland
-- h2 Verkündungen (22)
-- h2 Vorhandene Normen (1528)
+- h2 Vorschriften
 - h3 §§ 14a und 14c des Gesetzes zur Förderung der gese
 - h3 Abgeordnetengesetz des Landes Westdeutschland
 - h3 Allgemeines Berggesetz
@@ -53,14 +91,14 @@ Befunde: keine
 - h3 Ausführungsgesetz zum Bürgerlichen Gesetzbuch
 - h3 Ausführungsgesetz zum Bürgerlichen Gesetzbuch
 - h3 Ausführungsgesetz zum Flurbereinigungsgesetz
+- h3 Ausführungsgesetz zum Gerichtsverfassungsgesetz
 
 Befunde: keine
 
 ### west-type-verordnung (/west/?type=verordnung)
 
 - h1 Land Westdeutschland
-- h2 Verkündungen (22)
-- h2 Vorhandene Normen (1528)
+- h2 Vorschriften
 - h3 Allgemeine Externen-Prüfungsordnung für Bildungsgä
 - h3 Allgemeine Verwaltungsgebührenordnung für das Land
 - h3 Ausbildungs- und Prüfungsordnung für Desinfektorin
@@ -70,14 +108,14 @@ Befunde: keine
 - h3 Ausbildungs- und Prüfungsverordnung für den Beruf 
 - h3 Ausbildungs- und Prüfungsverordnung für Rettungssa
 - h3 Ausführungsverordnung zum Gesetz zur Ausführung de
+- h3 Ausführungsverordnung zur Verordnung über die Zust
 
 Befunde: keine
 
 ### west-type-verwaltungsvorschrift (/west/?type=verwaltungsvorschrift)
 
 - h1 Land Westdeutschland
-- h2 Verkündungen (22)
-- h2 Vorhandene Normen (1528)
+- h2 Vorschriften
 - h3 Abgabe von Unterlagen an das Landesarchiv West Run
 - h3 Abnahme von baulichen Maßnahmen bei Ingenieurbauwe
 - h3 Abschlagszahlung auf die zu erwartende einmalige C
@@ -87,14 +125,14 @@ Befunde: keine
 - h3 Allgemeine Richtlinie zur Förderung von Projekten 
 - h3 Allgemeine Verwaltungsvorschrift zu § 74 Absatz 4 
 - h3 Allgemeine Verwaltungsvorschriften zum Landesreise
+- h3 Anweisungen über die Verwaltung und Organisation d
 
 Befunde: keine
 
 ### west-type-runderlass (/west/?type=runderlass)
 
 - h1 Land Westdeutschland
-- h2 Verkündungen (22)
-- h2 Vorhandene Normen (1528)
+- h2 Vorschriften
 - h3 Abgabe von Unterlagen an das Landesarchiv West Run
 - h3 Abnahme von baulichen Maßnahmen bei Ingenieurbauwe
 - h3 Abschlagszahlung auf die zu erwartende einmalige C
@@ -104,14 +142,14 @@ Befunde: keine
 - h3 Ausbildung hauptberuflicher Feuerwehrangehöriger z
 - h3 Ausübung der Befugnisse im Rechtshilfeverkehr mit 
 - h3 Benennung der Mitglieder des Verwaltungsrats des M
+- h3 Berufskolleg - Unterricht in Justizvollzugsanstalt
 
 Befunde: keine
 
 ### nsh (/nsh/)
 
 - h1 Land Niedersachsen-Holstein
-- h2 Verkündungen (5)
-- h2 Vorhandene Normen (2705)
+- h2 Vorschriften
 - h3 1. Änderung der Richtlinie zur Umsetzung des Schul
 - h3 1. Änderung der Richtlinie zur Umsetzung des Schul
 - h3 40. Ausführungsanweisung zum Finanzausgleichsgeset
@@ -121,14 +159,14 @@ Befunde: keine
 - h3 72. Nachtrag; Bekanntmachung des Nachtrages 72 zur
 - h3 Abfallwirtschaftsgesetz für das Land Niedersachsen
 - h3 Abgabe amtlicher Veröffentlichungen an Bibliotheke
+- h3 Abgabe amtlicher Veröffentlichungen an Bibliotheke
 
 Befunde: keine
 
 ### ost (/ost/)
 
 - h1 Freistaat Ostdeutschland
-- h2 Verkündungen (149)
-- h2 Vorhandene Normen (5211)
+- h2 Vorschriften
 - h3 1. Änderung zum Programm des Ostdeutschen Staatsmi
 - h3 Abkommen zur Änderung des Abkommens über die Erric
 - h3 Abkommen zur Änderung des Abkommens über die Zentr
@@ -138,14 +176,14 @@ Befunde: keine
 - h3 Abkommen zur Änderung des Abkommens über die Zentr
 - h3 Abkommen zwischen den Ländern in der Bundesrepubli
 - h3 Abkommen über die erweiterte Zuständigkeit der mit
+- h3 Abkommen über die Zentralstelle der Länder für Ges
 
 Befunde: keine
 
 ### baywue (/bayern-wuerttemberg/)
 
 - h1 Freistaat Bayern-Württemberg
-- h2 Verkündungen (8)
-- h2 Vorhandene Normen (1664)
+- h2 Vorschriften
 - h3 15-Punkte-Programm der Bayern-Württembergischen St
 - h3 2025-IMuster einer Beitrags- und Gebührensatzung z
 - h3 50 Jahre Deutsch-Französischer Vertrag
@@ -155,6 +193,7 @@ Befunde: keine
 - h3 Abkommen über die Deutsche Hochschule der Polizei
 - h3 Abkommen über die Errichtung und Finanzierung des 
 - h3 Abkommen über die erweiterte Zuständigkeit der mit
+- h3 Abkommen über die erweiterte Zuständigkeit der Pol
 
 Befunde: keine
 
@@ -245,9 +284,9 @@ Befunde: keine
 - h3 Artikel 2 Zuweisung von Übertragungskapazitäten
 - h3 Artikel 3
 - h3 Quellhinweise
-- h2 Fassungen und Änderungen
+- h2 Frühere Fassungen
 - h2 Zitieren
-- h2 Quellen
+- h2 Quellen und Nachweise
 
 Befunde: warning table-no-header-cells (Tabelle 0)
 
@@ -264,7 +303,7 @@ Befunde: warning table-no-header-cells (Tabelle 0)
 - h3 Anhang 5 zu den Tarifstellen 4.3.1.1, 4.3.1.2 und 
 - h3 Anlage Tarifstellen 1 bis 14 (HTM)
 - h3 Quellhinweise
-- h2 Fassungen und Änderungen
+- h2 Frühere Fassungen
 
 Befunde: keine
 
@@ -312,9 +351,9 @@ Befunde: keine
 - h3 Anlage (Staatsvertag zum Lotteriewesen...) (HTM)
 - h3 Anlage (Staatsvertrag über die Regionalisierung..)
 - h3 Quellhinweise
-- h2 Fassungen und Änderungen
+- h2 Frühere Fassungen
 - h2 Zitieren
-- h2 Quellen
+- h2 Quellen und Nachweise
 
 Befunde: keine
 
@@ -372,16 +411,14 @@ Befunde: warning table-no-header-cells (Tabelle 0)
 ### sources-reconstructed (/west/norm/vv-lhundg-west/quellen/)
 
 - h1 Verwaltungsvorschriften zum Landeshundegesetz
-- h2 Quellen der Fassung 2023-12-01
-- h2 Quellen der Norm
+- h2 Herkunft dieser Fassung
 
 Befunde: keine
 
 ### sources-reference (/west/norm/lhundg-west/quellen/)
 
 - h1 Hundegesetz für das Land Westdeutschland
-- h2 Quellen der Fassung 2023-12-01
-- h2 Quellen der Norm
+- h2 Herkunft dieser Fassung
 
 Befunde: keine
 
@@ -389,23 +426,23 @@ Befunde: keine
 
 - h1 Hundegesetz für das Land Westdeutschland
 - h2 Vorschriftendaten
-- h2 Fassung 2023-12-01
+- h2 Diese Fassung
 - h2 Beziehungen
-- h3 Externe Kennungen
 
 Befunde: keine
 
 ### history-reference (/west/norm/lhundg-west/historie/)
 
 - h1 Hundegesetz für das Land Westdeutschland
-- h2 Gespeicherte Fassungen
-- h2 Änderungen und Hinweise
+- h2 Änderungen seit dem Ausgangsstand
+- h3 Fassung vom 1. Dezember 2023 (Ausgangsrechtsstand)
 
 Befunde: keine
 
 ### compare-reference (/west/norm/lhundg-west/vergleich/)
 
 - h1 Hundegesetz für das Land Westdeutschland
+- h2 Änderungen seit dem Ausgangsstand
 
 Befunde: keine
 

@@ -4,6 +4,7 @@
  */
 import type { JurisdictionStatusSummary } from '@landesrecht/legal-core/config/inventory-status.ts';
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import type { SimulationChangeKind } from '@landesrecht/legal-core/lib/simulation-change.ts';
 import type { JurisdictionAvailability } from '@landesrecht/runtime/registry.ts';
 import type { NormHistory, NormMeta, NormStatus, NormType, NormVersion, Publication, PublicationEntry } from '@landesrecht/legal-core/lib/schema.ts';
 import type { SearchHit } from '@landesrecht/search/ranking.ts';
@@ -70,6 +71,9 @@ export interface ApiNormResponse {
   currentVersionId: string;
   /** Die am Stichtag geltende Fassung einschließlich Normkörper. */
   version: NormVersion;
+  /** Klassifikation gegenüber dem Ausgangsrechtsstand (additiv seit Lauf 25). */
+  simulationChangeKind?: SimulationChangeKind;
+  lastSimulationChangeDate?: string | null;
 }
 
 export interface ApiVersionDescriptor {

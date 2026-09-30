@@ -21,6 +21,8 @@ export type NormSubpage = (typeof NORM_SUBPAGES)[number];
 export const PORTAL_PATHS = {
   home: '/',
   search: '/suche/',
+  changes: '/aenderungen/',
+  about: '/ueber-den-rechtsbestand/',
   help: '/hilfe/',
   imprint: '/impressum/',
   api: '/api/v1',

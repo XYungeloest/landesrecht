@@ -51,11 +51,12 @@ describe('Modell: Eintrag ohne Portalnorm', () => {
 
   it('UI: ohne Portalnorm kein Link, sondern der Stand', () => {
     expect(entryLinkFor('west', { title: 'x' } as never, null)).toBeUndefined();
-    expect(entryStatusLabel({ consolidationStatus: 'review' })).toBe('in Prüfung');
-    expect(entryStatusLabel({ consolidationStatus: 'blocked' })).toBe('Konsolidierung gesperrt');
-    expect(entryStatusLabel({ consolidationStatus: 'not-promulgated' })).toBe('nicht im veröffentlichten Bestand');
-    expect(entryStatusLabel({})).toBe('nicht im veröffentlichten Bestand');
-    expect(entryStatusLabel({ normSlug: 'fehlt-west' })).toBe('nicht im Bestand');
+    // Öffentlich keine Arbeitsstände: geprüft oder gesperrt heißt „noch nicht im konsolidierten Rechtsbestand“.
+    expect(entryStatusLabel({ consolidationStatus: 'review' })).toBe('Noch nicht im konsolidierten Rechtsbestand');
+    expect(entryStatusLabel({ consolidationStatus: 'blocked' })).toBe('Noch nicht im konsolidierten Rechtsbestand');
+    expect(entryStatusLabel({ consolidationStatus: 'not-promulgated' })).toBe('Entwurf / nicht verkündet');
+    expect(entryStatusLabel({})).toBe('Noch nicht im konsolidierten Rechtsbestand');
+    expect(entryStatusLabel({ normSlug: 'fehlt-west' })).toBe('Noch nicht im konsolidierten Rechtsbestand');
   });
 });
 

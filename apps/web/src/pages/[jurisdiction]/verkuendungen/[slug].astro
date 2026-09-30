@@ -12,8 +12,8 @@ import { entryLinkKey, entryStatusLabel, resolveEntryLinks } from '../../../lib/
 import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../../lib/runtime/context.ts';
 
 // Eine Ausgabe (Vorbild OstRecht apps/recht/src/pages/verkuendungen/[slug].astro): Einträge mit Seiten,
-// Dokumentart und Verknüpfung zur Norm bzw. entstandenen Fassung, dazu die Quellenbelege der Ausgabe mit
-// SHA-256 und Archivobjekt – ohne Bilddaten, der Bucket bleibt privat.
+// Dokumentart und Verknüpfung zur Norm bzw. entstandenen Fassung, dazu die Quellen der Ausgabe in Nutzersprache
+// (Speichertechnik nur in der API) – ohne Bilddaten, das Quellenarchiv bleibt privat.
 const resolved = jurisdictionFromParam(Astro.params.jurisdiction);
 if (!resolved || !Astro.params.slug) return Astro.rewrite('/404');
 const { id, jurisdiction } = resolved;
@@ -63,7 +63,7 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
     {publication.entries.length === 0 ? <p class="muted">Keine Einträge.</p> : (
       <div class="norm-table-wrap" tabindex="0" role="region" aria-label="Einträge der Ausgabe">
         <table>
-          <caption class="visually-hidden">Einträge dieser Ausgabe mit Seite, Gegenstand, Dokumentart und Verknüpfung zur Norm</caption>
+          <caption class="visually-hidden">Einträge dieser Ausgabe mit Seite, Gegenstand, Dokumentart und Vorschrift im Portal</caption>
           <thead><tr><th scope="col">Seite</th><th scope="col">Eintrag</th><th scope="col">Dokumentart</th><th scope="col">Norm im Portal</th></tr></thead>
           <tbody>
             {publication.entries.map((entry, position) => {
@@ -84,11 +84,10 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
         </table>
       </div>
     )}
-    <p class="muted">Verknüpfte Vorschriften führen zur geltenden oder zur durch diese Ausgabe entstandenen Fassung.</p>
+    <p class="muted">Verknüpfte Vorschriften führen zur geltenden oder zur durch diese Ausgabe entstandenen Fassung. „{VOCABULARY.simulationChange.notConsolidated}“ heißt: Der Akt ist abgedruckt, seine Wirkung auf den Rechtsbestand ist aber noch nicht eingearbeitet.</p>
   </section>
   <section aria-labelledby="quellen-heading">
-    <h2 id="quellen-heading">Quellenbelege der Ausgabe</h2>
-    <SourceList sources={publication.sourceReferences} />
-    <p class="muted">Belege nennen Archivobjekt und SHA-256 der unveränderten Quelle; das Quellenarchiv ist nicht öffentlich.</p>
+    <h2 id="quellen-heading">Quellen der Ausgabe</h2>
+    <SourceList sources={publication.sourceReferences} jurisdiction={id} />
   </section>
 </BaseLayout>

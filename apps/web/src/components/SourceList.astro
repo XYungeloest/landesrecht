@@ -1,44 +1,56 @@
 ---
+/**
+ * Quellen und Nachweise für Leserinnen und Leser: Bezeichnung, Art, Fundstelle, Datum, Seitenbereich, Portal-Link
+ * und Hinweis. Speicher- und Prüftechnik (Hashes, Archivobjekte, Ablageorte, Kennungen) bleibt der API und den
+ * Audits vorbehalten. Sim-Verkündungen verlinken auf ihre Ausgabe im Portal.
+ */
+import { formatDate, publicNote } from '@landesrecht/legal-core/lib/display.ts';
+import { getPublicationUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import type { SourceReference } from '@landesrecht/legal-core/lib/schema.ts';
 
 interface Props {
   sources: SourceReference[];
   compact?: boolean;
+  /** Land der Norm (für Links auf Sim-Verkündungen). */
+  jurisdiction?: JurisdictionId;
 }
 
-const { sources, compact = false } = Astro.props;
+const { sources, compact = false, jurisdiction } = Astro.props;
 /** Bezeichnungen je Quellenart; eine Art ohne Eintrag erscheint mit ihrer Kennung (nie ein Fehler). */
 const KIND_LABELS: Readonly<Record<string, string>> = {
   'official-portal-snapshot': 'Amtliche Portalfassung',
   'official-gazette': 'Verkündungsblatt',
-  'structured-transcription': 'Strukturierte Transkription',
+  'structured-transcription': 'Strukturierte Übertragung',
   'amendment-source': 'Änderungsquelle',
-  'provider-record': 'Externer Datensatz',
-  'primary-pdf': 'Amtliche PDF',
+  'provider-record': 'Datensatz des Herkunftsportals',
+  'primary-pdf': 'Amtliche PDF-Ausgabe',
   'simulation-gazette': 'Verkündungsblatt der Simulation',
   'simulation-standalone-act': 'Einzelverkündung der Simulation',
   'simulation-promulgation-evidence': 'Verkündungsnachweis der Simulation',
   'simulation-amendment-source': 'Änderungsquelle der Simulation',
 };
 const kindLabel = (kind: SourceReference['kind']): string => KIND_LABELS[kind] ?? kind;
+/** Öffentliche Bezeichnung: der Klarname ohne technische Dateinamen in Klammern. */
+const displayLabel = (source: SourceReference): string => source.label.replace(/\s*\((Originaldatei|Datei|Quelle):?[^)]*\)\s*$/u, '').trim() || source.label;
+const publicationLink = (source: SourceReference): string | undefined => (source.publicationSlug && jurisdiction ? getPublicationUrl(jurisdiction, source.publicationSlug) : undefined);
 ---
 {sources.length === 0 ? (
   <p class="muted">Keine Quellenangaben hinterlegt.</p>
 ) : (
-  <ul>
+  <ul class="source-list">
     {sources.map((source) => (
       <li>
-        {source.url && source.availability === 'external' ? <a href={source.url} rel="noopener noreferrer">{source.label}</a> : source.label}
-        {!compact && (
+        {source.url && source.availability === 'external' ? <a href={source.url} rel="noopener noreferrer">{displayLabel(source)}</a> : publicationLink(source) ? <a href={publicationLink(source)}>{displayLabel(source)}</a> : displayLabel(source)}
+        {compact ? <span class="muted"> · {kindLabel(source.kind)}</span> : (
           <dl class="facts">
-            <dt>Art</dt><dd>{kindLabel(source.kind)}{source.system && ` (${source.system})`}</dd>
-            <dt>Verfügbarkeit</dt><dd>{source.availability}</dd>
-            {source.externalId && <><dt>Kennung</dt><dd>{source.externalId}</dd></>}
-            {(source.sourceValidFrom || source.sourceValidTo) && <><dt>Quellgültigkeit</dt><dd>{source.sourceValidFrom ?? '…'} – {source.sourceValidTo ?? 'offen'}</dd></>}
-            {source.objectKey && <><dt>Archivobjekt</dt><dd><code>{source.objectKey}</code></dd></>}
-            {source.sha256 && <><dt>SHA-256</dt><dd><code>{source.sha256}</code></dd></>}
-            {source.retrievedAt && <><dt>Abgerufen</dt><dd>{source.retrievedAt}</dd></>}
-            {source.note && <><dt>Hinweis</dt><dd>{source.note}</dd></>}
+            <dt>Art</dt><dd>{kindLabel(source.kind)}</dd>
+            {source.sourceNumber && <><dt>Fundstelle</dt><dd>{source.sourceNumber}</dd></>}
+            {source.pageRange && <><dt>Seiten</dt><dd>{source.pageRange}</dd></>}
+            {(source.sourceValidFrom || source.sourceValidTo) && <><dt>Geltung der Quellfassung</dt><dd>{source.sourceValidFrom ? `ab ${formatDate(source.sourceValidFrom)}` : ''}{source.sourceValidTo ? ` bis ${formatDate(source.sourceValidTo)}` : source.sourceValidFrom ? '' : 'offen'}</dd></>}
+            {source.retrievedAt && <><dt>Stand der Quelle</dt><dd>{formatDate(source.retrievedAt.slice(0, 10))}</dd></>}
+            {source.url && source.availability === 'external' && <><dt>Originalquelle</dt><dd><a href={source.url} rel="noopener noreferrer">{source.url}</a></dd></>}
+            {publicNote(source.note) && <><dt>Hinweis</dt><dd>{publicNote(source.note)}</dd></>}
           </dl>
         )}
       </li>

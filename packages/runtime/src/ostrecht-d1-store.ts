@@ -40,7 +40,7 @@ import { adaptOstRechtRecord, adaptOstRechtSource, adaptOstRechtStatus, OSTRECHT
 import { buildSearchQueryPlan, compareHits, documentMatchesFilters, evaluateDocument, type SearchDocument, type SearchHit, type SearchResultPage, type SearchState } from '@landesrecht/search/index.ts';
 
 import type { D1SchemaDialect, DialectDocumentRow } from './d1-dialect.ts';
-import { createD1NormStore } from './d1-store.ts';
+import { createD1NormStore, withSimulationChange } from './d1-store.ts';
 import { assertOstRechtSchemaContract, type OstRechtContractOptions } from './ostrecht-contract.ts';
 import { getOstRechtFreshness, type OstRechtFreshnessReport } from './ostrecht-freshness.ts';
 import type { ReadOnlyD1Database } from './read-only-d1.ts';
@@ -283,6 +283,14 @@ export function ostrechtDialect(options: OstRechtDialectOptions = {}): D1SchemaD
     (SELECT max(lx.valid_from) FROM law_versions lx WHERE lx.norm_id = n.id AND lx.valid_from <= ${REF}),
     COALESCE((SELECT max(lh.change_date) FROM law_norm_history lh WHERE lh.norm_id = n.id AND lh.change_type IN ('initial', 'amendment', 'repeal') AND lh.change_date <= ${REF}), ${BASE})) END`;
   const versionCount = `(SELECT count(*) FROM law_versions vx WHERE vx.norm_id = n.id AND (vx.valid_to IS NULL OR vx.valid_to >= ${BASE}))`;
+  // Klassifikation gegenüber dem Ausgangsrechtsstand (legal-core `classifySimulationChange`, hier in SQL): Ausgangsfassung =
+  // Fassung, die am Ausgangsrechtsstand gilt; Simulationsfassung = Beginn danach; Aufhebung danach aus der Historie.
+  const hasBaselineVersion = `EXISTS (SELECT 1 FROM law_versions bx WHERE bx.norm_id = n.id AND bx.valid_from <= ${BASE} AND (bx.valid_to IS NULL OR bx.valid_to >= ${BASE}))`;
+  const simulationVersions = `(SELECT max(sx.valid_from) FROM law_versions sx WHERE sx.norm_id = n.id AND sx.valid_from > ${BASE})`;
+  const repealAfter = `(SELECT max(rx.change_date) FROM law_norm_history rx WHERE rx.norm_id = n.id AND rx.change_type = 'repeal' AND rx.change_date > ${BASE})`;
+  const simulationChangeKind = `CASE WHEN NOT ${hasBaselineVersion} THEN 'simulation-new' WHEN ${simulationVersions} IS NOT NULL OR ${repealAfter} IS NOT NULL THEN 'baseline-changed' ELSE 'baseline-unchanged' END`;
+  const lastSimulationChangeDate = `CASE WHEN NOT ${hasBaselineVersion} THEN (SELECT max(nx.valid_from) FROM law_versions nx WHERE nx.norm_id = n.id) ELSE max(COALESCE(${simulationVersions}, ''), COALESCE(${repealAfter}, '')) END`;
+  const lastSimulationChangeDateOrNull = `NULLIF(${lastSimulationChangeDate}, '')`;
 
   const summaryColumns = [
     '? AS jurisdiction',
@@ -297,6 +305,8 @@ export function ostrechtDialect(options: OstRechtDialectOptions = {}): D1SchemaD
     `${versionCount} AS version_count`,
     `${lastChangeDate} AS last_change_date`,
     'n.subjects_json',
+    `${simulationChangeKind} AS simulation_change_kind`,
+    `${lastSimulationChangeDateOrNull} AS last_simulation_change_date`,
   ].join(', ');
 
   return {
@@ -308,6 +318,9 @@ export function ostrechtDialect(options: OstRechtDialectOptions = {}): D1SchemaD
     summaryColumns,
     summaryParams: [jurisdiction],
     sortKey: 'n.sort_title',
+    indexLetter: `CASE WHEN upper(substr(n.sort_title, 1, 1)) BETWEEN 'A' AND 'Z' THEN upper(substr(n.sort_title, 1, 1)) ELSE '#' END`,
+    simulationChangeKind,
+    lastSimulationChangeDate: lastSimulationChangeDateOrNull,
     validFrom: 'v.valid_from',
     validTo: 'v.valid_to',
     currentFlag,
@@ -318,14 +331,14 @@ export function ostrechtDialect(options: OstRechtDialectOptions = {}): D1SchemaD
       return { sql: `(v.valid_from <= ${REF} AND n.status <> 'pending-effective' AND ((v.valid_to IS NOT NULL AND v.valid_to < ${REF}) OR n.status IN ('repealed', 'historical')))`, params: [] };
     },
     unitIndex: (alias) => `CAST(${alias}.provision_path AS INTEGER)`,
-    documentQuery: (placeholders) => `SELECT d.norm_id, d.version_id, d.document_json AS search_document_json, v.valid_from, v.valid_to, n.status, ${lastChangeDate} AS last_change_date
+    documentQuery: (placeholders) => `SELECT d.norm_id, d.version_id, d.document_json AS search_document_json, v.valid_from, v.valid_to, n.status, ${lastChangeDate} AS last_change_date, ${simulationChangeKind} AS simulation_change_kind, ${lastSimulationChangeDateOrNull} AS last_simulation_change_date
       FROM law_search_documents d
       JOIN law_versions v ON v.norm_id = d.norm_id AND v.version_id = d.version_id
       JOIN law_norms n ON n.id = d.norm_id
       WHERE d.norm_id IN (${placeholders}) AND ${versionScope}`,
     adaptDocument: (row) => {
       const typed = row as OstRechtDocumentRow;
-      return adaptOstRechtSearchDocument(JSON.parse(row.search_document_json) as OstRechtSearchIndexDocument, { status: typed.status, lastChangeDate: typed.last_change_date, asOf, baseline });
+      return withSimulationChange(adaptOstRechtSearchDocument(JSON.parse(row.search_document_json) as OstRechtSearchIndexDocument, { status: typed.status, lastChangeDate: typed.last_change_date, asOf, baseline }), row);
     },
     derivedQuery: 'SELECT relations_json FROM law_norm_derived WHERE norm_id = ?',
     adaptRecord: ({ meta, history, versions, derived }) => {
@@ -437,6 +450,7 @@ export function createOstRechtD1Store(db: ReadOnlyD1Database, options: OstRechtS
     jurisdiction: inner.jurisdiction,
     listNormSummaries: (query) => guarded(() => inner.listNormSummaries(query)),
     countNormsByType: () => guarded(() => inner.countNormsByType()),
+    countNormFacets: (query) => guarded(() => inner.countNormFacets(query)),
     getNormSummary: (slug) => guarded(() => inner.getNormSummary(slug)),
     getNormSummaries: (slugs) => guarded(() => inner.getNormSummaries!(slugs)),
     getNorm: (slug, bodies) => guarded(() => inner.getNorm(slug, bodies)),

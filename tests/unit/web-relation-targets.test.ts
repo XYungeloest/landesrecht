@@ -33,17 +33,17 @@ describe('Beziehungsziele der Datenseite', () => {
       successorTarget: { slug: 'gibt-es-nicht-west' },
     };
     const states = await resolveRelationTargets(registry, meta);
-    expect(states.get(relationTargetKey('west', west.meta.slug))).toBe('present');
-    expect(states.get(relationTargetKey('west', 'ausgeschlossene-zielnorm-west'))).toBe('absent');
-    expect(states.get(relationTargetKey('nsh', nsh.meta.slug))).toBe('present');
-    expect(states.get(relationTargetKey('baywue', 'irgendwas-baywue'))).toBe('unchecked');
-    expect(states.get(relationTargetKey('west', 'gibt-es-nicht-west'))).toBe('absent');
+    expect(states.get(relationTargetKey('west', west.meta.slug))).toMatchObject({ state: 'present', title: west.meta.abbr ?? west.meta.shortTitle });
+    expect(states.get(relationTargetKey('west', 'ausgeschlossene-zielnorm-west'))).toEqual({ state: 'absent' });
+    expect(states.get(relationTargetKey('nsh', nsh.meta.slug))?.state).toBe('present');
+    expect(states.get(relationTargetKey('baywue', 'irgendwas-baywue'))).toEqual({ state: 'unchecked' });
+    expect(states.get(relationTargetKey('west', 'gibt-es-nicht-west'))?.state).toBe('absent');
   });
 
   it('die Datenseite verlinkt nur vorhandene Ziele (Quelltext-Regression)', async () => {
     const component = await readFile(join(resolveRepositoryRoot(), 'apps/web/src/components/NormFactsPage.astro'), 'utf8');
     expect(component).toContain("targetState(jurisdiction, relation.target.slug) === 'present' ? <a href={getNormUrl(jurisdiction, relation.target.slug)}>");
-    expect(component).toContain('nicht im veröffentlichten Bestand');
+    expect(component).toContain('VOCABULARY.simulationChange.notConsolidated');
     for (const page of ['[jurisdiction]/norm/[slug]/daten.astro', '[jurisdiction]/norm/[slug]/version/[versionId]/daten.astro']) {
       const source = await readFile(join(resolveRepositoryRoot(), 'apps/web/src/pages', page), 'utf8');
       expect(source).toContain('relationTargets={relationTargets}');

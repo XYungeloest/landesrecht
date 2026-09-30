@@ -5,6 +5,7 @@
  */
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import type { NormRecord, NormStatus, NormType, Publication } from '@landesrecht/legal-core/lib/schema.ts';
+import type { SimulationChangeKind } from '@landesrecht/legal-core/lib/simulation-change.ts';
 import type { SearchResultPage, SearchState } from '@landesrecht/search/index.ts';
 
 export type BodySelection = 'none' | 'current' | 'all' | string[];
@@ -23,13 +24,44 @@ export interface NormSummary {
   lastChangeDate: string | null;
   subjects: string[];
   url: string;
+  /** Klassifikation gegenüber dem Ausgangsrechtsstand (legal-core `classifySimulationChange`). */
+  simulationChangeKind: SimulationChangeKind;
+  /** Jüngste Änderung in der Simulation (bei neuen Normen der Erlass); `null` bei unverändertem Ausgangsrecht. */
+  lastSimulationChangeDate: string | null;
 }
 
 export interface NormSummaryQuery {
   type?: NormType;
+  /** Mehrere Typen (z. B. Familie der Verwaltungsvorschriften); hat Vorrang vor `type`. */
+  types?: readonly NormType[];
   status?: NormStatus;
   subject?: string;
+  /** Klassifikation gegenüber dem Ausgangsrechtsstand. */
+  changeKind?: SimulationChangeKind;
+  /** Anfangsbuchstabe des Sortierschlüssels (A–Z, `#` für Ziffern und Sonstiges). */
+  letter?: string;
+  /** Sortierung: alphabetisch (Standard) oder jüngste Simulationsänderung zuerst. */
+  sort?: 'title' | 'change';
+  offset?: number;
   limit?: number;
+}
+
+/** Facettenzählung über den gesamten Bestand unter den angegebenen Filtern (nie aus einer begrenzten Liste). */
+export interface NormFacetQuery {
+  types?: readonly NormType[];
+  changeKind?: SimulationChangeKind;
+  letter?: string;
+}
+
+export interface NormFacets {
+  /** Normen, die alle Filter erfüllen. */
+  total: number;
+  /** Je Typ (unter `changeKind` und `letter`). */
+  byType: NormTypeCount[];
+  /** Je Klassifikation (unter `types` und `letter`). */
+  byChangeKind: Record<SimulationChangeKind, number>;
+  /** Je Anfangsbuchstabe (unter `types` und `changeKind`). */
+  byLetter: Array<{ letter: string; count: number }>;
 }
 
 /** Anzahl der Normen je Normtyp über den gesamten Bestand der Jurisdiktion (unabhängig von Listenlimits). */
@@ -59,6 +91,8 @@ export interface NormStore {
   listNormSummaries(query?: NormSummaryQuery): Promise<NormSummary[]>;
   /** Aggregierte Zählung je Typ über alle Normen (Typfilter und Länderseite; nie aus einer begrenzten Liste). */
   countNormsByType(): Promise<NormTypeCount[]>;
+  /** Facetten (Typ, Klassifikation, Anfangsbuchstabe) über den gesamten Bestand unter den Filtern der Länderseite. */
+  countNormFacets(query?: NormFacetQuery): Promise<NormFacets>;
   getNormSummary(slug: string): Promise<NormSummary | null>;
   /**
    * Übersichten mehrerer Normen in wenigen Abfragen (unbekannte Slugs fehlen im Ergebnis). Fehlt die Methode, fragt

@@ -45,6 +45,7 @@ const fullTitle = title === VOCABULARY.portalName ? title : `${title} – ${VOCA
             {JURISDICTION_LIST.map((jurisdiction) => (
               <li><a href={getJurisdictionUrl(jurisdiction.id)} title={jurisdiction.name} aria-current={isActive(getJurisdictionUrl(jurisdiction.id)) ? 'page' : undefined}>{jurisdiction.shortName}</a></li>
             ))}
+            <li><a href={PORTAL_PATHS.changes} aria-current={isActive(PORTAL_PATHS.changes) ? 'page' : undefined}>Änderungen</a></li>
             <li><a href={PORTAL_PATHS.search} aria-current={isActive(PORTAL_PATHS.search) ? 'page' : undefined}>Suche</a></li>
             <li><a href={PORTAL_PATHS.help} aria-current={isActive(PORTAL_PATHS.help) ? 'page' : undefined}>Hilfe</a></li>
           </ul>
@@ -58,7 +59,7 @@ const fullTitle = title === VOCABULARY.portalName ? title : `${title} – ${VOCA
     <footer class="site-footer">
       <p>{VOCABULARY.officialNote}</p>
       <p>{VOCABULARY.baselineLabel} aller Länder: {formatBaselineDate(SIMULATION_BASELINE_DATE)} · {referenceDateLabel(EDITORIAL_REFERENCE_DATE)}</p>
-      <p><a href={PORTAL_PATHS.simrecht}>SimRecht-Schnittstelle</a> · <a href={PORTAL_PATHS.imprint}>Impressum</a></p>
+      <p><a href={PORTAL_PATHS.about}>Über den Rechtsbestand</a> · <a href={PORTAL_PATHS.changes}>Änderungen in der Simulation</a> · <a href={PORTAL_PATHS.simrecht}>Schnittstelle</a> · <a href={PORTAL_PATHS.imprint}>Impressum</a></p>
     </footer>
   </body>
 </html>

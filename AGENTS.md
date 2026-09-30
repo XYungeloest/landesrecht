@@ -80,6 +80,9 @@ Prioritäten:
   `docs/BUNDESRECHT_COMPATIBILITY.md` (bevorzugt read-only-Quelle statt Kopie, keine Bund-Sonderstrukturen im Kern).
 - Öffentliche Texte auf Deutsch mit echten Umlauten; der Simulationshinweis bleibt sichtbar
   (Hinweisleiste, Startseite, Fußzeile, Impressum).
+- Öffentliche Seiten ohne Arbeitsbegriffe (Freeze, Baseline, Review, SHA-256, R2/D1, Kennungen); Rechtsstand je Norm nur
+  aus `classifySimulationChange` (`baseline-unchanged|baseline-changed|simulation-new`, nie aus `versionCount`),
+  Sprache und Filter in `docs/FRONTEND_DESIGN.md`.
 
 ## Arbeitsweise
 

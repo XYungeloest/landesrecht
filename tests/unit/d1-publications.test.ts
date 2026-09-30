@@ -49,7 +49,7 @@ const foreign = publication({ slug: 'gvobl-nsh-2026-1', jurisdiction: 'nsh', tit
 describe('Projektion der Verkündungen', () => {
   it('Migration 0002 legt law_publications an und liegt in der Migrationsreihenfolge nach 0001', async () => {
     const migrations = await listMigrations(migrationsDir);
-    expect(migrations.map((file) => file.split('/').pop())).toEqual(['0001_landesrecht.sql', '0002_publications.sql']);
+    expect(migrations.map((file) => file.split('/').pop())).toEqual(['0001_landesrecht.sql', '0002_publications.sql', '0003_simulation_change.sql']);
     const migration = await readFile(join(migrationsDir, '0002_publications.sql'), 'utf8');
     expect(migration).toContain('CREATE TABLE IF NOT EXISTS law_publications');
     expect(migration).toContain('PRIMARY KEY (jurisdiction, slug)');

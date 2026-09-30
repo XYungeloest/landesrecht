@@ -345,9 +345,10 @@ derselben Norm → `replaceBody`; aufgehobene alte Norm plus neue Norm → Akt d
 nichtnormative Metadaten eines Akts – nie Normtext, nie Umschreiben gespeicherter Einträge. Ein bereits materialisierter
 Akt nimmt neue ids additiv auf; eine gespeicherte id ist unveränderlich. Ausgewertet werden
 `kind: superseded-technical-note` (frühere technische Notiz an einer Beziehung ist überholt: `relation { type, target }`,
-`supersededNote` = exakter bisheriger Wortlaut, `statement` = aktuelle Aussage; die Oberfläche zeigt `statement` und die
-alte Notiz nur als überholt) und `kind: source-status` (Quellenlage, z. B. „Verkündung mittelbar amtlich belegt,
-Original-Verkündungsblatt fehlt“). Helfer: `packages/legal-core/src/lib/editorial-resolutions.ts`.
+`supersededNote` = exakter bisheriger Wortlaut, `statement` = aktuelle Aussage) und `kind: source-status` (Quellenlage,
+z. B. „Verkündung mittelbar amtlich belegt, Original-Verkündungsblatt fehlt“). Helfer:
+`packages/legal-core/src/lib/editorial-resolutions.ts`. Öffentlich erscheint `statement` nur, wenn `publicNote()` es als
+Lesertext zulässt; überholte Notizen und Quellenlage-Vermerke bleiben redaktionelle Daten (API, Audits).
 
 Regeln des Parsers und der Konsolidierung:
 

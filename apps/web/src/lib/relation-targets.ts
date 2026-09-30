@@ -11,9 +11,15 @@ import { getNormSummaries } from '@landesrecht/runtime/store.ts';
 
 export type RelationTargetState = 'present' | 'absent' | 'unchecked';
 
+/** Vorhandenes Ziel mit seiner Bezeichnung (Kurzbezeichnung oder Titel) für die Anzeige statt der technischen Adresse. */
+export interface RelationTargetInfo {
+  state: RelationTargetState;
+  title?: string;
+}
+
 export const relationTargetKey = (jurisdiction: string, slug: string): string => `${jurisdiction}/${slug}`;
 
-export async function resolveRelationTargets(registry: StoreRegistry, meta: NormMeta): Promise<Map<string, RelationTargetState>> {
+export async function resolveRelationTargets(registry: StoreRegistry, meta: NormMeta): Promise<Map<string, RelationTargetInfo>> {
   const wanted = new Map<JurisdictionId, Set<string>>();
   const add = (target: { jurisdiction?: JurisdictionId; slug: string } | undefined): void => {
     if (!target) return;
@@ -24,14 +30,17 @@ export async function resolveRelationTargets(registry: StoreRegistry, meta: Norm
   for (const relation of meta.relations) add(relation.target);
   add(meta.predecessorTarget);
   add(meta.successorTarget);
-  const states = new Map<string, RelationTargetState>();
+  const states = new Map<string, RelationTargetInfo>();
   await Promise.all([...wanted].map(async ([jurisdiction, slugs]) => {
     if (!registry.has(jurisdiction)) {
-      for (const slug of slugs) states.set(relationTargetKey(jurisdiction, slug), 'unchecked');
+      for (const slug of slugs) states.set(relationTargetKey(jurisdiction, slug), { state: 'unchecked' });
       return;
     }
     const found = await getNormSummaries(registry.get(jurisdiction), [...slugs]);
-    for (const slug of slugs) states.set(relationTargetKey(jurisdiction, slug), found.has(slug) ? 'present' : 'absent');
+    for (const slug of slugs) {
+      const summary = found.get(slug);
+      states.set(relationTargetKey(jurisdiction, slug), summary ? { state: 'present', title: summary.abbr ?? summary.shortTitle } : { state: 'absent' });
+    }
   }));
   return states;
 }

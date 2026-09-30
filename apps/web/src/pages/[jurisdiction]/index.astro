@@ -2,13 +2,14 @@
 export const prerender = false;
 
 import { formatBaselineDate, jurisdictionGenitive } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { formatDate, statusLabel, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { getPublicationLabel } from '@landesrecht/legal-core/lib/publications.ts';
 import { getPublicationsUrl, getPublicationUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
-import { ADMINISTRATIVE_REGULATION_TYPES, expandNormTypeFilter, isNormType, NORM_TYPES, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import InventoryNotice from '../../components/InventoryNotice.astro';
+import NormListing from '../../components/NormListing.astro';
 import SearchForm from '../../components/SearchForm.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { listingTypes, PAGE_SIZE, parseListingState } from '../../lib/norm-listing.ts';
 import { jurisdictionFromParam } from '../../lib/norm-view.ts';
 import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../lib/runtime/context.ts';
 
@@ -18,78 +19,39 @@ const { id, jurisdiction } = resolved;
 const registry = await getStoreRegistry();
 if (!registry.has(id)) return Astro.rewrite('/404');
 const store = registry.get(id);
-// Typzähler aus einer aggregierten Abfrage über den gesamten Bestand – nie aus der begrenzten Liste.
-const [typeCountRows, stats, publications] = await Promise.all([store.countNormsByType(), store.getStats(), store.listPublications()]);
-const LATEST_PUBLICATIONS = 5;
-const totalCount = typeCountRows.reduce((sum, entry) => sum + entry.count, 0);
-const typeParam = Astro.url.searchParams.get('type') ?? '';
-const selectedType: NormType | undefined = isNormType(typeParam) ? typeParam : undefined;
-const isAdministrative = (type: NormType): boolean => (ADMINISTRATIVE_REGULATION_TYPES as readonly string[]).includes(type);
-const typeCounts = NORM_TYPES.map((type) => ({ type, count: typeCountRows.find((entry) => entry.type === type)?.count ?? 0 })).filter((entry) => entry.count > 0);
-const administrativeCount = typeCountRows.filter((entry) => isAdministrative(entry.type)).reduce((sum, entry) => sum + entry.count, 0);
-// Gefilterte Listen laden ihre Typen vollständig; die ungefilterte Liste bleibt auf LIST_LIMIT begrenzt.
-const LIST_LIMIT = 500;
-const listTypes = selectedType ? expandNormTypeFilter([selectedType]) : undefined;
-const visibleNorms = listTypes
-  ? (await Promise.all(listTypes.map((type) => store.listNormSummaries({ type, limit: 5000 })))).flat().sort((left, right) => left.title.localeCompare(right.title, 'de') || left.slug.localeCompare(right.slug))
-  : await store.listNormSummaries({ limit: LIST_LIMIT });
-const visibleTotal = listTypes ? typeCountRows.filter((entry) => listTypes.includes(entry.type)).reduce((sum, entry) => sum + entry.count, 0) : totalCount;
+const state = parseListingState(Astro.url.searchParams);
+const types = listingTypes(state.type);
+const facetQuery = { ...(types ? { types } : {}), ...(state.changeKind ? { changeKind: state.changeKind } : {}), ...(state.letter ? { letter: state.letter } : {}) };
+// Zählwerte über den gesamten Bestand (Facetten); die Reiter zählen ohne Typ- und Buchstabenfilter.
+const [facets, tabFacets, publications] = await Promise.all([store.countNormFacets(facetQuery), store.countNormFacets(), store.listPublications({ limit: 5 })]);
+const norms = await store.listNormSummaries({ ...facetQuery, sort: state.changeKind ? 'change' : 'title', limit: PAGE_SIZE, offset: (Math.max(1, state.page) - 1) * PAGE_SIZE });
 const basePath = `/${jurisdiction.pathSegment}/`;
-const filterUrl = (type?: NormType): string => (type ? `${basePath}?type=${encodeURIComponent(type)}` : basePath);
+const publicationCount = (await store.listPublications()).length;
 Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
 ---
-<BaseLayout title={jurisdiction.name} description={`Landesrecht des ${jurisdictionGenitive(jurisdiction)}: Gesetze, Verordnungen und Verwaltungsvorschriften der Simulation.`} canonical={`/${jurisdiction.pathSegment}/`}>
+<BaseLayout title={jurisdiction.name} description={`Landesrecht des ${jurisdictionGenitive(jurisdiction)}: Gesetze, Verordnungen und Verwaltungsvorschriften – Ausgangsrechtsstand vom ${formatBaselineDate(jurisdiction.baselineDate)} und Änderungen der Simulation.`} canonical={basePath}>
   <nav class="breadcrumbs" aria-label="Brotkrumen"><ol><li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li><li>{jurisdiction.name}</li></ol></nav>
   <h1>{jurisdiction.name}</h1>
-  <p class="lead">Kurzbezeichnung: <strong>{jurisdiction.shortName}</strong> · {VOCABULARY.baselineLabel}: <strong>{formatBaselineDate(jurisdiction.baselineDate)}</strong></p>
-  <p>Der Rechtsbestand des {jurisdictionGenitive(jurisdiction)} beginnt mit dem Rechtsstand vom {formatBaselineDate(jurisdiction.baselineDate)}. Übernommen wird das reale Recht des Landes {jurisdiction.sourceSystem.realWorldState} ({jurisdiction.sourceSystem.portalLabel}); spätere Änderungen entstehen ausschließlich in der Simulation.</p>
-  {jurisdiction.upstreamSourceOfTruth && (
-    <p><strong>Hinweis:</strong> Der Rechtsbestand des {jurisdictionGenitive(jurisdiction)} wird in <a href={jurisdiction.upstreamSourceOfTruth.siteUrl} rel="noopener noreferrer">{jurisdiction.upstreamSourceOfTruth.label}</a> geführt; neue Rechtsakte entstehen dort. Dieses Portal liest den Bestand unmittelbar aus der OstRecht-Datenbank und zeigt ihn nach den gemeinsamen Regeln der vier Länder (Ausgangsfassungen beginnen am {formatBaselineDate(jurisdiction.baselineDate)}).</p>
-  )}
+  <p class="lead">Gesetze, Verordnungen und Verwaltungsvorschriften des {jurisdictionGenitive(jurisdiction)} ({jurisdiction.shortName}). Ausgangspunkt ist der Rechtsstand vom {formatBaselineDate(jurisdiction.baselineDate)}; alle späteren Änderungen stammen aus der Politiksimulation.</p>
   <InventoryNotice jurisdiction={id} />
   <SearchForm state={{ jurisdictions: [id] }} />
+  <section aria-labelledby="normen-heading">
+    <h2 id="normen-heading">Vorschriften</h2>
+    <NormListing basePath={basePath} state={state} facets={facets} tabCounts={tabFacets.byChangeKind} norms={norms} headingId="normen" />
+  </section>
   <section aria-labelledby="verkuendungen-heading">
-    <h2 id="verkuendungen-heading"><a href={getPublicationsUrl(id)}>Verkündungen</a> ({publications.length})</h2>
+    <h2 id="verkuendungen-heading"><a href={getPublicationsUrl(id)}>Verkündungen</a></h2>
     {publications.length === 0 ? (
-      <p class="muted">Noch keine Ausgaben der Verkündungsblätter der Simulation übernommen.</p>
+      <p class="muted">Noch keine Ausgaben der Verkündungsblätter.</p>
     ) : (
       <>
         <ul class="publication-series">
-          {publications.slice(0, LATEST_PUBLICATIONS).map((publication) => (
+          {publications.map((publication) => (
             <li><a href={getPublicationUrl(id, publication.slug)}>{getPublicationLabel(publication)}</a> <span class="muted">· {formatDate(publication.date)} · {publication.entries.length} {publication.entries.length === 1 ? 'Eintrag' : 'Einträge'}</span></li>
           ))}
         </ul>
-        <p class="muted"><a href={getPublicationsUrl(id)}>Alle Ausgaben</a>{publications.length > LATEST_PUBLICATIONS && ` (${publications.length})`}</p>
+        <p><a class="button-link button-secondary" href={getPublicationsUrl(id)}>Alle Ausgaben{publicationCount > publications.length && ` (${publicationCount})`}</a></p>
       </>
-    )}
-  </section>
-  <section aria-labelledby="normen-heading">
-    <h2 id="normen-heading">Vorhandene Normen ({stats.normCount})</h2>
-    {totalCount > 0 && (
-      <nav aria-label="Nach Normtyp filtern">
-        <ul class="type-filter">
-          <li><a href={filterUrl()} aria-current={selectedType ? undefined : 'true'}>{VOCABULARY.typeFilter.all} ({totalCount})</a></li>
-          {typeCounts.filter((entry) => !isAdministrative(entry.type)).map((entry) => (
-            <li><a href={filterUrl(entry.type)} aria-current={selectedType === entry.type ? 'true' : undefined}>{typeLabel(entry.type)} ({entry.count})</a></li>
-          ))}
-          {administrativeCount > 0 && <li><a href={filterUrl('verwaltungsvorschrift')} aria-current={selectedType === 'verwaltungsvorschrift' ? 'true' : undefined}>{VOCABULARY.typeFilter.administrativeFamily} ({administrativeCount})</a></li>}
-          {typeCounts.filter((entry) => entry.type !== 'verwaltungsvorschrift' && isAdministrative(entry.type)).map((entry) => (
-            <li><a href={filterUrl(entry.type)} aria-current={selectedType === entry.type ? 'true' : undefined}>{typeLabel(entry.type)} ({entry.count})</a></li>
-          ))}
-        </ul>
-      </nav>
-    )}
-    {selectedType && <p class="muted">{visibleNorms.length} von {visibleTotal} Normen: {selectedType === 'verwaltungsvorschrift' ? VOCABULARY.typeFilter.administrativeFamily : typeLabel(selectedType)}.</p>}
-    {!selectedType && totalCount > visibleNorms.length && <p class="muted">Die Liste zeigt die ersten {visibleNorms.length} von {totalCount} Normen; über die Typfilter und die Suche ist der gesamte Bestand erreichbar.</p>}
-    {visibleNorms.length === 0 ? <p class="muted">{totalCount === 0 ? 'Noch keine Normen im Bestand.' : 'Keine Normen dieses Typs.'}</p> : (
-      <ul class="hit-list">
-        {visibleNorms.map((norm) => (
-          <li class="hit">
-            <h3 class="hit__title"><a href={norm.url}>{norm.title}</a></h3>
-            <p class="hit__meta">{norm.shortTitle}{norm.abbr && ` · ${norm.abbr}`} · {typeLabel(norm.type)} · {statusLabel(norm.status)} · {norm.versionCount} {norm.versionCount === 1 ? 'Fassung' : 'Fassungen'}</p>
-          </li>
-        ))}
-      </ul>
     )}
   </section>
 </BaseLayout>

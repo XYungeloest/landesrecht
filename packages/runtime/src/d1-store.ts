@@ -8,6 +8,7 @@ import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdiction
 import { comparePublicationsNewestFirst } from '@landesrecht/legal-core/lib/publications.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import { expandNormTypeFilter } from '@landesrecht/legal-core/lib/schema.ts';
+import { isSimulationChangeKind, type SimulationChangeKind } from '@landesrecht/legal-core/lib/simulation-change.ts';
 import {
   parseNormHistory,
   parseNormMeta,
@@ -61,6 +62,8 @@ interface NormRow {
   version_count: number;
   last_change_date: string | null;
   subjects_json: string;
+  simulation_change_kind: string;
+  last_simulation_change_date: string | null;
   meta_json?: string;
   history_json?: string;
 }
@@ -91,7 +94,7 @@ interface UnitRow {
   body: string;
 }
 
-const SUMMARY_COLUMNS = 'jurisdiction, slug, title, short_title, abbr, type, status, current_version_id, current_valid_from, version_count, last_change_date, subjects_json';
+const SUMMARY_COLUMNS = 'jurisdiction, slug, title, short_title, abbr, type, status, current_version_id, current_valid_from, version_count, last_change_date, subjects_json, simulation_change_kind, last_simulation_change_date';
 
 /** Dialekt der eigenen Projektion (`data/d1/0001_landesrecht.sql`). */
 export function landesrechtDialect(jurisdiction: JurisdictionId): D1SchemaDialect {
@@ -103,13 +106,16 @@ export function landesrechtDialect(jurisdiction: JurisdictionId): D1SchemaDialec
     summaryColumns: SUMMARY_COLUMNS,
     summaryParams: [],
     sortKey: 'n.sort_key',
+    indexLetter: 'n.index_letter',
+    simulationChangeKind: 'n.simulation_change_kind',
+    lastSimulationChangeDate: 'n.last_simulation_change_date',
     validFrom: 'v.simulation_valid_from',
     validTo: 'v.simulation_valid_to',
     currentFlag: "(v.temporal_kind = 'current')",
     temporalKind: (kind) => ({ sql: 'v.temporal_kind = ?', params: [kind] }),
     unitIndex: (alias) => `${alias}.unit_index`,
-    documentQuery: (placeholders) => `SELECT norm_id, version_id, search_document_json FROM law_versions WHERE norm_id IN (${placeholders})`,
-    adaptDocument: (row) => JSON.parse(row.search_document_json) as Omit<SearchDocument, 'units'>,
+    documentQuery: (placeholders) => `SELECT v.norm_id, v.version_id, v.search_document_json, n.simulation_change_kind, n.last_simulation_change_date FROM law_versions v JOIN law_norms n ON n.id = v.norm_id WHERE v.norm_id IN (${placeholders})`,
+    adaptDocument: (row) => withSimulationChange(JSON.parse(row.search_document_json) as Omit<SearchDocument, 'units'>, row),
     adaptRecord: ({ id, meta, history, versions }) => validateNormRecord({
       meta: parseNormMeta(meta, `d1:${id}/meta`),
       history: parseNormHistory(history, `d1:${id}/history`),
@@ -151,7 +157,14 @@ async function unlessUnprojected<T>(action: () => Promise<T>, fallback: () => T)
   }
 }
 
+/** Klassifikation aus der Zeile in das Suchdokument übernehmen (Trefferkennzeichnung, ohne Neuprojektion der Dokumente). */
+export function withSimulationChange<T extends object>(document: T, row: { simulation_change_kind?: unknown; last_simulation_change_date?: unknown }): T & { simulationChangeKind?: SimulationChangeKind; lastSimulationChangeDate?: string | null } {
+  if (!isSimulationChangeKind(row.simulation_change_kind)) return document;
+  return { ...document, simulationChangeKind: row.simulation_change_kind, lastSimulationChangeDate: typeof row.last_simulation_change_date === 'string' ? row.last_simulation_change_date : null };
+}
+
 function toSummary(row: NormRow): NormSummary {
+  if (!isSimulationChangeKind(row.simulation_change_kind)) throw new Error(`d1:${row.jurisdiction}/${row.slug}: unbekannte Klassifikation ${String(row.simulation_change_kind)} (Projektion veraltet? Migration 0003 und Vollprojektion)`);
   const summary: NormSummary = {
     jurisdiction: row.jurisdiction as JurisdictionId,
     slug: row.slug,
@@ -165,6 +178,8 @@ function toSummary(row: NormRow): NormSummary {
     lastChangeDate: row.last_change_date,
     subjects: JSON.parse(row.subjects_json) as string[],
     url: getNormUrl(row.jurisdiction as JurisdictionId, row.slug),
+    simulationChangeKind: row.simulation_change_kind,
+    lastSimulationChangeDate: row.last_simulation_change_date ?? null,
   };
   if (row.abbr) summary.abbr = row.abbr;
   return summary;
@@ -233,6 +248,10 @@ function filterConditions(dialect: D1SchemaDialect, state: SearchState, plan: Se
   if (state.subjects.length > 0) {
     clauses.push(`EXISTS (SELECT 1 FROM law_norm_subjects s WHERE s.norm_id = n.id AND s.subject IN (${state.subjects.map(() => '?').join(', ')}))`);
     params.push(...state.subjects);
+  }
+  if (state.simulationChange) {
+    clauses.push(`${dialect.simulationChangeKind} = ?`);
+    params.push(state.simulationChange);
   }
   if (dialect.versionScope) clauses.push(dialect.versionScope);
   if (state.validOn) {
@@ -378,14 +397,40 @@ export function createD1NormStore(db: ReadableD1, jurisdiction: JurisdictionId, 
       return rows.results.map((row) => ({ type: row.type as NormType, count: Number(row.count) }));
     },
 
+    async countNormFacets(query = {}) {
+      const where = (parts: { types?: boolean; changeKind?: boolean; letter?: boolean }): { sql: string; params: unknown[] } => {
+        const clauses = [dialect.normScope.sql];
+        const params: unknown[] = [...dialect.normScope.params];
+        if (parts.types !== false && query.types && query.types.length > 0) { clauses.push(`n.type IN (${query.types.map(() => '?').join(', ')})`); params.push(...query.types); }
+        if (parts.changeKind !== false && query.changeKind) { clauses.push(`${dialect.simulationChangeKind} = ?`); params.push(query.changeKind); }
+        if (parts.letter !== false && query.letter) { clauses.push(`${dialect.indexLetter} = ?`); params.push(query.letter); }
+        return { sql: clauses.join(' AND '), params };
+      };
+      const run = async <T>(select: string, filter: { sql: string; params: unknown[] }, group: string): Promise<T[]> => (await unlessUnprojected(() => db.prepare(`SELECT ${select} FROM law_norms n WHERE ${filter.sql} GROUP BY ${group} ORDER BY ${group}`).bind(...filter.params).all<T>(), () => ({ results: [] as T[] }))).results;
+      const [byType, byKind, byLetter] = await Promise.all([
+        run<{ type: string; count: number }>('n.type AS type, COUNT(*) AS count', where({ types: false }), 'n.type'),
+        run<{ kind: string; count: number }>(`${dialect.simulationChangeKind} AS kind, COUNT(*) AS count`, where({ changeKind: false }), 'kind'),
+        run<{ letter: string; count: number }>(`${dialect.indexLetter} AS letter, COUNT(*) AS count`, where({ letter: false }), 'letter'),
+      ]);
+      const total = Number((await unlessUnprojected(() => db.prepare(`SELECT COUNT(*) AS count FROM law_norms n WHERE ${where({}).sql}`).bind(...where({}).params).first<{ count: number }>(), () => null))?.count ?? 0);
+      const byChangeKind = { 'baseline-unchanged': 0, 'baseline-changed': 0, 'simulation-new': 0 } as Record<SimulationChangeKind, number>;
+      for (const row of byKind) if (isSimulationChangeKind(row.kind)) byChangeKind[row.kind] = Number(row.count);
+      return { total, byType: byType.map((row) => ({ type: row.type as NormType, count: Number(row.count) })), byChangeKind, byLetter: byLetter.map((row) => ({ letter: String(row.letter), count: Number(row.count) })) };
+    },
+
     async listNormSummaries(query = {}) {
       const clauses = [dialect.normScope.sql];
       const params: unknown[] = [...dialect.summaryParams, ...dialect.normScope.params];
-      if (query.type) { clauses.push('n.type = ?'); params.push(query.type); }
+      const types = query.types && query.types.length > 0 ? query.types : query.type ? [query.type] : [];
+      if (types.length > 0) { clauses.push(`n.type IN (${types.map(() => '?').join(', ')})`); params.push(...types); }
       if (query.status) { clauses.push('n.status = ?'); params.push(query.status); }
       if (query.subject) { clauses.push('EXISTS (SELECT 1 FROM law_norm_subjects s WHERE s.norm_id = n.id AND s.subject = ?)'); params.push(query.subject); }
+      if (query.changeKind) { clauses.push(`${dialect.simulationChangeKind} = ?`); params.push(query.changeKind); }
+      if (query.letter) { clauses.push(`${dialect.indexLetter} = ?`); params.push(query.letter); }
       const limit = Math.min(Math.max(query.limit ?? 500, 1), 5000);
-      const rows = await unlessUnprojected(() => db.prepare(`SELECT ${dialect.summaryColumns} FROM law_norms n WHERE ${clauses.join(' AND ')} ORDER BY ${dialect.sortKey}, n.slug LIMIT ?`).bind(...params, limit).all<NormRow>(), () => ({ results: [] as NormRow[] }));
+      const offset = Math.max(query.offset ?? 0, 0);
+      const order = query.sort === 'change' ? `${dialect.lastSimulationChangeDate} DESC, ${dialect.sortKey}, n.slug` : `${dialect.sortKey}, n.slug`;
+      const rows = await unlessUnprojected(() => db.prepare(`SELECT ${dialect.summaryColumns} FROM law_norms n WHERE ${clauses.join(' AND ')} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(...params, limit, offset).all<NormRow>(), () => ({ results: [] as NormRow[] }));
       return rows.results.map((row) => dialect.adaptSummary(toSummary(row)));
     },
 
@@ -650,6 +695,7 @@ function fallbackHit(document: SearchDocument): SearchHit {
     simulationValidFrom: document.simulationValidFrom,
     simulationValidTo: document.simulationValidTo,
     lastChangeDate: document.lastChangeDate,
+    ...(document.simulationChangeKind ? { simulationChangeKind: document.simulationChangeKind, lastSimulationChangeDate: document.lastSimulationChangeDate ?? null } : {}),
     matchKind: 'body',
     matchLabel: MATCH_LABELS.body,
     snippet: document.summary ?? document.citation,

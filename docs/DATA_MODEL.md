@@ -102,5 +102,25 @@ Sprungziele (`lib/body.ts`): `paragraph-3`, `artikel-5`, `abschnitt-1`, `anlage-
 | `law_search` | FTS5 mit externem Inhalt über `law_search_units`, Tokenizer `unicode61 remove_diacritics 2`, Trigger halten den Index synchron |
 | `law_runtime_meta` | `last_projected_at`, `projection_fingerprint`, `projection_state`, `jurisdiction`, `baseline_date`, `reference_date`, `norm_count`, `version_count`, `schema_version` |
 
+`data/d1/0003_simulation_change.sql` ergänzt `law_norms` um die abgeleiteten Spalten `simulation_change_kind` und
+`last_simulation_change_date` (Projektionsschema 2, siehe unten).
+
+### Simulationsklassifikation
+
+`classifySimulationChange(record)` (`packages/legal-core/src/lib/simulation-change.ts`) leitet für jede Norm genau eine
+Klasse aus den Fassungen ab, nie aus `versionCount`:
+
+| Klasse | Bedeutung | Öffentliche Bezeichnung |
+| --- | --- | --- |
+| `baseline-unchanged` | Ausgangsfassung (`simulationValidFrom` = `SIMULATION_BASELINE_DATE`), keine spätere Fassung, keine Aufhebung danach | Seit dem Ausgangsstand unverändert (kein Kennzeichen) |
+| `baseline-changed` | Ausgangsfassung plus mindestens eine spätere Fassung oder Aufhebung in der Simulation | In der Simulation geändert |
+| `simulation-new` | keine Ausgangsfassung, erste Fassung nach dem Stichtag | Neu in der Simulation |
+
+`lastSimulationChangeDate` ist die jüngste Sim-Fassung oder Aufhebung. Die Klassifikation ist fail-closed
+(`SimulationChangeError`): keine Fassung, eine Fassung vor dem Stichtag, mehrere Ausgangsfassungen oder eine Aufhebung
+vor dem Stichtag brechen die Projektion ab. Die D1-Spalten sind reine Projektion (Filter, Sortierung, Facetten); Ost
+berechnet dieselbe Klasse per SQL aus der OstRecht-D1 (`packages/runtime/src/ostrecht-d1-store.ts`). API-Felder:
+`simulationChangeKind`, `lastSimulationChangeDate` (additiv).
+
 Die Spaltenreihenfolge von `law_search` ist Vertrag (`packages/search/src/schema.ts`);
 `npm run d1:schema:check` und `tests/unit/d1-projection.test.ts` prüfen sie.

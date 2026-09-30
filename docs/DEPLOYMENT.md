@@ -123,6 +123,24 @@ npx wrangler d1 execute landesrecht-baywue --remote --config wrangler.jsonc --fi
   Plangruppen (`(verkündung) <slug>`, `(verkündung entfernt) <slug>`); die Web-Routen `/<land>/verkuendungen/…` und
   `/api/v1/publications/<land>…` lesen ausschließlich `law_publications`.
 
+### Migration 0003: Simulationsklassifikation (Projektionsschema 2)
+
+`data/d1/0003_simulation_change.sql` ergänzt `law_norms` um `simulation_change_kind` und `last_simulation_change_date`
+(abgeleitet, siehe `docs/DATA_MODEL.md`) samt Index. `ALTER TABLE … ADD COLUMN` ist in SQLite nicht wiederholbar:
+Remote genau einmal je Datenbank ausführen, lokal tolerieren `applyMigrations` und `d1:seed:dev` die vorhandene Spalte.
+
+```sh
+npx wrangler d1 execute landesrecht-west   --remote --config wrangler.jsonc --file ../../data/d1/0003_simulation_change.sql --yes
+npx wrangler d1 execute landesrecht-nsh    --remote --config wrangler.jsonc --file ../../data/d1/0003_simulation_change.sql --yes
+npx wrangler d1 execute landesrecht-baywue --remote --config wrangler.jsonc --file ../../data/d1/0003_simulation_change.sql --yes
+```
+
+- Danach je Land eine **Vollprojektion** (`npm run d1:plan -- --jurisdiction <land>` ohne `--incremental`, dann
+  `d1:apply:batches`): Das Projektionsschema wechselte auf 2, ein inkrementeller Plan wird deshalb abgelehnt.
+- Bis zur Vollprojektion tragen alle Normen den Spaltenvorgabewert `baseline-unchanged`; der Worker darf erst danach
+  mit den Reitern „geändert/neu“ ausgeliefert werden.
+- Ost braucht keine Migration: Die Klasse wird lesend aus der OstRecht-D1 berechnet.
+
 `d1:apply:remote` schreibt eine einzige SQL-Datei und ist nur für kleine Bestände gedacht. Für mehrere
 Tausend Normen (West nach dem Bulkimport) gilt der Batch-Weg:
 

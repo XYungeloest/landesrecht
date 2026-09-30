@@ -23,3 +23,17 @@ sich dieselben Komponenten und Interaktionsfarben.
 Neue Oberflächen verwenden diese Tokens und vorhandene Komponenten. Rechtstexte,
 Trefferlisten und Verkündungen werden mit Weißraum und Trennlinien gegliedert;
 Karten bleiben Übersichten und kompakten Metadaten vorbehalten.
+
+## Öffentliche Sprache und Rechtsstand
+
+- Öffentliche Seiten zeigen keine Arbeitsbegriffe (Freeze, Baseline, Review, Ledger, Seed, SHA-256, R2/D1,
+  Archivobjekte, Systemkennungen, Fassungs-IDs). Redaktionelle Arbeitsnotizen aus gespeicherten Fassungen filtert
+  `publicNote()` (`packages/legal-core/src/lib/display.ts`) bei der Anzeige; Speichertechnik bleibt in der API.
+  `scripts/smoke.ts` prüft 15 öffentliche Seiten gegen eine Begriffsliste.
+- Rechtsstand je Vorschrift aus `classifySimulationChange`: Kennzeichen (`SimulationBadge.astro`) nur für
+  „In der Simulation geändert“ und „Neu in der Simulation“; Unverändertes bleibt unmarkiert. Geänderte Normen tragen
+  im Kopf einen Hinweis mit „Was hat sich geändert?“ (Vergleich Ausgangsfassung ↔ geltende Fassung).
+- Normlisten (`NormListing.astro`, Logik in `lib/norm-listing.ts`): Reiter `?stand=changed|new`, Typfilter,
+  A–Z (`?buchstabe=`), 50 je Seite (`?seite=`); Zählwerte kommen aus `countNormFacets`, nie aus der geladenen Seite.
+- Länderübergreifende Änderungen: `/aenderungen/`; Erläuterungen ohne Technik: `/ueber-den-rechtsbestand/`.
+- „Nach Sachgebiet“ entfällt, solange `subjects` im Bestand leer ist (Stand: 0 von 5 897 Normen).

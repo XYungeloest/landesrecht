@@ -1,0 +1,20 @@
+---
+/**
+ * Kennzeichnung gegenüber dem Ausgangsrechtsstand: nur „In der Simulation geändert“ und „Neu in der Simulation“
+ * erhalten ein Abzeichen; unverändertes Ausgangsrecht bleibt ohne (es ist der Normalfall). Die Bedeutung steht im
+ * Text, nicht nur in der Farbe.
+ */
+import { simulationChangeLabel } from '@landesrecht/legal-core/lib/display.ts';
+import type { SimulationChangeKind } from '@landesrecht/legal-core/lib/simulation-change.ts';
+
+interface Props {
+  kind: SimulationChangeKind | undefined;
+  /** `band`: großes Band im Normkopf; `tag`: kleines Abzeichen in Listen. */
+  variant?: 'tag' | 'band';
+}
+
+const { kind, variant = 'tag' } = Astro.props;
+---
+{kind && kind !== 'baseline-unchanged' && (
+  <span class={`sim-badge sim-badge--${kind === 'baseline-changed' ? 'changed' : 'new'}${variant === 'band' ? ' sim-badge--band' : ''}`}>{simulationChangeLabel(kind)}</span>
+)}

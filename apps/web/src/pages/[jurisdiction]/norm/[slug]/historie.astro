@@ -1,9 +1,9 @@
 ---
 export const prerender = false;
 
-import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { formatDate, publicNote, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { getPublicationLabel, publicationSlugsByVersion } from '@landesrecht/legal-core/lib/publications.ts';
-import { getNormUrl, getPublicationUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import { getNormSubpageUrl, getNormUrl, getPublicationUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import NormPageShell from '../../../../components/NormPageShell.astro';
 import { buildNormView, jurisdictionFromParam } from '../../../../lib/norm-view.ts';
 import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../../../lib/runtime/context.ts';
@@ -17,7 +17,7 @@ const record = await store.getNorm(Astro.params.slug, 'none');
 const view = record ? buildNormView(record) : null;
 if (!record || !view) return Astro.rewrite('/404');
 Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
-const entries = [...record.history.entries].sort((left, right) => right.date.localeCompare(left.date));
+const baselineDate = view.jurisdiction.baselineDate;
 // Verkündung je Fassung über `sourceReferences[].publicationSlug`; verlinkt wird nur eine Ausgabe, die der Store kennt.
 const publicationSlugs = publicationSlugsByVersion(record.versions);
 const publications = new Map((await Promise.all([...new Set(publicationSlugs.values())].map(async (slug) => [slug, await store.getPublication(slug)] as const))).filter(([, publication]) => publication !== null));
@@ -26,36 +26,66 @@ const publicationFor = (versionId: string | null | undefined) => {
   const publication = slug ? publications.get(slug) : undefined;
   return publication ? { url: getPublicationUrl(resolved.id, publication.slug), label: getPublicationLabel(publication) } : undefined;
 };
+// Zeitstrahl: Ausgangsfassung → Simulationsänderungen → geltende Fassung; Aufhebung als eigener Schritt.
+const timeline = view.versions.map((entry, index) => {
+  const isBaseline = entry.simulationValidFrom === baselineDate;
+  const historyEntry = record.history.entries.find((item) => item.affectingVersionId === entry.versionId && item.type !== 'initial');
+  const role = isBaseline ? VOCABULARY.simulationChange.baselineVersion : VOCABULARY.simulationChange.simulationVersion;
+  const previous = index > 0 ? view.versions[index - 1] : undefined;
+  return { entry, isBaseline, role, historyEntry, publication: publicationFor(entry.versionId), compareUrl: previous ? `${getNormSubpageUrl(resolved.id, record.meta.slug, 'vergleich')}?von=${encodeURIComponent(previous.versionId)}&bis=${encodeURIComponent(entry.versionId)}` : undefined };
+});
+const repeal = record.history.entries.filter((entry) => entry.type === 'repeal').sort((left, right) => right.date.localeCompare(left.date))[0];
+const notices = record.history.entries.filter((entry) => entry.type === 'notice' || entry.type === 'correction').sort((left, right) => right.date.localeCompare(left.date));
 ---
 <NormPageShell view={view} section="historie" title={`${VOCABULARY.sections.history}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
   <section aria-labelledby="fassungen-heading">
-    <h2 id="fassungen-heading">Gespeicherte Fassungen</h2>
-    <ul class="history-list">
-      {[...view.versions].reverse().map((entry) => (
-        <li>
-          <time datetime={entry.simulationValidFrom}>{formatDate(entry.simulationValidFrom)}</time>
-          <span class={`tag tag--${entry.kind}`}>{entry.kindLabel}</span>
-          <a href={entry.url}>Fassung {entry.versionId}</a>
-          <span class="muted"> – gültig in der Simulation {entry.simulationValidTo ? `bis ${formatDate(entry.simulationValidTo)}` : 'bis auf Weiteres'}</span>
-          {publicationFor(entry.versionId) && <span class="muted"> · verkündet in <a href={publicationFor(entry.versionId)!.url}>{publicationFor(entry.versionId)!.label}</a></span>}
+    <h2 id="fassungen-heading">{VOCABULARY.simulationChange.changesSince}</h2>
+    {view.change.kind === 'baseline-unchanged' && <p class="muted">Diese Vorschrift gilt seit dem Ausgangsrechtsstand vom {formatDate(baselineDate)} unverändert.</p>}
+    {view.change.kind === 'simulation-new' && <p class="muted">Diese Vorschrift wurde in der Simulation neu erlassen; eine Ausgangsfassung vom {formatDate(baselineDate)} gibt es nicht.</p>}
+    <ol class="version-timeline">
+      {timeline.map((step) => (
+        <li class={`version-timeline__step${step.entry.kind === 'current' ? ' version-timeline__step--current' : ''}`} aria-current={step.entry.selected && step.entry.kind === 'current' ? 'true' : undefined}>
+          <div class="version-timeline__marker" aria-hidden="true"></div>
+          <div class="version-timeline__body">
+            <p class="version-timeline__head">
+              <span class={`tag ${step.isBaseline ? 'tag--baseline' : 'sim-badge sim-badge--changed'}`}>{step.role}</span>
+              {step.entry.kind === 'current' && <span class="tag tag--current">{VOCABULARY.simulationChange.currentVersion}</span>}
+              {step.entry.kind === 'future' && <span class="tag tag--future">{step.entry.kindLabel}</span>}
+            </p>
+            <h3><a href={step.entry.url}>{step.isBaseline ? `Fassung vom ${formatDate(step.entry.simulationValidFrom)} (Ausgangsrechtsstand)` : `Änderung am ${formatDate(step.entry.simulationValidFrom)}`}</a></h3>
+            <p class="muted">Gültig {step.entry.simulationValidTo ? `vom ${formatDate(step.entry.simulationValidFrom)} bis ${formatDate(step.entry.simulationValidTo)}` : `seit ${formatDate(step.entry.simulationValidFrom)}`}{step.historyEntry && ` · ${step.historyEntry.title}`}</p>
+            {step.historyEntry && <p class="muted">{step.publication ? <a href={step.publication.url} title={`Verkündung: ${step.publication.label}`}>{step.historyEntry.citation}</a> : step.historyEntry.citation}{step.historyEntry.relatedNorm && <> · <a href={getNormUrl(step.historyEntry.relatedNorm.jurisdiction ?? record.meta.jurisdiction, step.historyEntry.relatedNorm.slug)}>Änderungsvorschrift</a></>}</p>}
+            {step.compareUrl && <p><a href={step.compareUrl}>Vergleich mit der vorherigen Fassung</a></p>}
+          </div>
         </li>
       ))}
-    </ul>
-  </section>
-  <section aria-labelledby="aenderungen-heading">
-    <h2 id="aenderungen-heading">Änderungen und Hinweise</h2>
-    <ul class="history-list">
-      {entries.map((entry) => (
-        <li>
-          <time datetime={entry.date}>{formatDate(entry.date)}</time>
-          <span class="tag">{VOCABULARY.history[entry.type]}</span>
-          <p>{entry.title}</p>
-          <p class="muted">{publicationFor(entry.affectingVersionId) ? <a href={publicationFor(entry.affectingVersionId)!.url} title={`Verkündung: ${publicationFor(entry.affectingVersionId)!.label}`}>{entry.citation}</a> : entry.citation}{entry.note && ` – ${entry.note}`}</p>
-          {entry.relatedNorm && <p><a href={getNormUrl(entry.relatedNorm.jurisdiction ?? record.meta.jurisdiction, entry.relatedNorm.slug)}>{entry.relatedNorm.slug}</a></p>}
-          {entry.affectingVersionId && <p class="muted">Betroffene Fassung: {entry.affectingVersionId}</p>}
+      {repeal && (
+        <li class="version-timeline__step version-timeline__step--repeal">
+          <div class="version-timeline__marker" aria-hidden="true"></div>
+          <div class="version-timeline__body">
+            <p class="version-timeline__head"><span class="tag tag--repealed">{VOCABULARY.history.repeal}</span></p>
+            <h3>Aufgehoben am {formatDate(repeal.date)}</h3>
+            <p class="muted">{repeal.title} · {repeal.citation}{repeal.relatedNorm && <> · <a href={getNormUrl(repeal.relatedNorm.jurisdiction ?? record.meta.jurisdiction, repeal.relatedNorm.slug)}>Aufhebende Vorschrift</a></>}</p>
+          </div>
         </li>
-      ))}
-    </ul>
-    <p class="muted">Geltung und Änderungsinformation sind getrennte Angaben: Eine Fassung gilt in der Simulation ab ihrem Beginn; die Historie nennt die Rechtsakte, die sie ausgelöst haben.</p>
+      )}
+    </ol>
+    {view.compareUrl && <p><a class="button-link" href={view.compareUrl}>{VOCABULARY.simulationChange.compareCta}</a></p>}
   </section>
+  {notices.length > 0 && (
+    <section aria-labelledby="hinweise-heading">
+      <h2 id="hinweise-heading">Berichtigungen und Hinweise</h2>
+      <ul class="history-list">
+        {notices.map((entry) => (
+          <li>
+            <time datetime={entry.date}>{formatDate(entry.date)}</time>
+            <span class="tag">{VOCABULARY.history[entry.type]}</span>
+            <p>{entry.title}</p>
+            <p class="muted">{entry.citation}{publicNote(entry.note) && ` – ${publicNote(entry.note)}`}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+  <p class="muted">Jede Fassung gilt ab dem angegebenen Tag; die Angaben zu Änderungen nennen die Rechtsakte, die sie ausgelöst haben.</p>
 </NormPageShell>

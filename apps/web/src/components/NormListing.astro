@@ -1,0 +1,95 @@
+---
+/**
+ * Normliste mit Rechtsstand-Reitern, Typfilter, A–Z und Seitennavigation. Zählwerte kommen aus den Facetten des
+ * Stores (gesamter Bestand), nie aus der geladenen Seite. Kennzeichnung nur für geänderte und neue Vorschriften.
+ * Die Logik (Adressen, Zählwerte) liegt in `lib/norm-listing.ts` (`buildListingView`).
+ */
+import { formatDate, simulationChangeDateText, statusLabel, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import type { NormFacets, NormSummary } from '@landesrecht/runtime/store.ts';
+import { buildListingView, type ListingState } from '../lib/norm-listing.ts';
+import SimulationBadge from './SimulationBadge.astro';
+
+type JurisdictionNamer = (id: NormSummary['jurisdiction']) => string;
+
+interface Props {
+  basePath: string;
+  state: ListingState;
+  facets: NormFacets;
+  /** Reiterzählung ohne Typ- und Buchstabenfilter (für die Reiterbeschriftung). */
+  tabCounts: NormFacets['byChangeKind'];
+  norms: NormSummary[];
+  /** Land in der Trefferzeile anzeigen (länderübergreifende Listen). */
+  showJurisdiction?: boolean;
+  jurisdictionName?: JurisdictionNamer;
+  headingId: string;
+  /** Reiter der Änderungsseite ohne „Alle Vorschriften“. */
+  tabs?: 'full' | 'changes';
+  showLetters?: boolean;
+}
+
+const { basePath, state, facets, tabCounts, norms, showJurisdiction = false, jurisdictionName, headingId, tabs = 'full', showLetters = true } = Astro.props;
+const view = buildListingView({
+  basePath,
+  state,
+  total: facets.total,
+  byType: facets.byType,
+  byLetter: facets.byLetter,
+  tabCounts,
+  tabs,
+  labels: { all: VOCABULARY.simulationChange.filter.all, typeAll: VOCABULARY.typeFilter.all, administrativeFamily: VOCABULARY.typeFilter.administrativeFamily, changeKind: VOCABULARY.simulationChange.byKind, typeLabel },
+});
+const summaryText = facets.total === 0 ? 'Keine Vorschriften für diese Auswahl.' : `${facets.total} ${facets.total === 1 ? 'Vorschrift' : 'Vorschriften'}${view.pageCount > 1 ? `, Seite ${view.page} von ${view.pageCount}` : ''}${view.sortedByChange ? ' · jüngste Änderung zuerst' : ' · alphabetisch'}`;
+---
+<nav class="stand-tabs" aria-label="Rechtsstand">
+  <ul>
+    {view.tabs.map((tab) => (
+      <li><a href={tab.url} aria-current={tab.current ? 'true' : undefined}>{tab.label} <span class="stand-tabs__count">({tab.count})</span></a></li>
+    ))}
+  </ul>
+</nav>
+{view.types.length > 0 && (
+  <nav aria-label="Nach Normtyp filtern">
+    <ul class="type-filter">
+      {view.types.map((entry) => (
+        <li><a href={entry.url} aria-current={entry.current ? 'true' : undefined}>{entry.label} ({entry.count})</a></li>
+      ))}
+    </ul>
+  </nav>
+)}
+{showLetters && !view.sortedByChange && (
+  <nav class="letter-nav" aria-label="Nach Anfangsbuchstaben">
+    <ul>
+      {view.letters.map((entry) => (
+        <li>{entry.empty ? <span class="letter-nav__empty" aria-hidden="true">{entry.letter}</span> : <a href={entry.url} aria-current={entry.current ? 'true' : undefined} aria-label={entry.count === undefined ? entry.label : `${entry.label} (${entry.count})`}>{entry.letter || entry.label}</a>}</li>
+      ))}
+    </ul>
+  </nav>
+)}
+<p class="muted" id={`${headingId}-summary`}>{summaryText}</p>
+{norms.length > 0 && (
+  <ol class="hit-list" start={view.firstIndex + 1} aria-describedby={`${headingId}-summary`}>
+    {norms.map((norm) => (
+      <li class="hit">
+        <h3 class="hit__title"><a href={norm.url}>{norm.title}</a></h3>
+        <p class="hit__meta">
+          <SimulationBadge kind={norm.simulationChangeKind} />
+          {showJurisdiction && jurisdictionName && <span class="tag">{jurisdictionName(norm.jurisdiction)}</span>}
+          {norm.abbr ? `${norm.abbr} · ` : norm.shortTitle !== norm.title ? `${norm.shortTitle} · ` : ''}{typeLabel(norm.type)} · {statusLabel(norm.status)}
+          {norm.simulationChangeKind === 'baseline-changed' && norm.lastSimulationChangeDate && <> · {simulationChangeDateText(norm.lastSimulationChangeDate)}</>}
+          {norm.simulationChangeKind === 'simulation-new' && <> · gültig ab {formatDate(norm.currentValidFrom)}</>}
+        </p>
+      </li>
+    ))}
+  </ol>
+)}
+{view.pageCount > 1 && (
+  <nav class="pagination" aria-label="Seiten">
+    <ul>
+      {view.previousUrl && <li><a href={view.previousUrl} rel="prev">Zurück</a></li>}
+      {view.pages.map((entry) => (
+        <li>{entry.kind === 'gap' ? <span class="pagination__gap" aria-hidden="true">…</span> : <a href={entry.url} aria-current={entry.current ? 'page' : undefined}>{entry.page}</a>}</li>
+      ))}
+      {view.nextUrl && <li><a href={view.nextUrl} rel="next">Weiter</a></li>}
+    </ul>
+  </nav>
+)}

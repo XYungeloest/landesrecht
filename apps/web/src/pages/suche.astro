@@ -5,11 +5,12 @@ import { JURISDICTION_LIST, getJurisdiction } from '@landesrecht/legal-core/conf
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { formatDate, referenceDateLabel, statusLabel, typeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { STAND_VALUES } from '../lib/norm-listing.ts';
 import { NORM_TYPES, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import { parseSearchState } from '@landesrecht/search/query.ts';
-import InventoryNotice from '../components/InventoryNotice.astro';
 import SearchFilters from '../components/SearchFilters.astro';
 import SearchSnippet from '../components/SearchSnippet.astro';
+import SimulationBadge from '../components/SimulationBadge.astro';
 import SearchForm from '../components/SearchForm.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getStoreRegistry } from '../lib/runtime/context.ts';
@@ -37,6 +38,7 @@ function pageUrl(offset: number): string {
     versionScope: state.versionScope === 'current' ? undefined : state.versionScope,
     validOn: state.validOn,
     sort: state.sort,
+    stand: state.simulationChange ? STAND_VALUES[state.simulationChange] : undefined,
     offset: offset > 0 ? String(offset) : undefined,
   });
 }
@@ -47,6 +49,7 @@ const filterParams = {
   versionScope: state.versionScope === 'current' ? undefined : state.versionScope,
   validOn: state.validOn,
   sort: state.sort,
+  stand: state.simulationChange ? STAND_VALUES[state.simulationChange] : undefined,
 };
 const activeFilters = [
   ...(state.jurisdictions.length < JURISDICTION_LIST.length ? state.jurisdictions.map((id) => ({
@@ -56,6 +59,7 @@ const activeFilters = [
   ...state.types.map((type) => ({ label: typeLabel(type), url: getSearchUrl({ ...filterParams, type: state.types.filter((entry) => entry !== type).join(',') || undefined }) })),
   ...(state.validOn ? [{ label: `Geltungstag: ${formatDate(state.validOn)}`, url: getSearchUrl({ ...filterParams, validOn: undefined }) }] : []),
   ...(state.versionScope !== 'current' ? [{ label: state.versionScope === 'all' ? 'Alle Fassungen' : VOCABULARY.version.byKind[state.versionScope].many, url: getSearchUrl({ ...filterParams, versionScope: undefined }) }] : []),
+  ...(state.simulationChange ? [{ label: VOCABULARY.simulationChange.filter[state.simulationChange], url: getSearchUrl({ ...filterParams, stand: undefined }) }] : []),
 ];
 
 ---
@@ -86,6 +90,13 @@ const activeFilters = [
       </details>
     </fieldset>
     <fieldset>
+      <legend>{VOCABULARY.simulationChange.label}</legend>
+      <label><input type="radio" name="stand" value="" checked={!state.simulationChange} /> {VOCABULARY.simulationChange.filter.all}</label>
+      <label><input type="radio" name="stand" value="changed" checked={state.simulationChange === 'baseline-changed'} /> {VOCABULARY.simulationChange.filter['baseline-changed']}</label>
+      <label><input type="radio" name="stand" value="new" checked={state.simulationChange === 'simulation-new'} /> {VOCABULARY.simulationChange.filter['simulation-new']}</label>
+      <label><input type="radio" name="stand" value="unchanged" checked={state.simulationChange === 'baseline-unchanged'} /> {VOCABULARY.simulationChange.filter['baseline-unchanged']}</label>
+    </fieldset>
+    <fieldset>
       <legend>{VOCABULARY.version.label}</legend>
       <label><input type="radio" name="versionScope" value="current" checked={state.versionScope === 'current' && !state.validOn} /> {VOCABULARY.version.byKind.current.many}</label>
       <label><input type="radio" name="versionScope" value="historical" checked={state.versionScope === 'historical'} /> {VOCABULARY.version.byKind.historical.many}</label>
@@ -106,21 +117,20 @@ const activeFilters = [
   ) : (
     <section aria-labelledby="treffer-heading">
       {historicalRequested && currentOnly.length > 0 && (
-        <p class="muted" role="note"><strong>Hinweis:</strong> Für {currentOnly.map((entry) => getJurisdiction(entry.jurisdiction).name).join(', ')} ist der Volltext nur für die geltende Fassung durchsuchbar. Frühere Fassungen sind vollständig über die Fassungsübersicht der jeweiligen Vorschrift erreichbar, erscheinen hier aber nicht als Volltexttreffer.</p>
+        <p class="muted" role="note"><strong>Hinweis:</strong> Für frühere Fassungen des Rechts von {currentOnly.map((entry) => getJurisdiction(entry.jurisdiction).name).join(', ')} ist die Volltextsuche eingeschränkt. Sie sind über die Fassungsübersicht der jeweiligen Vorschrift erreichbar.</p>
       )}
       {unavailable.length > 0 && (
         <p class="muted" role="note"><strong>Entwicklungsbetrieb:</strong> {unavailable.map((entry) => getJurisdiction(entry.jurisdiction).name).join(', ')} lokal nicht verfügbar und nicht in den Treffern enthalten.</p>
       )}
       {partial.length > 0 && (
-        <p class="muted" role="note"><strong>Hinweis:</strong> Für {partial.map((entry) => `${getJurisdiction(entry.jurisdiction).name} (${entry.staleNormCount} ${entry.staleNormCount === 1 ? 'Vorschrift' : 'Vorschriften'})`).join(', ')} ist die geltende Fassung noch nicht im Volltext durchsuchbar; diese Vorschriften werden über Titel, Abkürzung und Schlagworte gefunden.</p>
+        <p class="muted" role="note"><strong>Hinweis:</strong> Für einzelne Vorschriften aus {partial.map((entry) => getJurisdiction(entry.jurisdiction).name).join(', ')} ist die geltende Fassung noch nicht im Volltext durchsuchbar; sie werden über Titel, Abkürzung und Schlagworte gefunden.</p>
       )}
       <h2 id="treffer-heading">{page.total} {page.total === 1 ? 'Treffer' : 'Treffer'}{state.q && <> für „{state.q}“</>}</h2>
       {state.validOn ? <p class="muted">Fassungen, die am {formatDate(state.validOn)} in der Simulation galten.</p> : <p class="muted">{referenceDateLabel(EDITORIAL_REFERENCE_DATE)}.</p>}
-      {state.jurisdictions.map((jurisdiction) => <InventoryNotice jurisdiction={jurisdiction} />)}
       <ol class="hit-list" start={page.offset + 1}>
         {page.hits.map((hit) => (
           <li class="hit">
-            <p class="hit__meta"><span class="tag">{typeLabel(hit.type)}</span><span class="tag">{getJurisdiction(hit.jurisdiction).shortName}</span></p>
+            <p class="hit__meta"><span class="tag">{typeLabel(hit.type)}</span><span class="tag">{getJurisdiction(hit.jurisdiction).shortName}</span><SimulationBadge kind={hit.simulationChangeKind} /></p>
             <h3 class="hit__title"><a href={hit.unit ? hit.unit.url : (hit.versionKind === 'current' ? hit.url : hit.versionUrl)}>{hit.title}</a></h3>
             <p class="hit__meta">
               <span class={`tag tag--${hit.versionKind}`}>{VOCABULARY.version.byKind[hit.versionKind].one}</span>

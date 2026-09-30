@@ -10,6 +10,7 @@ import { formatDate, referenceDateLabel, statusLabel, typeLabel, versionKindLabe
 import { getNormVersionIdentity, getPublicNormSummary, type NormVersionIdentity } from '@landesrecht/legal-core/lib/identity.ts';
 import { getNormSubpageUrl, getNormUrl, getNormVersionUrl, resolveJurisdictionSegment, type NormSubpage } from '@landesrecht/legal-core/lib/routes.ts';
 import type { NormRecord, NormVersion } from '@landesrecht/legal-core/lib/schema.ts';
+import { classifySimulationChange, type SimulationChange } from '@landesrecht/legal-core/lib/simulation-change.ts';
 import { classifyNormVersion, getApplicableVersion, type VersionTemporalKind } from '@landesrecht/legal-core/lib/versions.ts';
 import type { NormStore } from '@landesrecht/runtime/store.ts';
 
@@ -45,6 +46,12 @@ export interface NormView {
   versions: VersionNavEntry[];
   outline: OutlineEntry[];
   anchors: AnchorMap;
+  /** Klassifikation gegenüber dem Ausgangsrechtsstand (zentral, legal-core). */
+  change: SimulationChange;
+  /** Ausgangsfassung (am Ausgangsrechtsstand geltend), falls vorhanden – Ziel von „Ausgangsfassung“ und Vergleichsbasis. */
+  baselineVersion?: NormVersion;
+  /** Adresse des Vergleichs Ausgangsfassung ↔ geltende Fassung (nur bei geänderten Normen). */
+  compareUrl?: string;
 }
 
 export async function loadNormView(store: NormStore, slug: string, versionId?: string): Promise<NormView | null> {
@@ -67,9 +74,12 @@ export function buildNormView(record: NormRecord, versionId?: string): NormView 
   const subpageVersion = explicitVersion ? version.versionId : undefined;
   const anchors = buildAnchorMap(version.body);
 
+  const change = classifySimulationChange(record);
+  const baselineVersion = record.versions.find((entry) => entry.simulationValidFrom === jurisdiction.baselineDate);
   const view: NormView = {
     jurisdiction,
     record,
+    change,
     version,
     identity,
     kind,
@@ -80,8 +90,8 @@ export function buildNormView(record: NormRecord, versionId?: string): NormView 
     statusLabel: statusLabel(record.meta.status),
     legalStatusText: isCurrent ? referenceDateLabel(EDITORIAL_REFERENCE_DATE) : `${VOCABULARY.version.label} vom ${formatDate(version.simulationValidFrom)}`,
     validityText: version.simulationValidTo
-      ? `Gültig in der Simulation vom ${formatDate(version.simulationValidFrom)} bis ${formatDate(version.simulationValidTo)}`
-      : `Gültig in der Simulation seit ${formatDate(version.simulationValidFrom)}`,
+      ? `Gültig vom ${formatDate(version.simulationValidFrom)} bis ${formatDate(version.simulationValidTo)}`
+      : `Gültig seit ${formatDate(version.simulationValidFrom)}`,
     url,
     versionUrl,
     canonicalUrl: explicitVersion ? versionUrl : url,
@@ -107,10 +117,12 @@ export function buildNormView(record: NormRecord, versionId?: string): NormView 
     outline: buildOutline(version.body, anchors),
     anchors,
   };
+  if (baselineVersion) view.baselineVersion = baselineVersion;
+  if (change.kind === 'baseline-changed' && baselineVersion && current.versionId !== baselineVersion.versionId) view.compareUrl = `${getNormSubpageUrl(record.meta.jurisdiction, record.meta.slug, 'vergleich')}?von=${encodeURIComponent(baselineVersion.versionId)}&bis=${encodeURIComponent(current.versionId)}`;
   const summary = getPublicNormSummary(identity);
   if (summary !== undefined) view.summary = summary;
   if (version.sourceValidFrom || version.sourceValidTo) {
-    view.sourceValidityText = `Reale Quellfassung gültig ${version.sourceValidFrom ? `ab ${formatDate(version.sourceValidFrom)}` : ''}${version.sourceValidTo ? ` bis ${formatDate(version.sourceValidTo)}` : ''}`.replace(/\s+/g, ' ').trim();
+    view.sourceValidityText = `Die übernommene Quellfassung galt ${version.sourceValidFrom ? `ab ${formatDate(version.sourceValidFrom)}` : ''}${version.sourceValidTo ? ` bis ${formatDate(version.sourceValidTo)}` : ''}`.replace(/\s+/g, ' ').trim();
   }
   return view;
 }

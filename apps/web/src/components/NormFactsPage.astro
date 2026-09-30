@@ -1,28 +1,36 @@
 ---
-/** Vorschriftendaten: alle Metadaten der Norm und der gewählten Fassung. */
+/**
+ * Vorschriftendaten für Leserinnen und Leser: Bezeichnung, Normtyp, Geltung, Land, Daten, Fundstelle, Organe,
+ * Sachgebiete und Beziehungen. Technische Angaben (Geltungsintervalle der Quellfassung, Quellenlage-Codes,
+ * Systemkennungen, Kennungen) stehen nicht hier; rechtlich relevante Herkunft steht unter „Quellen und Nachweise“.
+ */
 import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts';
-import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
-import { resolveRelationNote, sourceStatusResolutions } from '@landesrecht/legal-core/lib/editorial-resolutions.ts';
+import { formatDate, publicNote, simulationChangeDateText, simulationChangeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
+import { resolveRelationNote } from '@landesrecht/legal-core/lib/editorial-resolutions.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import type { NormView } from '../lib/norm-view.ts';
-import { relationTargetKey, type RelationTargetState } from '../lib/relation-targets.ts';
+import { relationTargetKey, type RelationTargetInfo, type RelationTargetState } from '../lib/relation-targets.ts';
 import NormPageShell from './NormPageShell.astro';
 
 interface Props {
   view: NormView;
   /** Existenz der Beziehungsziele (`resolveRelationTargets`); fehlt die Angabe, wird wie bisher verlinkt. */
-  relationTargets?: Map<string, RelationTargetState>;
+  relationTargets?: Map<string, RelationTargetInfo>;
 }
 
 const { view, relationTargets } = Astro.props;
 /** Verlinkt nur vorhandene Ziele; ein nicht vorhandenes Ziel erscheint als Text mit Status statt als toter Link. */
-const targetState = (jurisdiction: string, slug: string): RelationTargetState => relationTargets?.get(relationTargetKey(jurisdiction, slug)) ?? 'present';
-const ABSENT_TARGET = 'nicht im veröffentlichten Bestand';
+const targetState = (jurisdiction: string, slug: string): RelationTargetState => relationTargets?.get(relationTargetKey(jurisdiction, slug))?.state ?? 'present';
+/** Anzeigename eines Ziels: angegebene Bezeichnung oder Titel der Zielnorm; ohne beides nie die technische Adresse. */
+const targetName = (jurisdiction: string, slug: string, fallback?: string | null): string => fallback ?? relationTargets?.get(relationTargetKey(jurisdiction, slug))?.title ?? 'eine noch nicht erfasste Vorschrift';
+const ABSENT_TARGET = VOCABULARY.simulationChange.notConsolidated;
 const { meta } = view.record;
 const RELATION_LABELS: Record<string, string> = {
   amends: 'ändert', 'amended-by': 'geändert durch', repeals: 'hebt auf', 'repealed-by': 'aufgehoben durch', replaces: 'ersetzt', 'replaced-by': 'ersetzt durch',
   implements: 'führt aus', 'based-on': 'beruht auf', 'part-of': 'Bestandteil von', contains: 'enthält', 'refers-to': 'verweist auf', related: 'verwandt', corrects: 'berichtigt', 'corrected-by': 'berichtigt durch',
 };
+const changeNote = publicNote(view.version.changeNote);
+const standText = view.change.kind === 'baseline-unchanged' ? `${simulationChangeLabel('baseline-unchanged')} (${formatDate(view.jurisdiction.baselineDate)})` : view.change.kind === 'baseline-changed' ? `${simulationChangeLabel('baseline-changed')}${view.change.lastChangeDate ? `, ${simulationChangeDateText(view.change.lastChangeDate)}` : ''}` : `${simulationChangeLabel('simulation-new')}${view.change.firstSimulationDate ? ` (seit ${formatDate(view.change.firstSimulationDate)})` : ''}`;
 ---
 <NormPageShell view={view} section="daten" title={`${VOCABULARY.sections.facts}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
   <div class="card">
@@ -33,63 +41,45 @@ const RELATION_LABELS: Record<string, string> = {
       <dt>Abkürzung</dt><dd>{view.identity.abbr ?? '–'}</dd>
       <dt>Normtyp</dt><dd>{view.typeLabel}</dd>
       <dt>{VOCABULARY.validity.label}</dt><dd>{view.statusLabel}</dd>
-      <dt>Jurisdiktion</dt><dd>{view.jurisdiction.name} ({view.jurisdiction.shortName})</dd>
-      <dt>{VOCABULARY.baselineLabel}</dt><dd>{formatDate(view.jurisdiction.baselineDate)}</dd>
-      <dt>Ausfertigungs- oder Erlassdatum</dt><dd>{formatDate(meta.documentDate)}</dd>
-      <dt>Verkündungsdatum</dt><dd>{formatDate(meta.publicationDate)}</dd>
+      <dt>{VOCABULARY.simulationChange.label}</dt><dd>{standText}</dd>
+      <dt>Land</dt><dd>{view.jurisdiction.name} ({view.jurisdiction.shortName})</dd>
+      <dt>Ausfertigung oder Erlass</dt><dd>{formatDate(meta.documentDate)}</dd>
+      <dt>Verkündung</dt><dd>{formatDate(meta.publicationDate)}</dd>
       <dt>Inkrafttreten</dt><dd>{formatDate(meta.effectiveDate)}</dd>
       <dt>Außerkrafttreten</dt><dd>{formatDate(meta.expiryDate)}</dd>
-      <dt>Fundstelle (Simulation)</dt><dd>{view.version.citation}</dd>
+      <dt>Fundstelle</dt><dd>{view.version.citation}</dd>
       {meta.initialCitation !== view.version.citation && <><dt>Fundstelle der Stammfassung</dt><dd>{meta.initialCitation}</dd></>}
-      <dt>Fundstelle der Quelle</dt><dd>{view.version.sourceCitation ?? meta.sourceCitation ?? '–'}</dd>
-      <dt>Erlassorgan</dt><dd>{meta.enactingBody ?? (meta.originEnactingBody ? 'nicht übergeleitet – siehe Erlassorgan der Quelle' : 'nicht angegeben')}</dd>
-      {meta.originEnactingBody && <><dt>Erlassorgan der Quelle</dt><dd>{meta.originEnactingBody}</dd></>}
+      <dt>Erlassorgan</dt><dd>{meta.enactingBody ?? meta.originEnactingBody ?? 'nicht angegeben'}</dd>
       <dt>Zuständige Stelle</dt><dd>{meta.responsibleBody ?? '–'}</dd>
-      <dt>Sachgebiete</dt><dd>{meta.subjects.join(', ') || '–'}</dd>
-      <dt>Schlagwörter</dt><dd>{meta.keywords.join(', ') || '–'}</dd>
-      <dt>Vorgänger</dt><dd>{meta.predecessorTarget && targetState(meta.predecessorTarget.jurisdiction ?? meta.jurisdiction, meta.predecessorTarget.slug) === 'present' ? <a href={getNormUrl(meta.predecessorTarget.jurisdiction ?? meta.jurisdiction, meta.predecessorTarget.slug)}>{meta.predecessor ?? meta.predecessorTarget.slug}</a> : meta.predecessorTarget ? <>{meta.predecessor ?? meta.predecessorTarget.slug} <span class="muted">({ABSENT_TARGET})</span></> : (meta.predecessor ?? '–')}</dd>
-      <dt>Nachfolger</dt><dd>{meta.successorTarget && targetState(meta.successorTarget.jurisdiction ?? meta.jurisdiction, meta.successorTarget.slug) === 'present' ? <a href={getNormUrl(meta.successorTarget.jurisdiction ?? meta.jurisdiction, meta.successorTarget.slug)}>{meta.successor ?? meta.successorTarget.slug}</a> : meta.successorTarget ? <>{meta.successor ?? meta.successorTarget.slug} <span class="muted">({ABSENT_TARGET})</span></> : (meta.successor ?? '–')}</dd>
+      {meta.subjects.length > 0 && <><dt>Sachgebiete</dt><dd>{meta.subjects.join(', ')}</dd></>}
+      {meta.keywords.length > 0 && <><dt>Schlagwörter</dt><dd>{meta.keywords.join(', ')}</dd></>}
+      {(meta.predecessor || meta.predecessorTarget) && <><dt>Vorgänger</dt><dd>{meta.predecessorTarget && targetState(meta.predecessorTarget.jurisdiction ?? meta.jurisdiction, meta.predecessorTarget.slug) === 'present' ? <a href={getNormUrl(meta.predecessorTarget.jurisdiction ?? meta.jurisdiction, meta.predecessorTarget.slug)}>{targetName(meta.predecessorTarget.jurisdiction ?? meta.jurisdiction, meta.predecessorTarget.slug, meta.predecessor)}</a> : meta.predecessorTarget ? <>{targetName(meta.predecessorTarget.jurisdiction ?? meta.jurisdiction, meta.predecessorTarget.slug, meta.predecessor)} <span class="muted">({ABSENT_TARGET})</span></> : meta.predecessor}</dd></>}
+      {(meta.successor || meta.successorTarget) && <><dt>Nachfolger</dt><dd>{meta.successorTarget && targetState(meta.successorTarget.jurisdiction ?? meta.jurisdiction, meta.successorTarget.slug) === 'present' ? <a href={getNormUrl(meta.successorTarget.jurisdiction ?? meta.jurisdiction, meta.successorTarget.slug)}>{targetName(meta.successorTarget.jurisdiction ?? meta.jurisdiction, meta.successorTarget.slug, meta.successor)}</a> : meta.successorTarget ? <>{targetName(meta.successorTarget.jurisdiction ?? meta.jurisdiction, meta.successorTarget.slug, meta.successor)} <span class="muted">({ABSENT_TARGET})</span></> : meta.successor}</dd></>}
     </dl>
   </div>
   <div class="card">
-    <h2>Fassung {view.version.versionId}</h2>
+    <h2>Diese Fassung</h2>
     <dl class="facts">
-      <dt>Simulationsgeltung ab</dt><dd>{formatDate(view.version.simulationValidFrom)}</dd>
-      <dt>Simulationsgeltung bis</dt><dd>{view.version.simulationValidTo ? formatDate(view.version.simulationValidTo) : 'offen'}</dd>
-      <dt>Quellfassung gültig ab</dt><dd>{formatDate(view.version.sourceValidFrom)}</dd>
-      <dt>Quellfassung gültig bis</dt><dd>{view.version.sourceValidTo ? formatDate(view.version.sourceValidTo) : (view.version.sourceValidFrom ? 'offen oder nicht belegt' : '–')}</dd>
-      {view.version.sourceStatus && <><dt>{VOCABULARY.sourceStatus.label}</dt><dd>{VOCABULARY.sourceStatus.validity[view.version.sourceStatus.validity]}; {VOCABULARY.sourceStatus.text[view.version.sourceStatus.text]}{view.version.sourceStatus.note && <><br /><span class="muted">{view.version.sourceStatus.note}</span></>}</dd></>}
-      <dt>Änderungshinweis</dt><dd>{view.version.changeNote}</dd>
+      <dt>Gültig ab</dt><dd>{formatDate(view.version.simulationValidFrom)}</dd>
+      <dt>Gültig bis</dt><dd>{view.version.simulationValidTo ? formatDate(view.version.simulationValidTo) : 'bis auf Weiteres'}</dd>
+      {changeNote && <><dt>Änderungshinweis</dt><dd>{changeNote}</dd></>}
     </dl>
+    <p class="muted">Herkunft und Belege dieser Fassung: <a href={view.subpages.find((subpage) => subpage.key === 'quellen')?.url}>{VOCABULARY.sections.sources}</a>.</p>
   </div>
-  {sourceStatusResolutions(meta).length > 0 && (
-    <div class="card">
-      <h2>Quellenlage</h2>
-      <ul>{sourceStatusResolutions(meta).map((entry) => <li>{entry.statement}{entry.date && <span class="muted"> (Stand {formatDate(entry.date)})</span>}</li>)}</ul>
-    </div>
-  )}
   <div class="card">
     <h2>Beziehungen</h2>
     {meta.relations.length === 0 ? <p class="muted">Keine Beziehungen hinterlegt.</p> : (
       <ul>
         {meta.relations.map((relation) => {
           const jurisdiction = relation.target.jurisdiction ?? meta.jurisdiction;
+          const note = publicNote(resolveRelationNote(meta, relation).note);
           return (
             <li>
-              {RELATION_LABELS[relation.type] ?? relation.type}: {targetState(jurisdiction, relation.target.slug) === 'present' ? <a href={getNormUrl(jurisdiction, relation.target.slug)}>{relation.target.slug}</a> : <>{relation.target.slug} <span class="muted">– {ABSENT_TARGET}</span></>}
-              <span class="muted"> ({getJurisdiction(jurisdiction).shortName}{resolveRelationNote(meta, relation).note ? `, ${resolveRelationNote(meta, relation).note}` : ''}{relation.date ? `, ${formatDate(relation.date)}` : ''})</span>
-              {resolveRelationNote(meta, relation).superseded && <span class="muted"><br />Überholte technische Notiz{resolveRelationNote(meta, relation).superseded!.date ? ` (aufgelöst am ${formatDate(resolveRelationNote(meta, relation).superseded!.date!)})` : ''}: <s>{resolveRelationNote(meta, relation).superseded!.note}</s></span>}
+              {RELATION_LABELS[relation.type] ?? relation.type}: {targetState(jurisdiction, relation.target.slug) === 'present' ? <a href={getNormUrl(jurisdiction, relation.target.slug)}>{targetName(jurisdiction, relation.target.slug)}</a> : <>{targetName(jurisdiction, relation.target.slug)} <span class="muted">– {ABSENT_TARGET}</span></>}
+              <span class="muted"> ({getJurisdiction(jurisdiction).shortName}{note ? `, ${note}` : ''}{relation.date ? `, ${formatDate(relation.date)}` : ''})</span>
             </li>
           );
         })}
-      </ul>
-    )}
-    <h3>Externe Kennungen</h3>
-    {meta.externalIdentifiers.length === 0 ? <p class="muted">Keine externen Kennungen.</p> : (
-      <ul>
-        {meta.externalIdentifiers.map((identifier) => (
-          <li><code>{identifier.system}</code>: {identifier.url ? <a href={identifier.url} rel="noopener noreferrer">{identifier.value}</a> : identifier.value}</li>
-        ))}
       </ul>
     )}
   </div>

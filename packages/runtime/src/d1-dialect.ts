@@ -27,6 +27,9 @@ export interface DialectDocumentRow {
   search_document_json: string;
   valid_from?: string | null;
   valid_to?: string | null;
+  /** Klassifikation gegenüber dem Ausgangsrechtsstand aus `law_norms` bzw. dem Dialektausdruck (Trefferkennzeichnung). */
+  simulation_change_kind?: string | null;
+  last_simulation_change_date?: string | null;
 }
 
 export interface DialectRecordInput {
@@ -58,6 +61,12 @@ export interface D1SchemaDialect {
   summaryParams: unknown[];
   /** Sortierschlüssel der Normliste (Alias `n`). */
   sortKey: string;
+  /** Anfangsbuchstabe der Norm (A–Z oder `#`), Ausdruck über Alias `n`. */
+  indexLetter: string;
+  /** Klassifikation gegenüber dem Ausgangsrechtsstand (`baseline-unchanged` | `baseline-changed` | `simulation-new`), Ausdruck über Alias `n`. */
+  simulationChangeKind: string;
+  /** Jüngste Simulationsänderung (ISO oder NULL), Ausdruck über Alias `n`. */
+  lastSimulationChangeDate: string;
   /** Geltungsspalten der Fassungstabelle (Alias `v`). */
   validFrom: string;
   validTo: string;
