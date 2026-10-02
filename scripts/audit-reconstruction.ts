@@ -4,7 +4,7 @@
  *
  *   node scripts/audit-reconstruction.ts [--output-root <dir>] [--slug vv-lhundg-west] [--url <portal-url>]
  *
- * Läuft ausschließlich aus dem Abrufcache (`.cache/recht-nrw`, Offline-Fetcher) in ein temporäres
+ * Läuft ausschließlich aus den hashgeprüften lokalen Archivdateien des Source-Manifests in ein temporäres
  * Ausgaberoot (Standard: mkdtemp) und schreibt nie in den Bestand. Verglichen werden Basis-, Schritt- und
  * Ergebnis-Fingerabdrücke (Rezept, Manifest, Lauf), der Fingerabdruck des endgültigen Normkörpers
  * (Bestand vs. Lauf) und die Determinismus-Wiederholung (zwei Läufe). Report:
@@ -15,7 +15,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { loadImportEnvironment } from '@landesrecht/importer-recht-nrw/common/environment.ts';
-import { createRechtNrwFetcher } from '@landesrecht/importer-recht-nrw/common/fetcher.ts';
+import { createReconstructionArchiveFetcher } from './lib/reconstruction-archive.ts';
 import { readManifest, type ManifestEntry } from '@landesrecht/importer-recht-nrw/common/manifest.ts';
 import { importRechtNrwLrmbDocument, type LrmbImportResult } from '@landesrecht/importer-recht-nrw/lrmb/pipeline.ts';
 import { bodyFingerprint, readReconstructionRecipe } from '@landesrecht/importer-recht-nrw/lrmb/reconstruction.ts';
@@ -67,7 +67,7 @@ async function seedOutputRoot(repoRoot: string, outputRoot: string): Promise<voi
 async function runOnce(label: string): Promise<RunOutcome> {
   const outputRoot = values.get('output-root') ? join(values.get('output-root')!, label) : await mkdtemp(join(tmpdir(), `landesrecht-reconstruction-${label}-`));
   await seedOutputRoot(root, outputRoot);
-  const fetcher = createRechtNrwFetcher({ cacheDir: join(root, '.cache', 'recht-nrw'), offline: true });
+  const fetcher = createReconstructionArchiveFetcher(root, storedManifest!);
   const environment = await loadImportEnvironment(outputRoot, { mode: 'sample' });
   let result: LrmbImportResult;
   try {
@@ -109,7 +109,7 @@ const same = (left: unknown, right: unknown): boolean => JSON.stringify(left) ==
 
 const checks = [
   { name: 'Lauf 1 erfolgreich (Status imported*)', ok: first.status.startsWith('imported'), detail: `${first.status} (${first.stage})` },
-  { name: 'Keine Netzabrufe (nur Cache)', ok: first.networkRequests === 0 && second.networkRequests === 0, detail: `Netz ${first.networkRequests}/${second.networkRequests}, Cache ${first.cacheHits}/${second.cacheHits}` },
+  { name: 'Keine Netzabrufe (nur hashgeprüftes Archiv)', ok: first.networkRequests === 0 && second.networkRequests === 0, detail: `Netz ${first.networkRequests}/${second.networkRequests}, Archiv ${first.cacheHits}/${second.cacheHits}` },
   { name: 'Basis-Fingerabdruck = Rezept', ok: first.baseFingerprint === recipe.expected.baseFingerprint, detail: `${first.baseFingerprint ?? '–'} vs. ${recipe.expected.baseFingerprint}` },
   { name: 'Ergebnis-Fingerabdruck = Rezept', ok: first.resultFingerprint === recipe.expected.resultFingerprint, detail: `${first.resultFingerprint ?? '–'} vs. ${recipe.expected.resultFingerprint}` },
   { name: 'Basis-Fingerabdruck = Manifest (erster Schritt vorher)', ok: first.baseFingerprint === storedSteps[0]?.before, detail: storedSteps[0]?.before ?? '–' },
@@ -118,8 +118,8 @@ const checks = [
   { name: 'Anzahl Änderungsbefehle = Rezept', ok: first.steps.length === recipe.amendments.reduce((sum, amendment) => sum + amendment.steps.length, 0), detail: `${first.steps.length}` },
   { name: 'Endgültiger Normkörper (nach Transformation) = Bestand', ok: first.finalBodyFingerprint === storedFinal, detail: `${first.finalBodyFingerprint ?? '–'} vs. ${storedFinal}` },
   { name: 'Rohquellen-Hashes = Manifest des Bestands', ok: same(first.sourceHashes, storedManifest.rawDocuments.map((raw) => `${raw.role}:${raw.sha256}`).sort()), detail: first.sourceHashes.join(', ') },
-  { name: 'Determinismus: Lauf 2 identisch (Basis, Schritte, Ergebnis, Normkörper)', ok: first.baseFingerprint === second.baseFingerprint && same(first.steps, second.steps) && first.resultFingerprint === second.resultFingerprint && first.finalBodyFingerprint === second.finalBodyFingerprint, detail: second.status },
-  { name: 'Bestand nicht berührt (Ausgaberoot ≠ Repository)', ok: first.outputRoot !== root && second.outputRoot !== root, detail: first.outputRoot },
+  { name: 'Determinismus: Lauf 2 identisch (Basis, Schritte, Ergebnis, Normkörper)', ok: second.status.startsWith('imported') && first.baseFingerprint === second.baseFingerprint && same(first.steps, second.steps) && first.resultFingerprint === second.resultFingerprint && first.finalBodyFingerprint === second.finalBodyFingerprint && same(first.sourceHashes, second.sourceHashes), detail: second.status },
+  { name: 'Bestand nicht berührt (Ausgaberoot ≠ Repository)', ok: first.outputRoot !== root && second.outputRoot !== root, detail: values.get('output-root') ? first.outputRoot : '<mkdtemp>' },
   { name: 'Quellenlage der Fassung im Bestand: reconstructed/reconstructed', ok: storedVersion.sourceStatus?.validity === 'reconstructed' && storedVersion.sourceStatus?.text === 'reconstructed', detail: JSON.stringify(storedVersion.sourceStatus ?? null) },
 ];
 
@@ -137,8 +137,9 @@ const result = {
 
 const markdown = `# Rekonstruktions-Audit VV LHundG (${slug}, ${termId})
 
-Erzeugt mit \`npm run audit:reconstruction\`: die Stichtagsfassung wird zweimal offline (nur \`.cache/recht-nrw\`,
-Offline-Fetcher) in je ein temporäres Ausgaberoot erzeugt (\`importRechtNrwLrmbDocument\`, Schreiblauf außerhalb des
+Erzeugt mit \`npm run audit:reconstruction\`: die Stichtagsfassung wird zweimal offline aus den lokalen
+Archivdateien des versionierten Source-Manifests erzeugt (SHA-256 und Bytezahl vor jedem Lesen geprüft,
+kein HTTP-Cache und kein Netzabruf). Je Lauf wird ein temporäres Ausgaberoot verwendet (\`importRechtNrwLrmbDocument\`, Schreiblauf außerhalb des
 Repositories) und mit Rezept \`data/imports/recht-nrw/reconstructions/${termId.replace(/^term:/u, 'term-')}.json\`, Manifest und Bestand verglichen.
 
 ## Prüfungen
@@ -161,7 +162,7 @@ ${mdTable(['Schritt', 'vorher', 'nachher', 'wie Manifest'], first.steps.map((ste
 
 ## Lauf 1
 
-Status ${first.status} (${first.stage}); Abrufe: ${first.networkRequests} Netz, ${first.cacheHits} Cache; geschriebene Dateien (relativ zum Ausgaberoot): ${first.writtenFiles.length}.
+Status ${first.status} (${first.stage}); Abrufe: ${first.networkRequests} Netz, ${first.cacheHits} Archiv; geschriebene Dateien (relativ zum Ausgaberoot): ${first.writtenFiles.length}.
 
 ${first.findings.map((finding) => `- ${finding}`).join('\n') || '- keine Befunde'}
 `;

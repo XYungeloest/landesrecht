@@ -1,7 +1,8 @@
 # Rekonstruktions-Audit VV LHundG (vv-lhundg-west, term:23528)
 
-Erzeugt mit `npm run audit:reconstruction`: die Stichtagsfassung wird zweimal offline (nur `.cache/recht-nrw`,
-Offline-Fetcher) in je ein temporäres Ausgaberoot erzeugt (`importRechtNrwLrmbDocument`, Schreiblauf außerhalb des
+Erzeugt mit `npm run audit:reconstruction`: die Stichtagsfassung wird zweimal offline aus den lokalen
+Archivdateien des versionierten Source-Manifests erzeugt (SHA-256 und Bytezahl vor jedem Lesen geprüft,
+kein HTTP-Cache und kein Netzabruf). Je Lauf wird ein temporäres Ausgaberoot verwendet (`importRechtNrwLrmbDocument`, Schreiblauf außerhalb des
 Repositories) und mit Rezept `data/imports/recht-nrw/reconstructions/term-23528.json`, Manifest und Bestand verglichen.
 
 ## Prüfungen
@@ -9,7 +10,7 @@ Repositories) und mit Rezept `data/imports/recht-nrw/reconstructions/term-23528.
 | Prüfung | Ergebnis | Detail |
 | --- | --- | --- |
 | Lauf 1 erfolgreich (Status imported*) | bestanden | imported-with-warnings (write-canonical-json) |
-| Keine Netzabrufe (nur Cache) | bestanden | Netz 0/0, Cache 6/6 |
+| Keine Netzabrufe (nur hashgeprüftes Archiv) | bestanden | Netz 0/0, Archiv 4/4 |
 | Basis-Fingerabdruck = Rezept | bestanden | de8736c4149aeac86ba3fa183e9c6719d34f597795b3780a88b1dfdd2161fac8 vs. de8736c4149aeac86ba3fa183e9c6719d34f597795b3780a88b1dfdd2161fac8 |
 | Ergebnis-Fingerabdruck = Rezept | bestanden | 0267991fc0f2e39594e74f9e1b3d9821a3c30e01742306899295d4404221a80b vs. 0267991fc0f2e39594e74f9e1b3d9821a3c30e01742306899295d4404221a80b |
 | Basis-Fingerabdruck = Manifest (erster Schritt vorher) | bestanden | de8736c4149aeac86ba3fa183e9c6719d34f597795b3780a88b1dfdd2161fac8 |
@@ -19,7 +20,7 @@ Repositories) und mit Rezept `data/imports/recht-nrw/reconstructions/term-23528.
 | Endgültiger Normkörper (nach Transformation) = Bestand | bestanden | 590f761fc4f66c9c27baff7b8d4f0667b3df44ab7d7d9b9142da2f5e0700cc87 vs. 590f761fc4f66c9c27baff7b8d4f0667b3df44ab7d7d9b9142da2f5e0700cc87 |
 | Rohquellen-Hashes = Manifest des Bestands | bestanden | gazette-amendment:2eb849e23affc1f0246589c683083d633bc8ad6581d0efcd84ee23be96b2f838, gazette-amendment:8b2cfa8c4f681218626c59302ce5b870b85d296c5e066bf86fd9316d603f49cb, gazette-amendment:978325d257c5fbc45abb8b5d9cfb0d96dadef5b16eb049ba1931937a2cba045c, version-page:1febb67789d814c35b49076a862216e854fb2e66e27a7ea175d799d51574ef35 |
 | Determinismus: Lauf 2 identisch (Basis, Schritte, Ergebnis, Normkörper) | bestanden | imported-with-warnings |
-| Bestand nicht berührt (Ausgaberoot ≠ Repository) | bestanden | /var/folders/lz/48dsvnvs7b78prwlj_xbbzmr0000gn/T/landesrecht-reconstruction-lauf-1-xOKu8k |
+| Bestand nicht berührt (Ausgaberoot ≠ Repository) | bestanden | <mkdtemp> |
 | Quellenlage der Fassung im Bestand: reconstructed/reconstructed | bestanden | {"validity":"reconstructed","text":"reconstructed","note":"Stichtagsfassung rekonstruiert: konsolidierter Portaltext abzüglich der nach dem Stichtag in Kraft getretenen Änderung(en) (Runderlass vom 16. Juli 2024, MBl. NRW. 2024 S. 805); jeder Schritt ist im Quellenbereich belegt."} |
 
 **Gesamt: alle Prüfungen bestanden.**
@@ -45,7 +46,7 @@ Repositories) und mit Rezept `data/imports/recht-nrw/reconstructions/term-23528.
 
 ## Lauf 1
 
-Status imported-with-warnings (write-canonical-json); Abrufe: 0 Netz, 6 Cache; geschriebene Dateien (relativ zum Ausgaberoot): 10.
+Status imported-with-warnings (write-canonical-json); Abrufe: 0 Netz, 4 Archiv; geschriebene Dateien (relativ zum Ausgaberoot): 10.
 
 - [warning] undated-record-without-validity: Undatierter LRMB-Datensatz ohne „Gültig ab“ (Geltung nur über Belege bestimmbar)
 - [warning] undated-record-without-version-list: Undatierter LRMB-Datensatz ohne Fassungsliste

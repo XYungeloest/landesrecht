@@ -3,6 +3,24 @@
 Routine für neue Sim-Quellen, neue Baseline-Evidenz, Ost und den lokalen Entwicklungsbetrieb. Keine Websuche; beschafft
 wird extern und von Hand. Was noch fehlt, zeigt `npm run sources:needed` (`--land west|nsh|baywue`, `--priority P1`).
 
+## Releaseprüfung
+
+- Vor Commit/PR: `npm run release:check -- --offline` (vollständig lokal).
+- Vor und nach Deployment mit Netz: `npm run release:check` (zusätzlich Produktionsprüfungen).
+- Umfassender Betriebscheck: `npm run release:check -- --full` (zusätzlich beratende Remote-D1-, R2- und Performance-Audits).
+
+Offline entfallen bewusst Remote-Ost-Contract/Drift/Freshness, Produktions-Smoke und Website-Stichprobe sowie
+die Remote-Audits von `--full`. Die lokalen Ost-Contract-Tests laufen weiterhin mit Vitest. Im normalen Lauf
+bleiben fehlgeschlagene Produktionsprüfungen blockierend.
+
+`audit:reconstruction` liest die VV-LHundG-Evidenz (`term:23528`) ausschließlich über das versionierte
+Manifest `data/imports/recht-nrw/manifest/lrmb/term-23528.json` aus `sources/recht-nrw/term-23528/`.
+SHA-256 und Bytezahl werden geprüft; zwei isolierte Rekonstruktionsläufe vergleichen Rezept,
+Schrittkette und Ergebnis mit dem eingefrorenen Bestand. Der temporäre Abrufcache ist keine Voraussetzung.
+Fehlende oder abweichende Archivdateien erzeugen einen Fehlerbericht mit Source-ID, Pfad und erwartetem Hash;
+es gibt weder einen Live-Abruf noch ein stilles Überspringen. Ohne die Primärevidenz ist das akzeptierte
+Rezept nicht vollständig auditierbar; dann muss die exakt archivierte Datei wiederhergestellt werden.
+
 ## Source-Inbox `imports/`
 
 `imports/` ist gitignored und die manuelle Inbox: Landesordner `west/`, `nsh/`, `baywü/`. `bund/` enthält
