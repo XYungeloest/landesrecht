@@ -9,6 +9,10 @@
  * mit längerer Frist abgefragt: ein 503 gilt erst als Fehler, wenn es nach den Wiederholungen bleibt – ein echter
  * Ausfall wird also nie verschluckt, nur der erste Kaltstart der D1-Verbindungen abgewartet.
  */
+import { SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { getNormSubpageUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import { changedNormProblem, comparisonProblem, productionHealthProblem } from './lib/smoke-contracts.ts';
+
 const baseIndex = process.argv.indexOf('--base');
 const base = (baseIndex >= 0 ? process.argv[baseIndex + 1] : undefined) ?? 'https://landesrecht-online.de';
 
@@ -128,15 +132,15 @@ const checks: Check[] = [
   { path: '/west/?stand=changed', status: 200, expect: (body: string) => (/stand-tabs/u.test(body) && /aria-current="true">In der Simulation geändert/u.test(body) && /sim-badge--changed/u.test(body) ? null : 'Reiter „geändert“ ohne Kennzeichnung') },
   { path: '/west/?stand=new', status: 200, expect: (body: string) => (/aria-current="true">Neu in der Simulation/u.test(body) && /sim-badge--new/u.test(body) && !/sim-badge--changed/u.test(body) ? null : 'Reiter „neu“ zeigt falsche Kennzeichnung') },
   { path: '/nsh/?seite=2', status: 200, expect: (body: string) => (/class="pagination"/u.test(body) && !/Liste zeigt die ersten/u.test(body) ? null : 'Seitennavigation fehlt oder Listenlimit sichtbar') },
-  { path: '/west/norm/lnatschg-west/', status: 200, expect: (body: string) => (/sim-banner--changed/u.test(body) && body.includes('Ausgangsfassung vom') && body.includes('Was hat sich geändert?') ? null : 'geänderte Norm ohne Hinweis/Ausgangsfassung') },
-  { path: '/west/norm/lnatschg-west/vergleich/', status: 200, expect: (body: string) => (body.includes('Ausgangsfassung (1. Dezember 2023)') && body.includes('Geltende Fassung (seit') ? null : 'Vergleich nicht auf Ausgangsfassung ↔ geltende Fassung') },
+  { path: '/west/norm/lnatschg-west/', status: 200, expect: (body: string) => changedNormProblem(body, { compare: `${getNormSubpageUrl('west', 'lnatschg-west', 'vergleich')}?von=${SIMULATION_BASELINE_DATE}&bis=2026-05-18`, baseline: getNormVersionUrl('west', 'lnatschg-west', SIMULATION_BASELINE_DATE), history: getNormSubpageUrl('west', 'lnatschg-west', 'historie') }) },
+  { path: '/west/norm/lnatschg-west/vergleich/', status: 200, expect: (body: string) => comparisonProblem(body, SIMULATION_BASELINE_DATE, '2026-05-18') },
   { path: '/bayern-wuerttemberg/norm/staatsverfassung-2025-baywue/', status: 200, expect: 'sim-banner--new' },
   { path: '/nsh/norm/lbo-nsh/', status: 200, expect: 'sim-banner--changed' },
   { path: '/west/norm/kjrg-west/', status: 200, expect: 'sim-banner--new' },
   { path: '/api/v1/norms/west/lnatschg-west', status: 200, expect: json((payload) => (payload.simulationChangeKind === 'baseline-changed' && typeof payload.lastSimulationChangeDate === 'string' ? null : `simulationChangeKind ${payload.simulationChangeKind}`)) },
   { path: '/suche?q=Gesetz&stand=changed', status: 200, expect: (body: string) => (/sim-badge--changed/u.test(body) && !/sim-badge--new/u.test(body) ? null : 'Suchfilter „geändert“ ohne passende Kennzeichnung') },
   { path: '/api/v1/search?q=Gesetz&stand=new&jurisdiction=west', status: 200, expect: json((payload) => ((payload.hits ?? []).length > 0 && (payload.hits as Array<{ simulationChangeKind?: string }>).every((hit) => hit.simulationChangeKind === 'simulation-new') ? null : 'Suchfilter „neu“ liefert fremde Treffer')) },
-  { path: '/ueber-den-rechtsbestand/', status: 200, expect: 'Ausgangsrechtsstand vom 1. Dezember 2023' },
+  { path: '/ueber-den-rechtsbestand/', status: 200, expect: `Rechtsstand vom ${formatBaselineDate(SIMULATION_BASELINE_DATE)}` },
   { path: '/west/verkuendungen/gibt-es-nicht/', status: 404, expect: null },
   { path: '/api/v1/norms/west/gibt-es-nicht', status: 404, expect: null },
   { path: '/api/v1/publications/west/gv-west-2024-1-20240223', status: 200, expect: '"gv-west-2024-1-20240223"' },
@@ -179,7 +183,7 @@ const report = (ok: boolean, line: string): void => {
       const payload = JSON.parse(result.body) as { status?: string; d1?: Record<string, string>; search?: Record<string, { readiness?: string }> };
       attempts.push(`${result.status}/${payload.status} ${result.ms}ms`);
       // Produktion: kein Entwicklungsmodus, jedes Pflicht-Binding (auch OSTRECHT_RECHT) antwortet.
-      const production = (payload as { mode?: string }).mode === undefined && Object.values(payload.d1 ?? {}).every((health) => health === 'ok');
+      const production = productionHealthProblem(payload) === null;
       healthy = result.status === 200 && (payload.status === 'ok' || payload.status === 'degraded') && production;
       detail = `d1 ${JSON.stringify(payload.d1)}${payload.search ? `, Suche ${JSON.stringify(Object.fromEntries(Object.entries(payload.search).map(([key, value]) => [key, value.readiness])))}` : ''}`;
       if (healthy && payload.status === 'degraded') detail += ' (degraded: Such-Readiness nicht vollständig)';
@@ -218,6 +222,6 @@ for (const check of checks) {
     report(false, `ERR ${check.path} ${(error as Error).message}`);
   }
 }
-const total = checks.length + 1;
+const total = checks.length + publicPages.length + 1;
 console.log(failed > 0 ? `${failed} von ${total} Prüfung(en) fehlgeschlagen` : `Alle ${total} Prüfungen bestanden`);
 process.exit(failed > 0 ? 1 : 0);

@@ -13,6 +13,11 @@ Offline entfallen bewusst Remote-Ost-Contract/Drift/Freshness, Produktions-Smoke
 die Remote-Audits von `--full`. Die lokalen Ost-Contract-Tests laufen weiterhin mit Vitest. Im normalen Lauf
 bleiben fehlgeschlagene Produktionsprüfungen blockierend.
 
+Der Produktions-Smoke prüft Fassungslinks und die ausgewählten Vergleichsfassungen unabhängig von
+Buttonbeschriftungen. `/health` muss alle vier Pflicht-D1-Bindings ausdrücklich mit `ok` melden.
+Bei gesetztem `HTTPS_PROXY` braucht Nodes `fetch` die aktivierte Proxy-Unterstützung; mit unterstützter
+Node-Version den Netzlauf als `NODE_USE_ENV_PROXY=1 npm run release:check` starten.
+
 `audit:reconstruction` liest die VV-LHundG-Evidenz (`term:23528`) ausschließlich über das versionierte
 Manifest `data/imports/recht-nrw/manifest/lrmb/term-23528.json` aus `sources/recht-nrw/term-23528/`.
 SHA-256 und Bytezahl werden geprüft; zwei isolierte Rekonstruktionsläufe vergleichen Rezept,
