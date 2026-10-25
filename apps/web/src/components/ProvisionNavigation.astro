@@ -1,0 +1,27 @@
+---
+import type { ProvisionNavigationModel, ProvisionNavItem } from '../lib/provision-navigation.ts';
+interface Props { model: ProvisionNavigationModel; position: 'top' | 'bottom' }
+const {model,position} = Astro.props;
+const neighbourName = (item: ProvisionNavItem, direction: string) => `${direction}: ${[item.context,item.label,item.title].filter(Boolean).join(' · ')}`;
+---
+<nav class={`provision-navigation provision-navigation--${position}`} aria-label={position === 'top' ? 'Vorschriftennavigation' : 'Vorschriftennavigation am Textende'}>
+  {model.previous ? <a class="provision-navigation__neighbour" rel="prev" href={model.previous.url} aria-label={neighbourName(model.previous,'Vorherige Vorschrift')}><span aria-hidden="true">←</span><span>{model.previous.label}</span></a> : <span class="provision-navigation__edge" aria-hidden="true"></span>}
+  {position === 'top' ? <form action={model.current.url} method="get" class="provision-navigation__jump">
+    <label class="visually-hidden" for="provision-choice">Vorschrift dieser Fassung auswählen</label>
+    <select id="provision-choice" name="vorschrift">
+      {model.groups.map((group)=>group.label ? <optgroup label={group.label}>{group.items.map((item)=><option value={item.anchor} selected={item.anchor === model.current.anchor} title={item.title}>{item.label}</option>)}</optgroup> : group.items.map((item)=><option value={item.anchor} selected={item.anchor === model.current.anchor} title={item.title}>{item.label}</option>))}
+    </select>
+    <button type="submit" class="button-secondary" aria-label="Ausgewählte Vorschrift öffnen">Öffnen</button>
+  </form> : <a class="provision-navigation__current" href={`#${model.current.anchor}-heading`} aria-label={`${model.current.label} – zum Seitenanfang`}>{model.current.label} ↑</a>}
+  {model.next ? <a class="provision-navigation__neighbour provision-navigation__neighbour--next" rel="next" href={model.next.url} aria-label={neighbourName(model.next,'Nächste Vorschrift')}><span>{model.next.label}</span><span aria-hidden="true">→</span></a> : <span class="provision-navigation__edge" aria-hidden="true"></span>}
+</nav>
+<script>
+  // CSS bleibt ohne JavaScript funktionsfähig; bei veränderter Headerhöhe präzise nachführen.
+  const page = document.querySelector<HTMLElement>('.provision-page');
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (page && header && typeof ResizeObserver !== 'undefined') {
+    const sync = () => page.style.setProperty('--provision-header-offset',`${Math.ceil(header.getBoundingClientRect().height)}px`);
+    sync();
+    new ResizeObserver(sync).observe(header);
+  }
+</script>

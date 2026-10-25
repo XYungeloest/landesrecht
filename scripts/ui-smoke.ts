@@ -63,6 +63,17 @@ for (const versionId of [undefined, '2023-12-01']) {
   const units = queryAll(document, (element) => 'data-norm-unit' in element.attrs);
   assert.equal(units.length, 1, 'nur eine Einzelvorschrift');
   assert.equal(units[0]!.attrs.id, 'paragraph-1');
+  const h1=byTag(document,'h1')[0]!;
+  assert.equal(h1.attrs.id,'paragraph-1-heading');
+  assert.equal(units[0]!.attrs['aria-labelledby'],h1.attrs.id);
+  assert.equal(byTag(units[0]!,'h2').length,0,'keine doppelte Wurzelüberschrift');
+  assert.equal(byTag(document,'select').filter((node)=>node.attrs.name==='vorschrift').length,1,'eine native Auswahl');
+  assert.equal(queryAll(document,(node)=>node.tag==='nav' && node.attrs['aria-label']?.startsWith('Vorschriftennavigation') === true).length,2);
+  const target = getProvisionUrl('west','lnatschg-west','paragraph-2',versionId);
+  const jumpResponse=await fetch(new URL(`${path}?vorschrift=paragraph-2&mark=paragraph-1`,base),{redirect:'manual'});
+  assert.equal(jumpResponse.status,303);
+  assert.equal(jumpResponse.headers.get('location'),target);
+  assert.equal((await fetch(new URL(`${path}?vorschrift=paragraph-99999`,base),{redirect:'manual'})).status,404);
   assert(normalizedText(document).includes('Zitat kopieren'));
   assert(byTag(document, 'a').some((link) => link.attrs.rel === 'next' && link.attrs.href?.endsWith('/paragraph-2/')));
   assert(byTag(document, 'a').some((link) => link.attrs.href?.endsWith('/#paragraph-1')));
@@ -111,3 +122,29 @@ assert(normalizedText(emptySubject).includes('noch keine Vorschriften erschlosse
 assert(byTag(emptySubject,'a').some((link)=>link.attrs.href===getSubjectsUrl('bildung-kultur')));
 assert.deepEqual(auditAccessibility(emptySubject),[]);
 console.log('Sachgebiete: Übersicht, Länderwahl, Facetten, Pagination, Suchfilter, Accessibility und leere/ungültige Gruppen erfolgreich.');
+
+
+// Normativer Inhalt bleibt bei der kompakten Darstellung byteunabhängig textgleich.
+for (const [slug,anchor,versionId] of [
+  ['lnatschg-west','paragraph-2',undefined],
+  ['lnatschg-west','paragraph-2','2023-12-01'],
+  ['umlg-west','paragraph-10','2023-12-01'],
+] as const) {
+  const full = await load(versionId ? getNormVersionUrl('west',slug,versionId) : getNormUrl('west',slug));
+  const single = await load(getProvisionUrl('west',slug,anchor,versionId));
+  const fullUnit = queryAll(full,(node)=>node.attrs.id===anchor)[0]!;
+  const singleUnit = queryAll(single,(node)=>node.attrs.id===anchor)[0]!;
+  assert.equal(normalizedText(classes(singleUnit,'norm-unit__body')[0]!),normalizedText(classes(fullUnit,'norm-unit__body')[0]!),`Normtext unverändert: ${slug}/${anchor}`);
+  // Übernommene Tabellenhinweise bleiben exakt wie im selben Block der Gesamtseite.
+  // Neue UI-Befunde (Überschriften, Formulare, ARIA, Links) sind weiterhin Fehler.
+  const inheritedTableFindings = auditAccessibility(fullUnit).filter((finding)=>finding.code.startsWith('table-'));
+  assert.deepEqual(auditAccessibility(single),inheritedTableFindings);
+}
+const firstProvision = await load(getProvisionUrl('west','lnatschg-west','paragraph-1'));
+assert.equal(byTag(firstProvision,'a').filter((link)=>link.attrs.rel==='prev').length,0);
+const lastProvision = await load(getProvisionUrl('west','lnatschg-west','paragraph-84'));
+assert.equal(byTag(lastProvision,'a').filter((link)=>link.attrs.rel==='next').length,0);
+const largeProvision = await load(getProvisionUrl('nsh','lvwg-nsh','paragraph-1'));
+assert.equal(byTag(largeProvision,'option').length,397,'genau eine Option je tatsächlicher LVwG-Einheit');
+assert.deepEqual(auditAccessibility(largeProvision),[]);
+console.log('Kompakte Einzelansichten: eine Hauptüberschrift, native Auswahl ohne JavaScript, historische Ziele, Randfälle und unveränderter Wortlaut erfolgreich.');

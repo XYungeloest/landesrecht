@@ -18,6 +18,8 @@ interface Props {
   slug?: string;
   versionId?: string;
   single?: boolean;
+  /** Nur die Wurzelüberschrift einer Einzelansicht steht bereits außerhalb des Renderers. */
+  rootHeadingId?: string;
   indexOffset?: number;
   anchors: AnchorMap;
   path?: number[];
@@ -30,7 +32,7 @@ interface Props {
   jurisdiction?: JurisdictionId;
 }
 
-const { markings = new Map<string, MarkingTarget>(), slug, versionId, single = false, indexOffset = 0, blocks, anchors, path = [], headingLevel = 2, quoted = false, unitAnchor, unitPath, jurisdiction } = Astro.props;
+const { rootHeadingId, markings = new Map<string, MarkingTarget>(), slug, versionId, single = false, indexOffset = 0, blocks, anchors, path = [], headingLevel = 2, quoted = false, unitAnchor, unitPath, jurisdiction } = Astro.props;
 const headingTag = `h${Math.min(Math.max(headingLevel + 1, single ? 2 : 3), 6)}` as 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 const nextLevel = Number.parseInt(headingTag.slice(1), 10);
 
@@ -144,8 +146,8 @@ const HeadingTag = headingTag;
 
   if (UNITS.has(block.type)) {
     return (
-      <section id={anchor} class={`norm-unit norm-unit--${block.type}${quoted ? ' norm-unit--quoted' : ''}`} data-norm-unit aria-labelledby={anchor ? `${anchor}-heading` : undefined}>
-        <div class="norm-unit__head">
+      <section id={anchor} class={`norm-unit norm-unit--${block.type}${quoted ? ' norm-unit--quoted' : ''}`} data-norm-unit aria-labelledby={rootHeadingId ?? (anchor ? `${anchor}-heading` : undefined)}>
+        {!rootHeadingId && <div class="norm-unit__head">
           <HeadingTag id={anchor ? `${anchor}-heading` : undefined}>
             {block.label && <span class="norm-label">{block.label}</span>}
             {block.label && block.title && ' '}
@@ -154,10 +156,10 @@ const HeadingTag = headingTag;
           {!quoted && anchor && <a class="norm-unit__link" href={`#${anchor}`} aria-label={`Link zu ${block.label ?? block.title ?? anchor}`} title="Direkter Link zu dieser Vorschrift"><span aria-hidden="true">¶</span></a>}
           {marking && <MarkingButton target={marking} />}
           {!single && !quoted && anchor && jurisdiction && slug && block.type !== 'annex' && <a class="action-link" href={getProvisionUrl(jurisdiction, slug, anchor, versionId)}>Einzelansicht öffnen</a>}
-        </div>
+        </div>}
         <div class="norm-unit__body">
           {block.text && <p class="norm-text">{block.text}</p>}
-          <Astro.self markings={markings} blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={anchor ?? unitAnchor} unitPath={anchor ? childPath : unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
+          <Astro.self markings={markings} blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={rootHeadingId ? headingLevel : nextLevel} quoted={quoted} unitAnchor={anchor ?? unitAnchor} unitPath={anchor ? childPath : unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
         </div>
       </section>
     );

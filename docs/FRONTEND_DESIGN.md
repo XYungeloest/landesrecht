@@ -75,3 +75,23 @@ Absatzlinks bleiben unverändert. Historische Zitate ergänzen den ausdrücklich
 bezeichneten Geltungszeitraum. Die Auswahlleiste erscheint erst bei Auswahl; Schaltflächen haben
 44-Pixel-Touchflächen, Tastaturfokus, gedrückten Zustand und Statusmeldungen. Ohne JavaScript
 bleiben Text, Anker und Navigation vollständig verfügbar.
+
+## Kompakte Einzelvorschriften
+
+`ProvisionPage` zeigt eine verlinkte Gesetzesbezeichnung, eine einzige Hauptüberschrift,
+knappen Fassungsstatus und drei primäre Aktionen. Fundstelle, Geltungsdetails, Quellen und
+zusätzliche Aktionen liegen unter „Weitere Angaben“. Die Änderungsangabe benennt stets das
+gesamte Gesetz/Regelwerk; ohne Einzelvergleich gibt es keine paragraphengenaue Änderungsbehauptung.
+`NormBody.rootHeadingId` unterdrückt ausschließlich die bereits außerhalb gerenderte
+Wurzelüberschrift, behält deren bisherigen Anker und ARIA-Bezug sowie die nachfolgenden Ebenen.
+Gesamtgesetzseiten bleiben unverändert.
+
+`ProvisionNavigation` verwendet oben und unten dasselbe Modell aus `getProvisionEntries`.
+Die obere Leiste bleibt 58 Pixel hoch unter dem Portalheader; dessen Höhe wird bei Bedarf
+per ResizeObserver nachgeführt (CSS-Fallback ohne JavaScript). Die native Auswahl ist nach
+vorhandenen Gliederungskontexten gruppiert und wird ausdrücklich mit „Öffnen“ bestätigt.
+Ein validierter GET-Parameter `vorschrift` führt per 303 auf die bestehende Einzelvorschriften-URL;
+auch ohne JavaScript bleibt die Navigation vollständig nutzbar. Historische Pfade erhalten ihre
+Fassungs-ID; unbekannte Auswahlziele liefern 404. Markierungsparameter werden beim Wechsel
+nicht übernommen. Nur die obere Leiste enthält die Auswahloptionen, um große Gesetze nicht
+doppelt in den DOM aufzunehmen. In der Druckansicht entfallen Navigation und Aktionsleisten.
