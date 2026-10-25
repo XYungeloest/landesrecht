@@ -16,19 +16,14 @@ const { value, label } = Astro.props;
   <span class="copy-action__feedback muted" aria-live="polite"></span>
 </span>
 <script>
+  import { copyText } from '../lib/copy.ts';
   for (const container of document.querySelectorAll<HTMLElement>('[data-copy-action]')) {
     const button = container.querySelector<HTMLButtonElement>('button[data-copy-value]');
     const feedback = container.querySelector<HTMLElement>('.copy-action__feedback');
-    if (!button || !feedback || !navigator.clipboard) continue;
+    if (!button || !feedback) continue;
     button.hidden = false;
     button.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(button.dataset.copyValue ?? '');
-        feedback.textContent = 'Kopiert.';
-      } catch {
-        feedback.textContent = 'Kopieren nicht möglich – bitte den Text markieren.';
-      }
-      window.setTimeout(() => { feedback.textContent = ''; }, 2500);
+      await copyText(button.dataset.copyValue ?? '', feedback);
     });
   }
 </script>

@@ -93,8 +93,8 @@ Der Indexumfang von Ost und der redaktionelle Rechtsstand werden dadurch nicht v
 - `/sachgebiete/` zeigt nur belegte Hauptgruppen, Beschreibung und dynamische Vorschriftenzahl.
 - `/sachgebiete/<id>/` verwendet `NormListing`, Store-Facetten, Rechtsstand, Typen, A–Z und Pagination.
 - `land=west|nsh|ost|baywue` ist mit allen Listenfiltern kombinierbar. Nicht belegte Länder werden in
-  Gruppen nicht als Auswahl angeboten; direkte leere Land-/Gruppenadressen führen zur Länderübersicht
-  der Sachgebiete. Unbekannte Gruppen liefern 404.
+  Gruppen nicht als Auswahl angeboten; direkte leere Land-/Gruppenadressen zeigen einen verständlichen Leerzustand mit
+  Rücksetzen des Landesfilters und Zugang zur vollständigen Landessuche. Unbekannte Gruppen liefern 404.
 - Die Länderseiten und Hauptnavigation verlinken die Übersicht. Der öffentliche Hinweis auf die
   schrittweise Ergänzung bleibt sichtbar; normale Seiten zeigen keine internen Abdeckungsdiagnosen.
 - Die Rechtssuche verwendet `subject=<stabile Gruppen-ID>` (mehrere Werte als OR). Bestehende freie

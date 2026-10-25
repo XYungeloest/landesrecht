@@ -135,3 +135,14 @@ export function getSubjectsUrl(id?: string, jurisdiction?: JurisdictionId): stri
   const base = id ? `${PORTAL_PATHS.subjects}${encodeURIComponent(id)}/` : PORTAL_PATHS.subjects;
   return jurisdiction ? `${base}?land=${jurisdiction}` : base;
 }
+
+/** Teilbarer Anzeigezustand einer bereits aufgelösten Normseite; keine Textdaten. */
+export function getMarkedUrl(pageUrl: string, ids: readonly string[]): string {
+  const url = new URL(pageUrl);
+  url.searchParams.delete('mark');
+  if (ids.length) {
+    url.searchParams.set('mark', ids.join(','));
+    url.hash = ids[0]!;
+  }
+  return url.href;
+}

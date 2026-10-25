@@ -44,6 +44,14 @@ for (const stand of ['changed', 'new', 'unchanged']) {
 }
 const norm = await load(getNormUrl('west', 'lnatschg-west'));
 assert.equal(classes(norm, 'copy-action').length, 2);
+assert.equal(queryAll(norm,(node)=>'data-marking-tools' in node.attrs).length,1);
+const marks = queryAll(norm,(node)=>'data-mark-toggle' in node.attrs);
+assert(marks.length > 0);
+for(const mark of marks) {
+  assert('hidden' in mark.attrs, 'Markierungsaktionen ohne JavaScript versteckt');
+  assert.equal(queryAll(norm,(node)=>node.attrs.id === mark.attrs['data-mark-id']).length,1,'eindeutiges vorhandenes Ziel');
+}
+assert(byTag(norm,'a').some((link)=>link.attrs.href === '#paragraph-2-abs-1'),'Absatz-Direktlink unverändert');
 console.log('UI-Smoke: 15 Seitentypen, A–Z, Pagination, Filter ohne Begriff, Vergleich und Anker erfolgreich.');
 
 // Einzelvorschriften behalten die Anker der gewählten Gesamtfassung und zeigen nur ihre Einheit.
@@ -74,6 +82,7 @@ for (const [jurisdiction, slug, anchor] of [
 ] as const) {
   const document = await load(getProvisionUrl(jurisdiction, slug, anchor));
   assert(queryAll(document, (element) => element.attrs.id === anchor).length === 1);
+  assert(queryAll(document,(element)=>element.attrs['data-mark-id'] === anchor).length === 1,'Markierungsaktion des Landes');
   assert.deepEqual(auditAccessibility(document), []);
   console.log(`✓ ${jurisdiction}: Einzelansicht ${anchor}`);
 }
@@ -95,5 +104,10 @@ assert(classes(nextSubject,'hit').length > 0);
 const subjectSearch = await load(getSearchUrl({ subject:'bildung-kultur',jurisdiction:'nsh',bereich:'alle',q:'Hochschule' }));
 assert(queryAll(subjectSearch,(element) => element.tag === 'input' && element.attrs.name === 'subject' && element.attrs.value === 'bildung-kultur' && 'checked' in element.attrs).length === 1);
 assert.equal((await fetch(new URL(getSubjectsUrl('unknown'),base))).status,404);
-assert.equal((await fetch(new URL(getSubjectsUrl('bildung-kultur','west'),base),{redirect:'manual'})).status,303);
+const emptySubjectResponse = await fetch(new URL(getSubjectsUrl('bildung-kultur','west'),base),{redirect:'manual'});
+assert.equal(emptySubjectResponse.status,200);
+const emptySubject=parseHtml(await emptySubjectResponse.text());
+assert(normalizedText(emptySubject).includes('noch keine Vorschriften erschlossen'));
+assert(byTag(emptySubject,'a').some((link)=>link.attrs.href===getSubjectsUrl('bildung-kultur')));
+assert.deepEqual(auditAccessibility(emptySubject),[]);
 console.log('Sachgebiete: Übersicht, Länderwahl, Facetten, Pagination, Suchfilter, Accessibility und leere/ungültige Gruppen erfolgreich.');

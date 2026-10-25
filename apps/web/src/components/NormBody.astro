@@ -4,6 +4,8 @@
  * Änderungsmarken und Verlaufsfunktionen). Sprungziele kommen aus der Anchor-Map des
  * Legal-Core, damit Suche, Inhaltsübersicht und Seite dieselben Adressen verwenden.
  */
+import MarkingButton from './MarkingButton.astro';
+import type { MarkingTarget } from '@landesrecht/legal-core/lib/markings.ts';
 import type { AnchorMap } from '@landesrecht/legal-core/lib/body.ts';
 import { anchorSlug } from '@landesrecht/legal-core/lib/body.ts';
 import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
@@ -12,6 +14,7 @@ import { getNormAssetUrl, getProvisionUrl } from '@landesrecht/legal-core/lib/ro
 
 interface Props {
   blocks: NormBodyBlock[];
+  markings?: Map<string, MarkingTarget>;
   slug?: string;
   versionId?: string;
   single?: boolean;
@@ -27,7 +30,7 @@ interface Props {
   jurisdiction?: JurisdictionId;
 }
 
-const { slug, versionId, single = false, indexOffset = 0, blocks, anchors, path = [], headingLevel = 2, quoted = false, unitAnchor, unitPath, jurisdiction } = Astro.props;
+const { markings = new Map<string, MarkingTarget>(), slug, versionId, single = false, indexOffset = 0, blocks, anchors, path = [], headingLevel = 2, quoted = false, unitAnchor, unitPath, jurisdiction } = Astro.props;
 const headingTag = `h${Math.min(Math.max(headingLevel + 1, single ? 2 : 3), 6)}` as 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 const nextLevel = Number.parseInt(headingTag.slice(1), 10);
 
@@ -99,7 +102,7 @@ const HeadingTag = headingTag;
             <div class="norm-item__content">
               {block.text && <p class="norm-text">{block.text}</p>}
               {block.children && block.children.length > 0 && (
-                <Astro.self blocks={block.children} anchors={anchors} path={[...path, index]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
+                <Astro.self markings={markings} blocks={block.children} anchors={anchors} path={[...path, index]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
               )}
             </div>
           </li>
@@ -123,6 +126,7 @@ const HeadingTag = headingTag;
   const { block, index } = run;
   const anchor = anchorFor(index);
   const childPath = [...path, index];
+  const marking = markings.get(childPath.join('.'));
 
   if (DIVISIONS.has(block.type) || block.type === 'preamble') {
     return (
@@ -133,7 +137,7 @@ const HeadingTag = headingTag;
           {block.title && <span class="norm-title">{block.title}</span>}
         </HeadingTag>
         {block.text && <p class="norm-text">{block.text}</p>}
-        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
+        <Astro.self markings={markings} blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
       </section>
     );
   }
@@ -148,11 +152,12 @@ const HeadingTag = headingTag;
             {block.title && <span class="norm-title">{block.title}</span>}
           </HeadingTag>
           {!quoted && anchor && <a class="norm-unit__link" href={`#${anchor}`} aria-label={`Link zu ${block.label ?? block.title ?? anchor}`} title="Direkter Link zu dieser Vorschrift"><span aria-hidden="true">¶</span></a>}
+          {marking && <MarkingButton target={marking} />}
           {!single && !quoted && anchor && jurisdiction && slug && block.type !== 'annex' && <a class="action-link" href={getProvisionUrl(jurisdiction, slug, anchor, versionId)}>Einzelansicht öffnen</a>}
         </div>
         <div class="norm-unit__body">
           {block.text && <p class="norm-text">{block.text}</p>}
-          <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={anchor ?? unitAnchor} unitPath={anchor ? childPath : unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
+          <Astro.self markings={markings} blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={nextLevel} quoted={quoted} unitAnchor={anchor ?? unitAnchor} unitPath={anchor ? childPath : unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
         </div>
       </section>
     );
@@ -161,7 +166,7 @@ const HeadingTag = headingTag;
   if (block.type === 'quotedProvision') {
     return (
       <blockquote class="norm-quoted">
-        <Astro.self blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={true} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
+        <Astro.self markings={markings} blocks={block.children ?? []} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={true} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
       </blockquote>
     );
   }
@@ -170,11 +175,11 @@ const HeadingTag = headingTag;
     const id = subparagraphId(block.label, index);
     return (
       <div class="norm-abs" id={id}>
-        <a class="norm-abs__addr" href={`#${id}`}>{block.label ?? ''}</a>
+        <span class="norm-abs__address"><a class="norm-abs__addr" href={`#${id}`}>{block.label ?? ''}</a>{marking && <MarkingButton target={marking} />}</span>
         <div class="norm-abs__body">
           {block.text && <p class="norm-text">{block.text}</p>}
           {block.children && block.children.length > 0 && (
-            <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
+            <Astro.self markings={markings} blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
           )}
         </div>
       </div>
@@ -186,7 +191,7 @@ const HeadingTag = headingTag;
       <>
         <p class="norm-text">{block.text}</p>
         {block.children && block.children.length > 0 && (
-          <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
+          <Astro.self markings={markings} blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
         )}
       </>
     );
@@ -198,7 +203,7 @@ const HeadingTag = headingTag;
       <>
         <p class="norm-heading"><strong>{block.title ?? block.text}</strong></p>
         {block.children && block.children.length > 0 && (
-          <Astro.self blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
+          <Astro.self markings={markings} blocks={block.children} anchors={anchors} path={childPath} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
         )}
       </>
     );
@@ -228,7 +233,7 @@ const HeadingTag = headingTag;
                   : <td rowspan={cell.rowspan} colspan={cell.colspan}>
                       {cell.text}
                       {cell.children && cell.children.length > 0 && (
-                        <Astro.self blocks={cell.children} anchors={anchors} path={[...childPath, rowIndex, cellIndex]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
+                        <Astro.self markings={markings} blocks={cell.children} anchors={anchors} path={[...childPath, rowIndex, cellIndex]} headingLevel={headingLevel} quoted={quoted} unitAnchor={unitAnchor} unitPath={unitPath} jurisdiction={jurisdiction} slug={slug} versionId={versionId} single={single} />
                       )}
                     </td>)}
               </tr>

@@ -58,3 +58,20 @@ A–Z, Pagination und Anker. Ergänzend im Browser bei 1440, 1024, 768 und 390 p
 Vergleich, Quellen, Verkündungsarchiv/-detail und Bestandsinformation. Reiter, A–Z, Pagination,
 Filterdialog (Escape/Fokusrückgabe), Absatzlink und Kopierrückmeldung bedienen; Normtext-Druck prüfen.
 Screenshots bleiben außerhalb des versionierten Bestands.
+
+## Markieren und Zitieren
+
+Normtext- und Einzelvorschriftenseiten verwenden dieselben strukturgebundenen Anzeigeziele
+(`legal-core/lib/markings.ts`) und den gemeinsamen Clipboard-Pfad. Markierbar sind eindeutig
+bezeichnete Paragraphen/Artikel und ihre direkten, einmalig nummerierten Absätze. Zitierte,
+unstrukturierte, verschachtelte oder mehrdeutig bezeichnete Absätze erhalten keine vermutete
+Zitieradresse. Anlagen-/Artikelkontexte werden im Zitat mitgeführt. Eine ganze Vorschrift im
+Zitat umfasst gleichzeitig ausgewählte Absätze derselben Einheit.
+
+`mark` enthält ausschließlich auf der dargestellten Seite vorhandene Kennungen: höchstens 50,
+maximal 8.192 Zeichen Eingabe und 160 Zeichen je Kennung. Unbekannte Ziele werden ignoriert.
+Es gibt keine Speicherung, Cookies oder Textdaten im Parameter. Kanonische URLs und gewöhnliche
+Absatzlinks bleiben unverändert. Historische Zitate ergänzen den ausdrücklich als Portal-Fassung
+bezeichneten Geltungszeitraum. Die Auswahlleiste erscheint erst bei Auswahl; Schaltflächen haben
+44-Pixel-Touchflächen, Tastaturfokus, gedrückten Zustand und Statusmeldungen. Ohne JavaScript
+bleiben Text, Anker und Navigation vollständig verfügbar.

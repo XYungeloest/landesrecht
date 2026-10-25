@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NormBody from './NormBody.astro';
+import MarkingTools from './MarkingTools.astro';
+import { getMarkingTargets, formatMarkedCitation } from '@landesrecht/legal-core/lib/markings.ts';
 import CopyButton from './CopyButton.astro';
 import type { NormView } from '../lib/norm-view.ts';
 import { getProvisionEntries } from '@landesrecht/legal-core/lib/body.ts';
@@ -16,7 +18,12 @@ const url = getProvisionUrl(view.jurisdiction.id, view.record.meta.slug, entry.a
 const fullUrl = explicitVersion ? view.versionUrl : view.url;
 const isLaw = ['gesetz', 'verfassung', 'zustimmungsgesetz'].includes(view.record.meta.type);
 const wholeLabel = isLaw ? 'Gesetz' : 'Regelwerk';
-const citation = `${entry.block.label ?? ''} ${view.identity.abbr ?? view.identity.shortTitle}`.trim();
+const targets = getMarkingTargets(view.version.body, view.anchors);
+const markings = new Map(targets.map((target)=>[target.path,target]));
+const normName = view.identity.abbr || view.identity.shortTitle || view.identity.title;
+const versionNote = !view.isCurrent ? `Portal-Fassung: ${view.validityText}` : undefined;
+const citationValue = formatMarkedCitation(targets,[entry.anchor],normName,versionNote);
+const citation = citationValue || `${entry.block.label ?? ''} ${normName}${versionNote ? ` (${versionNote})` : ''}`.trim();
 const ancestors: NormBodyBlock[] = [];
 let siblings = view.version.body;
 for (const index of entry.path.slice(0, -1)) {
@@ -36,7 +43,7 @@ const address = (item: ProvisionEntry) => getProvisionUrl(view.jurisdiction.id, 
     {view.change.kind === 'baseline-changed' && <p role="note">Das {wholeLabel} wurde in der Simulation geändert. Daraus folgt keine Aussage über eine Änderung dieser Einzelvorschrift.</p>}
     {view.change.kind === 'simulation-new' && <p role="note">Das {wholeLabel} wurde in der Simulation neu geschaffen.</p>}
     <p class="norm-head__actions">
-      <CopyButton value={citation} label="Zitat kopieren" />
+      {citationValue && <CopyButton value={citationValue} label="Zitat kopieren" />}
       <CopyButton value={new URL(url, import.meta.env.PUBLIC_SITE_URL ?? Astro.site ?? Astro.url.origin).href} label="Link kopieren" />
       <a class="button-link" href={`${fullUrl}#${entry.anchor}`}>{isLaw ? 'Gesamtes Gesetz ansehen' : 'Gesamte Vorschrift ansehen'}</a>
       {view.versions.length > 1 && <a class="action-link" href={getNormSubpageUrl(view.jurisdiction.id, view.record.meta.slug, 'historie')}>Frühere Fassungen</a>}
@@ -44,9 +51,12 @@ const address = (item: ProvisionEntry) => getProvisionUrl(view.jurisdiction.id, 
       {view.compareUrl && <a class="action-link" href={view.compareUrl}>Vergleich des gesamten {wholeLabel === 'Gesetz' ? 'Gesetzes' : 'Regelwerks'}</a>}
     </p>
   </header>
+  <div data-marking-document>
   <article class="norm-document" aria-label={citation}>
-    <NormBody blocks={[entry.block]} anchors={view.anchors} path={entry.path.slice(0, -1)} indexOffset={entry.path.at(-1)} jurisdiction={view.jurisdiction.id} headingLevel={1} single />
+    <NormBody markings={markings} blocks={[entry.block]} anchors={view.anchors} path={entry.path.slice(0, -1)} indexOffset={entry.path.at(-1)} jurisdiction={view.jurisdiction.id} headingLevel={1} single />
   </article>
+  <MarkingTools normName={normName} versionNote={versionNote} />
+  </div>
   <nav class="pagination" aria-label="Benachbarte Vorschriften"><ul><li>
     {entries[position - 1] && <a rel="prev" class="button-link" href={address(entries[position - 1]!)}>← {entries[position - 1]!.block.label}</a>}
     {entries[position + 1] && <a rel="next" class="button-link" href={address(entries[position + 1]!)}>{entries[position + 1]!.block.label} →</a>}

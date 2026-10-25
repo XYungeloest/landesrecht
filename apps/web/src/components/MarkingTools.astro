@@ -1,0 +1,17 @@
+---
+interface Props { normName: string; versionNote?: string }
+const { normName, versionNote } = Astro.props;
+---
+<div class="marking-tools" data-marking-tools data-norm-name={normName} data-version-note={versionNote} hidden role="region" aria-label="Markierte Vorschriften">
+  <p data-marking-count></p>
+  <div class="marking-tools__actions">
+    <button type="button" class="button-secondary" data-marking-copy="citation">Zitat kopieren</button>
+    <button type="button" class="button-secondary" data-marking-copy="link">Link mit Markierung kopieren</button>
+    <button type="button" class="button-secondary" data-marking-clear>Markierungen aufheben</button>
+  </div>
+  <span class="muted" data-marking-feedback role="status" aria-live="polite"></span>
+</div>
+<script>
+  import { initMarkingTools } from '../lib/marking-tools.ts';
+  document.querySelectorAll<HTMLElement>('[data-marking-tools]').forEach(initMarkingTools);
+</script>

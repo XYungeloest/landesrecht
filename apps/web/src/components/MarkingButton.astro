@@ -1,0 +1,7 @@
+---
+import type { MarkingTarget } from '@landesrecht/legal-core/lib/markings.ts';
+interface Props { target: MarkingTarget }
+const {target} = Astro.props;
+const label = `${target.provisionLabel}${target.subsection ? ` Absatz ${target.subsection}` : ''}`;
+---
+<button type="button" class="marking-toggle" hidden data-mark-toggle data-mark-id={target.id} data-mark-provision={target.provisionId} data-mark-label={target.provisionLabel} data-mark-subsection={target.subsection} aria-label={`${label} markieren`} aria-pressed="false" title={`${label} markieren`}><span aria-hidden="true">✎</span></button>

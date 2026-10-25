@@ -16,8 +16,8 @@ const land = isJurisdictionId(rawLand) ? rawLand : undefined;
 if (land) registry.get(land);
 const coverage = await subjectCoverage(registry);
 const supported = coverage.filter((entry) => (entry.groups.find((g) => g.id === group.id)?.count ?? 0)>0);
-if (land && !supported.some((entry) => entry.jurisdiction === land)) return Astro.redirect(getSubjectsUrl(undefined,land),303);
-if (!supported.length) return Astro.redirect(getSubjectsUrl(),303);
+const unassignedCountry = land && !supported.some((entry) => entry.jurisdiction === land);
+if (!land && !supported.length) return Astro.redirect(getSubjectsUrl(),303);
 const result = await subjectListing(registry,group.id,parseListingState(Astro.url.searchParams),land);
 const basePath = getSubjectsUrl(group.id,land);
 Astro.response.headers.set('Cache-Control',PAGE_CACHE_CONTROL);
@@ -28,10 +28,10 @@ Astro.response.headers.set('Cache-Control',PAGE_CACHE_CONTROL);
   <p class="muted">{SUBJECT_COVERAGE_NOTICE}</p>
   {registry.unavailable().length > 0 && <p role="note" class="muted">Im Entwicklungsbetrieb sind einzelne Länder nicht oder nur auszugsweise lokal verfügbar.</p>}
   <nav aria-label="Land wählen"><ul class="type-filter"><li><a href={listingUrl(getSubjectsUrl(group.id),{...result.state,page:1})} aria-current={!land ? 'true' : undefined}>Alle Länder</a></li>
-    {supported.map((entry) => <li><a href={listingUrl(getSubjectsUrl(group.id,entry.jurisdiction),{...result.state,page:1})} aria-current={land===entry.jurisdiction ? 'true' : undefined}>{getJurisdiction(entry.jurisdiction).name}</a></li>)}
+    {coverage.filter((entry) => supported.includes(entry) || entry.jurisdiction === land).map((entry) => <li><a href={listingUrl(getSubjectsUrl(group.id,entry.jurisdiction),{...result.state,page:1})} aria-current={land===entry.jurisdiction ? 'true' : undefined}>{getJurisdiction(entry.jurisdiction).name}</a></li>)}
   </ul></nav>
   <p><a class="action-link" href={getSearchUrl({subject:group.id,jurisdiction:land,bereich:'alle'})}>In diesem Sachgebiet suchen</a></p>
   <section aria-labelledby="subject-list-heading"><h2 class="visually-hidden" id="subject-list-heading">Zugeordnete Vorschriften</h2>
-    <NormListing basePath={basePath} state={result.state} facets={result.facets} tabCounts={result.tabs.byChangeKind} norms={result.norms} showJurisdiction={!land} jurisdictionName={(id) => getJurisdiction(id).shortName} headingId="subject-list" />
+    {unassignedCountry ? <div class="subject-empty" role="note"><p>Für {getJurisdiction(land!).name} sind in diesem Sachgebiet noch keine Vorschriften erschlossen. Das bedeutet nicht, dass es dort kein entsprechendes Landesrecht gibt.</p><p><a class="button-link" href={listingUrl(getSubjectsUrl(group.id),{...result.state,page:1})}>Landesfilter zurücksetzen</a> <a href={getSearchUrl({jurisdiction:land,bereich:'alle'})}>Alle Vorschriften dieses Landes durchsuchen</a></p></div> : <NormListing basePath={basePath} state={result.state} facets={result.facets} tabCounts={result.tabs.byChangeKind} norms={result.norms} showJurisdiction={!land} jurisdictionName={(id) => getJurisdiction(id).shortName} headingId="subject-list" />}
   </section>
 </BaseLayout>
