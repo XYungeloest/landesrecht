@@ -89,7 +89,10 @@ Gesamtgesetzseiten bleiben unverändert.
 `ProvisionNavigation` verwendet oben und unten dasselbe Modell aus `getProvisionEntries`.
 Die obere Leiste bleibt 58 Pixel hoch unter dem Portalheader; dessen Höhe wird bei Bedarf
 per ResizeObserver nachgeführt (CSS-Fallback ohne JavaScript). Die native Auswahl ist nach
-vorhandenen Gliederungskontexten gruppiert und wird ausdrücklich mit „Öffnen“ bestätigt.
+vorhandenen Gliederungskontexten gruppiert. Mit JavaScript öffnet `change` sofort das zugehörige,
+serverseitig freigegebene Optionsziel; ein zugänglicher Hinweis kündigt den Wechsel an. Erst nach
+Bereitschaft der automatischen Navigation wird „Öffnen“ ausgeblendet. Ohne JavaScript bleibt
+die Bestätigung mit „Öffnen“ erhalten.
 Ein validierter GET-Parameter `vorschrift` führt per 303 auf die bestehende Einzelvorschriften-URL;
 auch ohne JavaScript bleibt die Navigation vollständig nutzbar. Historische Pfade erhalten ihre
 Fassungs-ID; unbekannte Auswahlziele liefern 404. Markierungsparameter werden beim Wechsel

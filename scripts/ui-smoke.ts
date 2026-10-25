@@ -68,6 +68,10 @@ for (const versionId of [undefined, '2023-12-01']) {
   assert.equal(units[0]!.attrs['aria-labelledby'],h1.attrs.id);
   assert.equal(byTag(units[0]!,'h2').length,0,'keine doppelte Wurzelüberschrift');
   assert.equal(byTag(document,'select').filter((node)=>node.attrs.name==='vorschrift').length,1,'eine native Auswahl');
+  for(const option of byTag(document,'option')) assert.equal(option.attrs['data-provision-url'],getProvisionUrl('west','lnatschg-west',option.attrs.value!,versionId),'serverseitig bestimmtes Sprungziel');
+  const jumpForm=classes(document,'provision-navigation__jump')[0]!;
+  assert(byTag(jumpForm,'button').some((button)=>!('hidden' in button.attrs)),'Öffnen ohne JavaScript sichtbar');
+  assert(normalizedText(jumpForm).includes('mit Öffnen bestätigen'),'Anleitung ohne JavaScript');
   assert.equal(queryAll(document,(node)=>node.tag==='nav' && node.attrs['aria-label']?.startsWith('Vorschriftennavigation') === true).length,2);
   const target = getProvisionUrl('west','lnatschg-west','paragraph-2',versionId);
   const jumpResponse=await fetch(new URL(`${path}?vorschrift=paragraph-2&mark=paragraph-1`,base),{redirect:'manual'});
