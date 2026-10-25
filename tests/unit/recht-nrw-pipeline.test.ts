@@ -150,7 +150,7 @@ describe('RECHT.NRW-Importpfad (Fixtures, ohne Netz)', () => {
     const hit = await store.search(createSearchState({ q: 'Prüfung des Landesrechts' }));
     expect(hit.hits.map((entry) => [entry.slug, entry.unit?.anchor])).toEqual([['testg-west', 'paragraph-1']]);
     const reference = await store.search(createSearchState({ q: '§ 2 Absatz 2 TestG' }));
-    expect(reference.hits[0]?.unit?.url).toBe(`${getNormUrl('west', 'testg-west')}#paragraph-2`);
+    expect(reference.hits[0]?.unit?.url).toBe(`${getNormUrl('west', 'testg-west')}paragraph-2/`);
     const loaded = await store.getNorm('testg-west', 'all');
     expect(loaded?.versions[0]!.body.some((block) => block.type === 'annex')).toBe(true);
     expect(getNormVersionUrl('west', 'testg-west', '2023-12-01')).toBe('/west/norm/testg-west/version/2023-12-01/');

@@ -4,6 +4,8 @@
  * verwendet (identisches Prinzip wie OstRecht: SQL liefert Kandidaten und Reihenfolge, die
  * Bewertung liefert Treffart und beste Einheit).
  */
+import { getProvisionUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import { effectiveSearchTypes } from './query.ts';
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { expandNormTypeFilter, type NormStatus, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import type { VersionTemporalKind } from '@landesrecht/legal-core/lib/versions.ts';
@@ -111,10 +113,21 @@ export function evaluateDocument(document: SearchDocument, plan: SearchQueryPlan
   const allText = [titleText, ...document.units.map((unit) => `${unit.label}\n${unit.heading}\n${unit.body}`)].join('\n');
 
   let referenceUnit: SearchUnit | undefined;
+  let uniqueReference = false;
   if (plan.references.length > 0) {
     const matching = provisionUnits.filter((unit) => plan.references.every((intent) => unitMatchesIntent(unit, intent)));
     if (matching.length === 0 && !titleCarriesReferences(titleText, plan)) return null;
-    referenceUnit = matching[0];
+    // Bei gleicher Nummer hat die unverschachtelte Vorschrift Vorrang. Mehrdeutige
+    // Anlagenzählungen bleiben Ankertreffer; eine eindeutige verschachtelte Einheit
+    // erhält ihre vollständige, namespacierte Einzeladresse.
+    const unscoped = matching.filter((unit) => plan.references.every((intent) => {
+      if (intent.kind !== 'paragraph' && intent.kind !== 'article') return true;
+      const stem = `${intent.kind === 'paragraph' ? 'paragraph' : 'artikel'}-${intent.number}`;
+      return unit.anchor === stem || unit.anchor.startsWith(`${stem}--`);
+    }));
+    const addressed = unscoped.length ? unscoped : matching;
+    referenceUnit = addressed[0];
+    uniqueReference = addressed.length === 1;
   }
 
   const scopeText = plan.scope === 'title' ? titleText : allText;
@@ -131,9 +144,9 @@ export function evaluateDocument(document: SearchDocument, plan: SearchQueryPlan
   let rank: number[];
   if (identityMatch) {
     matchKind = 'identity';
-    // Exakte Schreibung (Umlaute erhalten) vor normalisierter Gleichheit („LÖG West“ vor „LOG West“), Abkürzung vor Titel.
+    // Abkürzung vor Titel; darunter exakte Schreibung (Umlaute erhalten) vor normalisierter Gleichheit.
     const exact = identityValues.some((value) => rawIdentityKey(value) === plan.identityRaw);
-    rank = [0, exact ? 0 : 1, document.abbr && plan.identityVariants.includes(normalizeSearchText(document.abbr)) ? 0 : 1];
+    rank = [0, document.abbr && buildSearchVariants(document.abbr).some((variant) => plan.identityVariants.includes(variant)) ? 0 : 1, exact ? 0 : 1];
   } else if (referenceUnit && (titleMatch || !plan.freeText)) {
     matchKind = 'reference';
     // Bezeichnung der Anfrage ohne Adresse („§ 1 LÖG West“ → „LÖG West“): exakte Schreibung vor normalisierter
@@ -144,7 +157,7 @@ export function evaluateDocument(document: SearchDocument, plan: SearchQueryPlan
   } else if (titleMatch) {
     matchKind = 'title';
     // Titeltreffer einer Änderungsvorschrift („Gesetz zur Änderung der Gemeindeordnung“) hinter die Stammnorm.
-    rank = [2, document.type === 'aenderungsvorschrift' ? 1 : 0];
+    rank = [2, document.type === 'aenderungsvorschrift' ? 1 : 0, normalizeSearchText(document.shortTitle).includes(normalizeSearchText(plan.subjectRaw || plan.identityRaw)) ? 0 : 1];
   } else if (referenceUnit) {
     matchKind = 'reference';
     rank = [3];
@@ -185,7 +198,7 @@ export function evaluateDocument(document: SearchDocument, plan: SearchQueryPlan
   if (document.abbr !== undefined) hit.abbr = document.abbr;
   if (unit) {
     const target = document.versionKind === 'current' ? document.url : document.versionUrl;
-    hit.unit = { anchor: unit.anchor, label: unit.label, heading: unit.heading, url: `${target}#${unit.anchor}` };
+    hit.unit = { anchor: unit.anchor, label: unit.label, heading: unit.heading, url: uniqueReference && referenceUnit && (unit.type === 'paragraph' || unit.type === 'article') ? getProvisionUrl(document.jurisdiction, document.slug, unit.anchor, document.versionKind === 'current' ? undefined : document.versionId) : `${target}#${unit.anchor}` };
     if (unit.references) hit.unit.references = unit.references;
   }
   return hit;
@@ -212,7 +225,7 @@ export function compareHits(left: SearchHit, right: SearchHit, sort: SearchSort)
 
 export function documentMatchesFilters(document: SearchDocument, state: SearchState): boolean {
   if (state.jurisdictions.length > 0 && !state.jurisdictions.includes(document.jurisdiction)) return false;
-  const types = expandNormTypeFilter(state.types);
+  const types = expandNormTypeFilter(effectiveSearchTypes(state));
   if (types.length > 0 && !types.includes(document.type)) return false;
   if (state.statuses.length > 0 && !state.statuses.includes(document.status)) return false;
   if (state.subjects.length > 0 && !state.subjects.some((subject) => document.subjects.includes(subject))) return false;

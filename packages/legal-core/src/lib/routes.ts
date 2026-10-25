@@ -121,3 +121,9 @@ export function resolveJurisdictionSegment(value: string | undefined): Jurisdict
 export function absoluteUrl(siteUrl: string, path: string): string {
   return `${siteUrl.replace(/\/+$/u, '')}${path}`;
 }
+
+/** Einzelvorschrift: derselbe kollisionsfreie Schlüssel wie auf der Gesamtseite. */
+export function getProvisionUrl(jurisdiction: JurisdictionId, slug: string, anchor: string, versionId?: string): string {
+  const base = versionId ? getNormVersionUrl(jurisdiction, slug, versionId) : getNormUrl(jurisdiction, slug);
+  return `${base}${encodeURIComponent(anchor)}/`;
+}

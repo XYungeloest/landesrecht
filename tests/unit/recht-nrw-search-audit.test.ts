@@ -319,7 +319,7 @@ describe('Suchintegrität: D1-Suche auf einem temporären Bestand', () => {
   it('§-Adresse zeigt auf die richtige Stelle der geltenden Fassung', async () => {
     const page = await west('§ 5 SchulG');
     expect(page.hits.map((hit) => [hit.slug, hit.versionId, hit.matchKind, hit.unit?.anchor])).toEqual([['schulg-west', '2026-03-01', 'reference', 'paragraph-5']]);
-    expect(page.hits[0]!.unit?.url).toBe('/west/norm/schulg-west/#paragraph-5');
+    expect(page.hits[0]!.unit?.url).toBe('/west/norm/schulg-west/paragraph-5/');
     expect((await west('§ 5 Absatz 3 SchulG', { versionScope: 'all' })).hits.map((hit) => hit.versionId)).toEqual(['2026-03-01']);
     expect((await west('§ 5 Abs. 2 SchulG', { versionScope: 'all' })).hits.map((hit) => hit.versionId).sort()).toEqual(['2023-12-01', '2026-03-01']);
     expect((await west('§ 2 DVO KiBiz')).hits.map((hit) => [hit.slug, hit.unit?.anchor])).toEqual([['dvo-kibiz-west', 'paragraph-2']]);

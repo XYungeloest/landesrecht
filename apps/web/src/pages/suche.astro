@@ -7,7 +7,7 @@ import { formatDate, referenceDateLabel, statusLabel, typeLabel, VOCABULARY } fr
 import { getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import { STAND_VALUES } from '../lib/norm-listing.ts';
 import { NORM_TYPES, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
-import { parseSearchState } from '@landesrecht/search/query.ts';
+import { parsePublicSearchState } from '@landesrecht/search/query.ts';
 import SearchFilters from '../components/SearchFilters.astro';
 import SearchSnippet from '../components/SearchSnippet.astro';
 import SimulationBadge from '../components/SimulationBadge.astro';
@@ -15,7 +15,7 @@ import SearchForm from '../components/SearchForm.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getStoreRegistry } from '../lib/runtime/context.ts';
 
-const state = parseSearchState(Astro.url.searchParams);
+const state = parsePublicSearchState(Astro.url.searchParams);
 /** Hauptfilter; „Verwaltungsvorschrift“ umfasst alle Arten von Verwaltungsvorschriften. */
 const PRIMARY_TYPES: NormType[] = ['gesetz', 'verordnung', 'verwaltungsvorschrift', 'runderlass', 'richtlinie'];
 const secondaryTypes = NORM_TYPES.filter((type) => !PRIMARY_TYPES.includes(type));
@@ -32,6 +32,10 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=600');
 
 function pageUrl(offset: number): string {
   return getSearchUrl({
+    bereich: state.bereich,
+    scope: state.scope,
+    match: state.matchMode,
+    limit: String(state.limit),
     q: state.q,
     jurisdiction: state.jurisdictions.length === JURISDICTION_LIST.length ? undefined : state.jurisdictions.join(','),
     type: state.types.join(',') || undefined,
@@ -43,6 +47,9 @@ function pageUrl(offset: number): string {
   });
 }
 const filterParams = {
+  bereich: state.bereich,
+  scope: state.scope,
+  match: state.matchMode,
   q: state.q,
   jurisdiction: state.jurisdictions.length === JURISDICTION_LIST.length ? undefined : state.jurisdictions.join(','),
   type: state.types.join(',') || undefined,
@@ -70,6 +77,10 @@ const activeFilters = [
   <div class="search-workspace">
   <SearchFilters>
   <form class="filters" method="get" action={PORTAL_PATHS.search}>
+    <input type="hidden" name="bereich" value={state.bereich} />
+    <input type="hidden" name="scope" value={state.scope} />
+    <input type="hidden" name="sort" value={state.sort} />
+    <input type="hidden" name="match" value={state.matchMode} />
     <input type="hidden" name="q" value={state.q} />
     <fieldset>
       <legend>{VOCABULARY.simulationChange.label}</legend>
@@ -86,6 +97,7 @@ const activeFilters = [
     </fieldset>
     <fieldset>
       <legend>Vorschriftenart</legend>
+      {state.bereich === 'gesetze' && <p class="muted">Explizit gewählte Vorschriftenarten haben Vorrang vor dem Suchumfang.</p>}
       {PRIMARY_TYPES.map((type) => (
         <label><input type="checkbox" name="type" value={type} checked={state.types.includes(type)} /> {type === 'verwaltungsvorschrift' ? VOCABULARY.typeFilter.administrativeFamily : typeLabel(type)}</label>
       ))}

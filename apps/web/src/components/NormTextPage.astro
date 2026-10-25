@@ -20,7 +20,7 @@ const { view } = Astro.props;
     <NormOutline entries={view.outline} />
     <article class="norm-document" id="normtext" aria-labelledby="normtext-title">
       <h2 id="normtext-title" class="visually-hidden">{VOCABULARY.sections.text}</h2>
-      <NormBody blocks={view.version.body} anchors={view.anchors} jurisdiction={view.record.meta.jurisdiction} />
+      <NormBody blocks={view.version.body} anchors={view.anchors} jurisdiction={view.record.meta.jurisdiction} slug={view.record.meta.slug} versionId={view.canonicalUrl === view.versionUrl ? view.version.versionId : undefined} />
       {view.version.sourceNotes && view.version.sourceNotes.length > 0 && (
         <section class="norm-source-notes" aria-labelledby="quellhinweise-heading">
           <h3 id="quellhinweise-heading">Quellhinweise</h3>

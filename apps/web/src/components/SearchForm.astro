@@ -29,5 +29,13 @@ const allSelected = selected.length === 0 || selected.length === JURISDICTION_LI
       ))}
     </select>
   )}
+  <label>Suchumfang
+    <select name="bereich">
+      <option value="gesetze" selected={state.bereich !== 'alle'}>Gesetze und Verordnungen</option>
+      <option value="alle" selected={state.bereich === 'alle'}>Alle Vorschriften und Rechtsakte</option>
+    </select>
+  </label>
+  {state.scope && <input type="hidden" name="scope" value={state.scope} />}
+  {state.matchMode && <input type="hidden" name="match" value={state.matchMode} />}
   <button type="submit">Suchen</button>
 </form>

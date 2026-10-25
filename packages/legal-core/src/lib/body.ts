@@ -190,3 +190,24 @@ export function countBlockTypes(blocks: readonly NormBodyBlock[]): Record<string
   visit(blocks);
   return counts;
 }
+
+/** Echte Einheiten in Dokumentreihenfolge; Zitate sind niemals eigene Vorschriften. */
+export interface ProvisionEntry {
+  anchor: string;
+  path: number[];
+  block: NormBodyBlock;
+}
+export function getProvisionEntries(blocks: readonly NormBodyBlock[], anchors = buildAnchorMap(blocks)): ProvisionEntry[] {
+  const result: ProvisionEntry[] = [];
+  function visit(entries: readonly NormBodyBlock[], path: number[]): void {
+    entries.forEach((block, index) => {
+      if (block.type === 'quotedProvision') return;
+      const current = [...path, index];
+      const anchor = anchors.get(current.join('.'));
+      if ((block.type === 'paragraph' || block.type === 'article') && anchor) result.push({ anchor, path: current, block });
+      if (block.children) visit(block.children, current);
+    });
+  }
+  visit(blocks, []);
+  return result;
+}

@@ -4,6 +4,7 @@
  * Fassungen, Suchtreffer über den FTS5-Index mit Kandidatenabfrage und Seitenzuschnitt.
  * Jede gelesene Zeile wird über die kanonischen Parser re-validiert (D1 ist abgeleitet).
  */
+import { effectiveSearchTypes } from '@landesrecht/search/query.ts';
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { comparePublicationsNewestFirst } from '@landesrecht/legal-core/lib/publications.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
@@ -236,7 +237,7 @@ function referenceConditions(references: readonly StructuralIntent[]): { sql: st
 function filterConditions(dialect: D1SchemaDialect, state: SearchState, plan: SearchQueryPlan, conjuncts = true): { sql: string; params: unknown[] } {
   const clauses: string[] = [];
   const params: unknown[] = [];
-  const types = expandNormTypeFilter(state.types);
+  const types = expandNormTypeFilter(effectiveSearchTypes(state));
   if (types.length > 0) {
     clauses.push(`n.type IN (${types.map(() => '?').join(', ')})`);
     params.push(...types);

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /** Read-only checks against the locally rendered UI, complementing the responsive browser audit. */
 import assert from 'node:assert/strict';
-import { byTag, hasClass, parseHtml, queryAll, normalizedText, auditOutlineAnchors } from './lib/html-audit.ts';
-import { getJurisdictionUrl, getNormUrl, getNormSubpageUrl, getNormVersionUrl, getPublicationUrl, getPublicationsUrl, getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { byTag, hasClass, parseHtml, queryAll, normalizedText, auditOutlineAnchors, auditAccessibility } from './lib/html-audit.ts';
+import { getJurisdictionUrl, getNormUrl, getNormSubpageUrl, getNormVersionUrl, getProvisionUrl, getPublicationUrl, getPublicationsUrl, getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 
 const baseIndex = process.argv.indexOf('--base');
 const base = (baseIndex >= 0 ? process.argv[baseIndex + 1] : undefined) ?? 'http://localhost:4321';
@@ -45,3 +45,35 @@ for (const stand of ['changed', 'new', 'unchanged']) {
 const norm = await load(getNormUrl('west', 'lnatschg-west'));
 assert.equal(classes(norm, 'copy-action').length, 2);
 console.log('UI-Smoke: 15 Seitentypen, A–Z, Pagination, Filter ohne Begriff, Vergleich und Anker erfolgreich.');
+
+// Einzelvorschriften behalten die Anker der gewählten Gesamtfassung und zeigen nur ihre Einheit.
+for (const versionId of [undefined, '2023-12-01']) {
+  const path = getProvisionUrl('west', 'lnatschg-west', 'paragraph-1', versionId);
+  const document = await load(path);
+  assert.equal(byTag(document, 'h1').length, 1);
+  assert.deepEqual(auditAccessibility(document), [], 'Barrierefreiheit der Einzelansicht');
+  const units = queryAll(document, (element) => 'data-norm-unit' in element.attrs);
+  assert.equal(units.length, 1, 'nur eine Einzelvorschrift');
+  assert.equal(units[0]!.attrs.id, 'paragraph-1');
+  assert(normalizedText(document).includes('Zitat kopieren'));
+  assert(byTag(document, 'a').some((link) => link.attrs.rel === 'next' && link.attrs.href?.endsWith('/paragraph-2/')));
+  assert(byTag(document, 'a').some((link) => link.attrs.href?.endsWith('/#paragraph-1')));
+  console.log(`✓ Einzelvorschrift ${path}`);
+}
+for (const anchor of ['paragraph-99999', 'zitat-paragraph-1']) {
+  assert.equal((await fetch(new URL(getProvisionUrl('west', 'lnatschg-west', anchor), base))).status, 404);
+}
+const searchDocument = await load(getSearchUrl({ q: 'Schule', bereich: 'alle', jurisdiction: 'west' }));
+assert.equal(queryAll(searchDocument, (element) => element.tag === 'select' && element.attrs.name === 'bereich').length, 1);
+assert(byTag(searchDocument, 'option').some((option) => option.attrs.value === 'alle' && 'selected' in option.attrs));
+console.log('Einzelvorschriften: aktuelle/historische Fassung, Navigation, Originalanker und 404; Suchumfang erfolgreich.');
+
+for (const [jurisdiction, slug, anchor] of [
+  ['nsh', 'gesetz-zum-abkommen-zwischen-der-freien-und-hansestadt-hamburg-und-dem-nsh', 'paragraph-1'],
+  ['baywue', 'gesetz-ueber-die-gutachterstelle-fuer-die-freiwillige-kastration-und-baywue', 'artikel-1'],
+] as const) {
+  const document = await load(getProvisionUrl(jurisdiction, slug, anchor));
+  assert(queryAll(document, (element) => element.attrs.id === anchor).length === 1);
+  assert.deepEqual(auditAccessibility(document), []);
+  console.log(`✓ ${jurisdiction}: Einzelansicht ${anchor}`);
+}

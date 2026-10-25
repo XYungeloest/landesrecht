@@ -163,3 +163,15 @@ ganze Wörter – angefangene Wörter („Schulg Westd“) erscheinen dort als V
   Änderungen **Worker neu deployen** (die D1-Daten bleiben unverändert; kein Schema- oder Projektionslauf nötig).
 - Tests: `npm run test:search` (search-*.test.ts), `tests/unit/recht-nrw-search-audit.test.ts`,
   `tests/unit/d1-scale.test.ts` (2 000 synthetische Normen, beide Modi).
+
+## Öffentlicher Suchumfang und Einzelvorschriften
+
+`/suche/` verwendet standardmäßig `bereich=gesetze` (Verfassung, Gesetz einschließlich
+Zustimmungsgesetz, Verordnung). `bereich=alle` öffnet den gesamten Bestand. Explizite `type`-Filter
+haben Vorrang; alte Links mit Typfiltern wählen ohne Bereich automatisch `alle`. Die API und direkte
+Store-Aufrufe bleiben ohne `bereich` vollständig. `scope=all|title|body` bleibt unabhängig davon.
+
+Eindeutige Strukturtreffer auf Paragraphen und Artikel führen zu `getProvisionUrl`; normale
+Volltexttreffer behalten Gesamtgesetz-Anker. Bei gleicher Nummer hat die unverschachtelte Vorschrift Vorrang; eindeutige Anlagenzählungen
+verwenden ihren vollständigen Namensraum, mehrdeutige bleiben Ankertreffer. Einzelansichten verwenden Originalpfade und AnchorMap der gewählten Fassung,
+überspringen Zitate und liefern für fehlende Einheiten 404. Der Vergleich bleibt ein Gesetzesvergleich.

@@ -208,7 +208,7 @@ describe('OstRecht-D1-Store (Ost, Variante A)', () => {
     const reference = await store.search(createSearchState({ q: '§ 1 OstFSG', jurisdictions: ['ost'] }));
     expect(reference.hits[0]).toMatchObject({ slug: FEIERTAG, matchKind: 'reference' });
     expect(reference.hits[0]!.unit?.anchor).toBe('paragraph-1');
-    expect(reference.hits[0]!.unit?.url).toContain('#paragraph-1');
+    expect(reference.hits[0]!.unit?.url).toBe(`/ost/norm/${FEIERTAG}/paragraph-1/`);
   });
 
   it('sucht nach dem Landesrecht-Stichtag über die von OstRecht indexierten Fassungen (nur die dort geltende Fassung trägt Sucheinheiten)', async () => {

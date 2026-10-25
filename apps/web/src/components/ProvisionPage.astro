@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NormBody from './NormBody.astro';
+import CopyButton from './CopyButton.astro';
+import type { NormView } from '../lib/norm-view.ts';
+import { getProvisionEntries } from '@landesrecht/legal-core/lib/body.ts';
+import type { NormBodyBlock } from '@landesrecht/legal-core/lib/schema.ts';
+import type { ProvisionEntry } from '@landesrecht/legal-core/lib/body.ts';
+import { getProvisionUrl, getNormSubpageUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/routes.ts';
+interface Props { view: NormView; entry: ProvisionEntry; explicitVersion: boolean }
+const { view, entry, explicitVersion } = Astro.props;
+const entries = getProvisionEntries(view.version.body, view.anchors);
+const position = entries.findIndex((item) => item.anchor === entry.anchor);
+const versionId = explicitVersion ? view.version.versionId : undefined;
+const url = getProvisionUrl(view.jurisdiction.id, view.record.meta.slug, entry.anchor, versionId);
+const fullUrl = explicitVersion ? view.versionUrl : view.url;
+const isLaw = ['gesetz', 'verfassung', 'zustimmungsgesetz'].includes(view.record.meta.type);
+const wholeLabel = isLaw ? 'Gesetz' : 'Regelwerk';
+const citation = `${entry.block.label ?? ''} ${view.identity.abbr ?? view.identity.shortTitle}`.trim();
+const ancestors: NormBodyBlock[] = [];
+let siblings = view.version.body;
+for (const index of entry.path.slice(0, -1)) {
+  const parent = siblings[index]!;
+  ancestors.push(parent);
+  siblings = parent.children ?? [];
+}
+const address = (item: ProvisionEntry) => getProvisionUrl(view.jurisdiction.id, view.record.meta.slug, item.anchor, versionId);
+---
+<BaseLayout title={`${citation} – ${entry.block.title ?? view.identity.shortTitle}`} canonical={url} robots={view.isCurrent ? undefined : 'noindex, follow'}>
+  <nav class="breadcrumbs" aria-label="Brotkrumen"><ol><li>{view.jurisdiction.name}</li><li><a href={fullUrl}>{view.identity.shortTitle}</a></li>{ancestors.filter((block) => block.label || block.title).map((block) => <li>{[block.label, block.title].filter(Boolean).join(' ')}</li>)}<li>{entry.block.label}</li></ol></nav>
+  <header class="norm-head">
+    <p class="norm-head__tags"><span class={`norm-band norm-band--${view.kind}`}>{view.bandLabel}</span></p>
+    <h1>{entry.block.label}{entry.block.title && <> – {entry.block.title}</>}</h1>
+    <p class="norm-head__short">{view.identity.title}{view.identity.abbr && <> · {view.identity.abbr}</>}</p>
+    <dl class="facts"><dt>Geltung</dt><dd>{view.statusLabel}</dd><dt>Fassung</dt><dd>{view.legalStatusText} · {view.validityText}</dd><dt>Fundstelle</dt><dd>{view.version.citation}</dd></dl>
+    {view.change.kind === 'baseline-changed' && <p role="note">Das {wholeLabel} wurde in der Simulation geändert. Daraus folgt keine Aussage über eine Änderung dieser Einzelvorschrift.</p>}
+    {view.change.kind === 'simulation-new' && <p role="note">Das {wholeLabel} wurde in der Simulation neu geschaffen.</p>}
+    <p class="norm-head__actions">
+      <CopyButton value={citation} label="Zitat kopieren" />
+      <CopyButton value={new URL(url, import.meta.env.PUBLIC_SITE_URL ?? Astro.site ?? Astro.url.origin).href} label="Link kopieren" />
+      <a class="button-link" href={`${fullUrl}#${entry.anchor}`}>{isLaw ? 'Gesamtes Gesetz ansehen' : 'Gesamte Vorschrift ansehen'}</a>
+      {view.versions.length > 1 && <a class="action-link" href={getNormSubpageUrl(view.jurisdiction.id, view.record.meta.slug, 'historie')}>Frühere Fassungen</a>}
+      {view.baselineVersion && view.baselineVersion.versionId !== view.version.versionId && <a class="action-link" href={getNormVersionUrl(view.jurisdiction.id, view.record.meta.slug, view.baselineVersion.versionId)}>Ausgangsfassung des {wholeLabel === 'Gesetz' ? 'Gesetzes' : 'Regelwerks'}</a>}
+      {view.compareUrl && <a class="action-link" href={view.compareUrl}>Vergleich des gesamten {wholeLabel === 'Gesetz' ? 'Gesetzes' : 'Regelwerks'}</a>}
+    </p>
+  </header>
+  <article class="norm-document" aria-label={citation}>
+    <NormBody blocks={[entry.block]} anchors={view.anchors} path={entry.path.slice(0, -1)} indexOffset={entry.path.at(-1)} jurisdiction={view.jurisdiction.id} headingLevel={1} single />
+  </article>
+  <nav class="pagination" aria-label="Benachbarte Vorschriften"><ul><li>
+    {entries[position - 1] && <a rel="prev" class="button-link" href={address(entries[position - 1]!)}>← {entries[position - 1]!.block.label}</a>}
+    {entries[position + 1] && <a rel="next" class="button-link" href={address(entries[position + 1]!)}>{entries[position + 1]!.block.label} →</a>}
+  </li></ul></nav>
+</BaseLayout>

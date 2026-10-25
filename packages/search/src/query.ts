@@ -30,6 +30,8 @@ export type SearchMatchMode = (typeof SEARCH_MATCH_MODES)[number];
 export const DEFAULT_SEARCH_MATCH_MODE: SearchMatchMode = 'and-first';
 
 export interface SearchState {
+  /** Öffentlicher Bestandsumfang; ohne Wert bleibt die API abwärtskompatibel. */
+  bereich?: 'gesetze' | 'alle';
   q: string;
   scope: SearchScope;
   jurisdictions: JurisdictionId[];
@@ -341,6 +343,7 @@ export function parseSearchState(params: URLSearchParams): SearchState {
     offset: clampInteger(params.get('offset'), 0, 5000, 0),
     limit: clampInteger(params.get('limit'), 1, MAX_SEARCH_LIMIT, DEFAULT_SEARCH_LIMIT),
   };
+  if (params.get('bereich') === 'gesetze' || params.get('bereich') === 'alle') state.bereich = params.get('bereich') as 'gesetze' | 'alle';
   if (validOn && isIsoCalendarDate(validOn)) state.validOn = validOn;
   if ((SEARCH_MATCH_MODES as readonly string[]).includes(matchMode ?? '')) state.matchMode = matchMode as SearchMatchMode;
   const stand = params.get('stand');
@@ -378,4 +381,14 @@ export function createSearchState(overrides: Partial<SearchState> = {}): SearchS
     limit: DEFAULT_SEARCH_LIMIT,
     ...overrides,
   };
+}
+
+/** Explizite Typfilter behalten Vorrang vor dem öffentlichen Standard. */
+export function effectiveSearchTypes(state: SearchState): NormType[] {
+  return state.types.length ? state.types : state.bereich === 'gesetze' ? ['verfassung', 'gesetz', 'zustimmungsgesetz', 'verordnung'] : [];
+}
+export function parsePublicSearchState(params: URLSearchParams): SearchState {
+  const state = parseSearchState(params);
+  state.bereich ??= state.types.length ? 'alle' : 'gesetze';
+  return state;
 }

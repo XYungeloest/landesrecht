@@ -129,3 +129,19 @@ describe('Rangfolge der Suche (beide Match-Modi, D1 und Dateistore)', () => {
     }
   });
 });
+
+describe('Öffentlicher Bestandsumfang in D1 und Dateistore', () => {
+  it('filtert standardmäßig zentrale Vorschriften und bewahrt explizite Verwaltungsvorschriften', async () => {
+    const stores = await project(corpus());
+    for (const store of [stores.d1.west, stores.files.west]) {
+      const standard = await store.search(createSearchState({ q: 'Kinderbildungsgesetz', bereich: 'gesetze' }));
+      expect(standard.hits.map((hit) => hit.slug)).not.toContain('vv-kibiz-west');
+      const all = await store.search(createSearchState({ q: 'Kinderbildungsgesetz', bereich: 'alle' }));
+      expect(all.hits.map((hit) => hit.slug)).toContain('vv-kibiz-west');
+      expect(all.total).toBeGreaterThan(standard.total);
+      const explicit = await store.search(createSearchState({ bereich: 'gesetze', types: ['verwaltungsvorschrift'] }));
+      expect(explicit.hits.map((hit) => hit.slug)).toEqual(['vv-kibiz-west']);
+      expect((await store.search(createSearchState({ q: 'Kinderbildungsgesetz' }))).total).toBe(all.total);
+    }
+  });
+});
