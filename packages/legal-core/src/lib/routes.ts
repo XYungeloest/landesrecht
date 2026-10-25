@@ -21,6 +21,7 @@ export type NormSubpage = (typeof NORM_SUBPAGES)[number];
 export const PORTAL_PATHS = {
   home: '/',
   search: '/suche/',
+  subjects: '/sachgebiete/',
   changes: '/aenderungen/',
   about: '/ueber-den-rechtsbestand/',
   help: '/hilfe/',
@@ -68,10 +69,11 @@ export function getNormAnchorUrl(jurisdiction: JurisdictionId, slug: string, anc
   return `${base}#${anchor}`;
 }
 
-export function getSearchUrl(params: Record<string, string | undefined> = {}): string {
+export function getSearchUrl(params: Record<string, string | readonly string[] | undefined> = {}): string {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== '') search.set(key, value);
+    if (Array.isArray(value)) { for (const entry of value) if (entry) search.append(key, entry); }
+    else if (typeof value === 'string' && value !== '') search.set(key, value);
   }
   const query = search.toString();
   return query ? `${PORTAL_PATHS.search}?${query}` : PORTAL_PATHS.search;
@@ -126,4 +128,10 @@ export function absoluteUrl(siteUrl: string, path: string): string {
 export function getProvisionUrl(jurisdiction: JurisdictionId, slug: string, anchor: string, versionId?: string): string {
   const base = versionId ? getNormVersionUrl(jurisdiction, slug, versionId) : getNormUrl(jurisdiction, slug);
   return `${base}${encodeURIComponent(anchor)}/`;
+}
+
+/** Gemeinsame Sachgebietsroute; Filter bleiben teilbar. */
+export function getSubjectsUrl(id?: string, jurisdiction?: JurisdictionId): string {
+  const base = id ? `${PORTAL_PATHS.subjects}${encodeURIComponent(id)}/` : PORTAL_PATHS.subjects;
+  return jurisdiction ? `${base}?land=${jurisdiction}` : base;
 }

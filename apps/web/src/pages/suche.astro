@@ -8,6 +8,8 @@ import { getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.t
 import { STAND_VALUES } from '../lib/norm-listing.ts';
 import { NORM_TYPES, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import { parsePublicSearchState } from '@landesrecht/search/query.ts';
+import { SUBJECT_GROUPS, SUBJECT_COVERAGE_NOTICE, getSubjectGroup } from '@landesrecht/legal-core/config/subjects.ts';
+import { subjectCoverage, mergedSubjectCounts } from '../lib/subjects.ts';
 import SearchFilters from '../components/SearchFilters.astro';
 import SearchSnippet from '../components/SearchSnippet.astro';
 import SimulationBadge from '../components/SimulationBadge.astro';
@@ -20,7 +22,8 @@ const state = parsePublicSearchState(Astro.url.searchParams);
 const PRIMARY_TYPES: NormType[] = ['gesetz', 'verordnung', 'verwaltungsvorschrift', 'runderlass', 'richtlinie'];
 const secondaryTypes = NORM_TYPES.filter((type) => !PRIMARY_TYPES.includes(type));
 const registry = await getStoreRegistry();
-const page = state.q || state.types.length > 0 || state.jurisdictions.length < JURISDICTION_LIST.length || state.simulationChange || state.validOn || state.versionScope !== 'current' ? await registry.search(state) : null;
+const subjects = mergedSubjectCounts(await subjectCoverage(registry,state.jurisdictions)).filter((group) => group.count > 0);
+const page = state.q || state.types.length > 0 || state.subjects.length > 0 || state.jurisdictions.length < JURISDICTION_LIST.length || state.simulationChange || state.validOn || state.versionScope !== 'current' ? await registry.search(state) : null;
 // Suchabdeckung: Länder, deren Volltextindex nur die geltende Fassung trägt oder einzelne geltende Fassungen noch nicht kennt.
 const coverage = page ? await registry.searchCoverage(state.jurisdictions) : [];
 const historicalRequested = state.versionScope !== 'current' || Boolean(state.validOn);
@@ -36,6 +39,7 @@ function pageUrl(offset: number): string {
     scope: state.scope,
     match: state.matchMode,
     limit: String(state.limit),
+    subject: state.subjects,
     q: state.q,
     jurisdiction: state.jurisdictions.length === JURISDICTION_LIST.length ? undefined : state.jurisdictions.join(','),
     type: state.types.join(',') || undefined,
@@ -50,6 +54,7 @@ const filterParams = {
   bereich: state.bereich,
   scope: state.scope,
   match: state.matchMode,
+  subject: state.subjects,
   q: state.q,
   jurisdiction: state.jurisdictions.length === JURISDICTION_LIST.length ? undefined : state.jurisdictions.join(','),
   type: state.types.join(',') || undefined,
@@ -59,6 +64,7 @@ const filterParams = {
   stand: state.simulationChange ? STAND_VALUES[state.simulationChange] : undefined,
 };
 const activeFilters = [
+  ...state.subjects.map((subject) => ({ label: getSubjectGroup(subject)?.title ?? subject, url: getSearchUrl({...filterParams,subject:state.subjects.filter((id) => id !== subject)}) })),
   ...(state.jurisdictions.length < JURISDICTION_LIST.length ? state.jurisdictions.map((id) => ({
     label: getJurisdiction(id).shortName,
     url: getSearchUrl({ ...filterParams, jurisdiction: state.jurisdictions.filter((entry) => entry !== id).join(',') || undefined }),
@@ -88,6 +94,11 @@ const activeFilters = [
       <label><input type="radio" name="stand" value="changed" checked={state.simulationChange === 'baseline-changed'} /> {VOCABULARY.simulationChange.filter['baseline-changed']}</label>
       <label><input type="radio" name="stand" value="new" checked={state.simulationChange === 'simulation-new'} /> {VOCABULARY.simulationChange.filter['simulation-new']}</label>
       <label><input type="radio" name="stand" value="unchanged" checked={state.simulationChange === 'baseline-unchanged'} /> {VOCABULARY.simulationChange.filter['baseline-unchanged']}</label>
+    </fieldset>
+    <fieldset>
+      <legend>Sachgebiet</legend>
+      {SUBJECT_GROUPS.filter((group) => subjects.some((entry) => entry.id === group.id) || state.subjects.includes(group.id)).map((group) => <label><input type="checkbox" name="subject" value={group.id} checked={state.subjects.includes(group.id)} /> {group.title}</label>)}
+      <p class="muted">{SUBJECT_COVERAGE_NOTICE}</p>
     </fieldset>
     <fieldset>
       <legend>Land</legend>

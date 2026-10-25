@@ -2,7 +2,7 @@
 /** Read-only checks against the locally rendered UI, complementing the responsive browser audit. */
 import assert from 'node:assert/strict';
 import { byTag, hasClass, parseHtml, queryAll, normalizedText, auditOutlineAnchors, auditAccessibility } from './lib/html-audit.ts';
-import { getJurisdictionUrl, getNormUrl, getNormSubpageUrl, getNormVersionUrl, getProvisionUrl, getPublicationUrl, getPublicationsUrl, getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { getJurisdictionUrl, getNormUrl, getNormSubpageUrl, getNormVersionUrl, getProvisionUrl, getSubjectsUrl, getPublicationUrl, getPublicationsUrl, getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 
 const baseIndex = process.argv.indexOf('--base');
 const base = (baseIndex >= 0 ? process.argv[baseIndex + 1] : undefined) ?? 'http://localhost:4321';
@@ -77,3 +77,23 @@ for (const [jurisdiction, slug, anchor] of [
   assert.deepEqual(auditAccessibility(document), []);
   console.log(`✓ ${jurisdiction}: Einzelansicht ${anchor}`);
 }
+
+const subjects = await load(getSubjectsUrl());
+assert.equal(byTag(subjects, 'h1').length, 1);
+assert(classes(subjects, 'subject-card').length > 0);
+assert.deepEqual(auditAccessibility(subjects), []);
+const subjectPath = getSubjectsUrl('bildung-kultur','nsh');
+const subject = await load(subjectPath);
+assert.deepEqual(auditAccessibility(subject), []);
+assert.equal(classes(subject,'hit').length,50);
+const subjectNext = byTag(subject,'a').find((link) => link.attrs.rel === 'next');
+const nextSubjectUrl = subjectNext?.attrs.href;
+assert(nextSubjectUrl, 'Sachgebiets-Pagination fehlt');
+assert(nextSubjectUrl.includes('land=nsh') && nextSubjectUrl.includes('seite=2'));
+const nextSubject = await load(nextSubjectUrl);
+assert(classes(nextSubject,'hit').length > 0);
+const subjectSearch = await load(getSearchUrl({ subject:'bildung-kultur',jurisdiction:'nsh',bereich:'alle',q:'Hochschule' }));
+assert(queryAll(subjectSearch,(element) => element.tag === 'input' && element.attrs.name === 'subject' && element.attrs.value === 'bildung-kultur' && 'checked' in element.attrs).length === 1);
+assert.equal((await fetch(new URL(getSubjectsUrl('unknown'),base))).status,404);
+assert.equal((await fetch(new URL(getSubjectsUrl('bildung-kultur','west'),base),{redirect:'manual'})).status,303);
+console.log('Sachgebiete: Übersicht, Länderwahl, Facetten, Pagination, Suchfilter, Accessibility und leere/ungültige Gruppen erfolgreich.');

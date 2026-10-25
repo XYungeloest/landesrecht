@@ -159,7 +159,9 @@ Legacy-Auflösung auf OstRecht-Adressen für Verweise, die die Registry nicht ke
   Normfelder → generische `externalIdentifiers` und `SourceReference.system/externalId/sourceNumber`.
 - `origin_kind` (ostdeutsch-original/inherited-…), `in_inventory`, Änderungsvorschriften-Heuristik
   → keine jurisdiktionspolitischen Klassen im Kern.
-- Amtliche sächsische Sachgebietssystematik und Förderbereichsnummern → freie Sachgebiete.
+- Sachgebiete: gemeinsame redaktionelle Orientierung aus der OstRecht-Systematik und geprüften Crosswalks
+  unter `data/editorial/subjects/`; kanonische Inhalte bleiben unverändert. Virtuelle Leseprojektion statt
+  zusätzlicher D1-Tabellen, Ost nur lesend. Details: `docs/SACHGEBIETE_KONZEPT.md`.
 - Gazette-spezifische Fundstellenmuster (OGVBl., SächsGVBl., …) in der Suche.
 - Portal-/Staatsportal-Kopplung, Wissenshub, Kreisreform, Screenshot-Suite.
 - Einheitlicher Slug-Namensraum → `(jurisdiction, slug)` mit ID `<jur>:<slug>`.

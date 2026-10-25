@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "npm run d1:seed:dev && npm run dev --workspace @landesrecht/web",
     "preview": "npm run preview --workspace @landesrecht/web",
-    "check": "npm run check:types && npm run check:web",
+    "check": "npm run subjects:check && npm run check:types && npm run check:web",
     "check:types": "tsc --noEmit -p tsconfig.json",
     "check:web": "npm run check --workspace @landesrecht/web",
     "test": "vitest run --reporter=default --reporter=junit --outputFile=test-results/junit.xml",
@@ -119,7 +119,8 @@
     "audit:consent-laws": "node scripts/audit-consent-laws.ts",
     "audit:residuals": "node scripts/audit-residuals.ts",
     "audit:legacy-structure": "node scripts/audit-legacy-structure.ts",
-    "audit:quality": "npm run -s audit:provenance && npm run -s audit:naming && npm run -s audit:large-norms && npm run -s audit:anchors && npm run -s audit:treaty-evidence && npm run -s audit:reconstruction && npm run -s audit:consent-laws && npm run -s audit:residuals && npm run -s audit:legacy-structure"
+    "audit:quality": "npm run -s audit:provenance && npm run -s audit:naming && npm run -s audit:large-norms && npm run -s audit:anchors && npm run -s audit:treaty-evidence && npm run -s audit:reconstruction && npm run -s audit:consent-laws && npm run -s audit:residuals && npm run -s audit:legacy-structure",
+    "subjects:check": "node scripts/check-subjects.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

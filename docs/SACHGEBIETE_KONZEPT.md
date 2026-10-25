@@ -1,111 +1,107 @@
-# Gemeinsame Sachgebietsnavigation
+# Gemeinsame Sachgebiete: Daten und Laufzeit
 
-## Taxonomie und Verbindlichkeit
+## Taxonomie
 
-Als gemeinsame erste Ebene eignen sich die acht OstRecht-Hauptgruppen:
+Die gemeinsame redaktionelle Orientierung liegt in `data/editorial/subjects/taxonomy.json`.
+Sie übernimmt die genauen acht Hauptgruppen, Beschreibungen und 56 Untergruppen aus
+`../staatsregierung/packages/shared/src/config/law-subjects.json`. Hauptgruppen haben stabile
+sprechende IDs unabhängig von ihrem Anzeigetext; Untergruppen bleiben als belegte Quelltaxonomie
+erhalten. Öffentlich navigiert die erste Ausbaustufe über die acht Hauptgruppen, ohne Codes.
+Dies ist keine behauptete amtliche Einheitsklassifikation der vier Länder.
 
-1. Staats- und Verfassungsrecht
-2. Verwaltung
-3. Rechtspflege, Zivilrecht und Strafrecht
-4. Landesplanung, Baurecht, Wohnungen, Verkehr
-5. Finanzwesen
-6. Wirtschaftsrecht, Landwirtschaft, Umweltrecht
-7. Kulturelle Angelegenheiten
-8. Sozialwesen
+| Stabile ID | Öffentliche Bezeichnung |
+| --- | --- |
+| staat-verfassung | Staats- und Verfassungsrecht |
+| verwaltung | Verwaltung |
+| justiz | Rechtspflege, Zivilrecht und Strafrecht |
+| planung-verkehr | Landesplanung, Baurecht, Wohnungen, Verkehr |
+| finanzen | Finanzwesen |
+| wirtschaft-umwelt | Wirtschaftsrecht, Landwirtschaft, Umweltrecht |
+| bildung-kultur | Kulturelle Angelegenheiten |
+| soziales | Sozialwesen |
 
-Stabile sprachunabhängige IDs (z. B. `staat-verfassung`, `verwaltung`, `justiz`, `planung-verkehr`,
-`finanzen`, `wirtschaft-umwelt`, `bildung-kultur`, `soziales`) von öffentlichen deutschen Titeln trennen.
-Die acht Gruppen sind ein Entwurf, keine bereits länderübergreifend amtliche Systematik. Untergruppen erst
-nach einer redaktionellen Synopse veröffentlichen. Insbesondere „Förderrichtlinien“ (Ost-Untergruppe 55)
-ist eine Quellklassifikation und kein verlässlicher Hinweis auf das materielle Fördergebiet. Sie darf nicht
-anhand des Titels automatisch in Wirtschaft, Bildung oder Soziales umgebucht werden.
+## Quellen und Grenzen der Übersetzung
 
-## Bestandsprüfung und belastbare Abdeckung
+- **Ost:** `crosswalks/ost.json` enthält 56 exakte Zuordnungen der bekannten OstRecht-Sachgebietstitel
+  in ihre jeweilige Hauptgruppe. Grundlage sind die Quellkonfiguration und die vorhandenen
+  `subjects_json`-Angaben. Mehrere Quellsachgebiete ergeben die Vereinigungsmenge der Hauptgruppen;
+  unbekannte Werte bleiben unzugeordnet. Es gibt keine dauerhaften Ost-Normzuordnungen und keine Ost-Kopie.
+- **NSH:** `crosswalks/sh.json` trennt Gesetze/Verordnungen/Verträge von der Familie der
+  Verwaltungsvorschriften. Belege sind die amtliche
+  [Systematische Übersicht GVOBl.](https://verkuendungsportal.schleswig-holstein.de/home/gvobl/gvobl-service/_documents/gvobl_service_systematische_uebersicht.pdf?__blob=publicationFile&v=2)
+  und die getrennte
+  [Systematische Übersicht des Erlassverzeichnisses](https://verkuendungsportal.schleswig-holstein.de/home/amtsblatt/ab_service/ab_service_dokumente/ab_systematische_%C3%BCbersicht.pdf?__blob=publicationFile&v=1).
+  Beispielsweise wird der Bildungsbereich 223 nach Bildung/Kultur übersetzt; Schulbau 2134 im
+  Verwaltungsvorschriftenplan dagegen nach Planung/Baurecht. Die gemischten Bereiche 21, 24/25,
+  66 und 71/72 werden nicht pauschal übersetzt. Der Kulturschutz-Zweig 224 bleibt offen, weil er
+  Denkmalschutz berührt, den die gemeinsame Taxonomie im Bereich Planung/Baurecht führt.
+  Nichtnumerische Kennungen wie `B …` bleiben ebenfalls offen. Die aktuellen Quellen dienen nur
+  der begrifflichen Systematik, nicht der Übernahme nachträglicher Rechtsänderungen.
+- **BayWü:** `crosswalks/bayrs.json` verwendet belegte Bereiche des
+  [systematischen Fortführungsnachweises BAYERN.RECHT](https://www.gesetze-bayern.de/Content/Pdf/ffn?all=False).
+  Gemischte Zweige, insbesondere 21 und 224, bleiben ohne eigene geprüfte Übersetzung offen.
+  Öffentliches Auftragswesen 73 folgt der entsprechenden gemeinsamen Finanz-Untergruppe.
+  Ressortbuchstaben sind kein Klassifikationsmerkmal. Für Verwaltungsvorschriften gilt ein
+  eigener Gliederungsplan ([Redaktionsrichtlinien Nr. 8.1](https://www.gesetze-bayern.de/Content/Document/BayVwV312180-34));
+  dieser wird ausdrücklich nicht mit BayRS gleichgesetzt, obwohl die Herkunftsnummer im bestehenden
+  Importfeld ebenfalls `bayrs` heißt. Seine Übersetzungsregel bleibt `pending`, damit betroffene
+  Verwaltungsvorschriften nicht versehentlich über die Gesetze-Systematik eingeordnet werden.
+- **West:** `crosswalks/nrw.json` enthält bislang keine akzeptierte Regel. Die
+  [amtlichen Veröffentlichungsrichtlinien Nr. 2.1](https://recht.nrw.de/lrmb/verwaltungsvorschrift/01072025-richtlinien-fuer-die-gestaltung-den-erlass-und-die/)
+  unterscheiden SGV.- und SMBl.-Gliederungsnummern von Dokumentidentitäten. Die vorhandenen
+  9.361 Import-Manifeste (1.482 mit Zielidentität) enthalten kein entsprechendes Klassifikationsfeld
+  und keine zugehörigen `ugl_nr`-/`gld_nr`-Parameter in den Rohdokumentadressen. Auch die 13.242
+  Cache-Metadaten und die kanonischen Herkunftsverweise liefern solche Parameter nicht.
+  Die verlinkten alten amtlichen Systematikadressen leiten auf die neue Suche um. Im Normtext
+  zitierte Gliederungsnummern gehören häufig zu fremden Vorschriften und werden nicht verwendet.
+  Vor einer West-Zuordnung braucht es einen eindeutig mit der Normidentität verbundenen Beleg;
+  kein erneuter historischer Bulkimport und keine Titelklassifikation.
 
-Grundgesamtheit sind Stammnormen aller Typen und Rechtsstände, nicht Fassungsdateien und nicht nur die neue
-Standardsuche. Zählung im committed Landesrecht-Bestand und lesend in der produktiven OstRecht-D1
-`ostrecht-recht` (Sync vom 16. Oktober 2026). Der vorhandene vollständige lokale Seed wurde
-zusätzlich als unabhängige Vergleichsgrundlage geprüft; er ist älter als die Remote-Projektion.
+Jede Regel benennt ID, Land, Quellsystem, originalen Nummernbereich oder exakten Quelltitel,
+Typbereich, Zielgruppen, Quellenbeleg, Entscheidung und Status. Nur `accepted` wirkt zur Laufzeit.
+Die Daten sind eine bewusst partielle Übersetzung; neue Sim-Normen ohne eindeutigen Beleg bleiben
+unzugeordnet. Aktuelle Abdeckungszahlen liefert `npm run subjects:check`, für Ost die dynamische
+Store-Abfrage. Es werden keine festen Bestandszahlen in öffentliche Komponenten eingebaut.
 
-| Land | Normen | Gefüllte subjects | Klassifikationskennung | Bereits sicher in gemeinsamen Entwurf überführbar | Noch ohne geprüfte gemeinsame Zuordnung |
-| --- | ---: | ---: | --- | ---: | ---: |
-| West | 1.528 | 0 | 1.482 RECHT.NRW-Dokumentkennungen, keine Sachgebietskennung im kanonischen Bestand | 0 | 1.528 |
-| NSH | 2.705 | 0 | 2.669 `gliederungsnummer-sh` | 0 | 2.705 |
-| BayWü | 1.664 | 0 | 1.125 `bayrs` | 0 | 1.664 |
-| Ost | 5.226 im Landesrecht-Geltungsbereich | 5.226 | vorhandene OstRecht-Sachgebiete | 5.226 | 0 |
+## Projektion und Konflikte
 
-„0 sicher“ bei NSH und BayWü bedeutet fehlende geprüfte Übersetzungstabelle, nicht fehlende
-Klassifikationsinformation. 36 NSH-Normen und 539 BayWü-Normen haben auch die genannte Kennung nicht.
-Diese Mengen dürfen später nicht stillschweigend anhand von Titeln geschlossen werden.
+`packages/legal-core/src/config/subjects.ts` enthält Datenvalidierung, deterministische Zuordnung
+und `projectSubjectAssignments`. Der reproduzierbare Plan liest ausschließlich Metadaten. Er
+schreibt weder `meta.json` noch Fassungen. Unbekannte Norm-IDs in ergänzenden Zuordnungen,
+doppelte Regel-IDs und überlappende akzeptierte Regeln desselben Systems/Typbereichs sind Fehler.
+Mehrfachzuordnung ist über explizite Zielgruppen und mehrere belegte Herkunftskennungen zulässig;
+sie wird nicht als Mehrdeutigkeit gezählt. Konflikte verhindern die Freigabe statt stiller Priorisierung.
 
-Die Remote-D1 enthält insgesamt 5.227 Normen. Eine ausschließlich vor dem Ausgangsrechtsstand
-geltende Norm fällt aus dem Landesrecht-Scope heraus. Alle 5.226 verbleibenden Normen besitzen
-mindestens einen in der OstRecht-Systematik bekannten Sachgebietstitel (SELECT mit `json_each`,
-exakter Abgleich gegen die 56 definierten Titel, 0 Schreibzugriffe). Der ältere lokale Seed enthält
-5.212 Normen, davon 5.211 im Portal-Scope, ebenfalls alle zuordenbar. Die eigentliche Portalnavigation
-muss dieselben Bestands- und Geltungsfilter wie die Stores anwenden. Der Remote-Freshness-Audit
-meldet für den Landesrecht-Stichtag drei geltende Fassungen ohne passende Volltexteinheiten
-(Bezirksordnung, Gemeindeordnung, Landkreisordnung). Eine Sachgebietszuordnung ersetzt daher
-keinen Nachweis vollständiger Volltextsuche; historische Volltextsuche bleibt ebenfalls eingeschränkt.
+`assignments/index.json` ist der Einstieg für belegte normbezogene redaktionelle Entscheidungen.
+Akzeptierte Einzelentscheidungen ersetzen die automatische Ableitung ausdrücklich. Ost-Einzelentscheidungen
+sind verboten. Eine Liste gültiger Norm-IDs wird beim Gate gegen den committed Bestand geprüft.
+`npm run check` führt dieses Gate mit aus.
 
-### Quellen und sichere Ableitungen
+Die Laufzeit verwendet eine **virtuelle Leseprojektion**: `packages/runtime/src/subjects.ts` übersetzt
+exakt dieselben Regeln in SQL-Prädikate über vorhandene `subjects_json`- und `meta_json`-Felder.
+Die eigenen D1-Länder benötigen deshalb keine neue Tabelle und keinen Reprojektionslauf. Ost nutzt
+nur SELECT über seine vorhandenen Angaben und bleibt hinter dem Schema-Contract/Read-only-Binding.
+Identische Eingaben ergeben identische Ergebnisse; eigene Norm-/Suchprojektionen bleiben unverändert.
 
-- **Ost:** `../staatsregierung/packages/shared/src/config/law-subjects.json` enthält acht Hauptgruppen,
-  56 Untergruppen und zehn Förderbereiche. `law-subjects.ts` enthält die ausdrücklich geprüfte
-  FSN-Zuordnung. `meta.subjects`, `primarySubject` und `sourceReferences[].fsnNumber` sind im vorgelagerten
-  Bestand vorhanden, D1 führt `law_norms.subjects_json`. Eine exakte Zuordnung bekannter Sachgebietstitel
-  zur dort definierten Hauptgruppe ist deterministisch und belastbar. Unbekannte Titel bleiben offen.
-  Landesrecht liest diese Angaben über den bestehenden Read-only-Adapter; es pflegt keine Ost-Kopie.
-- **West/NRW:** RECHT.NRW-Dokumentnummern und Fundstellen identifizieren Dokumente, keine Sachgebiete.
-  LRGV/LRMB und der Normtyp sind ebenfalls keine Sachgebiete. Im kanonischen Bestand wird keine
-  NRW-Systematik mitgeführt. Vor einer Automatik braucht es eine belegte amtliche Klassifikationsquelle
-  und deren geprüfte Zuordnung zur Normidentität. Vorhandene Import-Manifeste und archivierte Quellen
-  können dafür gezielt untersucht werden; kein neuer Bulkabruf und keine Titelklassifikation.
-- **NSH/Schleswig-Holstein:** `externalIdentifiers` enthält `gliederungsnummer-sh`, z. B. `223-13`,
-  `200-11-1`, `6623.58`. Der Importer `packages/importers/juris-sh` übernimmt diese Herkunftsangabe.
-  Sie ist eine gute Grundlage, aber kein Ost-FSN. Erforderlich sind die passende SH-Systematik,
-  getrennte Prüfung der Gesetzes- und Verwaltungsvorschriftenzählung und eine freigegebene
-  Präfix-/Bereichstabelle. Keine Abschneidung auf die erste oder die ersten beiden Ziffern nach Ost-Regeln.
-- **BayWü/Bayern:** `packages/importers/bayernrecht/src/parse/norm.ts` liest `gliederungsNr.BayRS`
-  und belegte Ersatzangaben; gespeichert als generisches System `bayrs`, z. B. `3133-J`, `2190-F`,
-  `7912.0-U`. Die Verwaltungsressort-Endung alleine beschreibt kein Sachgebiet. Eine belegte BayRS-
-  Gliederung mit geprüften Bereichsregeln ist nötig; BayRS und Ost-FSN sind nicht gleichzusetzen.
-- **Kanonisches Modell:** `NormMeta.subjects: string[]` und die Suchfilter existieren bereits. Die drei
-  eingefrorenen Länder haben dort keine Einträge. Diese Felder werden für den Ausbau nicht nachträglich
-  befüllt. Strukturelle Kapitelnummern innerhalb eines Gesetzes sind keine Sachgebietskennungen.
+`NormStore.countSubjectGroups` liefert Gesamtzahl, zugeordnet/unzugeordnet, Mehrdeutigkeiten und
+Gruppenzahlen dynamisch. Normen werden pro Gruppe einmal, für die Gesamtabdeckung als Vereinigungsmenge
+gezählt. Nicht zugeordnete Vorschriften bleiben ohne Sachgebietsfilter vollständig erreichbar.
+Der Indexumfang von Ost und der redaktionelle Rechtsstand werden dadurch nicht verändert.
 
-## Ergänzende redaktionelle Projektion
+## Oberfläche und Filter
 
-Vorschlag: `data/editorial/subjects/taxonomy.json`, `crosswalks/<source-system>.json` und
-`assignments/<jurisdiction>.json` außerhalb von `content/` und `data/simulation/`.
+- `/sachgebiete/` zeigt nur belegte Hauptgruppen, Beschreibung und dynamische Vorschriftenzahl.
+- `/sachgebiete/<id>/` verwendet `NormListing`, Store-Facetten, Rechtsstand, Typen, A–Z und Pagination.
+- `land=west|nsh|ost|baywue` ist mit allen Listenfiltern kombinierbar. Nicht belegte Länder werden in
+  Gruppen nicht als Auswahl angeboten; direkte leere Land-/Gruppenadressen führen zur Länderübersicht
+  der Sachgebiete. Unbekannte Gruppen liefern 404.
+- Die Länderseiten und Hauptnavigation verlinken die Übersicht. Der öffentliche Hinweis auf die
+  schrittweise Ergänzung bleibt sichtbar; normale Seiten zeigen keine internen Abdeckungsdiagnosen.
+- Die Rechtssuche verwendet `subject=<stabile Gruppen-ID>` (mehrere Werte als OR). Bestehende freie
+  Sachgebietstitel in API-Aufrufen bleiben unterstützt. `bereich`, Typ, Land, Rechtsstand, Geltungstag
+  und Fassungswahl behalten ihre bisherige Bedeutung. Formular, Filterlinks und Pagination erhalten
+  ausgewählte Sachgebiete. Der vorhandene mobile Filterdialog wird wiederverwendet.
 
-Eine Zuordnung trägt `(jurisdiction, normId)`, `subjectIds`, Herkunftssystem, ursprüngliche Kennung,
-Quellenbeleg, Regel-ID und Regelversion, Prüfentscheidung (`accepted|pending|rejected`) und optional ein
-Anwendungsintervall. Ein normbezogener redaktioneller Override hat Vorrang vor einem akzeptierten
-Crosswalk. Widersprechende Regeln stoppen die Projektion; keine automatische Mehrheitsentscheidung.
-Unbekannte Kennungen und Normen ohne Beleg bleiben ausdrücklich unzugeordnet. Mehrfachzuordnungen
-sind erlaubt und werden in Bestandszahlen als Vereinigungsmenge gezählt.
-
-Normen und ihre immutable Fassungen bleiben byteidentisch. Sachgebietsprojektionen werden versioniert,
-aber niemals als Rechtsänderung oder neue Fassung angezeigt. Bei Ost erfolgt die Zuordnung bekannter
-Quelltitel im Adapter/Projektionslesemodell, nicht durch Schreibzugriffe auf OstRecht-D1.
-
-## Filter, Navigation und Implementierungsplan
-
-1. Taxonomie und Begriffsübersetzung redaktionell entscheiden. Die vollständigen amtlichen
-   Quellsystematiken für SH, BayRS und gegebenenfalls NRW mit Provenienz dokumentieren.
-2. Crosswalks anhand eindeutiger Nummernbereiche erarbeiten; je Regel Positiv-, Grenz- und Konfliktfälle
-   prüfen. Zuerst Dry-run mit Anzahl zugeordneter, mehrdeutiger und offener Normen pro Land und Normtyp.
-3. Kleines fail-closed Schema und Validator für die redaktionelle Projektion bauen; Norm-IDs gegen die
-   Stores prüfen. Baseline-, Tabellen- und Simulationsgates bleiben unverändert. Erst nach Annahme der
-   Regeln eine zusätzliche Zuordnung materialisieren; keine Normtexte oder Normmetadaten überschreiben.
-4. Gemeinsame Store-Facetten und Suchfilter auf stabile `subject`-IDs umstellen beziehungsweise um die
-   ergänzende Projektion erweitern. Für eigene D1-Länder gegebenenfalls separate Zuordnungstabelle mit
-   Index `(subject_id, norm_id)`; Ost ausschließlich SELECT auf vorhandene Angaben. Kein titelbasierter
-   Laufzeitfallback. Umfang `bereich`, Land, Geltungstag und Rechtsstand bleiben kombinierbar.
-5. Erst mit belegter Abdeckung `/sachgebiete/` und `/sachgebiete/<id>/` veröffentlichen: gefüllte Gruppen,
-   Länderzahlen und transparent angegebene Abdeckung. Unzugeordnete Normen bleiben über Suche und
-   Länderübersichten erreichbar. Gleiche mobile Filterkomponente verwenden, leere Gruppen ausblenden.
-6. Regression: beide Store-Dialekte, länderübergreifende Vereinigungsmengen, Mehrfachzuordnung,
-   unbekannte Nummern, historische Geltung und unveränderte Freeze-Fingerabdrücke. Keine leere öffentliche
-   Seite und keine massenhafte Klassifikation vor diesen Entscheidungen.
+Die Tests prüfen alle 56 Ost-Zuordnungen, dynamische Fixture-Zähler, Regelgrenzen und gemischte Zweige,
+Ministerialblatt-Abgrenzung, Konflikte, unbekannte IDs, Mehrfachzuordnung, SQL-/Dateistore-Parität,
+Geltungstag, Standardsuchumfang, Facetten, Pagination und wiederholte Projektion.

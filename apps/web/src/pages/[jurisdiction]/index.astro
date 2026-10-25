@@ -4,7 +4,7 @@ export const prerender = false;
 import { formatBaselineDate, jurisdictionGenitive } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { formatDate, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { getPublicationLabel } from '@landesrecht/legal-core/lib/publications.ts';
-import { getPublicationsUrl, getPublicationUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { getPublicationsUrl, getPublicationUrl, getSubjectsUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import InventoryNotice from '../../components/InventoryNotice.astro';
 import NormListing from '../../components/NormListing.astro';
 import SearchForm from '../../components/SearchForm.astro';
@@ -34,6 +34,7 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
   <h1>{jurisdiction.name}</h1>
   <p class="lead">Gesetze, Verordnungen und Verwaltungsvorschriften des {jurisdictionGenitive(jurisdiction)} ({jurisdiction.shortName}). Ausgangspunkt ist der Rechtsstand vom {formatBaselineDate(jurisdiction.baselineDate)}; alle späteren Änderungen stammen aus der Politiksimulation.</p>
   <InventoryNotice jurisdiction={id} />
+  <p><a class="action-link" href={getSubjectsUrl(undefined,id)}>Vorschriften nach Sachgebieten finden</a></p>
   <SearchForm state={{ jurisdictions: [id] }} />
   <section aria-labelledby="normen-heading">
     <h2 id="normen-heading">Vorschriften</h2>

@@ -48,6 +48,7 @@ export interface NormSummaryQuery {
 
 /** Facettenzählung über den gesamten Bestand unter den angegebenen Filtern (nie aus einer begrenzten Liste). */
 export interface NormFacetQuery {
+  subject?: string;
   types?: readonly NormType[];
   changeKind?: SimulationChangeKind;
   letter?: string;
@@ -93,6 +94,8 @@ export interface NormStore {
   countNormsByType(): Promise<NormTypeCount[]>;
   /** Facetten (Typ, Klassifikation, Anfangsbuchstabe) über den gesamten Bestand unter den Filtern der Länderseite. */
   countNormFacets(query?: NormFacetQuery): Promise<NormFacets>;
+  /** Dynamische Sachgebietsabdeckung über den gesamten Store, keine festgeschriebenen Bestandszahlen. */
+  countSubjectGroups?(): Promise<import('./subjects.ts').SubjectCoverage>;
   getNormSummary(slug: string): Promise<NormSummary | null>;
   /**
    * Übersichten mehrerer Normen in wenigen Abfragen (unbekannte Slugs fehlen im Ergebnis). Fehlt die Methode, fragt

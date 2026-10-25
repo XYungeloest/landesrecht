@@ -4,6 +4,7 @@
  * Datei) übersetzen ihn in SQL beziehungsweise In-Memory-Bewertung, ohne die Eingabe erneut
  * zu interpretieren. Übernommen und verallgemeinert aus OstRecht (packages/recht-search).
  */
+import { getSubjectGroup } from '@landesrecht/legal-core/config/subjects.ts';
 import { isJurisdictionId, JURISDICTION_IDS, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { isNormStatus, isNormType, type NormStatus, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import { isSimulationChangeKind, type SimulationChangeKind } from '@landesrecht/legal-core/lib/simulation-change.ts';
@@ -335,7 +336,7 @@ export function parseSearchState(params: URLSearchParams): SearchState {
     jurisdictions: params.getAll('jurisdiction').flatMap((entry) => entry.split(',')).map((entry) => entry.trim()).filter(isJurisdictionId),
     types: params.getAll('type').flatMap((entry) => entry.split(',')).map((entry) => entry.trim()).filter(isNormType),
     statuses: params.getAll('status').flatMap((entry) => entry.split(',')).map((entry) => entry.trim()).filter(isNormStatus),
-    subjects: [...new Set(params.getAll('subject').map((entry) => entry.trim()).filter(Boolean))].slice(0, 20),
+    subjects: [...new Set(params.getAll('subject').flatMap((entry) => { const ids = entry.split(',').map((id) => id.trim()); return ids.every((id) => getSubjectGroup(id)) ? ids : [entry]; }).map((entry) => entry.trim()).filter(Boolean))].slice(0, 20),
     versionScope: versionScope === 'all' || (VERSION_TEMPORAL_KINDS as readonly string[]).includes(versionScope ?? '')
       ? (versionScope as VersionScope)
       : 'current',

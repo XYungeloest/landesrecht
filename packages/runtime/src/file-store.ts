@@ -3,6 +3,7 @@
  * ohne Wrangler, Prerendering und Tests. Antwortet mit denselben Strukturen wie der D1-Store,
  * damit Oberflächen und API keinen Unterschied sehen.
  */
+import { deriveSubjectIds, SUBJECT_GROUPS } from '@landesrecht/legal-core/config/subjects.ts';
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { getIndexLetter, getNormSortKey, getNormVersionIdentity } from '@landesrecht/legal-core/lib/identity.ts';
@@ -58,7 +59,7 @@ export function createFileNormStore(jurisdiction: JurisdictionId, records: reado
     if (!ignore.changeKind && query.changeKind && summary.simulationChangeKind !== query.changeKind) return false;
     if (!ignore.letter && query.letter && getIndexLetter(summary.title) !== query.letter) return false;
     if (query.status && record.meta.status !== query.status) return false;
-    if (query.subject && !record.meta.subjects.includes(query.subject)) return false;
+    if (query.subject && !record.meta.subjects.includes(query.subject) && !deriveSubjectIds(record.meta).includes(query.subject)) return false;
     return true;
   };
 
@@ -71,6 +72,16 @@ export function createFileNormStore(jurisdiction: JurisdictionId, records: reado
     kind: 'files',
     jurisdiction,
 
+    async countSubjectGroups() {
+      const counts = new Map(SUBJECT_GROUPS.map((group) => [group.id, 0]));
+      let assigned = 0;
+      for (const record of own) {
+        const ids = deriveSubjectIds(record.meta);
+        if (ids.length) assigned++;
+        for (const id of ids) counts.set(id, (counts.get(id) ?? 0)+1);
+      }
+      return { total: own.length, assigned, unassigned: own.length-assigned, ambiguous: 0, groups: [...counts].map(([id,count]) => ({ id,count })) };
+    },
     async countNormsByType(): Promise<NormTypeCount[]> {
       const counts = new Map<NormRecord['meta']['type'], number>();
       for (const record of own) counts.set(record.meta.type, (counts.get(record.meta.type) ?? 0) + 1);
@@ -122,7 +133,8 @@ export function createFileNormStore(jurisdiction: JurisdictionId, records: reado
     },
 
     async search(state) {
-      return runSearch(allDocuments(), { ...state, jurisdictions: [jurisdiction] }, buildSearchQueryPlan(state));
+      const docs = state.subjects.length ? allDocuments().map((document) => ({ ...document, subjects: [...document.subjects, ...deriveSubjectIds(bySlug.get(document.slug)!.meta)] })) : allDocuments();
+      return runSearch(docs, { ...state, jurisdictions: [jurisdiction] }, buildSearchQueryPlan(state));
     },
 
     async getStats() {

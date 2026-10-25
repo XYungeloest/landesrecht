@@ -1,0 +1,31 @@
+---
+export const prerender = false;
+import { SUBJECT_COVERAGE_NOTICE } from '@landesrecht/legal-core/config/subjects.ts';
+import { getJurisdiction, isJurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { getSubjectsUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../../lib/runtime/context.ts';
+import { subjectCoverage, mergedSubjectCounts } from '../../lib/subjects.ts';
+const registry = await getStoreRegistry();
+const rawLand = Astro.url.searchParams.get('land');
+const land = isJurisdictionId(rawLand) ? rawLand : undefined;
+if (land) registry.get(land);
+const coverage = await subjectCoverage(registry);
+const groups = mergedSubjectCounts(coverage,land).filter((group) => group.count > 0);
+Astro.response.headers.set('Cache-Control',PAGE_CACHE_CONTROL);
+---
+<BaseLayout title="Sachgebiete" canonical={PORTAL_PATHS.subjects}>
+  <nav class="breadcrumbs" aria-label="Brotkrumen"><ol><li><a href={PORTAL_PATHS.home}>Landesrecht</a></li><li>Sachgebiete</li></ol></nav>
+  <h1>Sachgebiete</h1>
+  <p class="lead">Rechtsvorschriften nach Themen finden. Die Einteilung dient als gemeinsame redaktionelle Orientierung für die vier Länder.</p>
+  <p class="muted">{SUBJECT_COVERAGE_NOTICE}</p>
+  <nav aria-label="Land wählen"><ul class="type-filter">
+    <li><a href={getSubjectsUrl()} aria-current={!land ? 'true' : undefined}>Alle Länder</a></li>
+    {coverage.map((entry) => <li><a href={getSubjectsUrl(undefined,entry.jurisdiction)} aria-current={land === entry.jurisdiction ? 'true' : undefined}>{getJurisdiction(entry.jurisdiction).name}</a></li>)}
+  </ul></nav>
+  {registry.unavailable().length > 0 && <p role="note" class="muted">Im Entwicklungsbetrieb sind einzelne Länder nicht oder nur auszugsweise lokal verfügbar.</p>}
+  {groups.length > 0 ? <div class="subject-grid">{groups.map((group) => <section class="subject-card">
+    <h2><a href={getSubjectsUrl(group.id,land)}>{group.title}</a></h2>
+    <p>{group.description}</p><p class="muted">{group.count} zugeordnete Vorschriften</p>
+  </section>)}</div> : <p>Für dieses Land sind noch keine Sachgebiete belegt. Nutzen Sie die <a href={PORTAL_PATHS.search}>Rechtssuche</a> oder die <a href={getSubjectsUrl()}>länderübergreifende Sachgebietsübersicht</a>.</p>}
+</BaseLayout>

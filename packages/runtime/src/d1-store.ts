@@ -5,6 +5,7 @@
  * Jede gelesene Zeile wird über die kanonischen Parser re-validiert (D1 ist abgeleitet).
  */
 import { effectiveSearchTypes } from '@landesrecht/search/query.ts';
+import { SUBJECT_GROUPS, subjectPredicate, type SubjectCoverage } from './subjects.ts';
 import type { JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { comparePublicationsNewestFirst } from '@landesrecht/legal-core/lib/publications.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
@@ -234,7 +235,7 @@ function referenceConditions(references: readonly StructuralIntent[]): { sql: st
  * Filterbedingungen der Kandidaten- und Zählabfrage. `conjuncts` fügt je Suchwort eine AND-Unterabfrage auf
  * Normebene hinzu (Plan `or-prefix`); im Plan `and-first` erzwingt bereits der MATCH-Ausdruck alle Wörter.
  */
-function filterConditions(dialect: D1SchemaDialect, state: SearchState, plan: SearchQueryPlan, conjuncts = true): { sql: string; params: unknown[] } {
+function filterConditions(dialect: D1SchemaDialect, jurisdiction: JurisdictionId, state: SearchState, plan: SearchQueryPlan, conjuncts = true): { sql: string; params: unknown[] } {
   const clauses: string[] = [];
   const params: unknown[] = [];
   const types = expandNormTypeFilter(effectiveSearchTypes(state));
@@ -247,8 +248,7 @@ function filterConditions(dialect: D1SchemaDialect, state: SearchState, plan: Se
     params.push(...state.statuses);
   }
   if (state.subjects.length > 0) {
-    clauses.push(`EXISTS (SELECT 1 FROM law_norm_subjects s WHERE s.norm_id = n.id AND s.subject IN (${state.subjects.map(() => '?').join(', ')}))`);
-    params.push(...state.subjects);
+    clauses.push(`(${state.subjects.map((id) => subjectPredicate(id, jurisdiction)).join(' OR ')})`);
   }
   if (state.simulationChange) {
     clauses.push(`${dialect.simulationChangeKind} = ?`);
@@ -393,6 +393,14 @@ export function createD1NormStore(db: ReadableD1, jurisdiction: JurisdictionId, 
     kind: 'd1',
     jurisdiction,
 
+    async countSubjectGroups(): Promise<SubjectCoverage> {
+      const predicates = SUBJECT_GROUPS.map((group) => subjectPredicate(group.id, jurisdiction));
+      const columns = predicates.map((predicate, index) => `coalesce(sum(CASE WHEN ${predicate} THEN 1 ELSE 0 END),0) AS g${index}`);
+      const row = await unlessUnprojected(() => db.prepare(`SELECT count(*) AS total, coalesce(sum(CASE WHEN ${predicates.map((p) => `(${p})`).join(' OR ')} THEN 1 ELSE 0 END),0) AS assigned, ${columns.join(', ')} FROM law_norms n WHERE ${dialect.normScope.sql}`).bind(...dialect.normScope.params).first<Record<string, number>>(), () => null);
+      const total = Number(row?.total ?? 0), assigned = Number(row?.assigned ?? 0);
+      return { total, assigned, unassigned: total-assigned, ambiguous: 0, groups: SUBJECT_GROUPS.map((group, index) => ({ id: group.id, count: Number(row?.[`g${index}`] ?? 0) })) };
+    },
+
     async countNormsByType(): Promise<NormTypeCount[]> {
       const rows = await unlessUnprojected(() => db.prepare(`SELECT n.type AS type, COUNT(*) AS count FROM law_norms n WHERE ${dialect.normScope.sql} GROUP BY n.type ORDER BY n.type`).bind(...dialect.normScope.params).all<{ type: string; count: number }>(), () => ({ results: [] as Array<{ type: string; count: number }> }));
       return rows.results.map((row) => ({ type: row.type as NormType, count: Number(row.count) }));
@@ -402,6 +410,7 @@ export function createD1NormStore(db: ReadableD1, jurisdiction: JurisdictionId, 
       const where = (parts: { types?: boolean; changeKind?: boolean; letter?: boolean }): { sql: string; params: unknown[] } => {
         const clauses = [dialect.normScope.sql];
         const params: unknown[] = [...dialect.normScope.params];
+        if (query.subject) clauses.push(subjectPredicate(query.subject, jurisdiction));
         if (parts.types !== false && query.types && query.types.length > 0) { clauses.push(`n.type IN (${query.types.map(() => '?').join(', ')})`); params.push(...query.types); }
         if (parts.changeKind !== false && query.changeKind) { clauses.push(`${dialect.simulationChangeKind} = ?`); params.push(query.changeKind); }
         if (parts.letter !== false && query.letter) { clauses.push(`${dialect.indexLetter} = ?`); params.push(query.letter); }
@@ -425,7 +434,7 @@ export function createD1NormStore(db: ReadableD1, jurisdiction: JurisdictionId, 
       const types = query.types && query.types.length > 0 ? query.types : query.type ? [query.type] : [];
       if (types.length > 0) { clauses.push(`n.type IN (${types.map(() => '?').join(', ')})`); params.push(...types); }
       if (query.status) { clauses.push('n.status = ?'); params.push(query.status); }
-      if (query.subject) { clauses.push('EXISTS (SELECT 1 FROM law_norm_subjects s WHERE s.norm_id = n.id AND s.subject = ?)'); params.push(query.subject); }
+      if (query.subject) clauses.push(subjectPredicate(query.subject, jurisdiction));
       if (query.changeKind) { clauses.push(`${dialect.simulationChangeKind} = ?`); params.push(query.changeKind); }
       if (query.letter) { clauses.push(`${dialect.indexLetter} = ?`); params.push(query.letter); }
       const limit = Math.min(Math.max(query.limit ?? 500, 1), 5000);
@@ -560,7 +569,7 @@ export function createD1NormStore(db: ReadableD1, jurisdiction: JurisdictionId, 
     // evaluateDocument als Titeltreffer bestätigt (titleCarriesReferences).
     const wantsRelaxed = plan.references.length > 0 && plan.freeText;
     const relaxedTitleHits = async (match: string, conjuncts: boolean, known: ReadonlySet<string>): Promise<SearchHit[]> => {
-      const relaxed = filterConditions(dialect, state, { ...plan, references: [] }, conjuncts);
+      const relaxed = filterConditions(dialect, jurisdiction, state, { ...plan, references: [] }, conjuncts);
       const rows = await rankedCandidates(match, relaxed, false);
       const unknown = rows.filter((candidate) => !known.has(`${candidate.norm_id}#${candidate.version_id}`));
       const titleHits: SearchHit[] = [];
@@ -575,20 +584,20 @@ export function createD1NormStore(db: ReadableD1, jurisdiction: JurisdictionId, 
     // Unterabfragen (und bei Strukturangaben die entspannte Titelsuche); liefert beides nichts, der großzügige
     // `or-prefix`-Plan (Wörter aus verschiedenen Einheiten, Präfixe auf früheren Wörtern), sofern er sich unterscheidet.
     let match = orMatch;
-    let filters = filterConditions(dialect, state, plan);
+    let filters = filterConditions(dialect, jurisdiction, state, plan);
     let candidates: CandidateRow[] = [];
     let total = 0;
     let titleHits: SearchHit[] | null = null;
     const pairKey = (row: CandidateRow): string => `${row.norm_id}#${row.version_id}`;
     if (andMatch && orMatch) {
       match = andMatch;
-      filters = filterConditions(dialect, state, plan, false);
+      filters = filterConditions(dialect, jurisdiction, state, plan, false);
       candidates = await rankedCandidates(andMatch, filters, true);
       total = candidates.length > 0 ? await countMatched(andMatch, filters) : 0;
       if (candidates.length === 0 && wantsRelaxed) titleHits = await relaxedTitleHits(andMatch, false, new Set());
       if (candidates.length === 0 && (titleHits?.length ?? 0) === 0 && andMatch !== orMatch) {
         match = orMatch;
-        filters = filterConditions(dialect, state, plan);
+        filters = filterConditions(dialect, jurisdiction, state, plan);
         titleHits = null;
         total = await countConjunctive(filters);
         candidates = total > 0 ? await rankedCandidates(orMatch, filters, true) : [];

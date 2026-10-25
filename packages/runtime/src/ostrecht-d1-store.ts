@@ -20,6 +20,7 @@
  * Der Schema-Contract (`ostrecht-contract.ts`) wird vor dem ersten Zugriff geprüft und schlägt bei Inkompatibilität oder
  * unvollständigem Sync (`sync_state ≠ complete`) klar fehl – keine halbgültige Auslieferung.
  */
+import { deriveSubjectIds } from '@landesrecht/legal-core/config/subjects.ts';
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { JURISDICTIONS, SIMULATION_BASELINE_DATE, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { getNormUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/routes.ts';
@@ -407,7 +408,7 @@ export async function searchStaleOstRechtNorms(db: ReadOnlyD1Database, freshness
       const header = adaptOstRechtSearchDocument(JSON.parse(row.search_document_json) as OstRechtSearchIndexDocument, { status: row.status, asOf, ...(options.baseline ? { baseline: options.baseline } : {}) });
       const metadata = [header.summary ?? '', ...header.keywords, ...header.subjects, header.citation].filter(Boolean).join('\n');
       const document: SearchDocument = { ...header, units: [{ index: 0, type: 'metadata', anchor: '', label: '', heading: '', body: metadata }] };
-      if (!documentMatchesFilters(document, state)) continue;
+      if (!documentMatchesFilters({ ...document, subjects: [...document.subjects, ...deriveSubjectIds({ id: `ost:${header.slug}`, jurisdiction: 'ost', type: header.type, subjects: header.subjects, externalIdentifiers: [] })] }, state)) continue;
       const hit = evaluateDocument(document, plan);
       if (hit) hits.push(hit);
     }
@@ -451,6 +452,7 @@ export function createOstRechtD1Store(db: ReadOnlyD1Database, options: OstRechtS
     listNormSummaries: (query) => guarded(() => inner.listNormSummaries(query)),
     countNormsByType: () => guarded(() => inner.countNormsByType()),
     countNormFacets: (query) => guarded(() => inner.countNormFacets(query)),
+    countSubjectGroups: () => guarded(() => inner.countSubjectGroups!()),
     getNormSummary: (slug) => guarded(() => inner.getNormSummary(slug)),
     getNormSummaries: (slugs) => guarded(() => inner.getNormSummaries!(slugs)),
     getNorm: (slug, bodies) => guarded(() => inner.getNorm(slug, bodies)),
