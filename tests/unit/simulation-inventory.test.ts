@@ -2,6 +2,8 @@
  * Inventar der Sim-Rechtsquellensammlung: Hash-Dubletten, Textextraktion ohne OCR, Zip-Abgleich, Vorsortierung.
  * Das Inventar ist die Grundlage der Evidenzprüfung und muss aus dem Archiv reproduzierbar sein (Gate G9).
  */
+import { checkInventoryReproducible } from '../../scripts/lib/simulation-gates.ts';
+import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -131,6 +133,8 @@ describe('Archivscan', () => {
     expect(inventory.container).toMatchObject({ present: true, entries: 4, onlyInContainer: [], onlyInFolder: [] });
     const archived = await readFile(join(root, '.cache/simulation/archive', `${merged.sha256}.txt`), 'utf8');
     expect(archived).toBe(same);
+    expect(merged.extraction.textSha256).toBe(createHash('sha256').update(await readFile(join(root, merged.extraction.textPath))).digest('hex'));
+    expect(merged.extraction.layoutSha256).toBe(createHash('sha256').update(await readFile(join(root, merged.extraction.layoutPath))).digest('hex'));
     expect(merged.detected.documentType).toBe('standalone-official-act');
     // Original unverändert.
     expect(await readFile(join(root, 'imports', 'west', 'Verordnung Kühlräume.txt'), 'utf8')).toBe(same);
@@ -153,4 +157,27 @@ describe('Kanonische Prüfsumme (OstRecht-kompatibel)', () => {
     expect(sha256('x')).not.toBe(sha256({ x: 'x' }));
     expect(sha256({ title: 'T', body: [] })).toMatch(/^[a-f0-9]{64}$/u);
   });
+});
+
+it('G9 scannt echte Quellen erneut, schreibt kein Inventar und prüft die gespeicherten Extraktionshashes', async () => {
+  if (!(await hasPdftotext())) return;
+  const root = await tempRoot();
+  await mkdir(join(root, 'imports/west'), { recursive: true });
+  await mkdir(join(root, 'data/simulation'), { recursive: true });
+  await writeFile(join(root, 'imports/west/test.pdf'), tinyPdf('Verordnung ueber die Pruefung'));
+  const stored = await scanArchive(root);
+  const previousTool = stored.sources[0]!.extraction.tool;
+  const oldTool = previousTool === 'pdftotext version 26.07.0' ? 'pdftotext version 26.10.0' : 'pdftotext version 26.07.0';
+  stored.tools = { [oldTool]: oldTool };
+  stored.sources[0]!.extraction.tool = oldTool;
+  const path = join(root, 'data/simulation/source-inventory.json');
+  const serialized = JSON.stringify(stored);
+  await writeFile(path, serialized);
+  const report = await checkInventoryReproducible(root);
+  expect(report.problems).toEqual([]);
+  expect(report.notes).toContainEqual(expect.stringContaining('Werkzeugversion pdftotext:'));
+  expect(await readFile(path, 'utf8')).toBe(serialized);
+  stored.sources[0]!.extraction.layoutSha256 = 'f'.repeat(64);
+  await writeFile(path, JSON.stringify(stored));
+  expect((await checkInventoryReproducible(root)).problems).toContainEqual(expect.stringContaining('Extraktionsprüfsumme layoutSha256 weicht ab'));
 });

@@ -24,6 +24,12 @@ export interface ExtractedText {
   pdfInfo?: Record<string, string>;
 }
 
+/** Nur das bekannte Versionsformat zerlegen; unbekannte Angaben bleiben streng als Werkzeugname erhalten. */
+export function extractionToolIdentity(tool: string): { name: string; version?: string } {
+  const match = /^pdftotext version ([0-9]+(?:\.[0-9]+)+(?:[-+][a-zA-Z0-9.-]+)?)$/u.exec(tool);
+  return match ? { name: 'pdftotext', version: match[1]! } : { name: tool };
+}
+
 let toolVersion: string | undefined;
 
 async function pdftotextVersion(): Promise<string> {

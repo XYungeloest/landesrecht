@@ -28,7 +28,14 @@ export interface InventorySource {
   pageCount?: number;
   textLayer: TextLayerStatus;
   charactersPerPage?: number;
-  extraction: { tool: string; textPath: string; layoutPath: string };
+  extraction: {
+    tool: string;
+    textPath: string;
+    layoutPath: string;
+    /** SHA-256 der UTF-8-Extrakte nach den dokumentierten Normalisierungen des Extraktors; optional für Altinventare. */
+    textSha256?: string;
+    layoutSha256?: string;
+  };
   pdfInfo?: { title?: string; producer?: string; creator?: string; creationDate?: string };
   detected: DetectedFacts;
 }
@@ -159,7 +166,11 @@ export async function scanArchive(root: string, options: { log?: (line: string) 
       ...(extracted.pageCount !== undefined ? { pageCount: extracted.pageCount } : {}),
       textLayer: extracted.textLayer,
       ...(extracted.charactersPerPage !== undefined ? { charactersPerPage: extracted.charactersPerPage } : {}),
-      extraction: { tool: extracted.tool, textPath, layoutPath },
+      extraction: {
+        tool: extracted.tool, textPath, layoutPath,
+        textSha256: createHash('sha256').update(extracted.raw, 'utf8').digest('hex'),
+        layoutSha256: createHash('sha256').update(extracted.layout, 'utf8').digest('hex'),
+      },
       ...(info ? { pdfInfo: { ...(info.Title ? { title: info.Title } : {}), ...(info.Producer ? { producer: info.Producer } : {}), ...(info.Creator ? { creator: info.Creator } : {}), ...(info.CreationDate ? { creationDate: info.CreationDate } : {}) } } : {}),
       detected,
     });

@@ -433,7 +433,7 @@ sind Fehler (Exit 1); gesperrte Ziele sind dokumentierter Zustand (Exit 0).
 | G8 | Engine: je Operation Treffer 0/1/2, Hash-/Alttext-/Wirkdatumsabweichung | `npm run test` (`simulation-engine`, `simulation-recipes`, `simulation-consolidate`, `simulation-gates`) |
 | G11 | Evidenzhierarchie (2.1): keine Wortlautquelle, kein Blatt-, Einzelakt-, Verkündungs- oder Änderungsbeleg und keine strukturtragende Rolle aus Ebene 4/5; jeder Akt hat einen Beleg der Ebene 1–3; kein angewandtes Ereignis nur mit Ebene-4/5-Belegen | `npm run content:simulation-gates` |
 | G12 | Inhaltsverzeichnis (4): jede Ausgabe mit inventarisierten Akten hat eine Publication, jeder Akt einen Eintrag (sonst dokumentierte Ausnahme); Identität (Blatt, Jahr, Nummer, Datum) wie im Inventar; Einträge ohne Portalnorm mit Titel, Seiten, Datum ihres Akts, gültigen Ledger-Bezügen und aktuellem Stand; keine Dubletten | `npm run content:simulation-gates` |
-| G9 | Inventar reproduzierbar: `inventory` erneut gerechnet entspricht `data/simulation/source-inventory.json` ohne `scannedAt` (nur mit vorhandenem `imports/`; `--skip-inventory` überspringt) | `npm run content:simulation-gates` |
+| G9 | Vollständiger Archivscan; fachliche Inventarfelder und vorhandene Extraktionsprüfsummen stimmen überein. `scannedAt` entfällt im Vergleich; erkannte Versionswechsel desselben Extraktionswerkzeugs sind Hinweise (nur mit vorhandenem `imports/`; `--skip-inventory` überspringt) | `npm run content:simulation-gates` |
 | G10 | R2/D1 konsistent, West-Fingerabdruck unverändert | `npm run audit:r2`, `npm run audit:d1-remote` |
 
 `npm run content:check` führt `content:validate`, `content:immutability`, `content:tables` (Tabellen-Regressionsgate, semantischer Fingerabdruck je Tabelle gegen HEAD, Freigaben in `data/content-table-changes.json`) und `content:simulation-gates` aus.
@@ -647,3 +647,24 @@ npm run import:simulation:r2-sync -- --write [--r2-transport wrangler|wrangler-a
   (Größe + MD5-Etag) nach. Vorhandene Objekte mit gleichem Inhalt zählen als vorhanden, anderer Inhalt ist ein harter
   Fehler; Umschläge sind unveränderlich. Abbrüche sind über das Manifest fortsetzbar.
 - Sim-Belege in Normen und Verkündungen nennen diese Schlüssel (`objectKey`, `sha256`); der Bucket bleibt privat.
+
+### G9: Werkzeugversionen und Extraktionsnachweis
+
+G9 zerlegt ausschließlich das bekannte Format `pdftotext version <Versionsnummer>` in Werkzeugname und
+Version. Die Werkzeugidentität bleibt verbindlich; Versionsänderungen werden separat als Hinweis gemeldet.
+Alle übrigen Inventarfelder, einschließlich Quelldateien, Quell-SHA-256, Größen, Seitenzahlen,
+Textebenenstatus, Zeichenzahlen, PDF-Metadaten, erkannter Dokumentdaten und Publikationsidentitäten,
+bleiben vergleichspflichtig. Unbekannte Werkzeugangaben werden nicht pauschal normalisiert.
+
+Neue Archivscans tragen zusätzlich `extraction.textSha256` und `extraction.layoutSha256`: SHA-256 der
+UTF-8-Text- und Layoutextrakte nach den bestehenden Normalisierungen aus `inventory/extract.ts`
+(z. B. CRLF bei Textdateien, Nullbreitezeichen/Seitenumbrüche bei PDF). Vorhandene gespeicherte Hashes
+müssen übereinstimmen; abweichende, fehlende oder ungültige Hashes sperren auch bei Versionswechsel.
+Eine Layoutänderung wird damit ebenfalls erkannt, wenn abgeleitete Dokumentdaten gleich bleiben.
+
+Altinventare ohne diese Prüfsummen bleiben lesbar und werden nicht automatisch neu geschrieben. G9
+benennt dann ausdrücklich die Beweisgrenze: Vergleich der übrigen Inventarfelder, keine nachgewiesene
+Textbytegleichheit. Neu berechnete Hashes sind ohne historischen Vergleichswert kein rückwirkender
+Nachweis. Änderungen der Fachfelder bleiben auch in diesem Fall ein Fehler. Eine spätere redaktionell
+geprüfte Übernahme von Extraktionshashes ist von diesem Gate getrennt; Quell-ID, Sim-Evidenz und
+Rechtswirkung hängen weiterhin an den unveränderten Quelldateien, nicht an Werkzeugversionen.

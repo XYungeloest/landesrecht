@@ -63,8 +63,8 @@ keine Ost-Sonderlogik.
   Fassungsnavigation, Versionsseiten und API vollständig erreichbar, aber nicht volltextsuchbar (`versionScope`
   `historical`/`all`, `validOn` liefern für Ost nur indexierte Fassungen). Ein eigener Ost-Suchindex (Variante B)
   ist nur bei realem Bedarf vorgesehen.
-- Läuft der Landesrecht-Stichtag einer künftigen OstRecht-Fassung voraus, bevor OstRecht neu synchronisiert, fehlt der
-  dann geltenden Fassung der Index; `npm run audit:ost-drift` meldet das (`currentVersionsWithoutUnits`).
+- Weichen die beiden Stichtage bei der geltenden Fassung voneinander ab, fehlt deren Index – sowohl bei einer
+  älteren OstRecht-Projektion als auch bei einer bereits weiter fortgeschriebenen Projektion; `npm run audit:ost-drift` meldet das (`currentVersionsWithoutUnits`).
 - Übernommene sächsische Änderungsvorschriften gehören in OstRecht nicht zur „Grundmenge“ (`in_inventory = 0`);
   Landesrecht zählt und listet sie wie in den anderen Ländern, ordnet sie in der Suche aber hinter Stammnormen ein.
 
@@ -73,9 +73,10 @@ keine Ost-Sonderlogik.
 `packages/runtime/src/ostrecht-freshness.ts` vergleicht den Landesrecht-Stichtag (`EDITORIAL_REFERENCE_DATE`) mit dem
 Projektionsstand von OstRecht (`law_runtime_meta`: `last_sync_at`, `sync_state`, `projection_fingerprint`; Fenster des
 indexierten Stichtags aus `law_versions.temporal_kind`) und nennt jede Norm, deren am Landesrecht-Stichtag geltende
-Fassung keine Sucheinheiten hat (geltende und von OstRecht indexierte Fassung). Das sind genau die Normen, deren
-nächste Fassung zwischen dem OstRecht-Projektionsstand und dem Landesrecht-Stichtag beginnt. Landesrecht schreibt und
-synchronisiert OstRecht nie; Abhilfe ist ein OstRecht-Sync mit jüngerem Stichtag.
+Fassung keine Sucheinheiten hat (geltende und von OstRecht indexierte Fassung). Betroffen sind Normen, deren geltende Fassung
+an den beiden Stichtagen verschieden ist. Landesrecht schreibt und synchronisiert OstRecht nie. Ein neuerer
+OstRecht-Sync hilft nur bei zurückliegendem Projektionsstand; ist OstRecht bereits weiter, muss die Projektion
+zusätzliche Fassungen indexieren. Ein erneuter Sync derselben aktuellen Fassung ergänzt keine historischen Einheiten.
 
 - **Suchabdeckung** (`SearchCoverage`, `NormStore.getSearchCoverage`, `StoreRegistry.searchCoverage`): `readiness`
   (`ready`/`partial`), `fullText` (`all-versions` für West/NSH/BayWü, `current-version-only` für Ost),
@@ -120,3 +121,66 @@ lokale `OSTRECHT_RECHT` ein erwarteter Zustand: Ost ist `unavailable-local` (503
 
 REVOSax-Spalten und -Felder im Kern, `origin_kind`/Inventarregeln, sächsische Sachgebietssystematik,
 Gazette-Muster der Suche, Konsolidierungs- und Rechtsüberleitungsskripte (sie bleiben OstRecht-Werkzeuge).
+
+## Abweichende Stichtage: Diagnose und Änderungsvorschlag
+
+Lesende Remote-Abfragen zeigen für Landesrecht (`EDITORIAL_REFERENCE_DATE = 2026-09-28`) folgende
+Konstellation. Die Intervalle stammen unverändert aus `law_versions`; `temporal_kind` beschreibt den
+OstRecht-Projektionsstand, nicht den Landesrecht-Stichtag.
+
+| Norm / OstRecht-Slug | Landesrecht-Fassung und Intervall (inklusive) | temporal_kind in D1 | Sucheinheiten dieser Fassung | Indexierte Fassung / Intervall | Sucheinheiten / FTS-Treffer |
+| --- | --- | --- | ---: | --- | ---: |
+| Bezirksordnung / `ostdeutsche-bezirksordnung` | `2026-08-01`, 2026-08-01 bis 2026-09-30 | historical | 0 | `2026-10-01`, ab 2026-10-01 ohne Ende, current | 29 / 29 |
+| Gemeindeordnung / `saechsische-gemeindeordnung` | `2026-09-12`, 2026-09-12 bis 2026-09-30 | historical | 0 | `2026-10-01`, ab 2026-10-01 ohne Ende, current | 151 / 151 |
+| Landkreisordnung / `saechsische-landkreisordnung` | `2026-08-01`, 2026-08-01 bis 2026-09-30 | historical | 0 | `2026-10-01`, ab 2026-10-01 ohne Ende, current | 78 / 78 |
+
+Alle Fassungen haben jeweils einen Eintrag in `law_search_documents`; das ist kein Volltextindex.
+Die indexierten Einheiten verteilen sich auf 28 Paragraphen + Metadaten, 149 Paragraphen + Ergänzungstext
++ Metadaten beziehungsweise 76 Paragraphen + Ergänzungstext + Metadaten. Die FTS-Stichprobe mit
+`gemeinde* OR bezirk* OR landkreis* OR ostdeutsch*` erreicht alle vorhandenen Einheiten dieser drei Normen.
+Der zusätzliche Abgleich der aus `law_version_blocks` zusammengesetzten Oktober-Normkörper mit
+`collectBodyUnits` findet bei allen drei Normen keine fehlenden oder zusätzlichen Vorschriften;
+Ergänzungstext und Metadateneinheit sind ebenfalls vorhanden, soweit erwartet. Der Freshness-Befund
+ist somit kein übersehener Index der Septemberfassungen.
+
+`law_runtime_meta` meldet `sync_state=complete`, `sync_mode=incremental`, `projection_scope=full` und
+`last_sync_at=2026-10-16T08:56:04.611Z`. Der genaue Projektionsstichtag ist dort nicht gespeichert.
+Aus `max(valid_from WHERE temporal_kind='current')` und
+`min(valid_from WHERE temporal_kind='future')` folgt das Fenster **2026-10-01 ≤ Stichtag < 2026-10-15**.
+Das ist eine Eingrenzung, kein Beleg für einen exakten Tag. Der lokal lesbare Schwestercheckout nennt
+in `packages/shared/src/config/editorial.json` noch 2026-09-12 und belegt deshalb nicht den Remote-Stichtag.
+Die späteren Fassungen sind neu indexiert; es gibt bei diesen Normen keinen Hinweis auf einen abgebrochenen
+Sync. Die Einschränkung entsteht durch die bewusste Ein-Fassungs-Projektion.
+
+### Vorschlag für OstRecht (hier nicht ausgeführt)
+
+Für vollständige Landesrecht-Suche am abweichenden Stichtag braucht es zusätzliche Fassungen im
+vorgelagerten Index. Ein bloßer Teilsync der drei Normen mit dem bisherigen Algorithmus genügt nicht.
+Konkreter Vorschlag nach separater Entscheidung und Prüfung im aktuellen Schwestercheckout:
+
+1. `../staatsregierung/scripts/sync-recht-d1.mjs`, `normQueries`: Die Schleife über `versions` erzeugt
+   bereits alle Suchdokumente, überspringt aber Sucheinheiten für `version.versionId !== current.versionId`.
+   Diese Einschränkung für eine Projektion aller Fassungen aufheben. Beim INSERT `version.versionId`
+   und `getNormVersionIdentity(norm, version)` verwenden, nicht `current.versionId` und `currentIdentity`.
+   `current_version_id`, Intervalle und `temporal_kind` bleiben an den eigenen OstRecht-Stichtag gebunden.
+   Die vorhandenen versionierten Schlüssel und Indizes können weiterverwendet werden; kein neues D1-Binding.
+2. In derselben Datei `runtimeMetaQueries` den tatsächlichen `asOf` als `projection_reference_date` und
+   den Indexumfang als `search_index_scope=all-versions` speichern. Metadaten erst am erfolgreichen Ende
+   setzen; die bestehenden Fingerabdruck-, Budget- und Sync-Gates unverändert anwenden.
+3. `../staatsregierung/tests/recht-d1-sync.test.mjs` und `recht-d1-reference-date.test.mjs` erweitern:
+   Septemberfassung und Oktoberfassung gemeinsam im FTS, Suche je Geltungstag ohne Textübertritt,
+   Defaultsuche weiterhin nur zum eigenen Stichtag, Metadaten-Teilsync und inkrementelle Projektion
+   identisch zur frischen Vollprojektion. Snapshot-/Projektionsnachweise entsprechend neu erzeugen.
+4. Erst nach Bereitstellung und Contract-Nachweis in Landesrecht die Abdeckungsangabe von
+   `current-version-only` auf den belegten Umfang umstellen; Freshness selbst nicht abschwächen.
+
+Zur Vorbereitung im geprüften Schwestercheckout (Befehle sind ein Vorschlag, hier nicht ausgeführt):
+
+```sh
+node --test tests/recht-d1-sync.test.mjs tests/recht-d1-reference-date.test.mjs tests/recht-d1-sync-scope.test.mjs
+npm run norms:runtime:d1-sync -- --full --dry-run
+```
+
+Der Dry-run dient der Größen-/Budgetprüfung nach der Codeänderung. Ein produktiver Schreibbefehl ist
+nicht Bestandteil dieser Diagnose. Insbesondere weder `--full` ohne Dry-run ausführen noch den
+Stichtag in Landesrecht oder OstRecht zurücksetzen, um den Befund verschwinden zu lassen.

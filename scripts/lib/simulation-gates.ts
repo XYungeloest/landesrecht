@@ -16,7 +16,7 @@
  *      Meta-Felder sind gleich – außer `status`, `expiryDate`, `successor`, `successorTarget`, `relations`,
  *      `keywords`.
  *   G9 Inventar reproduzierbar: das Inventar erneut gerechnet entspricht `data/simulation/source-inventory.json`
- *      (ohne `scannedAt`).
+ *      (ohne `scannedAt`, erkannte Werkzeugversionen nur als Hinweis; vorhandene Extraktionsprüfsummen bleiben verbindlich).
  *
  * Die Vergleiche laufen ohne `git show` je Datei: der Referenzbaum (`git ls-tree`) liefert Blob-Hashes, die
  * Arbeitskopie wird lokal als Git-Blob gehasht.
@@ -28,6 +28,8 @@ import { join } from 'node:path';
 
 import { isJurisdictionId, JURISDICTION_IDS, SIMULATION_BASELINE_DATE, type JurisdictionId } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { INVENTORY_PATH } from '@landesrecht/importer-simulation/common/paths.ts';
+import { extractionToolIdentity } from '@landesrecht/importer-simulation/inventory/extract.ts';
+import { canonicalJson } from '@landesrecht/importer-simulation/engine/hash.ts';
 import { scanArchive, type SourceInventory } from '@landesrecht/importer-simulation/inventory/scan.ts';
 
 export { BASELINE_LOCKS_PATH } from '@landesrecht/importer-simulation/common/baseline-locks.ts';
@@ -363,12 +365,81 @@ export async function checkAdditiveIdentity(root: string, jurisdiction: Jurisdic
   return report;
 }
 
-function stripScannedAt(inventory: SourceInventory): string {
-  const { scannedAt: _scannedAt, ...rest } = inventory;
-  return JSON.stringify(rest);
+/** G9-Vergleich: nur Zeitstempel und erkannte Werkzeugversionen sind nicht fachlich. */
+export function compareInventoryReproducibility(stored: SourceInventory, current: SourceInventory): GateReport {
+  const report: GateReport = { gate: 'G9', problems: [], notes: [] };
+  const normalizeTool = (tool: string): string => extractionToolIdentity(tool).name;
+  const versions = (inventory: SourceInventory): Map<string, Set<string>> => {
+    const result = new Map<string, Set<string>>();
+    for (const tool of [...Object.keys(inventory.tools), ...Object.values(inventory.tools), ...inventory.sources.map((source) => source.extraction.tool)]) {
+      const identity = extractionToolIdentity(tool);
+      if (identity.version) {
+        const set = result.get(identity.name) ?? new Set<string>();
+        set.add(identity.version);
+        result.set(identity.name, set);
+      }
+    }
+    return result;
+  };
+  const beforeVersions = versions(stored);
+  const afterVersions = versions(current);
+  for (const [name, before] of beforeVersions) {
+    const after = afterVersions.get(name);
+    if (after && [...before].sort().join(', ') !== [...after].sort().join(', ')) {
+      report.notes.push(`Werkzeugversion ${name}: ${[...before].sort().join(', ')} → ${[...after].sort().join(', ')} (nur Versionsabweichung ausgenommen; fachliche Daten und vorhandene Extraktionsprüfsummen werden weiterhin geprüft)`);
+    }
+  }
+
+  const storedSources = new Map(stored.sources.map((source) => [source.sha256, source]));
+  let withoutCompleteHashes = 0;
+  let checkedHashes = 0;
+  for (const source of stored.sources) {
+    if (!source.extraction.textSha256 || !source.extraction.layoutSha256) withoutCompleteHashes += 1;
+  }
+  for (const source of current.sources) {
+    const previous = storedSources.get(source.sha256);
+    for (const key of ['textSha256', 'layoutSha256'] as const) {
+      const expected = previous?.extraction[key];
+      const actual = source.extraction[key];
+      if ((expected !== undefined && !/^[0-9a-f]{64}$/u.test(expected)) || (actual !== undefined && !/^[0-9a-f]{64}$/u.test(actual))) {
+        report.problems.push(`${source.paths[0]}: ungültige Extraktionsprüfsumme ${key}`);
+      }
+      if (expected !== undefined) {
+        checkedHashes += 1;
+        if (actual !== expected) report.problems.push(`${source.paths[0]}: Extraktionsprüfsumme ${key} weicht ab oder fehlt`);
+      }
+    }
+  }
+  if (withoutCompleteHashes) report.notes.push(`${withoutCompleteHashes} Quelle(n) ohne vollständige gespeicherte Extraktionsprüfsummen: Vergleich der übrigen Inventarfelder, keine nachgewiesene Textbytegleichheit. Neue Prüfsummen werden nicht rückwirkend als Beweis verwendet.`);
+  report.notes.push(`${checkedHashes} gespeicherte Extraktionsprüfsumme(n) geprüft`);
+
+  const normalize = (inventory: SourceInventory, isCurrent: boolean): unknown => {
+    const { scannedAt: _scannedAt, ...rest } = inventory;
+    return {
+      ...rest,
+      // Schlüssel und Werte enthalten im Altschema dieselbe Werkzeug-/Versionszeichenkette.
+      tools: [...new Set(Object.entries(inventory.tools).map(([key, value]) => JSON.stringify([normalizeTool(key), normalizeTool(value)])))].sort(),
+      sources: inventory.sources.map((source) => {
+        const extraction = { ...source.extraction, tool: normalizeTool(source.extraction.tool) };
+        if (isCurrent) {
+          const previous = storedSources.get(source.sha256);
+          // Nur neu hinzugekommene Prüfsummen ohne historischen Vergleichswert ausnehmen.
+          for (const key of ['textSha256', 'layoutSha256'] as const) {
+            if (previous && previous.extraction[key] === undefined) delete extraction[key];
+          }
+        }
+        return { ...source, extraction };
+      }),
+    };
+  };
+  if (JSON.stringify(canonicalJson(normalize(stored, false))) !== JSON.stringify(canonicalJson(normalize(current, true)))) {
+    report.problems.push(`${INVENTORY_PATH}: fachlich relevante Inventardaten oder Werkzeugidentitäten weichen ab; keine Freigabe durch einen Versionswechsel`);
+  }
+  if (!report.problems.length) report.notes.push(`Inventar fachlich reproduzierbar: ${current.totals.sources} Quellen aus ${current.totals.files} Dateien`);
+  return report;
 }
 
-/** G9: Inventar erneut rechnen und mit `data/simulation/source-inventory.json` vergleichen (ohne `scannedAt`). */
+/** G9: Inventar erneut rechnen und mit `data/simulation/source-inventory.json` vergleichen (ohne `scannedAt`, erkannte Werkzeugversionen nur als Hinweis; vorhandene Extraktionsprüfsummen bleiben verbindlich). */
 export async function checkInventoryReproducible(root: string): Promise<GateReport> {
   const report: GateReport = { gate: 'G9', problems: [], notes: [] };
   const archivePresent = await stat(join(root, 'imports')).then((entry) => entry.isDirectory(), () => false);
@@ -383,17 +454,9 @@ export async function checkInventoryReproducible(root: string): Promise<GateRepo
   }
   const stored = JSON.parse(storedText) as SourceInventory;
   const current = await scanArchive(root);
-  if (stripScannedAt(stored) !== stripScannedAt(current)) {
-    const details: string[] = [];
-    if (stored.totals.files !== current.totals.files) details.push(`Dateien ${stored.totals.files} → ${current.totals.files}`);
-    if (stored.totals.sources !== current.totals.sources) details.push(`Quellen ${stored.totals.sources} → ${current.totals.sources}`);
-    const storedHashes = new Set(stored.sources.map((source) => source.sha256));
-    const currentHashes = new Set(current.sources.map((source) => source.sha256));
-    const added = [...currentHashes].filter((sha) => !storedHashes.has(sha)).length;
-    const removed = [...storedHashes].filter((sha) => !currentHashes.has(sha)).length;
-    if (added || removed) details.push(`Quellen neu ${added}, fehlend ${removed}`);
-    report.problems.push(`${INVENTORY_PATH}: entspricht nicht dem neu gerechneten Inventar (${details.join('; ') || 'Details oder Werkzeugversion abweichend'}); npm run import:simulation:inventory -- --write`);
-  } else report.notes.push(`Inventar reproduzierbar: ${current.totals.sources} Quellen aus ${current.totals.files} Dateien`);
+  const comparison = compareInventoryReproducibility(stored, current);
+  report.problems.push(...comparison.problems);
+  report.notes.push(...comparison.notes);
   return report;
 }
 
