@@ -2,7 +2,7 @@ import { JSDOM } from 'jsdom';
 import { afterEach,describe,expect,it,vi } from 'vitest';
 import { initMarkingTools } from '../../apps/web/src/lib/marking-tools.ts';
 import { decodeTextMarks } from '@landesrecht/legal-core/lib/textmarks.ts';
-const html=`<main data-marking-document><label hidden data-sentence-control><input data-sentence-toggle type="checkbox" checked>Satznummern</label><p data-textmark-notice hidden></p><article class="norm-document"><section id="paragraph-8"><button hidden data-mark-toggle data-mark-id="paragraph-8" data-mark-provision="paragraph-8" data-mark-label="§ 8">Markieren</button><div id="paragraph-8-abs-1"><button hidden data-mark-toggle data-mark-id="paragraph-8-abs-1" data-mark-provision="paragraph-8" data-mark-label="§ 8" data-mark-subsection="1">Markieren</button><p data-legal-text="p-0-0-text" data-legal-ref="paragraph-8-abs-1" data-sentence-starts='[{"offset":0,"number":1},{"offset":27,"number":2}]'>Die Behörde prüft den Fall. Danach entscheidet sie.</p></div></section></article><div hidden data-marking-tools data-norm-id="west:test" data-version-id="2023-12-01" data-version-path="/west/norm/test/version/2023-12-01/paragraph-8/" data-norm-name="TestG"><p data-marking-count></p><button data-marking-copy="citation">Zitat kopieren</button><button data-marking-copy="link">Link kopieren</button><button data-marking-clear>Aufheben</button><details hidden data-text-mark-details><summary>Verwalten</summary><div data-text-mark-list></div></details><span data-marking-feedback></span></div><div hidden data-text-selection><button data-text-marker>Textmarker</button><button data-selection-copy>Text kopieren</button><p hidden data-highlight-fallback>Keine API</p><span data-selection-feedback></span></div></main>`;
+const html=`<main data-marking-document><label hidden data-sentence-control><input data-sentence-toggle type="checkbox" checked>Satznummern</label><p data-textmark-notice hidden></p><article class="norm-document"><section id="paragraph-8"><button hidden data-mark-toggle data-mark-id="paragraph-8" data-mark-provision="paragraph-8" data-mark-label="§ 8">Markieren</button><div id="paragraph-8-abs-1"><button hidden data-mark-toggle data-mark-id="paragraph-8-abs-1" data-mark-provision="paragraph-8" data-mark-label="§ 8" data-mark-subsection="1">Markieren</button><p data-legal-text="p-0-0-text" data-legal-ref="paragraph-8-abs-1" data-sentence-starts='[{"offset":0,"number":1},{"offset":27,"number":2}]'>Die Behörde prüft den Fall. Danach entscheidet sie.</p></div></section></article><div hidden data-marking-tools data-norm-id="west:test" data-version-id="2023-12-01" data-version-path="/west/norm/test/version/2023-12-01/paragraph-8/" data-norm-name="TestG"><span data-marking-count></span><button data-marking-copy="link">Link kopieren</button><button data-marking-manage aria-expanded="false" aria-controls="marking-management">Verwalten</button><button data-marking-clear>Aufheben</button><div id="marking-management" data-marking-panel hidden><button data-marking-copy="citation">Zitat kopieren</button><div hidden data-text-mark-details><div data-text-mark-list></div></div></div><span data-marking-feedback></span></div><div hidden data-text-selection><button data-text-marker>Textmarker</button><button data-selection-copy>Text kopieren</button><p hidden data-highlight-fallback>Keine API</p><span data-selection-feedback></span></div></main>`;
 const windows:JSDOM[]=[];
 afterEach(()=>{for(const dom of windows.splice(0))dom.window.close();vi.unstubAllGlobals();});
 function fixture(supported=true,url='https://example.test/west/norm/test/paragraph-8/',reference='paragraph-8-abs-1') {
@@ -26,6 +26,34 @@ function fixture(supported=true,url='https://example.test/west/norm/test/paragra
   return {dom,w,doc,registry,writeText,select,click};
 }
 describe('Gemeinsames Markierungswerkzeug mit echten DOM-Ranges',()=>{
+  it('öffnet die Verwaltung nur ausdrücklich, schließt mit Escape und erhält die Auswahl',async()=>{
+    const f=fixture();await f.select(4,11);f.click('[data-text-marker]');
+    await vi.waitFor(()=>expect(f.registry.size).toBe(1));
+    const manage=f.doc.querySelector<HTMLButtonElement>('[data-marking-manage]')!,panel=f.doc.querySelector<HTMLElement>('[data-marking-panel]')!;
+    expect(panel.hidden).toBe(true);expect(manage.getAttribute('aria-expanded')).toBe('false');
+    f.click('[data-marking-manage]');expect(panel.hidden).toBe(false);expect(manage.getAttribute('aria-expanded')).toBe('true');
+    panel.dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+    expect(panel.hidden).toBe(true);expect(f.doc.activeElement).toBe(manage);expect(f.registry.size).toBe(1);
+    f.click('[data-marking-clear]');expect((f.doc.querySelector('[data-marking-tools]') as HTMLElement).hidden).toBe(true);expect(panel.hidden).toBe(true);
+  });
+  it('kennzeichnet angeschnittene Wörter nur in der Vorschau, niemals im kopierten Wortlaut',async()=>{
+    const f=fixture();await f.select(6,11);f.click('[data-text-marker]');await vi.waitFor(()=>expect(f.registry.size).toBe(1));
+    f.click('[data-marking-manage]');expect(f.doc.querySelector('.textmark-entry > span')!.textContent).toBe('Textmarkierung 1: …hörde');
+    f.click('.textmark-entry button');await vi.waitFor(()=>expect(f.writeText).toHaveBeenCalledWith('hörde'));
+  });
+  it('behält 20 freie Markierungen beim Teilen, Verwalten und einzelnen Entfernen',async()=>{
+    const f=fixture(),text=f.doc.querySelector('[data-legal-text]')!.textContent!;
+    const positions=[...text].flatMap((char,index)=>/\p{L}/u.test(char)?[index]:[]).slice(0,20);
+    for(const [index,start] of positions.entries()){await f.select(start,start+1);f.click('[data-text-marker]');await vi.waitFor(()=>expect(f.doc.querySelectorAll('.textmark-entry')).toHaveLength(index+1));}
+    expect(f.doc.querySelector('[data-marking-count]')!.textContent).toBe('20 Textmarkierungen');
+    expect((f.doc.querySelector('[data-marking-panel]') as HTMLElement).hidden).toBe(true);
+    f.click('[data-marking-copy="link"]');await vi.waitFor(()=>expect(f.writeText).toHaveBeenCalled());
+    const link=f.writeText.mock.calls[0]![0] as string,reload=fixture(true,link);
+    await vi.waitFor(()=>expect(reload.doc.querySelectorAll('.textmark-entry')).toHaveLength(20));
+    expect((reload.doc.querySelector('[data-marking-panel]') as HTMLElement).hidden).toBe(true);
+    reload.click('[data-marking-manage]');reload.click('.textmark-entry button:nth-of-type(3)');
+    expect(reload.doc.querySelectorAll('.textmark-entry')).toHaveLength(19);expect((reload.doc.querySelector('[data-marking-panel]') as HTMLElement).hidden).toBe(false);
+  });
   it('fällt bei nicht belegbarer Einzeladresse auf die Normbezeichnung mit historischem Fassungsstand zurück',async()=>{
     const f=fixture(true,undefined,'unknown');
     (f.doc.querySelector('[data-marking-tools]') as HTMLElement).dataset.versionNote='Portal-Fassung: gültig bis 2025';

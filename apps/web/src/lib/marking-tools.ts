@@ -15,6 +15,12 @@ export function initMarkingTools(toolbar: HTMLElement): void {
   const selected = new Set<string>();
   const feedback = toolbar.querySelector<HTMLElement>('[data-marking-feedback]')!;
   const count = toolbar.querySelector<HTMLElement>('[data-marking-count]')!;
+  const manage=toolbar.querySelector<HTMLButtonElement>('[data-marking-manage]')!;
+  const panel=toolbar.querySelector<HTMLElement>('[data-marking-panel]')!;
+  function setManagement(open:boolean) {panel.hidden=!open;manage.setAttribute('aria-expanded',String(open));}
+  setManagement(false);
+  manage.addEventListener('click',()=>setManagement(Boolean(panel.hidden)));
+  toolbar.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden){event.preventDefault();setManagement(false);manage.focus();}});
   // Ein eigener Status außerhalb der zunächst versteckten Auswahlleiste kündigt die erste Auswahl an.
   const live = document.createElement('span');
   live.className = 'visually-hidden';
@@ -24,11 +30,15 @@ export function initMarkingTools(toolbar: HTMLElement): void {
   const orderedIds = () => targets.filter((target)=>selected.has(target.id)).map((target)=>target.id);
   let textMarks:TextMarkController|undefined;
   function render(announce = true) {
-    const total=selected.size+(textMarks?.count()??0);
+    const free=textMarks?.count()??0,total=selected.size+free;
     toolbar.hidden = total === 0;
     root!.classList.toggle('has-markings',total > 0);
-    const message = `${total} ${total === 1 ? 'Markierung ausgewählt' : 'Markierungen ausgewählt'}.`;
-    count.textContent = message;
+    if(!total)setManagement(false);
+    const noun=free===total?'Textmarkierung':'Markierung';
+    count.textContent=`${total} ${noun}${total===1?'':'en'}`;
+    const message=`${free} Textmarkierungen und ${selected.size} markierte Vorschriften oder Absätze ausgewählt.`;
+    count.setAttribute('aria-label',message);
+    count.title=message;
     if (announce) live.textContent = message;
     for (const button of buttons) {
       const active = selected.has(button.dataset.markId!);
@@ -68,6 +78,7 @@ export function initMarkingTools(toolbar: HTMLElement): void {
     await copyText(text,feedback);
   }));
   function restore(scroll: boolean) {
+    setManagement(false);
     selected.clear();
     for (const id of parseMarkings(new URLSearchParams(window.location.search),targets)) selected.add(id);
     render(selected.size > 0);

@@ -466,19 +466,30 @@ td .norm-figure, th .norm-figure { margin-block: var(--space-1); }
 
 /* Markierungen sind ausschließlich ein Anzeigezustand; normale Adresslinks bleiben bestehen. */
 .marking-toggle { border: 1px solid transparent; border-radius: .3rem; background: transparent; color: var(--color-muted, #555); cursor: pointer; width: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; padding: .25rem; flex-shrink: 0; font: inherit; opacity: 0; }
-.norm-abs__address { display: flex; flex-direction: column; align-items: flex-start; }
+.norm-abs:has(> .norm-abs__address .marking-toggle:not([hidden])) { grid-template-columns: max-content minmax(0, 1fr); }
+.norm-abs__address { position: relative; align-self: start; min-width: 2.5rem; }
+.norm-abs__address:has(.marking-toggle:not([hidden])) { padding-inline-end: 1.75rem; min-width: 3rem; }
+.norm-abs__address .marking-toggle { position: absolute; inset-inline-end: 0; top: -.45rem; width: 1.75rem; min-width: 1.75rem; min-height: 2.75rem; padding: 0; }
 .norm-abs:hover > .norm-abs__address .marking-toggle, .norm-unit__head:hover > .marking-toggle, .marking-toggle:focus-visible, .marking-toggle[aria-pressed="true"] { opacity: 1; }
 .marking-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 .marking-toggle[aria-pressed="true"] { background: #fff0a6; color: #403200; border-color: #b29435; }
 .norm-document .is-marked { background: #fff8d6; box-shadow: inset 3px 0 #c8a735; border-radius: .2rem; }
-.marking-tools { position: fixed; left: .5rem; right: .5rem; bottom: .75rem; z-index: 5; margin: 1rem auto; padding: .85rem 1rem; max-width: 62rem; border: 1px solid #b9a868; border-radius: .4rem; background: #fffdf1; color: #302b18; box-shadow: 0 3px 16px #0002; }
+.marking-tools { position: fixed; left: .5rem; right: .5rem; bottom: .5rem; z-index: 5; margin: 0 auto; padding: .25rem .4rem; max-width: 48rem; border: 1px solid #b9a868; border-radius: .4rem; background: #fffdf1; color: #302b18; box-shadow: 0 3px 16px #0002; }
 .marking-tools[hidden], .marking-toggle[hidden] { display: none; }
-.marking-tools p { margin: 0 0 .4rem; }
-.marking-tools__actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.marking-tools__bar { display: grid; grid-template-columns: minmax(0, 1fr) auto auto 44px; align-items: center; gap: .35rem; min-height: 44px; }
+.marking-tools__bar > span { font-size: .8125rem; line-height: 1.3; overflow-wrap: anywhere; padding-inline-start: .2rem; }
+.marking-tools__bar button { font-size: .8125rem; padding: .35rem .55rem; min-height: 44px; white-space: nowrap; }
+.marking-tools__bar .marking-tools__clear { padding: 0; font-size: 1.5rem; }
+.marking-tools__panel { max-height: min(32dvh, 18rem); overflow-y: auto; overscroll-behavior: contain; border-top: 1px solid #ded5b4; padding: .5rem .2rem .2rem; margin-top: .25rem; }
+.marking-tools__panel[hidden] { display: none; }
+.marking-tools__panel > button { min-height: 44px; }
+.marking-tools__feedback:empty { display: none; }
+.marking-tools__feedback:not(:empty) { position: absolute; inset-inline: 0; bottom: calc(100% + .4rem); max-height: min(30dvh, 12rem); overflow-y: auto; padding: .4rem .6rem; background: #fffdf1; border: 1px solid #b9a868; border-radius: .3rem; font-size: .875rem; }
 .copy-action__manual { display: block; width: 100%; min-height: 5rem; margin-top: .5rem; font: inherit; }
 @media (hover: none) { .marking-toggle { opacity: 1; } }
-[data-marking-document].has-markings { padding-bottom: 12rem; }
-@media (max-width: 40rem) { .norm-abs { grid-template-columns: 2.75rem minmax(0, 1fr); } .marking-toggle { opacity: 1; } .marking-tools { bottom: .25rem; padding: .65rem; } .marking-tools__actions { gap: .35rem; } .marking-tools__actions button { min-height: 2.75rem; } }
+[data-marking-document].has-markings { padding-bottom: 5rem; }
+@media screen { [data-marking-document].has-markings:has([data-marking-manage][aria-expanded="true"]) { padding-bottom: calc(min(32dvh, 18rem) + 5rem); } }
+@media (max-width: 40rem) { .norm-abs { grid-template-columns: 2.75rem minmax(0, 1fr); } .marking-toggle { opacity: 1; } .marking-tools__bar { gap: .2rem; } .marking-tools__bar button { padding-inline: .4rem; } }
 @media print { .marking-tools, .marking-toggle { display: none !important; } .norm-document .is-marked { background: transparent; box-shadow: none; } }
 
 /* Einzelvorschrift: eine Überschrift, Lesetext und eine schmale Fassungsnavigation. */
@@ -531,7 +542,6 @@ td .norm-figure, th .norm-figure { margin-block: var(--space-1); }
 .textmark-entry { display: flex; flex-wrap: wrap; gap: .35rem; margin-block: .65rem; font-size: .875rem; }
 .textmark-entry > span { flex-basis: 100%; overflow-wrap: anywhere; }
 .textmark-entry button { min-height: 44px; padding: .35rem .5rem; }
-.marking-tools { max-height: min(45dvh, 26rem); overflow-y: auto; }
 @media print { .reading-control, .text-selection-menu, .textmark-notice { display: none !important; } }
 .text-selection-menu { max-height: min(45dvh, 26rem); overflow-y: auto; }
 .textmark-notice { flex-basis: 100%; font-size: .875rem; margin-block: .35rem; }

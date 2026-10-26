@@ -47,11 +47,13 @@ export function initTextMarking(root:HTMLElement,toolbar:HTMLElement,targets:rea
     list.replaceChildren();
     marks.forEach((mark,position)=>{
       const row=document.ownerDocument.createElement('div');row.className='textmark-entry';
-      const title=document.ownerDocument.createElement('span');title.textContent=`Textmarkierung ${position+1}: ${textOfParts(mark,index).slice(0,90)}${textOfParts(mark,index).length>90?'…':''}`;row.append(title);
+      const text=textOfParts(mark,index),first=mark[0]!,source=index.find(region=>region.key===first.key)!.text;
+      const cut=first.start>0&&/[\p{L}\p{N}\p{M}]/u.test(source[first.start-1]??'')&&/^[\p{L}\p{N}\p{M}]/u.test(text);
+      const title=document.ownerDocument.createElement('span');title.textContent=`Textmarkierung ${position+1}: ${cut?'…':''}${text.slice(0,90)}${text.length>90?'…':''}`;row.append(title);
       for(const [label,action] of [
         ['Text kopieren',()=>copyText(textOfParts(mark,index),toolbar.querySelector<HTMLElement>('[data-marking-feedback]')!)],
         ['Text mit Nachweis kopieren',()=>copyText(`„${textOfParts(mark,index)}“ – ${citation(mark)}`,toolbar.querySelector<HTMLElement>('[data-marking-feedback]')!)],
-        ['Entfernen',()=>{marks.splice(position,1);paint();render();changed();notify('Textmarkierung entfernt.');if(!toolbar.hidden){const details=toolbar.querySelector<HTMLDetailsElement>('[data-text-mark-details]')!;if(!details.hidden)details.querySelector('summary')?.focus();else toolbar.querySelector<HTMLButtonElement>('[data-marking-copy="link"]')?.focus();}else focusPassage(mark[0]);}],
+        ['Entfernen',()=>{marks.splice(position,1);paint();render();changed();notify('Textmarkierung entfernt.');if(!toolbar.hidden)toolbar.querySelector<HTMLButtonElement>('[data-marking-manage]')?.focus();else focusPassage(mark[0]);}],
       ] as const) {const button=document.ownerDocument.createElement('button');button.type='button';button.className='button-secondary';button.textContent=label;button.setAttribute('aria-label',`${label} – Textmarkierung ${position+1}`);button.addEventListener('click',action);row.append(button);}
       list.append(row);
     });

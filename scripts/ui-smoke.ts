@@ -64,6 +64,11 @@ for (const versionId of [undefined, '2023-12-01']) {
   assert.equal(units.length, 1, 'nur eine Einzelvorschrift');
   assert.equal(units[0]!.attrs.id, 'paragraph-1');
   const tools=queryAll(document,node=>'data-marking-tools' in node.attrs)[0]!;
+  const manage=byTag(tools,'button').find(node=>'data-marking-manage' in node.attrs)!;
+  const management=queryAll(tools,node=>'data-marking-panel' in node.attrs)[0]!;
+  assert.equal(manage.attrs['aria-expanded'],'false','Verwaltung zunächst geschlossen');
+  assert.equal(manage.attrs['aria-controls'],management.attrs.id);
+  assert('hidden' in management.attrs,'Einzelaktionen erst nach Verwalten sichtbar');
   assert.equal(tools.attrs['data-norm-id'],'west:lnatschg-west');
   assert(tools.attrs['data-version-id']);
   assert.equal(tools.attrs['data-version-path'],getProvisionUrl('west','lnatschg-west','paragraph-1',tools.attrs['data-version-id']));

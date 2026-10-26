@@ -3,14 +3,17 @@ interface Props { normName: string; versionNote?: string; normId: string; versio
 const { normName, versionNote, normId, versionId, versionPath } = Astro.props;
 ---
 <div class="marking-tools" data-marking-tools data-norm-id={normId} data-version-id={versionId} data-version-path={versionPath} data-norm-name={normName} data-version-note={versionNote} hidden role="region" aria-label="Markierungen im Normtext">
-  <p data-marking-count></p>
-  <div class="marking-tools__actions">
-    <button type="button" class="button-secondary" data-marking-copy="citation">Zitat kopieren</button>
-    <button type="button" class="button-secondary" data-marking-copy="link">Link mit Markierung kopieren</button>
-    <button type="button" class="button-secondary" data-marking-clear>Markierungen aufheben</button>
+  <div class="marking-tools__bar">
+    <span data-marking-count></span>
+    <button type="button" class="button-secondary" data-marking-copy="link" aria-label="Link mit allen Markierungen kopieren">Link kopieren</button>
+    <button type="button" class="button-secondary" data-marking-manage aria-expanded="false" aria-controls="marking-management">Verwalten</button>
+    <button type="button" class="button-secondary marking-tools__clear" data-marking-clear aria-label="Alle Markierungen aufheben" title="Alle Markierungen aufheben"><span aria-hidden="true">×</span></button>
   </div>
-  <details data-text-mark-details hidden><summary>Textmarkierungen verwalten</summary><div data-text-mark-list></div></details>
-  <span class="muted" data-marking-feedback role="status" aria-live="polite"></span>
+  <div id="marking-management" class="marking-tools__panel" data-marking-panel hidden role="region" aria-label="Markierungen verwalten" tabindex="0">
+    <button type="button" class="button-secondary" data-marking-copy="citation">Zitat kopieren</button>
+    <div data-text-mark-details hidden><div data-text-mark-list></div></div>
+  </div>
+  <span class="marking-tools__feedback muted" data-marking-feedback role="status" aria-live="polite"></span>
 </div>
 <div class="text-selection-menu" data-text-selection role="group" aria-label="Textauswahl" hidden>
   <button type="button" class="button-secondary" data-text-marker aria-keyshortcuts="Alt+M" title="Textmarker (Alt+M)">Textmarker</button>

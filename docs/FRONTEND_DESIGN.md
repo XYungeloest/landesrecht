@@ -140,3 +140,9 @@ Ausgewählte Bereiche über eingefügte Nummern werden durchgehend dargestellt. 
 Das gemeinsame Auswahlpanel bleibt bis zur ersten Markierung verborgen. Es gibt keine Cookies,
 Analytics oder serverseitige Daten. DOM-/Range-Regressionsfälle laufen mit jsdom ausschließlich
 als Entwicklungsabhängigkeit.
+
+Aktive Markierungen erscheinen zunächst nur in einer schmalen unteren Leiste mit Anzahl,
+Linkkopie, „Verwalten“ und Aufheben. Die Verwaltung öffnet ausdrücklich, scrollt unabhängig
+vom Normtext und schließt auch mit Escape; der Fokus kehrt zum Verwaltungsbutton zurück.
+Angeschnittene Wortanfänge erhalten ausschließlich in der Vorschau ein vorangestelltes „…“.
+Absatz-Markierungsbuttons sitzen seitlich außerhalb des Textflusses und vergrößern die Absatzhöhe nicht.
