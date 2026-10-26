@@ -63,6 +63,17 @@ for (const versionId of [undefined, '2023-12-01']) {
   const units = queryAll(document, (element) => 'data-norm-unit' in element.attrs);
   assert.equal(units.length, 1, 'nur eine Einzelvorschrift');
   assert.equal(units[0]!.attrs.id, 'paragraph-1');
+  const tools=queryAll(document,node=>'data-marking-tools' in node.attrs)[0]!;
+  assert.equal(tools.attrs['data-norm-id'],'west:lnatschg-west');
+  assert(tools.attrs['data-version-id']);
+  assert.equal(tools.attrs['data-version-path'],getProvisionUrl('west','lnatschg-west','paragraph-1',tools.attrs['data-version-id']));
+  if(versionId)assert.equal(tools.attrs['data-version-id'],versionId);
+  const textRegions=queryAll(document,node=>'data-legal-text' in node.attrs);
+  assert(textRegions.length>0,'adressierbarer Originalwortlaut');
+  assert.equal(new Set(textRegions.map(node=>node.attrs['data-legal-text'])).size,textRegions.length,'eindeutige Textkoordinaten');
+  assert.equal(classes(document,'sentence-marker').length,0,'keine künstlichen Ziffern im Serverwortlaut');
+  assert.equal(queryAll(document,node=>'data-sentence-toggle' in node.attrs).length,1);
+  assert.equal(queryAll(document,node=>'data-text-selection' in node.attrs && 'hidden' in node.attrs).length,1,'Auswahlmenü erst bei Textauswahl');
   const h1=byTag(document,'h1')[0]!;
   assert.equal(h1.attrs.id,'paragraph-1-heading');
   assert.equal(units[0]!.attrs['aria-labelledby'],h1.attrs.id);

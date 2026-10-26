@@ -98,3 +98,45 @@ auch ohne JavaScript bleibt die Navigation vollständig nutzbar. Historische Pfa
 Fassungs-ID; unbekannte Auswahlziele liefern 404. Markierungsparameter werden beim Wechsel
 nicht übernommen. Nur die obere Leiste enthält die Auswahloptionen, um große Gesetze nicht
 doppelt in den DOM aufzunehmen. In der Druckansicht entfallen Navigation und Aktionsleisten.
+
+## Freier Textmarker und automatische Satz-Lesehilfe
+
+`NormBody` kennzeichnet seine unveränderten Textfelder mit stabilen Blockpfaden und vorhandenen
+Strukturbezügen. Der Client indiziert deren echte Textknoten, einschließlich Inline-Elementen,
+Links und Quell-Fußnotenverweisen. Native Selection/Range-Auswahlen werden ohne HTML-Ersetzung
+als zusammengehörige Bereiche desselben Vorgangs gespeichert. Visuelle Zeilen sind keine Adressen.
+Hervorhebung: [CSS Custom Highlight API](https://www.w3.org/TR/css-highlight-api-1/),
+kein `surroundContents`, keine Ersatz-HTML-Engine. Ohne diese API bleibt Textauswahl/Kopieren
+nutzbar; die fehlende Hervorhebung wird erklärt. Es gibt keine automatische Speicherung oder
+Übertragung. Eine Weitergabe erfolgt ausschließlich über den ausdrücklich kopierten Link;
+nach einem Reload werden nur im Link enthaltene Markierungen wiederhergestellt.
+
+`textmark` ist von strukturellen `mark`-Kennungen getrennt: Schema, Norm-ID, konkrete Fassungs-ID
+und je Teilbereich Blockpfad, UTF-16-Anfang/Ende sowie SHA-256 des gesamten sichtbaren Textfelds.
+Es erfolgt keine Suche nach dem ersten gleichen Wort. Teilbare Links führen immer auf die
+unveränderliche Fassungsroute. Fremde Fassungen, unbekannte Bereiche und abweichender Text
+werden verworfen. Ein beschädigter Teilbereich verwirft seinen gesamten Markierungsvorgang.
+Grenzen: 20 unabhängige Textmarkierungen, 64 Teilbereiche je Auswahl, insgesamt 120 Teilbereiche,
+20.000 ausgewählte UTF-16-Zeichen und höchstens 12.000 URL-kodierte Zeichen für `textmark`.
+URLs enthalten keine ausgewählten Wortlaute. Die Verwaltung erlaubt einzelnes Entfernen,
+reinen Wortlaut und Wortlaut mit Vorschriftennachweis. Zitiernachweise verwenden ausschließlich
+vorhandene Paragraphen-/Artikel-/Absatzadressen, nie automatisch erzeugte Satznummern.
+Bei fehlender eindeutiger Struktur wird nur die Normbezeichnung verwendet.
+
+`sentences.ts` erzeugt eine konservative Anzeigeprojektion auf denselben Normblöcken. Direkte,
+eindeutige Absätze zählen getrennt; mehrere `paragraphText`-Blöcke derselben Einheit gemeinsam.
+Geprüft werden Abkürzungen, Rechtsverweise, Datums-/Dezimalangaben und ausgeglichene Klammern.
+Semikola trennen nicht. Listen, Tabellen, Abbildungen, Zitate, unklare Nummerierungen, mögliche
+Quell-Satznummern, Auslassungspunkte und zweifelhafte Satz-/Abkürzungsenden werden ausgelassen.
+Fußnoten zählen nicht als Normsätze. Ein-Satz-Einheiten erhalten keine Zahl; Einheiten über
+50.000 Zeichen oder 999 Sätze ebenfalls nicht. Dies ist keine vollständige juristische
+Satzinterpretation, sondern eine abschaltbare Lesehilfe mit bewusst begrenzter Abdeckung.
+
+Der Client fügt ausschließlich leere, `aria-hidden`-Anzeigeelemente ein. Die Ziffern kommen aus
+CSS-Pseudoinhalt mit `user-select: none`; Textknoteninhalt und Absatzanker bleiben erhalten.
+Erst danach wird der Textindex aufgebaut. Ein-/Ausblenden ändert nur CSS, nicht Koordinaten.
+Ausgewählte Bereiche über eingefügte Nummern werden durchgehend dargestellt. Der Kontext bietet
+„Textmarker“/„Text kopieren“; Alt+M markiert eine bestehende Auswahl auch per Tastatur.
+Das gemeinsame Auswahlpanel bleibt bis zur ersten Markierung verborgen. Es gibt keine Cookies,
+Analytics oder serverseitige Daten. DOM-/Range-Regressionsfälle laufen mit jsdom ausschließlich
+als Entwicklungsabhängigkeit.

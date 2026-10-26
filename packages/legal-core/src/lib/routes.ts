@@ -146,3 +146,11 @@ export function getMarkedUrl(pageUrl: string, ids: readonly string[]): string {
   }
   return url.href;
 }
+
+/** Freie Markierungen erhalten stets eine unveränderliche Fassungsadresse. */
+export function getTextMarkedUrl(versionPath:string, origin:string, structuralIds:readonly string[], textmark?:string):string {
+  const url=new URL(getMarkedUrl(new URL(versionPath,origin).href,structuralIds));
+  if(textmark)url.searchParams.set('textmark',textmark);
+  else url.searchParams.delete('textmark');
+  return url.href;
+}

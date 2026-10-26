@@ -514,3 +514,24 @@ td .norm-figure, th .norm-figure { margin-block: var(--space-1); }
 @media (max-width: 40rem) { .provision-navigation { grid-template-columns: minmax(44px, 1fr) minmax(0, 1.2fr) minmax(44px, 1fr); gap: .25rem; font-size: .875rem; } .provision-navigation__jump button { font-size: .8125rem; } }
 @media (prefers-reduced-motion: reduce) { .provision-page, .provision-page * { scroll-behavior: auto; transition: none; } }
 @media print { .provision-navigation, .provision-actions, .provision-title > .marking-toggle, .provision-more-actions { display: none !important; } .provision-page { max-width: none; } .provision-page.has-markings { padding-bottom: 0; } .provision-details { display: none; } }
+
+/* Freier Marker: Ranges statt Änderungen am Wortlaut. Satzzeichen bleiben Textzeichen. */
+::highlight(landesrecht-textmark) { background-color: #fff0a6; }
+.reading-control { display: inline-flex; align-items: center; gap: .35rem; font-size: .8125rem; color: var(--color-text-muted); min-height: 32px; margin-inline-start: auto; }
+.reading-control[hidden], .text-selection-menu[hidden], .textmark-notice[hidden], [data-text-mark-details][hidden], [data-highlight-fallback][hidden] { display: none; }
+.sentence-marker { user-select: none; -webkit-user-select: none; }
+.sentence-marker::before { content: attr(data-number); font-size: .68em; vertical-align: super; padding-inline-end: .25em; color: var(--color-text-muted); }
+[data-sentences="off"] .sentence-marker { display: none; }
+.sentence-marker.within-textmark { background-color: #fff0a6; }
+.marking-toggle { user-select: none; -webkit-user-select: none; }
+.text-selection-menu { position: fixed; z-index: 15; display: flex; gap: .35rem; flex-wrap: wrap; max-width: min(26rem, calc(100vw - 16px)); padding: .4rem; border: 1px solid var(--color-control-border); border-radius: var(--radius-button); background: var(--color-surface); box-shadow: var(--shadow-md); }
+.text-selection-menu p { margin: .25rem; font-size: .8125rem; }
+.text-selection-menu button { min-height: 44px; padding: .4rem .65rem; }
+.text-selection-menu button:disabled { opacity: .6; cursor: not-allowed; }
+.textmark-entry { display: flex; flex-wrap: wrap; gap: .35rem; margin-block: .65rem; font-size: .875rem; }
+.textmark-entry > span { flex-basis: 100%; overflow-wrap: anywhere; }
+.textmark-entry button { min-height: 44px; padding: .35rem .5rem; }
+.marking-tools { max-height: min(45dvh, 26rem); overflow-y: auto; }
+@media print { .reading-control, .text-selection-menu, .textmark-notice { display: none !important; } }
+.text-selection-menu { max-height: min(45dvh, 26rem); overflow-y: auto; }
+.textmark-notice { flex-basis: 100%; font-size: .875rem; margin-block: .35rem; }

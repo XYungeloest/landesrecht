@@ -1,15 +1,22 @@
 ---
-interface Props { normName: string; versionNote?: string }
-const { normName, versionNote } = Astro.props;
+interface Props { normName: string; versionNote?: string; normId: string; versionId: string; versionPath: string }
+const { normName, versionNote, normId, versionId, versionPath } = Astro.props;
 ---
-<div class="marking-tools" data-marking-tools data-norm-name={normName} data-version-note={versionNote} hidden role="region" aria-label="Markierte Vorschriften">
+<div class="marking-tools" data-marking-tools data-norm-id={normId} data-version-id={versionId} data-version-path={versionPath} data-norm-name={normName} data-version-note={versionNote} hidden role="region" aria-label="Markierungen im Normtext">
   <p data-marking-count></p>
   <div class="marking-tools__actions">
     <button type="button" class="button-secondary" data-marking-copy="citation">Zitat kopieren</button>
     <button type="button" class="button-secondary" data-marking-copy="link">Link mit Markierung kopieren</button>
     <button type="button" class="button-secondary" data-marking-clear>Markierungen aufheben</button>
   </div>
+  <details data-text-mark-details hidden><summary>Textmarkierungen verwalten</summary><div data-text-mark-list></div></details>
   <span class="muted" data-marking-feedback role="status" aria-live="polite"></span>
+</div>
+<div class="text-selection-menu" data-text-selection role="group" aria-label="Textauswahl" hidden>
+  <button type="button" class="button-secondary" data-text-marker aria-keyshortcuts="Alt+M" title="Textmarker (Alt+M)">Textmarker</button>
+  <button type="button" class="button-secondary" data-selection-copy>Text kopieren</button>
+  <p class="muted" data-highlight-fallback hidden>Dieser Browser unterstützt freie Texthervorhebungen nicht. Text kopieren bleibt möglich.</p>
+  <span data-selection-feedback role="status" aria-live="polite"></span>
 </div>
 <script>
   import { initMarkingTools } from '../lib/marking-tools.ts';

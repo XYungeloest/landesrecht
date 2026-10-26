@@ -1,5 +1,6 @@
 import { formatMarkedCitation, MAX_MARKINGS, parseMarkings, type MarkingTarget } from '@landesrecht/legal-core/lib/markings.ts';
-import { getMarkedUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import { initTextMarking, type TextMarkController } from './text-marking.ts';
+import { getMarkedUrl, getTextMarkedUrl } from '@landesrecht/legal-core/lib/routes.ts';
 import { copyText } from './copy.ts';
 
 export function initMarkingTools(toolbar: HTMLElement): void {
@@ -21,10 +22,12 @@ export function initMarkingTools(toolbar: HTMLElement): void {
   live.setAttribute('aria-live','polite');
   root.append(live);
   const orderedIds = () => targets.filter((target)=>selected.has(target.id)).map((target)=>target.id);
+  let textMarks:TextMarkController|undefined;
   function render(announce = true) {
-    toolbar.hidden = selected.size === 0;
-    root!.classList.toggle('has-markings',selected.size > 0);
-    const message = `${selected.size} ${selected.size === 1 ? 'Markierung ausgewählt' : 'Markierungen ausgewählt'}.`;
+    const total=selected.size+(textMarks?.count()??0);
+    toolbar.hidden = total === 0;
+    root!.classList.toggle('has-markings',total > 0);
+    const message = `${total} ${total === 1 ? 'Markierung ausgewählt' : 'Markierungen ausgewählt'}.`;
     count.textContent = message;
     if (announce) live.textContent = message;
     for (const button of buttons) {
@@ -36,6 +39,8 @@ export function initMarkingTools(toolbar: HTMLElement): void {
       button.setAttribute('aria-label',`${address} ${active ? 'Markierung aufheben' : 'markieren'}`);
       button.title = button.getAttribute('aria-label')!;
     }
+    const citationButton=toolbar.querySelector<HTMLButtonElement>('[data-marking-copy="citation"]');
+    if(citationButton)citationButton.hidden=selected.size===0;
     feedback.replaceChildren();
   }
   for (const button of buttons) {
@@ -51,12 +56,15 @@ export function initMarkingTools(toolbar: HTMLElement): void {
   toolbar.querySelector('[data-marking-clear]')?.addEventListener('click',()=>{
     const first = buttons.find((button)=>selected.has(button.dataset.markId!));
     selected.clear();
+    textMarks?.clear();
     render();
     first?.focus();
   });
   toolbar.querySelectorAll<HTMLButtonElement>('[data-marking-copy]').forEach((button)=>button.addEventListener('click',async()=>{
     const ids = orderedIds();
-    const text = button.dataset.markingCopy === 'link' ? getMarkedUrl(window.location.href,ids) : formatMarkedCitation(targets,ids,toolbar.dataset.normName!,toolbar.dataset.versionNote);
+    const current=new URL(window.location.href);current.searchParams.delete('textmark');
+    const text = button.dataset.markingCopy === 'link' ? (textMarks?.count() ? getTextMarkedUrl(toolbar.dataset.versionPath!,window.location.origin,ids,textMarks.parameter()) : getMarkedUrl(current.href,ids)) : formatMarkedCitation(targets,ids,toolbar.dataset.normName!,toolbar.dataset.versionNote);
+    if(!text){feedback.textContent='Für Textpassagen bitte unter Textmarkierungen verwalten den Wortlaut mit Nachweis kopieren.';return;}
     await copyText(text,feedback);
   }));
   function restore(scroll: boolean) {
@@ -66,6 +74,8 @@ export function initMarkingTools(toolbar: HTMLElement): void {
     // Ein ausdrücklich gewähltes Fragment hat Vorrang vor der ersten Hervorhebung.
     if (scroll && selected.size && !window.location.hash) document.getElementById(orderedIds()[0]!)?.scrollIntoView({block:'center'});
   }
+  textMarks=initTextMarking(root,toolbar,targets,()=>render(),message=>{live.textContent=message;});
   restore(true);
-  window.addEventListener('popstate',()=>restore(true));
+  void textMarks.restore();
+  window.addEventListener('popstate',()=>{restore(true);void textMarks?.restore();});
 }

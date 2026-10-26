@@ -3,6 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import NormBody from './NormBody.astro';
 import ProvisionNavigation from './ProvisionNavigation.astro';
 import { buildProvisionNavigation } from '../lib/provision-navigation.ts';
+import ReadingControls from './ReadingControls.astro';
+import { buildSentencePlan } from '@landesrecht/legal-core/lib/sentences.ts';
 import MarkingTools from './MarkingTools.astro';
 import MarkingButton from './MarkingButton.astro';
 import { getMarkingTargets, formatMarkedCitation } from '@landesrecht/legal-core/lib/markings.ts';
@@ -18,6 +20,7 @@ const url = getProvisionUrl(view.jurisdiction.id, view.record.meta.slug, entry.a
 const fullUrl = explicitVersion ? view.versionUrl : view.url;
 const isLaw = ['gesetz', 'verfassung', 'zustimmungsgesetz'].includes(view.record.meta.type);
 const wholeLabel = isLaw ? 'Gesetz' : 'Regelwerk';
+const sentences=buildSentencePlan(view.version.body,view.anchors);
 const targets = getMarkingTargets(view.version.body, view.anchors);
 const markings = new Map(targets.map((target)=>[target.path,target]));
 const unitMarking = markings.get(entry.path.join('.'));
@@ -41,11 +44,12 @@ const citation = citationValue || `${entry.block.label ?? ''} ${normName}${versi
         <a href={`${fullUrl}#${entry.anchor}`}>{isLaw ? 'Ganzes Gesetz' : 'Ganzes Regelwerk'}</a>
         {citationValue && <CopyButton value={citationValue} label="Zitat kopieren" />}
         {view.versions.length > 1 && <a href={getNormSubpageUrl(view.jurisdiction.id,view.record.meta.slug,'historie')}>Fassungen</a>}
+        <ReadingControls />
       </div>
     </header>
     <ProvisionNavigation model={navigation} position="top" />
     <article class="norm-document" aria-label={citation}>
-      <NormBody markings={markings} blocks={[entry.block]} anchors={view.anchors} path={entry.path.slice(0, -1)} indexOffset={entry.path.at(-1)} jurisdiction={view.jurisdiction.id} headingLevel={1} single rootHeadingId={`${entry.anchor}-heading`} />
+      <NormBody sentences={sentences} markings={markings} blocks={[entry.block]} anchors={view.anchors} path={entry.path.slice(0, -1)} indexOffset={entry.path.at(-1)} jurisdiction={view.jurisdiction.id} headingLevel={1} single rootHeadingId={`${entry.anchor}-heading`} />
     </article>
     <ProvisionNavigation model={navigation} position="bottom" />
     <details class="provision-details">
@@ -61,6 +65,6 @@ const citation = citationValue || `${entry.block.label ?? ''} ${normName}${versi
         {view.compareUrl && <a href={view.compareUrl}>Vergleich des gesamten {isLaw ? 'Gesetzes' : 'Regelwerks'}</a>}
       </div>
     </details>
-    <MarkingTools normName={normName} versionNote={versionNote} />
+    <MarkingTools normId={view.record.meta.id} versionId={view.version.versionId} versionPath={getProvisionUrl(view.jurisdiction.id,view.record.meta.slug,entry.anchor,view.version.versionId)} normName={normName} versionNote={versionNote} />
   </div>
 </BaseLayout>
