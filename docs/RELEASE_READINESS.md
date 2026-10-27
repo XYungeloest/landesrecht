@@ -1,12 +1,18 @@
 # Release-Bereitschaft
 
-Erzeugt von `npm run release:check -- --write --full` am 2026-09-30 auf `edb1dadf1618` gegen `https://landesrecht-online.de`;
+Erzeugt von `npm run release:check -- --write --offline` am 2026-10-27 auf `1df581af95e6` gegen `https://landesrecht-online.de`;
 maschinenlesbar `data/audits/release-readiness.json`. Der Befehl orchestriert nur bestehende Prüfungen (Protokolle unter `.cache/release-check/`).
-Bewusst fehlende Sim-Quellen sind bekannte Einschränkungen, nie Releaseblocker.
+Prüfumfang ist die Arbeitskopie mit den uncommitteten Änderungen aus Lauf 1; HEAD bezeichnet nur den
+Git-Ausgangspunkt. Kein Nachweis, dass dieser Stand deployt ist. Die separat ausgeführten lesenden
+Produktionsprüfungen und die aktuelle **Betriebsentscheidung NO-GO** stehen in
+[PRODUCTION_GO_LIVE.md](PRODUCTION_GO_LIVE.md). Das dort dokumentierte Ost-Drift-Audit hat einen Befund;
+die unten als offline übersprungen markierten Schritte sind keine bestandenen Remoteprüfungen.
+
+Technischer Prüfbericht, keine Betriebsfreigabe. Rechtliche und fachliche GO-/NO-GO-Kriterien: docs/PRODUCTION_GO_LIVE.md. Fehlende Quellen sind dort nach Risiko zu entscheiden.
 
 ## Release-Status: **READY WITH KNOWN LIMITATIONS**
 
-Keine Releaseblocker.
+Keine technischen Releaseblocker in den ausgeführten Prüfungen. Betriebsfreigabe separat: docs/PRODUCTION_GO_LIVE.md.
 
 ## Bestand je Land
 
@@ -23,28 +29,28 @@ Ausgangsrechtsstand aller Länder: 2023-12-01; redaktioneller Stichtag 2026-09-2
 
 | Bereich | Prüfung | Art | Ergebnis | Dauer | Zusammenfassung |
 | --- | --- | --- | --- | ---: | --- |
-| Build | Typprüfung (tsc + astro check) | blockierend | bestanden | 14 s | - 0 errors · - 0 warnings |
-| Tests | Vitest (alle Tests) | blockierend | bestanden | 59 s | Test Files  126 passed (126) · Tests  2025 passed (2025) |
-| Inhalt | content:check (Validierung, Unveränderlichkeit, Tabellen, Sim-Gates inkl. Freeze-Gate G2) | blockierend | bestanden | 99 s | Unveränderlichkeit geprüft: 5919 gespeicherte Fassung(en) gegen HEAD: 5919 unverändert, 0 dokumentiert freigegeben, 0 als Testfixture verschoben. · Tabellen-Regressionsgate: 0 geänderte Fassung(en) gegen edb1dadf1618 verglichen (Tabellen 0 → 0), 0 Tabellenänderung(en) begründet freigegeben, keine unbegründete. · G2: west: 1482 Baseline-Fassungen gegen ff1b1f43e209 geprüft, 0 dokumentiert freigegeb |
-| Freeze | NSH-Freeze (Commit, Fingerabdruck) | blockierend | bestanden | 4 s | NSH-Baseline-Status: FROZEN (Freeze-Commit eeeca2cdc559; Bewertung READY WITH HUMAN REVIEW) · Baseline-Fingerabdruck 1b92d06468585d5d… · Gate freeze-fingerprint: ok – Freeze-Commit eeeca2cdc559: 2.672 Normen, 1b92d06468585d5d… · Arbeitskopie 2.672 Normen, 1b92d06468585d5d… · dokumentiert 1b92d06468585d5d… |
+| Build | Typprüfung (tsc + astro check) | blockierend | bestanden | 22 s | - 0 errors · - 0 warnings |
+| Tests | Vitest (alle Tests) | blockierend | bestanden | 88 s | Test Files  140 passed (140) · Tests  2127 passed (2127) |
+| Inhalt | content:check (Validierung, Unveränderlichkeit, Tabellen, Sim-Gates inkl. Freeze-Gate G2) | blockierend | bestanden | 80 s | Unveränderlichkeit geprüft: 5919 gespeicherte Fassung(en) gegen HEAD: 5919 unverändert, 0 dokumentiert freigegeben, 0 als Testfixture verschoben. · Tabellen-Regressionsgate: 0 geänderte Fassung(en) gegen 1df581af95e6 verglichen (Tabellen 0 → 0), 0 Tabellenänderung(en) begründet freigegeben, keine unbegründete. · G2: west: 1482 Baseline-Fassungen gegen ff1b1f43e209 geprüft, 0 dokumentiert freigegeb |
+| Freeze | NSH-Freeze (Commit, Fingerabdruck) | blockierend | bestanden | 5 s | NSH-Baseline-Status: FROZEN (Freeze-Commit eeeca2cdc559; Bewertung READY WITH HUMAN REVIEW) · Baseline-Fingerabdruck 1b92d06468585d5d… · Gate freeze-fingerprint: ok – Freeze-Commit eeeca2cdc559: 2.672 Normen, 1b92d06468585d5d… · Arbeitskopie 2.672 Normen, 1b92d06468585d5d… · dokumentiert 1b92d06468585d5d… |
 | Freeze | BayWü-Freeze (Commit, Fingerabdruck) | blockierend | bestanden | 2 s | BayWü-Baseline-Status: FROZEN (Freeze-Commit 018752abcd5c; Bewertung BASELINE READY) · Baseline 1.618 Normen · Fingerabdruck 07c7fec745054453… · Gate freeze-fingerprint: ok – Freeze-Commit 018752abcd5c: 1.618 Normen, 07c7fec745054453… · Arbeitskopie 1.618 Normen, 07c7fec745054453… · dokumentiert 07c7fec745054453… |
 | D1 | D1-Schema, Projektion, FTS5-Integrität | blockierend | bestanden | 23 s | D1-Schema gültig: 12 Tabellen, 276522 Anweisungen, 5897 Normen, 5919 Fassungen, 85054 Sucheinheiten, 35 Verkündungen, FTS5-Integrität geprüft. |
 | Sim-Quellen | Sim-Vollständigkeit (Status fail-closed berechnet) | blockierend | bestanden | 2 s | west: Sim-Quellen PARTIAL (SIM SOURCES PARTIAL) · Blätter PARTIAL 22/23 · Einzelakte COMPLETE (fehlend 0) · fehlende Quellen 1, Evidenz unvollständig 7, mögliche Lücken 1 + 4 Zeiträume · Ereignisse applied 41, review 38, blocked 17, not-promulgated 7 · letzte Quelle 2026-09-18 · nsh: Sim-Quellen PARTIAL (SIM SOURCES PARTIAL) · Blätter PARTIAL 5/6 · Einzelakte COMPLETE (fehlend 0) · fehlende Quelle |
 | Sim-Quellen | Source-Inbox (Dry-run) | beratend | bestanden | 1 s | Queue: all 19 · open 19 |
-| Build | Astro-Build (Worker) | blockierend | bestanden | 3 s | 08:16:43 [build] Complete! |
-| Suche | West: Golden Set (Recall, Top-1, Verletzungen) | blockierend | bestanden | 47 s | Golden Set or-prefix: Recall@10 94.1 %, MRR 0.933, Top-1 100.0 %, Sprungziel 100.0 %, Nulltreffer 100.0 %, verletzt 0, Latenz p50 185.5 ms / p95 659 ms / max 1654.1 ms (Standard: and-first) · Golden Set and-first: Recall@10 94.1 %, MRR 0.933, Top-1 100.0 %, Sprungziel 100.0 %, Nulltreffer 100.0 %, verletzt 0, Latenz p50 13.4 ms / p95 69 ms / max 253.7 ms (Standard: and-first) |
-| Suche | NSH: Suchintegrität (Stichprobe) und Golden Set | blockierend | bestanden | 110 s | or-prefix: Recall@10 0.957, MRR 0.942, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 432.9 ms · and-first: Recall@10 0.957, MRR 0.942, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 48.8 ms · West + BayWü + NSH: 12/12 gemeinsame Titelbruchstücke richtig gefiltert |
-| Suche | BayWü: Suchintegrität (Stichprobe) und Golden Set | blockierend | bestanden | 109 s | or-prefix: Recall@10 0.935, MRR 0.904, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 499.6 ms · and-first: Recall@10 0.944, MRR 0.926, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 67.6 ms · West + BayWü: 10/10 gemeinsame Titelbruchstücke richtig gefiltert |
-| Qualität | Provenienz West (--strict) | blockierend | bestanden | 2 s | Provenienz-Audit: 1482 Normen, 0 Fehler, 22 Warnungen → /Users/petzke/landesrecht/data/audits/recht-nrw/quality/provenance.md |
+| Build | Astro-Build (Worker) | blockierend | bestanden | 3 s | 13:57:33 [build] Complete! |
+| Suche | West: Golden Set (Recall, Top-1, Verletzungen) | blockierend | bestanden | 50 s | Golden Set or-prefix: Recall@10 94.1 %, MRR 0.927, Top-1 100.0 %, Sprungziel 100.0 %, Nulltreffer 100.0 %, verletzt 0, Latenz p50 200 ms / p95 750.7 ms / max 1789.9 ms (Standard: and-first) · Golden Set and-first: Recall@10 94.1 %, MRR 0.927, Top-1 100.0 %, Sprungziel 100.0 %, Nulltreffer 100.0 %, verletzt 0, Latenz p50 14.5 ms / p95 88 ms / max 255.9 ms (Standard: and-first) |
+| Suche | NSH: Suchintegrität (Stichprobe) und Golden Set | blockierend | bestanden | 124 s | or-prefix: Recall@10 0.957, MRR 0.942, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 529.2 ms · and-first: Recall@10 0.957, MRR 0.942, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 61.2 ms · West + BayWü + NSH: 12/12 gemeinsame Titelbruchstücke richtig gefiltert |
+| Suche | BayWü: Suchintegrität (Stichprobe) und Golden Set | blockierend | bestanden | 123 s | or-prefix: Recall@10 0.935, MRR 0.904, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 631.3 ms · and-first: Recall@10 0.944, MRR 0.926, Top-1 1, Sprungziel 1, Nulltreffer 1, verletzt 0, p95 93.2 ms · West + BayWü: 10/10 gemeinsame Titelbruchstücke richtig gefiltert |
+| Qualität | Provenienz West (--strict) | blockierend | bestanden | 7 s | Provenienz-Audit: 1482 Normen, 0 Fehler, 22 Warnungen → /Users/petzke/landesrecht/data/audits/recht-nrw/quality/provenance.md |
 | Qualität | Rekonstruktion VV LHundG (Determinismus) | blockierend | bestanden | 2 s | Rekonstruktions-Audit: 13/13 Prüfungen bestanden → /Users/petzke/landesrecht/data/audits/recht-nrw/quality/reconstruction-vv-lhundg.md |
-| Ost | Ost: Contract, Drift, Freshness (Stichtag 2026-09-28) | blockierend | bestanden | 251 s | Contract: ok · Freshness: Landesrecht-Stichtag 2026-09-28; OstRecht-Sync 2026-09-13T12:13:44.344Z (complete), indexierter Stichtag zwischen 2026-09-12 und vor 2026-10-01; Such-Readiness ready, Volltext current-version-only · Ergebnis: keine Drift |
-| API/Routen | Produktions-Smoke (https://landesrecht-online.de) | blockierend | bestanden | 17 s | Alle 83 Prüfungen bestanden |
-| API/Routen | Website-Stichprobe und Barrierefreiheit (Produktion) | blockierend | bestanden | 15 s | Website-Stichprobe: 43 Seiten, 0 mit Befunden, 43 Abrufe → /Users/petzke/landesrecht/data/audits/recht-nrw/quality/site-smoke.md |
-| D1 | D1 lokal ↔ remote (landesrecht-west) | beratend | bestanden | 38 s | Lokal ↔ Remote (landesrecht-west): identisch in 12 Prüfungen. |
-| D1 | D1 lokal ↔ remote (landesrecht-nsh) | beratend | bestanden | 37 s | Lokal ↔ Remote (landesrecht-nsh): identisch in 12 Prüfungen. |
-| D1 | D1 lokal ↔ remote (landesrecht-baywue) | beratend | bestanden | 37 s | Lokal ↔ Remote (landesrecht-baywue): identisch in 12 Prüfungen. |
-| R2 | R2-Archiv (Manifest ↔ Listing, Byte-Stichprobe) | beratend | bestanden | 50 s | Ergebnis: **0 relevante Abweichungen**. |
-| Performance | Performance-Baseline (lokal + Produktion) | beratend | bestanden | 7 s | D1 Normliste (500)                           median      6 ms  p95     12 ms  (5 Läufe) · Suche exakter Titel (Ladenöffnungszeiten)    median      7 ms  p95     14 ms  (5 Läufe) · Suche Abkürzung „LÖG West“                   median      6 ms  p95      8 ms  (5 Läufe) · Suche Abkürzung „DVO KiBiz“                  median      2 ms  p95      2 ms  (5 Läufe) · Suche Volltext „Erlaubnis“               |
+| Ost | Ost: Contract, Drift, Freshness (Stichtag 2026-09-28) | blockierend | übersprungen (offline) | 0 s | – |
+| API/Routen | Produktions-Smoke (https://landesrecht-online.de) | blockierend | übersprungen (offline) | 0 s | – |
+| API/Routen | Website-Stichprobe und Barrierefreiheit (Produktion) | blockierend | übersprungen (offline) | 0 s | – |
+| D1 | D1 lokal ↔ remote (landesrecht-west) | beratend | übersprungen (nur mit --full) | 0 s | – |
+| D1 | D1 lokal ↔ remote (landesrecht-nsh) | beratend | übersprungen (nur mit --full) | 0 s | – |
+| D1 | D1 lokal ↔ remote (landesrecht-baywue) | beratend | übersprungen (nur mit --full) | 0 s | – |
+| R2 | R2-Archiv (Manifest ↔ Listing, Byte-Stichprobe) | beratend | übersprungen (nur mit --full) | 0 s | – |
+| Performance | Performance-Baseline (lokal + Produktion) | beratend | übersprungen (nur mit --full) | 0 s | – |
 
 ## Bekannte, nicht blockierende Einschränkungen
 
@@ -56,7 +62,7 @@ Ausgangsrechtsstand aller Länder: 2023-12-01; redaktioneller Stichtag 2026-09-2
 - Suche: Tiefe Seiten der länderübergreifenden Suche (Offset 1 000–5 000) brauchen 8–20 s, weil jeder Store bis offset + limit Treffer liefert (mergeSearchPages); Offset ist auf 5 000 begrenzt, Antwort stabil 200 (maintenance)
 - Qualität: Benennungs-Audit West: 12 Abkürzungen mit Quell-Landesbezeichnung (z. B. „BVSG NW“) oder generischem Kürzel („EU“, „EG“) (expected/legal-data limitation)
 - Qualität: Legacy-Struktur West: 390 Tabellen ohne sichere Kopfzeile, 150 Normen mit mehrfach eingebetteten Fußnoten; Anker-Audit offline 245 Normen mit Strukturhinweisen (online 0/60 Seiten mit Befunden) (expected/legal-data limitation)
-- Suche: Zwei geltende West-Normen tragen den Titel „Verfassung für das Land Westdeutschland“ (Stichtagsverfassung und Sim-Verfassung 2024) (expected/legal-data limitation)
+- Suche: Zwei geltende West-Normen tragen den Titel „Verfassung für das Land Westdeutschland“ (Stichtagsverfassung und Sim-Verfassung 2024) (bug)
 - R2: R2-Audit: Umschläge (Metadaten-JSON) weichen bytegenau vom neu erzeugten Umschlag ab; Rohobjekte, Größen, MD5 und Byte-Stichprobe ohne Abweichung (expected/legal-data limitation)
 - API/Routen: Keine eigene Sitemap; robots.txt erlaubt alles, Canonicals zeigen auf https://landesrecht-online.de, Fassungs- und Suchseiten tragen noindex (maintenance)
 

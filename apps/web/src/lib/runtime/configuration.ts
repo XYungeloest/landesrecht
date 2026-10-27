@@ -58,9 +58,9 @@ export function assertCompleteBindings(env: Record<string, unknown>, options: { 
   );
 }
 
-/** Interne 500-Antwort für Konfigurationsfehler: Klartext, nicht cachebar, ohne Umgebungswerte. */
-export function configurationErrorResponse(error: Error): Response {
-  const body = ['Konfigurationsfehler des Landesrechtsportals (HTTP 500).', '', error.message, '', 'Diese Meldung ist für den Betrieb bestimmt; die Website ist erst nach Korrektur der Worker-Konfiguration erreichbar.'].join('\n');
+/** Öffentliche neutrale 500-Antwort: Klartext, nicht cachebar, ohne interne Diagnose. */
+export function configurationErrorResponse(_error: Error): Response {
+  const body = 'Das Landesrechtsportal ist vorübergehend nicht verfügbar (HTTP 500). Bitte versuchen Sie es später erneut.\n';
   return new Response(body, { status: 500, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
 }
 

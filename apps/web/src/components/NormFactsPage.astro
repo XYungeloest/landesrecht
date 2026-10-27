@@ -5,6 +5,7 @@
  * Systemkennungen, Kennungen) stehen nicht hier; rechtlich relevante Herkunft steht unter „Quellen und Nachweise“.
  */
 import { getJurisdiction } from '@landesrecht/legal-core/config/jurisdictions.ts';
+import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { formatDate, publicNote, simulationChangeDateText, simulationChangeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { resolveRelationNote } from '@landesrecht/legal-core/lib/editorial-resolutions.ts';
 import { getNormUrl } from '@landesrecht/legal-core/lib/routes.ts';
@@ -30,7 +31,7 @@ const RELATION_LABELS: Record<string, string> = {
   implements: 'führt aus', 'based-on': 'beruht auf', 'part-of': 'Bestandteil von', contains: 'enthält', 'refers-to': 'verweist auf', related: 'verwandt', corrects: 'berichtigt', 'corrected-by': 'berichtigt durch',
 };
 const changeNote = publicNote(view.version.changeNote);
-const standText = view.change.kind === 'baseline-unchanged' ? `${simulationChangeLabel('baseline-unchanged')} (${formatDate(view.jurisdiction.baselineDate)})` : view.change.kind === 'baseline-changed' ? `${simulationChangeLabel('baseline-changed')}${view.change.lastChangeDate ? `, ${simulationChangeDateText(view.change.lastChangeDate)}` : ''}` : `${simulationChangeLabel('simulation-new')}${view.change.firstSimulationDate ? ` (seit ${formatDate(view.change.firstSimulationDate)})` : ''}`;
+const standText = view.change.kind === 'baseline-unchanged' ? `${simulationChangeLabel('baseline-unchanged')} (${formatDate(view.jurisdiction.baselineDate)})` : view.change.kind === 'baseline-changed' ? `${simulationChangeLabel('baseline-changed')}${view.change.lastChangeDate ? `, ${simulationChangeDateText(view.change.lastChangeDate)}` : ''}` : `${simulationChangeLabel('simulation-new')}${view.change.firstSimulationDate ? ` (${view.change.firstSimulationDate > EDITORIAL_REFERENCE_DATE ? 'ab' : 'seit'} ${formatDate(view.change.firstSimulationDate)})` : ''}`;
 ---
 <NormPageShell view={view} section="daten" title={`${VOCABULARY.sections.facts}: ${view.identity.shortTitle} (${view.jurisdiction.shortName})`}>
   <div class="card">

@@ -1,17 +1,9 @@
 # Deployment
 
-Stand: Der Worker `landesrecht` läuft unter workers.dev und der eigenen Domain `landesrecht-online.de` (Custom Domain,
-in `wrangler.jsonc` unter `routes` eingetragen – ein Deploy mit leerer Liste löst sie vom Worker; öffentlich erreichbar,
-sobald die Nameserver der Domain auf Cloudflare zeigen), zuletzt deployt 2026-09-19 als Version
-`3d606854-f9c2-4eee-a2ff-38cb70118ef4` (West: D1 `landesrecht-west` mit 1 482 Normen; BayWü: D1
-`landesrecht-baywue` mit 1 700 Normen; NSH: D1 `landesrecht-nsh` mit 2 450 Normen – Schema 2026-09-19 angelegt,
-63 Batches voll, danach 6 inkrementell eingespielt, Zielfingerabdruck `6cf5aa27` nachgeprüft, lokal ↔ remote
-identisch; R2 `landesrecht-quellen` privat mit den Rohquellen aller drei Länder, `nsh/` 17 024 Objekte). NSH-Release nach
-Nutzerfreigabe (Nutzungsfreigabe von juris laut Nutzer, `data/imports/juris-sh/source-rights-approval.json`).
-Der NSH-R2-Sync prüft mit `--verify etag` über ein Listing (Größe + MD5) statt je Objekt zurückzulesen; der
-Wrangler-API-Transport verwendet ein noch gültiges OAuth-Token bis zum echten Ablauf weiter (`wrangler whoami`
-erneuert erst danach). Alle Remote-Schritte (Deploy, Remote-D1, R2-Upload) bleiben
-manuelle, einzeln freigegebene Schritte; Wrangler-Anmeldung nur per OAuth (`npx wrangler login`).
+Die Betriebsfreigabe und der belegte Produktionsstand stehen in [PRODUCTION_GO_LIVE.md](PRODUCTION_GO_LIVE.md).
+Die früher hier genannten Deployment- und Bestandszahlen vom September 2026 sind überholt.
+Remote-Schritte (Deploy, Remote-D1, R2-Upload) bleiben manuelle, einzeln freigegebene Schritte;
+die folgenden Befehle sind Betriebsanleitungen, keine Ausführungsfreigabe.
 
 ## Keine CI-Pipeline
 
@@ -216,7 +208,7 @@ Nach jeder Änderung unter `apps/web/` ist ein Redeploy nötig (`npm run build &
   `getStoreRegistry()` einen `RuntimeConfigurationError`; ein verletzter Schema-Contract der OstRecht-D1
   (`OstRechtContractError`) wird gleich behandelt (fail-closed, keine Teilkonfiguration, kein Rückfall auf Dateien). Die
   Middleware `apps/web/src/middleware.ts` beantwortet ihn mit HTTP 500 `text/plain`, `cache-control: no-store` und
-  interner Meldung (Binding-Namen, Hinweis auf `wrangler.jsonc`/`--env`) und schreibt eine Zeile ins Worker-Log –
+  neutraler öffentlicher Meldung; interne Binding-/Contract-Diagnosen stehen nur im Worker-Log –
   nie eine stille leere Website (`apps/web/src/lib/runtime/configuration.ts`, Test
   `tests/unit/web-runtime-configuration.test.ts`).
 - Bundle: `apps/web/dist/server` ≈ 0,9 MB (Astro-Runtime, Seiten, Runtime-Pakete); Inhalte kommen ausschließlich aus
@@ -342,6 +334,9 @@ und G3 (additiv); für NSH und BayWü vergleichen zusätzlich `node scripts/nsh-
 `docs/BAYWUE_BASELINE_FREEZE.md`). Ein reiner Freeze-Metadatenwechsel braucht keine D1- oder R2-Neuprojektion; neu gebaut und
 deployt wird nur, wenn sich die Oberfläche ändert (Baseline-Status im Bestandshinweis).
 
-## Offen
+## Wiederherstellung und Überwachung
 
-- Playwright-Smokes gegen den lokalen Worker (Muster: OstRecht `serve-law-worker`).
+Verbindliche Reihenfolge, offene Tests und Zuständigkeiten: [PRODUCTION_GO_LIVE.md](PRODUCTION_GO_LIVE.md).
+`node scripts/restore-local.ts` prüft den lokalen Wiederaufbau aller drei eigenen Projektionen, SQLite-Sicherung
+und Restore in neue Dateien unter `.cache/restore-drill/`. Kein Remotezugriff, keine Ost-Kopie.
+Der lokale Test ersetzt keinen Cloudflare-Time-Travel- oder R2-Disaster-Recovery-Test.

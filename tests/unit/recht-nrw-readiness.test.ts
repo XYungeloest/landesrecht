@@ -211,6 +211,9 @@ describe('Readiness: D1-Audit lokal ↔ remote', () => {
     expect(d1RemoteCheck({ ...report, differences: 1, results: [{ name: 'law_norms', equal: false }] }, watermark, 3).detail).toContain('1 Abweichungen lokal ↔ remote (law_norms)');
     expect(d1RemoteCheck({ ...report, checkedAt: T0 }, watermark, 3).detail).toContain('älter als die letzte Manifeständerung');
     expect(d1RemoteCheck(report, watermark, 4).detail).toContain('law_norms remote 3 ≠ 4 Normen im Bestand');
+    // Der erwartete D1-Gesamtbestand enthält auch Sim-Normen, nicht nur den Importbestand.
+    const withSimulation = { ...report, results: [{ name: 'law_norms', equal: true, remote: [{ n: 4 }] }] };
+    expect(d1RemoteCheck(withSimulation, watermark, 4).status).toBe('pass');
   });
 });
 

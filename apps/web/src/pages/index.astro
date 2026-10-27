@@ -15,13 +15,16 @@ import { getStoreRegistry, PAGE_CACHE_CONTROL } from '../lib/runtime/context.ts'
 const registry = await getStoreRegistry();
 const number = new Intl.NumberFormat('de-DE');
 // Alle Zahlen und Listen kommen aus den Stores; nichts ist fest eingetragen.
-const [facetsByLand, changed, fresh, publications, constitutions] = await Promise.all([
+const [facetsByLand, changed, fresh, futureChanged, futureNew, publications, constitutions] = await Promise.all([
   changeFacets(registry, { changeKind: 'baseline-changed' }),
-  listChanges(registry, { changeKind: 'baseline-changed', limit: 8 }),
-  listChanges(registry, { changeKind: 'simulation-new', excludeAmendments: true, limit: 6 }),
+  listChanges(registry, { changeKind: 'baseline-changed', timing: 'effective', limit: 8 }),
+  listChanges(registry, { changeKind: 'simulation-new', timing: 'effective', excludeAmendments: true, limit: 6 }),
+  listChanges(registry, { changeKind: 'baseline-changed', timing: 'future', limit: 6 }),
+  listChanges(registry, { changeKind: 'simulation-new', timing: 'future', excludeAmendments: true, limit: 6 }),
   latestPublications(registry, 6),
   Promise.all(JURISDICTION_LIST.filter((jurisdiction) => registry.has(jurisdiction.id)).map(async (jurisdiction) => ({ jurisdiction, norms: (await registry.get(jurisdiction.id).listNormSummaries({ type: 'verfassung', status: 'in-force', limit: 3 })) }))),
 ]);
+const future = [...futureChanged, ...futureNew].sort((a, b) => a.lastSimulationChangeDate!.localeCompare(b.lastSimulationChangeDate!)).slice(0, 6);
 const totals = sumFacets(facetsByLand);
 const changedCount = totals.byChangeKind['baseline-changed'];
 const newCount = totals.byChangeKind['simulation-new'];
@@ -69,7 +72,7 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
     </div>
     <div class="home-columns">
       <section aria-labelledby="zuletzt-heading">
-        <h3 id="zuletzt-heading">Zuletzt in der Simulation geändert</h3>
+        <h3 id="zuletzt-heading">Zuletzt wirksam gewordene Änderungen</h3>
         {changed.length === 0 ? <p class="muted">Noch keine Änderungen.</p> : (
           <ol class="compact-list">
             {changed.map((norm) => (
@@ -97,6 +100,14 @@ Astro.response.headers.set('Cache-Control', PAGE_CACHE_CONTROL);
         <p><a class="button-link button-secondary" href={changesUrl('simulation-new')}>Alle neuen Vorschriften</a></p>
       </section>
     </div>
+  </section>
+  <section aria-labelledby="kuenftig-heading">
+    <h2 id="kuenftig-heading">Künftig in Kraft tretende Änderungen</h2>
+    <p>Diese Änderungen sind erfasst, am redaktionellen Stichtag aber noch nicht wirksam.</p>
+    {future.length === 0 ? <p class="muted">Keine künftigen Änderungen erfasst.</p> : <ol class="compact-list">
+      {future.map(norm => <li><a href={norm.url}>{norm.abbr ?? norm.shortTitle}</a><span class="muted"> · {getJurisdiction(norm.jurisdiction).shortName} · wirksam ab {formatDate(norm.lastSimulationChangeDate!)}</span></li>)}
+    </ol>}
+    <p><a href={PORTAL_PATHS.changes}>Alle erfassten Änderungen mit Wirkdatum</a></p>
   </section>
   <div class="home-columns">
     <section aria-labelledby="verkuendungen-heading">

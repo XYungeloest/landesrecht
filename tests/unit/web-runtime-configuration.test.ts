@@ -46,7 +46,7 @@ describe('Worker-Konfiguration', () => {
     expect(all.message).toMatch(/^Alle D1-Bindings fehlen/u);
   });
 
-  it('antwortet mit einer internen 500-Klartextmeldung ohne Umgebungswerte und ohne Caching', async () => {
+  it('antwortet mit einer öffentlichen 500-Klartextmeldung ohne Umgebungswerte und ohne Caching', async () => {
     const env = envWith({ LANDESRECHT_WEST: undefined, GEHEIM: 'wert-der-nie-erscheint-0123456789' });
     const error = caught(() => assertCompleteBindings(env));
     const response = configurationErrorResponse(error);
@@ -54,8 +54,9 @@ describe('Worker-Konfiguration', () => {
     expect(response.headers.get('content-type')).toBe('text/plain; charset=utf-8');
     expect(response.headers.get('cache-control')).toBe('no-store');
     const body = await response.text();
-    expect(body).toMatch(/^Konfigurationsfehler des Landesrechtsportals \(HTTP 500\)\./u);
-    expect(body).toContain('LANDESRECHT_WEST');
+    expect(body).toContain('vorübergehend nicht verfügbar (HTTP 500)');
+    expect(body).not.toContain('LANDESRECHT_WEST');
+    expect(body).not.toContain('wrangler');
     expect(body).not.toContain('wert-der-nie-erscheint');
     expect(body).not.toContain('landesrecht.example');
     expect(isRuntimeConfigurationError(new Error('anderer Fehler'))).toBe(false);

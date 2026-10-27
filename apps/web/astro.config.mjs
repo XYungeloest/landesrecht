@@ -31,6 +31,8 @@ export default defineConfig({
   output: 'static',
   site: process.env.SITE_URL ?? DEFAULT_SITE_URL,
   vite: {
+    // Kleine Clientskripte ebenfalls als Dateien ausliefern: CSP erlaubt nur eigene Skriptquellen.
+    build: { assetsInlineLimit: 0 },
     // Bilddienst (`imageService: 'passthrough'`) und Konsolen-Logger werden erst beim Laden des Server-Einstiegs entdeckt. Ohne Vorab-
     // Optimierung bündelt Vite beim ersten Dev-Start nach und lädt neu, während der workerd-Runner noch die alten Chunks
     // anfordert (Abbruch „The file does not exist … deps_ssr/…“). Vorab eingeschlossen bleibt der erste Start stabil.

@@ -5,6 +5,7 @@
  * Aktionen „Was hat sich geändert?“ und „Ausgangsfassung“, Bereichsreiter und Fassungsband. Technische Angaben
  * (Kennungen, Hashes, Speicherorte) gehören nicht hierher.
  */
+import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { formatDate, simulationChangeDateText, simulationChangeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
 import { getJurisdictionUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -40,7 +41,7 @@ const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? Astro.url.origin;
   <header class:list={['norm-head', { 'norm-head--secondary': section !== 'text' }]}>
     <p class="norm-head__tags">
       <span class={`norm-band norm-band--${view.kind}`}>{view.bandLabel}</span>
-      {!view.isCurrent && <a class="action-link" href={view.url}>Zur geltenden Fassung</a>}
+      {!view.isCurrent && <a class="action-link" href={view.url}>{view.versions.some(entry => entry.kind === 'current') ? 'Zur geltenden Fassung' : 'Zur Normübersicht'}</a>}
     </p>
     <h1>{view.identity.title}</h1>
     <p class="norm-head__short">
@@ -50,7 +51,7 @@ const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? Astro.url.origin;
     {change.kind === 'baseline-changed' && (
       <div class="sim-banner sim-banner--changed" role="note" aria-label={simulationChangeLabel('baseline-changed')}>
         <p class="sim-banner__title">{simulationChangeLabel('baseline-changed')}</p>
-        <p>{change.lastChangeDate && <>{simulationChangeDateText(change.lastChangeDate)}.</>}{change.repealedInSimulation && <> In der Simulation aufgehoben.</>}</p>
+        <p>{change.lastChangeDate && <>{simulationChangeDateText(change.lastChangeDate)}.</>}{change.repealedInSimulation && <> {view.record.meta.expiryDate && view.record.meta.expiryDate > EDITORIAL_REFERENCE_DATE ? `Aufhebung wirksam ab ${formatDate(view.record.meta.expiryDate)}.` : 'In der Simulation aufgehoben.'}</>}</p>
         <p class="sim-banner__actions">
           {view.compareUrl && section !== 'vergleich' && <a class="button-link" href={view.compareUrl}>Änderungen ansehen</a>}
           {baselineUrl && <a class="action-link" href={baselineUrl}>Ausgangsfassung</a>}
@@ -60,7 +61,7 @@ const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? Astro.url.origin;
     )}
     {change.kind === 'simulation-new' && (
       <div class="sim-banner sim-banner--new" role="note" aria-label={simulationChangeLabel('simulation-new')}>
-        <p><strong>{simulationChangeLabel('simulation-new')}</strong>{change.firstSimulationDate && <> · gültig seit {formatDate(change.firstSimulationDate)}</>}</p>
+        <p><strong>{simulationChangeLabel('simulation-new')}</strong>{change.firstSimulationDate && <> · {change.firstSimulationDate > EDITORIAL_REFERENCE_DATE ? 'gültig ab' : 'gültig seit'} {formatDate(change.firstSimulationDate)}</>}</p>
       </div>
     )}
     <details class="norm-head__details" open={section === 'text'}>
@@ -74,6 +75,7 @@ const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? Astro.url.origin;
     </details>
     <p class="norm-head__actions">
       {section === 'text' && <a class="action-link" href="#normtext">Zum Normtext ↓</a>}
+      <a class="action-link" href={PORTAL_PATHS.feedback}>Fehler melden</a>
       <CopyButton value={citation} label="Fundstelle kopieren" />
       <CopyButton value={`${siteUrl}${view.isCurrent ? view.url : view.versionUrl}`} label="Link kopieren" />
     </p>

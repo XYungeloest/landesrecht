@@ -25,7 +25,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { loadAllNorms } from '@landesrecht/legal-core/lib/loader.ts';
+import { loadAllNorms, loadJurisdictionNorms } from '@landesrecht/legal-core/lib/loader.ts';
 
 import { parseLrmbDocument } from '../lrmb/parser.ts';
 import { parseDecreeFromTitle } from '../lrmb/text-metadata.ts';
@@ -595,7 +595,10 @@ export async function evaluateReadiness(root: string, options: ReadinessOptions 
   // 8. D1-Skalierungstest und D1-Audit lokal ↔ remote.
   const scale = await readJsonFile<{ ok?: boolean; norms?: number; full?: { durationMs?: number }; incremental?: { equivalent?: boolean } }>(join(root, D1_SCALE_REPORT_PATH)).catch(() => undefined);
   add('d1-scale', 'D1-Skalierungstest grün', Boolean(scale?.ok && (scale.norms ?? 0) >= 2_000 && scale.incremental?.equivalent), scale ? `${scale.norms} synthetische Normen, Vollprojektion ${Math.round((scale.full?.durationMs ?? 0) / 1000)} s, inkrementell äquivalent ${scale.incremental?.equivalent}` : `${D1_SCALE_REPORT_PATH} fehlt (npm run d1:scale-test -- --write)`);
-  push(d1RemoteCheck(await readJsonFile<D1RemoteCheckReport>(join(root, D1_REMOTE_CHECK_PATH)).catch(() => undefined), watermark, contentNorms));
+  // Die D1 enthält neben dem importierten Ausgangsbestand auch eigene Sim-Normen.
+  // Der Such-Importer-Audit darunter prüft weiterhin ausschließlich den Importbestand.
+  const projectedNorms = (await loadJurisdictionNorms('west', root)).length;
+  push(d1RemoteCheck(await readJsonFile<D1RemoteCheckReport>(join(root, D1_REMOTE_CHECK_PATH)).catch(() => undefined), watermark, projectedNorms));
 
   // 9. R2-Audit, Such-Vollaudit, Golden Set.
   push(r2AuditCheck(await readJsonFile<R2AuditReport>(join(root, R2_AUDIT_PATH)).catch(() => undefined), watermark));

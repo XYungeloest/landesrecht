@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /** Read-only checks against the locally rendered UI, complementing the responsive browser audit. */
 import assert from 'node:assert/strict';
+import { formatDate } from '@landesrecht/legal-core/lib/display.ts';
 import { byTag, hasClass, parseHtml, queryAll, normalizedText, auditOutlineAnchors, auditAccessibility } from './lib/html-audit.ts';
 import { getJurisdictionUrl, getNormUrl, getNormSubpageUrl, getNormVersionUrl, getProvisionUrl, getSubjectsUrl, getPublicationUrl, getPublicationsUrl, getSearchUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 
@@ -12,7 +13,7 @@ const load = async (path: string) => {
   return parseHtml(await response.text());
 };
 const classes = (document: ReturnType<typeof parseHtml>, name: string) => queryAll(document, (element) => hasClass(element, name));
-const paths = [PORTAL_PATHS.home, getJurisdictionUrl('west'), PORTAL_PATHS.changes, getSearchUrl({ q: 'Schule', jurisdiction: 'west' }), getNormUrl('west', 'abgg-west'), getNormUrl('west', 'lnatschg-west'), getNormUrl('west', 'kjrg-west'), getNormUrl('west', 'schulg-west'), getNormVersionUrl('west', 'lnatschg-west', '2023-12-01'), getNormSubpageUrl('west', 'lnatschg-west', 'vergleich'), getNormSubpageUrl('west', 'lnatschg-west', 'historie'), getNormSubpageUrl('west', 'lnatschg-west', 'quellen'), getPublicationsUrl('west'), getPublicationUrl('west', 'gv-west-2024-1-20240223'), PORTAL_PATHS.about];
+const paths = [PORTAL_PATHS.imprint, PORTAL_PATHS.privacy, PORTAL_PATHS.contact, PORTAL_PATHS.feedback, PORTAL_PATHS.home, getJurisdictionUrl('west'), PORTAL_PATHS.changes, getSearchUrl({ q: 'Schule', jurisdiction: 'west' }), getNormUrl('west', 'abgg-west'), getNormUrl('west', 'lnatschg-west'), getNormUrl('west', 'kjrg-west'), getNormUrl('west', 'schulg-west'), getNormVersionUrl('west', 'lnatschg-west', '2023-12-01'), getNormSubpageUrl('west', 'lnatschg-west', 'vergleich'), getNormSubpageUrl('west', 'lnatschg-west', 'historie'), getNormSubpageUrl('west', 'lnatschg-west', 'quellen'), getPublicationsUrl('west'), getPublicationUrl('west', 'gv-west-2024-1-20240223'), PORTAL_PATHS.about];
 for (const path of paths) {
   const document = await load(path);
   assert.equal(byTag(document, 'h1').length, 1, path);
@@ -52,7 +53,7 @@ for(const mark of marks) {
   assert.equal(queryAll(norm,(node)=>node.attrs.id === mark.attrs['data-mark-id']).length,1,'eindeutiges vorhandenes Ziel');
 }
 assert(byTag(norm,'a').some((link)=>link.attrs.href === '#paragraph-2-abs-1'),'Absatz-Direktlink unverändert');
-console.log('UI-Smoke: 15 Seitentypen, A–Z, Pagination, Filter ohne Begriff, Vergleich und Anker erfolgreich.');
+console.log('UI-Smoke: Norm- und Betriebsseiten, A–Z, Pagination, Filter ohne Begriff, Vergleich und Anker erfolgreich.');
 
 // Einzelvorschriften behalten die Anker der gewählten Gesamtfassung und zeigen nur ihre Einheit.
 for (const versionId of [undefined, '2023-12-01']) {
@@ -168,3 +169,21 @@ const largeProvision = await load(getProvisionUrl('nsh','lvwg-nsh','paragraph-1'
 assert.equal(byTag(largeProvision,'option').length,397,'genau eine Option je tatsächlicher LVwG-Einheit');
 assert.deepEqual(auditAccessibility(largeProvision),[]);
 console.log('Kompakte Einzelansichten: eine Hauptüberschrift, native Auswahl ohne JavaScript, historische Ziele, Randfälle und unveränderter Wortlaut erfolgreich.');
+
+// Der reale Kalendertag darf den redaktionellen Stichtag nicht ersetzen.
+for (const [jurisdiction, slug, date] of [
+  ['nsh', 'inklusions-und-teilhabegesetz-kita-nsh', '2027-01-01'],
+  ['baywue', 'zukunftssicherheitsforschungsg-baywue', '2026-10-01'],
+  ['baywue', 'wirtschaftsgruendungsg-baywue', '2026-10-01'],
+] as const) {
+  const document = await load(getNormUrl(jurisdiction, slug));
+  const text = normalizedText(document);
+  assert(text.includes(`Gültig ab ${formatDate(date)}`), `${slug}: künftige Geltung`);
+  assert(!text.includes(`gültig seit ${formatDate(date)}`), `${slug}: noch nicht wirksam`);
+  assert(!text.includes('Zur geltenden Fassung'), `${slug}: keine geltende Fassung versprechen`);
+}
+const home = await load(PORTAL_PATHS.home);
+const recent = queryAll(home, node => node.attrs['aria-labelledby'] === 'zuletzt-heading')[0]!;
+assert(!normalizedText(recent).includes('2027'), 'Kein Zukunftstermin in der Änderungsrückschau');
+assert(normalizedText(home).includes('Künftig in Kraft tretende Änderungen'));
+console.log('Rechtsstand: künftige Normen und getrennte Änderungsrückschau erfolgreich.');

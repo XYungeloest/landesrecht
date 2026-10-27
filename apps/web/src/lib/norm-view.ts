@@ -91,7 +91,7 @@ export function buildNormView(record: NormRecord, versionId?: string): NormView 
     legalStatusText: isCurrent ? referenceDateLabel(EDITORIAL_REFERENCE_DATE) : `${VOCABULARY.version.label} vom ${formatDate(version.simulationValidFrom)}`,
     validityText: version.simulationValidTo
       ? `Gültig vom ${formatDate(version.simulationValidFrom)} bis ${formatDate(version.simulationValidTo)}`
-      : `Gültig seit ${formatDate(version.simulationValidFrom)}`,
+      : kind === 'unknown-effective' ? 'Inkrafttreten ungeklärt' : `Gültig ${kind === 'future' ? 'ab' : 'seit'} ${formatDate(version.simulationValidFrom)}`,
     url,
     versionUrl,
     canonicalUrl: explicitVersion ? versionUrl : url,

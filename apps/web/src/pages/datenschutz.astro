@@ -1,0 +1,25 @@
+---
+import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Datenschutz – Entwurf" canonical={PORTAL_PATHS.privacy} robots="noindex, follow">
+  <h1>Datenschutz</h1>
+  <p role="note"><strong>Entwurf: noch nicht zur Veröffentlichung freigegeben.</strong> Angaben zum tatsächlichen Betreiber, zu Verträgen und zur Protokollierung müssen vor dem öffentlichen Betrieb vervollständigt und rechtlich geprüft werden.</p>
+  <h2>Verantwortlicher und Datenschutzkontakt</h2>
+  <p>Noch zu benennen sind der tatsächliche Betreiber mit ladungsfähiger Anschrift und erreichbarem Kontakt sowie gegebenenfalls ein Datenschutzbeauftragter. Die fiktiven Länder der Simulation ersetzen diese Angaben nicht.</p>
+  <h2>Aufruf und Hosting</h2>
+  <p>Das Portal wird über Cloudflare Workers bereitgestellt. Beim Aufruf werden insbesondere die für die Verbindung erforderliche IP-Adresse, die angeforderte Adresse und technische Anfrageinformationen an die Hosting-Infrastruktur übermittelt. Die Anwendung liest Rechtsinformationen und archivierte Quellen aus Cloudflare-Speichern.</p>
+  <p>Vor Freigabe zu klären: Vertragspartner und Rolle von Cloudflare, weitere Empfänger und Unterauftragnehmer, Verarbeitungsorte, gegebenenfalls Drittlandübermittlungen und deren Garantien sowie die Rechtsgrundlage der einzelnen Verarbeitungen.</p>
+  <h2>Protokolle und Betriebssicherheit</h2>
+  <p>Bei Konfigurationsfehlern schreibt die Anwendung technische Diagnosen in das Betriebslog. Ob und wie lange Cloudflare darüber hinaus Zugriffs-, Sicherheits- oder Fehlerprotokolle speichert, muss anhand der Kontoeinstellungen und Verträge bestätigt werden. Zugriffsberechtigte, Protokollfelder, Zweck, Rechtsgrundlage und konkrete Löschfristen sind vor Freigabe festzulegen.</p>
+  <p>Die produktive Infrastruktur sendet derzeit außerdem „NEL“- und „Report-To“-Header für Netzwerkfehlerberichte an Cloudflare. Ob und unter welchen Voraussetzungen unterstützende Browser solche Berichte senden, welche Daten dabei erfasst werden und ob diese Funktion deaktiviert werden soll, ist vor Freigabe zu klären. Die im Header genannte Gültigkeitsdauer ist keine belegte Speicherfrist der Berichte.</p>
+  <h2>Suche und Textmarkierungen</h2>
+  <p>Suchbegriffe werden als Bestandteil der angeforderten Adresse an den Server übertragen. Das Portal legt dafür keine eigene Suchhistorie an. Suchbegriffe können dennoch im Browserverlauf und in Infrastrukturprotokollen enthalten sein. Geben Sie keine vertraulichen personenbezogenen Angaben in die Suche ein.</p>
+  <p>Textmarkierungen werden im Arbeitsspeicher des geöffneten Browsers und in teilbaren Adressen verwaltet. Bei Weitergabe einer solchen Adresse können andere Personen die markierten Stellen erkennen. Die Anwendung verwendet hierfür keine Cookies und keine dauerhafte lokale Speicherung. Adressparameter können beim Seitenaufruf an den Server und in den Browserverlauf gelangen.</p>
+  <h2>Cookies, Analyse und externe Inhalte</h2>
+  <p>Im Anwendungscode sind keine Analyse- oder Werbedienste und keine Anmeldung eingebunden; die Sitzungsverwaltung ist deaktiviert. Die Anwendung setzt keine Cookies und verwendet weder Local Storage noch Session Storage. Etwaige zusätzliche Funktionen des Hosting-Kontos müssen vor Freigabe gesondert geprüft werden. Externe Quellen werden verlinkt; beim Öffnen gelten die Datenschutzinformationen des jeweiligen Anbieters.</p>
+  <h2>Kontakt und Fehlermeldungen</h2>
+  <p>Ein öffentliches Meldeformular ist noch nicht aktiviert. Vor dessen Einführung werden Datenfelder, Missbrauchsschutz, Empfänger, Rechtsgrundlage und Löschfristen ergänzt. Auch für einen künftigen E-Mail-Kontakt sind Verarbeitung und Aufbewahrung vorab festzulegen.</p>
+  <h2>Ihre Rechte</h2>
+  <p>Nach den jeweils geltenden Voraussetzungen bestehen Rechte auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie gegebenenfalls auf Widerruf einer Einwilligung. Sie können sich bei einer Datenschutzaufsichtsbehörde beschweren. Zuständige Behörde und eine tatsächlich erreichbare Stelle für Ihre Anfragen sind vor Veröffentlichung zu benennen.</p>
+</BaseLayout>

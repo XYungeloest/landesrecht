@@ -17,6 +17,8 @@ import { loadJurisdictionNorms } from '@landesrecht/legal-core/lib/loader.ts';
 import { expandNormTypeFilter, type NormType } from '@landesrecht/legal-core/lib/schema.ts';
 import { classifySimulationChange, type SimulationChangeKind } from '@landesrecht/legal-core/lib/simulation-change.ts';
 
+import { getProvisionUrl } from '@landesrecht/legal-core/lib/routes.ts';
+
 import { PAGE_SIZE } from '../apps/web/src/lib/norm-listing.ts';
 
 import { createPageFetcher, DEPLOYED_SITE_URL, loadWestCorpus, mdTable, parseCliArgs, repositoryRoot, writeAuditReport } from './lib/audit-common.ts';
@@ -118,7 +120,7 @@ const specs: PageSpec[] = [
   { key: 'search-first', path: '/suche/?q=gesetz&jurisdiction=west', kind: 'html', expectStatus: 200 },
   { key: 'search-type', path: '/suche/?q=gesetz&jurisdiction=west&type=verordnung', kind: 'html', expectStatus: 200 },
   { key: 'search-filter-only', path: '/suche/?jurisdiction=west&type=verwaltungsvorschrift', kind: 'html', expectStatus: 200 },
-  { key: 'search-structural', path: '/suche/?q=%C2%A7+3+Absatz+2+LHundG&jurisdiction=west', kind: 'html', expectStatus: 200, check: (document) => (queryAll(document, (element) => element.tag === 'a' && (element.attrs.href ?? '').includes('/west/norm/lhundg-west/#paragraph-3')).length > 0 ? [] : ['Strukturtreffer § 3 LHundG fehlt']) },
+  { key: 'search-structural', path: '/suche/?q=%C2%A7+3+Absatz+2+LHundG&jurisdiction=west', kind: 'html', expectStatus: 200, check: (document) => (queryAll(document, (element) => element.tag === 'a' && element.attrs.href === getProvisionUrl('west', 'lhundg-west', 'paragraph-3')).length > 0 ? [] : ['Strukturtreffer § 3 LHundG fehlt']) },
   { key: 'search-nohit', path: '/suche/?q=xyzzyqwertz&jurisdiction=west', kind: 'html', expectStatus: 200, check: (document) => (normalizedText(document).includes('0 Treffer') ? [] : ['Leere Trefferliste ohne „0 Treffer“']) },
   { key: 'norm-without-abbr', path: `/west/norm/${selection.withoutAbbr}/`, kind: 'html', expectStatus: 200, norm: selection.withoutAbbr, check: normChecks(selection.withoutAbbr) },
   { key: 'norm-longest', path: `/west/norm/${selection.longest}/`, kind: 'html', expectStatus: 200, norm: selection.longest, check: normChecks(selection.longest) },

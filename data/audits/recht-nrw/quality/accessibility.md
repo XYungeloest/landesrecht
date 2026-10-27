@@ -19,7 +19,7 @@ Geprüfte Seiten: 38 (Start, Länderseite mit Filtern, Suche, Normseiten, Unters
 - h3 Land Niedersachsen-Holstein
 - h3 Freistaat Ostdeutschland
 - h3 Freistaat Bayern-Württemberg
-- h2 76 Vorschriften in der Simulation geändert
+- h2 78 Vorschriften in der Simulation geändert
 - h3 Zuletzt in der Simulation geändert
 - h3 Neu in der Simulation
 - h2 Letzte Verkündungen
@@ -40,7 +40,7 @@ Befunde: keine
 - h3 Allgemeine Erlaubnis für Kleine Lotterien und Auss
 - h3 Allgemeine Erlaubnis für kleine Lotterien und Auss
 - h3 Allgemeine Externen-Prüfungsordnung für Bildungsgä
-- h3 Allgemeine Richtlinie zur Förderung von Projekten 
+- h3 Allgemeine Richtlinie zur Förderung von Projekten
 
 Befunde: keine
 
@@ -49,13 +49,13 @@ Befunde: keine
 - h1 Land Westdeutschland
 - h2 Vorschriften
 - h3 Gesetz zur Weiterentwicklung des Landespflegerecht
-- h3 Gesetz über die Beamtinnen und Beamten des Landes 
+- h3 Gesetz über die Beamtinnen und Beamten des Landes
 - h3 Gesetz zum Schutz der Natur in Westdeutschland
 - h3 Gesetz zur Ausführung des Asylbewerberleistungsges
 - h3 Verordnung zur Festlegung des Anwendungsbereichs b
-- h3 Allgemeine Richtlinie zur Förderung von Projekten 
+- h3 Allgemeine Richtlinie zur Förderung von Projekten
 - h3 Gesetz über den Brandschutz, die Hilfeleistung und
-- h3 Verordnung über den Betrieb und die Ausgestaltung 
+- h3 Verordnung über den Betrieb und die Ausgestaltung
 - h3 Verordnung zur Durchführung des Weinrechts
 - h2 Verkündungen
 
@@ -67,7 +67,7 @@ Befunde: keine
 - h2 Vorschriften
 - h3 Gesetz zur Einführung eines westdeutschen Standort
 - h3 Gesetz zur Einführung eines westdeutschen Unterneh
-- h3 Gesetz zur Förderung der Jugendbeteiligung in den 
+- h3 Gesetz zur Förderung der Jugendbeteiligung in den
 - h3 Gesetz zur Modernisierung der westdeutschen Landes
 - h3 Runderlass zur Trauerbeflaggung anlässlich des Tod
 - h3 Gesetz zur Einführung des Westdeutschen Landesgesu
@@ -105,7 +105,7 @@ Befunde: keine
 - h3 Ausbildungs- und Prüfungsordnung für Familienpfleg
 - h3 Ausbildungs- und Prüfungsordnung für Hygienekontro
 - h3 Ausbildungs- und Prüfungsordnung für sozialmedizin
-- h3 Ausbildungs- und Prüfungsverordnung für den Beruf 
+- h3 Ausbildungs- und Prüfungsverordnung für den Beruf
 - h3 Ausbildungs- und Prüfungsverordnung für Rettungssa
 - h3 Ausführungsverordnung zum Gesetz zur Ausführung de
 - h3 Ausführungsverordnung zur Verordnung über die Zust
@@ -122,8 +122,8 @@ Befunde: keine
 - h3 Allgemeine Anlagerichtlinien für die Verwaltung vo
 - h3 Allgemeine Erlaubnis für Kleine Lotterien und Auss
 - h3 Allgemeine Erlaubnis für kleine Lotterien und Auss
-- h3 Allgemeine Richtlinie zur Förderung von Projekten 
-- h3 Allgemeine Verwaltungsvorschrift zu § 74 Absatz 4 
+- h3 Allgemeine Richtlinie zur Förderung von Projekten
+- h3 Allgemeine Verwaltungsvorschrift zu § 74 Absatz 4
 - h3 Allgemeine Verwaltungsvorschriften zum Landesreise
 - h3 Anweisungen über die Verwaltung und Organisation d
 
@@ -140,7 +140,7 @@ Befunde: keine
 - h3 Anweisungen über die Verwaltung und Organisation d
 - h3 Aufgaben des Instituts der Feuerwehr West als tech
 - h3 Ausbildung hauptberuflicher Feuerwehrangehöriger z
-- h3 Ausübung der Befugnisse im Rechtshilfeverkehr mit 
+- h3 Ausübung der Befugnisse im Rechtshilfeverkehr mit
 - h3 Benennung der Mitglieder des Verwaltungsrats des M
 - h3 Berufskolleg - Unterricht in Justizvollzugsanstalt
 
@@ -188,10 +188,10 @@ Befunde: keine
 - h3 2025-IMuster einer Beitrags- und Gebührensatzung z
 - h3 50 Jahre Deutsch-Französischer Vertrag
 - h3 Abgabe amtlicher Veröffentlichungen an Bibliotheke
-- h3 Abgrenzung des Straßenbauer-Handwerks zum Garten- 
+- h3 Abgrenzung des Straßenbauer-Handwerks zum Garten-
 - h3 Abkommen über das Deutsche Institut für Bautechnik
 - h3 Abkommen über die Deutsche Hochschule der Polizei
-- h3 Abkommen über die Errichtung und Finanzierung des 
+- h3 Abkommen über die Errichtung und Finanzierung des
 - h3 Abkommen über die erweiterte Zuständigkeit der mit
 - h3 Abkommen über die erweiterte Zuständigkeit der Pol
 
@@ -210,15 +210,15 @@ Befunde: keine
 - h1 Rechtssuche
 - h2 Suche eingrenzen
 - h2 Suche eingrenzen
-- h2 1370 Treffer für „gesetz“
+- h2 1186 Treffer für „gesetz“
 - h3 Gesetz zur Ausführung des Gesetzes über die psycho
 - h3 Gesetz zur kommunalen Neugliederung des Raumes Bon
 - h3 Gesetz zur Wiederherstellung der Selbständigkeit d
-- h3 Gesetz zur Neugliederung der Gemeinden und Kreise 
-- h3 Gesetz zur Neugliederung der Gemeinden und Kreise 
-- h3 Gesetz zur Neugliederung der Gemeinden und Kreise 
-- h3 Gesetz zur Neugliederung der Gemeinden und Kreise 
-- h3 Gesetz zur Neugliederung der Gemeinden und Kreise 
+- h3 Gesetz zur Neugliederung der Gemeinden und Kreise
+- h3 Gesetz zur Neugliederung der Gemeinden und Kreise
+- h3 Gesetz zur Neugliederung der Gemeinden und Kreise
+- h3 Gesetz zur Neugliederung der Gemeinden und Kreise
+- h3 Gesetz zur Neugliederung der Gemeinden und Kreise
 
 Befunde: keine
 
@@ -229,13 +229,13 @@ Befunde: keine
 - h2 Suche eingrenzen
 - h2 676 Treffer für „gesetz“
 - h3 Verordnung zur Durchführung des Gesetzes zur Regel
-- h3 Verordnung zur Durchführung des Gesetzes über die 
-- h3 Verordnung zur Durchführung des Gesetzes über die 
+- h3 Verordnung zur Durchführung des Gesetzes über die
+- h3 Verordnung zur Durchführung des Gesetzes über die
 - h3 Durchführungsverordnung zum Gesetz über die Öffent
 - h3 Verordnung zur Übertragung von Zuständigkeiten nac
 - h3 Verordnung über Zuständigkeiten nach dem Gesetz zu
-- h3 Verordnung zur Durchführung des Gesetzes über das 
-- h3 Verordnung zur Durchführung des Wirtschafts-Portal
+- h3 Verordnung zur Durchführung des Gesetzes über das
+- h3 Verordnung zur Durchführung von Aufgaben nach dem
 
 Befunde: keine
 
@@ -251,8 +251,8 @@ Befunde: keine
 - h3 Allgemeine Anlagerichtlinien für die Verwaltung vo
 - h3 Allgemeine Erlaubnis für Kleine Lotterien und Auss
 - h3 Allgemeine Erlaubnis für kleine Lotterien und Auss
-- h3 Allgemeine Richtlinie zur Förderung von Projekten 
-- h3 Allgemeine Verwaltungsvorschrift zu § 74 Absatz 4 
+- h3 Allgemeine Richtlinie zur Förderung von Projekten
+- h3 Allgemeine Verwaltungsvorschrift zu § 74 Absatz 4
 
 Befunde: keine
 
@@ -300,7 +300,7 @@ Befunde: warning table-no-header-cells (Tabelle 0)
 - h3 § 4 Mindestgebühr bei Prozent- und Promillesätzen;
 - h3 § 5 Amtliches Vermessungswesen und amtliche Grunds
 - h3 § 6 Inkrafttreten, Außerkrafttreten
-- h3 Anhang 5 zu den Tarifstellen 4.3.1.1, 4.3.1.2 und 
+- h3 Anhang 5 zu den Tarifstellen 4.3.1.1, 4.3.1.2 und
 - h3 Anlage Tarifstellen 1 bis 14 (HTM)
 - h3 Quellhinweise
 - h2 Frühere Fassungen
@@ -497,36 +497,34 @@ Befunde: keine
 
 Befunde: keine
 
-### search-middle (/suche/?q=gesetz&jurisdiction=west&offset=680)
+### search-middle (/suche/?q=gesetz&jurisdiction=west&offset=580)
 
 - h1 Rechtssuche
 - h2 Suche eingrenzen
 - h2 Suche eingrenzen
-- h2 1370 Treffer für „gesetz“
-- h3 Verordnung über die Ausbildung und Prüfung für die
-- h3 Verordnung über die Schiedsstellen nach § 78 g SGB
-- h3 Verordnung über weitere polizeiliche Aufgaben des 
-- h3 Verordnung zum Landesfischereigesetz
-- h3 Richtlinie über die Gewährung von Billigkeitsleist
-- h3 Verordnung über die Laufbahnen der Beamtinnen und 
-- h3 Richtlinien über die Gewährung von Zuwendungen für
-- h3 Verordnung über die Festsetzung des Lärmschutzbere
+- h2 1186 Treffer für „gesetz“
+- h3 Verordnung zur Anerkennung und Finanzierung der Be
+- h3 Verordnung über die Vergütung und die Ausbildungsb
+- h3 Verordnung über die Ausbildung für die Laufbahn de
+- h3 Verordnung über die Zuständigkeiten auf den Gebiet
+- h3 Verordnung über die amtliche Grundstückswertermitt
+- h3 Verordnung über Zuständigkeiten im Tierarzneimitte
+- h3 Verordnung zum westdeutschen Denkmalschutzgesetz
+- h3 Wahlordnung für die Wahl zur ersten Kammerversamml
 
 Befunde: keine
 
-### search-last (/suche/?q=gesetz&jurisdiction=west&offset=1360)
+### search-last (/suche/?q=gesetz&jurisdiction=west&offset=1180)
 
 - h1 Rechtssuche
 - h2 Suche eingrenzen
 - h2 Suche eingrenzen
-- h2 1370 Treffer für „gesetz“
-- h3 Nichtraucherschutz in Diensträumen
-- h3 Beschaffung von Leistungen zum Zweck der Unterbrin
-- h3 Prüfungsordnung für die Durchführung von Abschluss
-- h3 Übermittlungssperren gemäß § 41 des Straßenverkehr
-- h3 Beschaffung von Leistungen zum Zweck der Unterbrin
-- h3 Richtlinie über die Gewährung von Zuwendungen zur 
-- h3 Verwaltungsvereinbarung zur Errichtung des „Promot
-- h3 Fortbildungsprüfungsordnung zur Fachwirtin/zum Fac
+- h2 1186 Treffer für „gesetz“
+- h3 Verordnung zu den Grundsätzen über die Qualifikati
+- h3 Verordnung zur Bestimmung der Pensionsfestsetzungs
+- h3 Verordnung über die Externenprüfung zum Erwerb der
+- h3 Verordnung zur Ausführung des § 93 Abs. 2 Schulges
+- h3 Verordnung über die Durchführung von Ausgleichsmaß
+- h3 Verordnung über die Ausbildung und die Abschlusspr
 
 Befunde: keine

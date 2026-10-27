@@ -26,6 +26,9 @@ export const PORTAL_PATHS = {
   about: '/ueber-den-rechtsbestand/',
   help: '/hilfe/',
   imprint: '/impressum/',
+  privacy: '/datenschutz/',
+  contact: '/kontakt/',
+  feedback: '/fehler-melden/',
   api: '/api/v1',
   simrecht: '/.well-known/simrecht.json',
 } as const;
