@@ -174,3 +174,14 @@ Legacy-Auflösung auf OstRecht-Adressen für Verweise, die die Registry nicht ke
 - `content/norms` (nicht `normen`): Feld- und Dateinamen des Modells sind englisch wie in OstRecht
   (`meta.json`, `versions/`), das Verzeichnis folgt dem.
 - Vitest statt `node --test` (Auftragsvorgabe); TypeScript läuft trotzdem ohne Build-Schritt.
+
+## Anonyme Fehlermeldungen
+
+`/fehler-melden/` verarbeitet GET und POST getrennt vom Rechtsbestand. Die optionale Feedback-D1
+(`LANDESRECHT_FEEDBACK`, eigene Migrationen `data/feedback/`) ist keine Jurisdiktion und gehört nie in
+`data/d1/`, Normprojektion, OstRecht oder R2. `FEEDBACK_ENABLED=false` bleibt Standard. Aktivierung verlangt
+Datenschutzfreigabe, getrennte Datenbank mit Schema-Marker, Turnstile, signierte CSRF-Tickets und
+Cloudflare-Rate-Limit-Binding. Kontext wird gegen bekannte Norm-/Fassungs-/Vorschriftenrouten geprüft;
+Query und Fragment werden verworfen. Die Redaktion arbeitet ausschließlich über die autorisierte CLI
+`scripts/feedback.ts`; keine öffentliche Lese-/Adminroute, keine automatische Änderung von Rechtsdaten.
+Konfiguration, Löschung und Freigabe: `docs/PRODUCTION_GO_LIVE.md`, Abschnitt Fehlermeldesystem.

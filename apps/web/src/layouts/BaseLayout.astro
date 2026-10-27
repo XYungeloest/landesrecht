@@ -2,7 +2,7 @@
 import { JURISDICTION_LIST, SIMULATION_BASELINE_DATE, formatBaselineDate } from '@landesrecht/legal-core/config/jurisdictions.ts';
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { referenceDateLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
-import { getJurisdictionUrl, getPublicationsUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { getFeedbackUrl, getJurisdictionUrl, getPublicationsUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import '../styles/base.css';
 import ResponsiveDisclosure from '../components/ResponsiveDisclosure.astro';
 
@@ -11,9 +11,10 @@ interface Props {
   description?: string;
   canonical?: string;
   robots?: string;
+  feedbackPath?: string;
 }
 
-const { title, description = VOCABULARY.portalSubtitle, canonical, robots } = Astro.props;
+const { title, description = VOCABULARY.portalSubtitle, canonical, robots, feedbackPath } = Astro.props;
 const isActive = (url: string) => Astro.url.pathname === url || (url !== PORTAL_PATHS.home && Astro.url.pathname.startsWith(url));
 const siteUrl = import.meta.env.PUBLIC_SITE_URL;
 const fullTitle = title === VOCABULARY.portalName ? title : `${title} – ${VOCABULARY.portalName}`;
@@ -62,7 +63,7 @@ const fullTitle = title === VOCABULARY.portalName ? title : `${title} – ${VOCA
     <footer class="site-footer">
       <p><strong>{VOCABULARY.portalName}</strong> · {VOCABULARY.officialNote}</p>
       <p>{VOCABULARY.baselineLabel} aller Länder: {formatBaselineDate(SIMULATION_BASELINE_DATE)} · {referenceDateLabel(EDITORIAL_REFERENCE_DATE)}</p>
-      <p><a href={PORTAL_PATHS.about}>Über den Rechtsbestand</a> · <a href={PORTAL_PATHS.changes}>Änderungen in der Simulation</a> · <a href={`${PORTAL_PATHS.home}#verkuendungen-heading`}>Verkündungen</a> · <a href={PORTAL_PATHS.help}>Hilfe</a> · <a href={PORTAL_PATHS.feedback}>Fehler melden</a> · <a href={PORTAL_PATHS.contact}>Kontakt</a> · <a href={PORTAL_PATHS.privacy}>Datenschutz</a> · <a href={PORTAL_PATHS.imprint}>Impressum</a></p>
+      <p><a href={PORTAL_PATHS.about}>Über den Rechtsbestand</a> · <a href={PORTAL_PATHS.changes}>Änderungen in der Simulation</a> · <a href={`${PORTAL_PATHS.home}#verkuendungen-heading`}>Verkündungen</a> · <a href={PORTAL_PATHS.help}>Hilfe</a> · <a href={getFeedbackUrl(feedbackPath ?? (Astro.url.pathname === PORTAL_PATHS.feedback ? undefined : Astro.url.pathname))}>Fehler melden</a> · <a href={PORTAL_PATHS.contact}>Kontakt</a> · <a href={PORTAL_PATHS.privacy}>Datenschutz</a> · <a href={PORTAL_PATHS.imprint}>Impressum</a></p>
     </footer>
   </body>
 </html>

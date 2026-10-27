@@ -187,3 +187,39 @@ const recent = queryAll(home, node => node.attrs['aria-labelledby'] === 'zuletzt
 assert(!normalizedText(recent).includes('2027'), 'Kein Zukunftstermin in der Änderungsrückschau');
 assert(normalizedText(home).includes('Künftig in Kraft tretende Änderungen'));
 console.log('Rechtsstand: künftige Normen und getrennte Änderungsrückschau erfolgreich.');
+
+// Feedback: Standardbetrieb deaktiviert; Formular, Beschriftungen und bereinigte Fassungsbezüge bleiben prüfbar.
+const feedback = await load(PORTAL_PATHS.feedback);
+assert.deepEqual(auditAccessibility(feedback), [], 'Barrierefreiheit des Meldeformulars');
+const feedbackForm = byTag(feedback, 'form').find(node => node.attrs.action === PORTAL_PATHS.feedback)!;
+assert(feedbackForm, 'vollständiges Meldeformular vorhanden');
+assert.equal(feedbackForm.attrs.method, 'post');
+assert.equal(byTag(feedbackForm, 'input').filter(node => node.attrs.type === 'file').length, 0);
+assert.equal(byTag(feedbackForm, 'select').find(node => node.attrs.name === 'category') && byTag(feedbackForm, 'option').length, 8);
+assert(byTag(feedbackForm, 'textarea').some(node => node.attrs.name === 'description' && node.attrs.maxlength === '5000' && 'required' in node.attrs));
+assert(byTag(feedbackForm, 'input').some(node => node.attrs.name === 'email' && !('required' in node.attrs)));
+for (const path of [getNormVersionUrl('west', 'lnatschg-west', '2023-12-01'), getProvisionUrl('west', 'lnatschg-west', 'paragraph-1', '2023-12-01')]) {
+  const document = await load(path + '?mark=paragraph-1&textmark=vertraulich');
+  const reports = byTag(document, 'a').filter(node => normalizedText(node) === 'Fehler melden');
+  assert(reports.length > 0);
+  for (const report of reports) {
+    const destination = new URL(report.attrs.href!, base);
+    assert.equal(destination.searchParams.get('seite'), path);
+    assert(!report.attrs.href!.includes('vertraulich'));
+  }
+}
+const knownContext = getProvisionUrl('west', 'lnatschg-west', 'paragraph-1', '2023-12-01');
+const contextual = await load(`${PORTAL_PATHS.feedback}?${new URLSearchParams({ seite: knownContext + '?mark=privat&textmark=vertraulich' })}`);
+assert.equal(byTag(contextual, 'input').find(node => node.attrs.name === 'page')?.attrs.value, knownContext);
+if (normalizedText(feedback).includes('Übermittlung derzeit deaktiviert')) {
+  assert(byTag(feedbackForm, 'fieldset').some(node => 'disabled' in node.attrs));
+  assert.equal(byTag(feedback, 'script').filter(node => (node.attrs.src ?? '').includes('challenges.cloudflare.com')).length, 0);
+  if (['localhost', '127.0.0.1'].includes(new URL(base).hostname)) {
+    const response = await fetch(new URL(PORTAL_PATHS.feedback, base), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Origin: new URL(base).origin }, body: 'category=other&description=Lokale+deaktivierte+Pruefung' });
+    assert.equal(response.status, 503);
+    assert.equal(response.headers.get('cache-control'), 'no-store');
+    assert.equal(response.headers.get('set-cookie'), null);
+    assert(!(await response.text()).includes('Ihre Meldung ist eingegangen'));
+  }
+}
+console.log('Feedback: Formular, Barrierefreiheit, historische Einzelvorschrift, bereinigter Bezug und sichere Deaktivierung erfolgreich.');

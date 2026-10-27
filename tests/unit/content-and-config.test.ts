@@ -11,7 +11,7 @@ import { isSimulationNorm } from '@landesrecht/legal-core/lib/provenance.ts';
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { isSyntheticFixtureNorm } from '@landesrecht/legal-core/lib/schema.ts';
 import { getApplicableVersion, resolveVersionAt } from '@landesrecht/legal-core/lib/versions.ts';
-import { D1_BINDINGS, R2_SOURCES_BINDING, R2_SOURCES_BUCKET_NAME, WORKER_D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
+import { D1_BINDINGS, FEEDBACK_D1_BINDING, FEEDBACK_DATABASE_NAMES, R2_SOURCES_BINDING, R2_SOURCES_BUCKET_NAME, WORKER_D1_BINDINGS } from '@landesrecht/runtime/bindings.ts';
 
 const root = resolveRepositoryRoot();
 /** Synthetischer Testbestand: tests/fixtures/content/ (nie Teil von content/, Projektion oder Build). */
@@ -85,7 +85,7 @@ describe('Wrangler-Konfiguration', () => {
     expect(config.account_id).toBeUndefined();
     // Ein D1-Binding je Jurisdiktion: eigene Datenbanken für West/NSH/BayWü, für Ost die OstRecht-D1 (nur lesend);
     // kein Binding LANDESRECHT_OST (die Datenbank ist im Konto nicht vorhanden und keine Laufzeitquelle).
-    expect(config.d1_databases.map((entry) => entry.binding).sort()).toEqual(WORKER_D1_BINDINGS.map((entry) => entry.binding).sort());
+    expect(config.d1_databases.filter(entry => entry.binding !== FEEDBACK_D1_BINDING).map((entry) => entry.binding).sort()).toEqual(WORKER_D1_BINDINGS.map((entry) => entry.binding).sort());
     expect(config.d1_databases.map((entry) => entry.binding)).not.toContain(D1_BINDINGS.ost);
     for (const { binding: name, databaseName } of WORKER_D1_BINDINGS) {
       const binding = config.d1_databases.find((entry) => entry.binding === name);
@@ -96,7 +96,18 @@ describe('Wrangler-Konfiguration', () => {
       expect(staging?.database_name).toBe(`${databaseName}-staging`);
       expect(staging?.database_id).not.toBe(binding?.database_id);
     }
-    expect(config.env.staging.d1_databases.map((entry) => entry.binding).sort()).toEqual(WORKER_D1_BINDINGS.map((entry) => entry.binding).sort());
+    expect(config.env.staging.d1_databases.filter(entry => entry.binding !== FEEDBACK_D1_BINDING).map((entry) => entry.binding).sort()).toEqual(WORKER_D1_BINDINGS.map((entry) => entry.binding).sort());
+    const feedback = config.d1_databases.find(entry => entry.binding === FEEDBACK_D1_BINDING);
+    const feedbackStaging = config.env.staging.d1_databases.find(entry => entry.binding === FEEDBACK_D1_BINDING);
+    if (feedback) {
+      expect(feedback.database_name).toBe(FEEDBACK_DATABASE_NAMES.production);
+      expect(config.d1_databases.filter(entry => entry.binding !== FEEDBACK_D1_BINDING).map(entry => entry.database_id)).not.toContain(feedback.database_id);
+    }
+    if (feedbackStaging) {
+      expect(feedbackStaging.database_name).toBe(FEEDBACK_DATABASE_NAMES.staging);
+      expect(config.env.staging.d1_databases.filter(entry => entry.binding !== FEEDBACK_D1_BINDING).map(entry => entry.database_id)).not.toContain(feedbackStaging.database_id);
+      expect(feedbackStaging.database_id).not.toBe(feedback?.database_id);
+    }
     expect(config.r2_buckets).toEqual([{ binding: R2_SOURCES_BINDING, bucket_name: R2_SOURCES_BUCKET_NAME }]);
     expect(config.env.staging.r2_buckets[0]!.bucket_name).toBe(`${R2_SOURCES_BUCKET_NAME}-staging`);
     expect(config.env.staging.vars.APP_ENV).toBe('staging');

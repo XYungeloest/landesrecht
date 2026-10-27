@@ -12,6 +12,7 @@ import { loadJurisdictionNorms, loadJurisdictionPublications } from '@landesrech
 import { resolveRepositoryRoot } from '@landesrecht/legal-core/lib/repository-root.ts';
 import { buildProjectionPlan } from '@landesrecht/runtime/projection.ts';
 import { checkSearchIndexIntegrity, executePlan, openSqliteD1 } from '@landesrecht/runtime/sqlite-d1.ts';
+import { assertFeedbackDatabase } from '@landesrecht/runtime/feedback.ts';
 import { SEARCH_UNIT_COLUMNS } from '@landesrecht/search/schema.ts';
 
 const REQUIRED_TABLES = [
@@ -45,3 +46,9 @@ checkSearchIndexIntegrity(db);
 const counts = db.native.prepare('SELECT (SELECT count(*) FROM law_norms) AS norms, (SELECT count(*) FROM law_versions) AS versions, (SELECT count(*) FROM law_search_units) AS units, (SELECT count(*) FROM law_publications) AS publications').get() as { norms: number; versions: number; units: number; publications: number };
 db.close();
 console.log(`D1-Schema gültig: ${REQUIRED_TABLES.length} Tabellen, ${statements} Anweisungen, ${counts.norms} Normen, ${counts.versions} Fassungen, ${counts.units} Sucheinheiten, ${counts.publications} Verkündungen, FTS5-Integrität geprüft.`);
+
+// Feedback liegt in einer eigenen Datenbank, niemals in einer Rechtsprojektion.
+const feedback = await openSqliteD1(':memory:', { migrationsDir: join(root, 'data', 'feedback') });
+await assertFeedbackDatabase(feedback);
+feedback.close();
+console.log('Feedback-D1-Schema separat geprüft; keine Normtabellen.');

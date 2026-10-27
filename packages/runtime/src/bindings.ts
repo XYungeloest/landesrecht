@@ -58,3 +58,8 @@ export function jurisdictionForBinding(binding: string): JurisdictionId | undefi
 export function sourceObjectKey(jurisdiction: JurisdictionId, system: string, snapshotDate: string, fileName: string): string {
   return `${jurisdiction}/${system}/${snapshotDate}/${fileName}`;
 }
+
+/** Feedback ist keine Jurisdiktion; nie Teil einer Normprojektion oder der OstRecht-Anbindung. */
+export const FEEDBACK_D1_BINDING = 'LANDESRECHT_FEEDBACK';
+export const FEEDBACK_DATABASE_NAMES = { production: 'landesrecht-feedback', staging: 'landesrecht-feedback-staging' } as const;
+export const FEEDBACK_RATE_LIMIT_BINDING = 'FEEDBACK_RATE_LIMITER';

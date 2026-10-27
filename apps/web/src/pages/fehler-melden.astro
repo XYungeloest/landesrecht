@@ -1,10 +1,108 @@
 ---
+export const prerender = false;
 import { PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { assertFeedbackDatabase, FEEDBACK_CATEGORIES, FEEDBACK_LIMITS, type FeedbackFields, type FeedbackErrors } from '@landesrecht/runtime/feedback.ts';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { resolveWorkerEnv, getStoreRegistry } from '../lib/runtime/context.ts';
+import { resolveFeedbackContext } from '../lib/feedback/context.ts';
+import { feedbackConfig, feedbackSession, issueFeedbackTicket } from '../lib/feedback/security.ts';
+import { submitFeedback, type FeedbackResult } from '../lib/feedback/submit.ts';
+import { FEEDBACK_CSP } from '../lib/security-headers.ts';
+
+Astro.response.headers.set('Cache-Control', 'no-store');
+Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+Astro.response.headers.set('Vary', 'Cookie');
+const env = await resolveWorkerEnv();
+const config = feedbackConfig(env);
+let available = Boolean(config && Astro.url.origin === config.origin);
+if (available && config) {
+  try { await assertFeedbackDatabase(config.db); } catch { available = false; }
+}
+const context = (path: string, origin: string) => resolveFeedbackContext(path, origin, getStoreRegistry);
+let fields: FeedbackFields = { category: '', description: '', email: '', page: '' };
+let errors: FeedbackErrors = {};
+let result: FeedbackResult | undefined;
+if (Astro.request.method === 'POST') {
+  result = await submitFeedback(Astro.request, env, { context });
+  fields = result.fields; errors = result.errors;
+  Astro.response.status = result.status;
+  if (result.status === 429) Astro.response.headers.set('Retry-After', '60');
+} else if (Astro.request.method !== 'GET') {
+  return new Response('Diese Anfrage ist nicht zulässig.', { status: 405, headers: { Allow: 'GET, POST', 'Cache-Control': 'no-store' } });
+} else if (Astro.url.searchParams.has('seite')) {
+  try { fields.page = (await context(Astro.url.searchParams.get('seite') ?? '', config?.origin ?? Astro.url.origin))?.path ?? ''; }
+  catch { errors.page = 'Der Seitenbezug konnte nicht geprüft werden. Sie können die Meldung ohne Seitenbezug beschreiben.'; }
+}
+let csrf = '';
+if (available && config && !result?.receipt) {
+  const ticket = await issueFeedbackTicket(config.csrfSecret, feedbackSession(Astro.request.headers.get('cookie')));
+  csrf = result?.retryToken ?? ticket.token;
+  Astro.response.headers.set('Set-Cookie', ticket.cookie);
+  Astro.response.headers.set('Content-Security-Policy', FEEDBACK_CSP);
+}
 ---
-<BaseLayout title="Fehler melden" canonical={PORTAL_PATHS.feedback} robots="noindex, follow">
+<BaseLayout title="Fehler melden" canonical={PORTAL_PATHS.feedback} robots="noindex, nofollow">
   <h1>Fehler melden</h1>
-  <p>Die Meldemöglichkeit wird vorbereitet und ist noch nicht aktiviert. Auf dieser Seite können derzeit keine Meldungen übermittelt werden.</p>
-  <p>Für einen Hinweis werden die Adresse der betroffenen Seite, die betreffende Vorschrift und eine kurze Beschreibung des vermuteten Fehlers benötigt. Bitte geben Sie keine vertraulichen oder unnötigen personenbezogenen Daten an.</p>
-  <p>Ein erreichbarer <a href={PORTAL_PATHS.contact}>Betreiberkontakt</a> muss vor dem öffentlichen Betrieb ergänzt werden.</p>
+  {result?.receipt ? <section aria-labelledby="feedback-confirmation">
+    <h2 id="feedback-confirmation">Vielen Dank für Ihren Hinweis</h2>
+    <p>Ihre Meldung ist eingegangen und wird von der Redaktion geprüft. Ein Hinweis führt nicht automatisch zu einer Änderung des Rechtsbestands.</p>
+    <p>Ihre Vorgangsnummer: <strong class="feedback-receipt">{result.receipt}</strong></p>
+    <p>Bitte bewahren Sie die Nummer für Rückfragen auf. Sie gewährt keinen öffentlichen Zugriff auf Meldungsdaten.</p>
+    <p><a href={PORTAL_PATHS.feedback}>Weiteren Fehler melden</a> · <a href={PORTAL_PATHS.home}>Zur Startseite</a></p>
+  </section> : <>
+    <p class="lead">Helfen Sie uns, Vorschriften, Fassungen, Fundstellen und die Bedienung des Portals zu verbessern. Eine Anmeldung ist nicht nötig.</p>
+    {!available && <p class="inventory-notice" role="note"><strong>Übermittlung derzeit deaktiviert.</strong> Meldungen können momentan nicht abgesendet werden. Der <a href={PORTAL_PATHS.contact}>Betreiberkontakt</a> muss vor der Aktivierung erreichbar sein.</p>}
+    <p>Bitte beschreiben Sie, wo Sie den Fehler vermuten und was Ihnen aufgefallen ist. Eine Meldung ist ein Hinweis und kein Rechtsbeleg. Übermitteln Sie keine vertraulichen oder unnötigen personenbezogenen Angaben.</p>
+    {Object.keys(errors).length > 0 && <div id="feedback-errors" class="feedback-errors" role="alert" tabindex="-1">
+      <h2>Die Meldung wurde nicht übermittelt</h2>
+      <p>{errors.form ?? 'Bitte prüfen Sie den Seitenbezug.'}</p>
+      <ul>{(['category', 'description', 'email', 'page'] as const).filter(key => errors[key]).map(key => <li><a href={`#feedback-${key}`}>{errors[key]}</a></li>)}</ul>
+    </div>}
+    <form action={PORTAL_PATHS.feedback} method="post" class="feedback-form" accept-charset="UTF-8">
+      <input type="hidden" name="csrf" value={csrf} />
+      <div hidden aria-hidden="true"><label>Bitte leer lassen<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+      <fieldset disabled={!available}>
+        <legend>Ihre Meldung</legend>
+        <p>Mit „Pflichtfeld“ gekennzeichnete Angaben werden benötigt.</p>
+        <label for="feedback-category">Art des Fehlers (Pflichtfeld)</label>
+        <select id="feedback-category" name="category" required aria-invalid={errors.category ? 'true' : undefined} aria-describedby={errors.category ? 'feedback-category-error' : undefined}>
+          <option value="">Bitte auswählen</option>
+          {Object.entries(FEEDBACK_CATEGORIES).map(([value, label]) => <option value={value} selected={fields.category === value}>{label}</option>)}
+        </select>
+        {errors.category && <p class="field-error" id="feedback-category-error">{errors.category}</p>}
+        <label for="feedback-page">Betroffene Seite (optional)</label>
+        <input id="feedback-page" name="page" type="text" value={fields.page} maxlength={FEEDBACK_LIMITS.page} autocomplete="off" aria-invalid={errors.page ? 'true' : undefined} aria-describedby={`feedback-page-hint${errors.page ? ' feedback-page-error' : ''}`} />
+        <p id="feedback-page-hint" class="muted">Nur eine interne Landesrecht-Adresse. Die konkrete Fassung wird festgehalten; Suchbegriffe und Textmarkierungen werden entfernt. Bei einer fehlenden Vorschrift können Sie das Feld leer lassen.</p>
+        {errors.page && <p class="field-error" id="feedback-page-error">{errors.page}</p>}
+        <label for="feedback-description">Beschreibung (Pflichtfeld)</label>
+        <textarea id="feedback-description" name="description" rows="8" required minlength="10" maxlength={FEEDBACK_LIMITS.description} aria-invalid={errors.description ? 'true' : undefined} aria-describedby={`feedback-description-hint${errors.description ? ' feedback-description-error' : ''}`}>{fields.description}</textarea>
+        <p id="feedback-description-hint" class="muted">10 bis 5.000 Zeichen. Bei einer fehlenden Vorschrift bitte Land und möglichst genaue Bezeichnung nennen. Keine Dateianhänge.</p>
+        {errors.description && <p class="field-error" id="feedback-description-error">{errors.description}</p>}
+        <label for="feedback-email">E-Mail für Rückfragen (optional)</label>
+        <input id="feedback-email" name="email" type="email" value={fields.email} maxlength={FEEDBACK_LIMITS.email} autocomplete="email" aria-invalid={errors.email ? 'true' : undefined} aria-describedby={`feedback-email-hint${errors.email ? ' feedback-email-error' : ''}`} />
+        <p id="feedback-email-hint" class="muted">Sie können das Feld leer lassen. Eine Namensangabe ist nicht erforderlich.</p>
+        {errors.email && <p class="field-error" id="feedback-email-error">{errors.email}</p>}
+        {available && config && <div class="feedback-security"><p>Sicherheitsprüfung gegen automatisierte Meldungen:</p><div class="cf-turnstile" data-sitekey={config.sitekey} data-action="feedback" data-language="de" data-size="compact"></div><noscript>Zum Absenden ist JavaScript für die Sicherheitsprüfung erforderlich.</noscript></div>}
+        <p>Informationen zur Verarbeitung Ihrer Angaben und zur Sicherheitsprüfung: <a href={PORTAL_PATHS.privacy}>Datenschutz</a>.</p>
+        <button type="submit" disabled={!available}>Meldung absenden</button>
+      </fieldset>
+    </form>
+    {available && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+  </>}
 </BaseLayout>
+<script>
+  document.querySelector<HTMLElement>('#feedback-errors')?.focus();
+</script>
+<style>
+  .feedback-form { max-width: 46rem; }
+  .feedback-form fieldset { border: 1px solid var(--border, #ccd2db); padding: clamp(1rem, 3vw, 1.75rem); min-width: 0; }
+  .feedback-form label { display: block; font-weight: 650; margin-top: 1.25rem; margin-bottom: .4rem; }
+  .feedback-form input:not([type="hidden"]), .feedback-form select, .feedback-form textarea { width: 100%; max-width: 100%; box-sizing: border-box; font: inherit; padding: .7rem; border: 1px solid #77828f; border-radius: .2rem; background: white; color: #182534; }
+  .feedback-form textarea { resize: vertical; }
+  .feedback-form p { overflow-wrap: anywhere; }
+  .feedback-form [aria-invalid="true"] { border: 2px solid #a32323; }
+  .field-error, .feedback-errors { color: #852020; }
+  .feedback-errors { border: 2px solid #a32323; padding: 1rem; margin-block: 1rem; }
+  .feedback-security { margin-top: 1rem; }
+  .feedback-receipt { overflow-wrap: anywhere; }
+</style>

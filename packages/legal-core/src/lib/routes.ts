@@ -157,3 +157,11 @@ export function getTextMarkedUrl(versionPath:string, origin:string, structuralId
   else url.searchParams.delete('textmark');
   return url.href;
 }
+
+/** Nur einen bereits serverseitig bestimmten Pfad übergeben, niemals Query oder Textmarker. */
+export function getFeedbackUrl(pagePath?: string): string {
+  if (!pagePath) return PORTAL_PATHS.feedback;
+  const path = pagePath.split(/[?#]/u)[0]!;
+  if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) return PORTAL_PATHS.feedback;
+  return `${PORTAL_PATHS.feedback}?${new URLSearchParams({ seite: path })}`;
+}

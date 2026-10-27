@@ -1,10 +1,14 @@
 # Betriebsfreigabe Landesrecht
 
-Prüftag: **27.10.2026**. Ausgangspunkt: sauberer Commit
+Prüftag der Betriebsprüfung (Lauf 1): **27.10.2026**. Ausgangspunkt: sauberer Commit
 `1df581af95e6fc523f6b1aaf962583cf51535eab`; Lauf 1 ergänzt ausschließlich uncommittete Änderungen.
 Kein Commit, Push, Deployment, Remote-Schreibzugriff oder neues Cloudflare-Betriebsmittel in diesem Lauf.
 Stichtage bleiben 01.12.2023 / 28.09.2026. Technische Prüfergebnisse: [RELEASE_READINESS.md](RELEASE_READINESS.md).
 Fachentscheidungen und 28 konkrete Fälle: [PRODUCTION_QUALITY_BACKLOG.md](PRODUCTION_QUALITY_BACKLOG.md).
+
+Feedback-Ergänzung Lauf 2 auf `1a33ad44106972a42782fbd6e436af0439a84af7`: siehe Abschnitt
+Fehlermeldesystem. Die Produktions-/Remotebefunde aus Lauf 1 wurden dabei nicht erneut erhoben.
+Keine produktive Aktivierung und keine Cloudflare-Schreibzugriffe in Lauf 2.
 
 ## Urteil und Freigabestufen
 
@@ -204,36 +208,232 @@ und Empfänger müssen zur Datenschutzerklärung passen; URL-Parameter/markierte
 übernehmen. [Workers Logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/)
 beschreibt Plattformmöglichkeiten, beweist aber keine Aktivierung im Konto.
 
-## Fehlermeldesystem Lauf 2
+## Fehlermeldesystem (Lauf 2)
 
-Footer verlinkt jetzt Fehler melden, Kontakt, Datenschutz und Impressum; Normköpfe enthalten den Meldezugang.
-Die Vorbereitungsseite sagt ausdrücklich, dass noch keine Übermittlung möglich ist.
+Implementiert auf Git-Ausgangspunkt `1a33ad44106972a42782fbd6e436af0439a84af7`, ohne Commit, Push,
+Deployment oder produktive Cloudflare-Schreibzugriffe. **Übermittlung bleibt deaktiviert.** Die rechtlichen
+und fachlichen NO-GO-Punkte dieses Dokuments werden durch die Formularimplementierung nicht aufgehoben.
 
-Vorgeschlagene Umsetzung ohne neue Frameworks:
+### Formular und Kontext
 
-1. Astro-GET-Seite mit verständlichem Formular, ohne Anmeldung. Norm-/Fassungs-/Einzelvorschrift-URL beim
-   Klick über zentralen Routenhelfer als `seite` übernehmen; nur eigene Origin und bekannte Normpfade,
-   Query/Fragment standardmäßig entfernen (keine Suche, Textmarker oder fremden URLs sammeln).
-2. Pflicht: Kategorie und Beschreibung. Kategorien: Wortlaut/Anlage, Geltung/Fassung, Quelle/Verkündung,
-   Suche/Verweis, Darstellung/Bedienung, technischer Fehler, Sonstiges. Rückkontakt-E-Mail freiwillig,
-   keine Namenspflicht, keine Anhänge, klare Zeichenlimits, barrierefreie Beschriftung/Fehlermeldung und
-   Bestätigungsansicht mit zufälliger Vorgangsnummer.
-3. Separate Feedback-D1 oder gleichwertiger isolierter Speicher, **keine neue Ressource in Lauf 1**.
-   Tabelle mit zufälliger ID, Erstellzeit, bereinigtem Normpfad, Kategorie, Beschreibung, optional E-Mail,
-   Status `new|triaged|in-progress|resolved|rejected`, Bearbeitungszeit; interne Notizen getrennt.
-   Keine Voll-IP/User-Agent-Speicherung in Feedbackdatensätzen, keine öffentlichen Meldungslisten.
-4. POST erst nach vollständiger Absicherung: Content-Type-/Origin-Prüfung, kleine Body-/Feldlimits,
-   serverseitige Validierung und parametrisierte SQL-Anweisungen, globale und zeitlich begrenzte
-   Missbrauchslimits, Honeypot/Mindestbearbeitungszeit und bei Bedarf Turnstile nach Datenschutzprüfung.
-   Ein IP-basierter Drosselschlüssel wäre kurzlebig mit rotierendem Geheimnis zu bilden; Frist/Grundlage
-   vorher festlegen. Fehler dürfen keine Datenbankdetails verraten; Duplikate/Idempotenz behandeln.
-5. Interne Sichtung hinter bestehender geeigneter Zugangskontrolle (z. B. Cloudflare Access), mit benannten
-   Redakteuren und Vertretung; Zugriff und Statuswechsel nachvollziehbar. Keine öffentliche Adminroute.
-   P0 sofort fachlich prüfen, übrige Fälle regelmäßig sichten; Code-/Bestandskorrekturen folgen weiter den
-   existierenden Review-/Freeze-/Sim-Rezeptregeln, nie automatischem Übernehmen einer Meldung.
-6. Vor Freigabe Löschfristen für Spam, Kontakt, abgeschlossene Fälle und Protokolle, Rechteausübung,
-   Empfänger und Datenschutztext festlegen. Tests für Validierung, Größenlimits, Drosselung,
-   Rechtekontrolle und XSS; vollständiger Test gegen isolierten Speicher, danach explizite Aktivierung.
+`/fehler-melden/` ist jetzt eine dynamische Astro-GET-/POST-Seite. Pflicht sind Kategorie und Beschreibung
+(10–5.000 Zeichen); E-Mail optional (höchstens 254 Zeichen). Sieben Kategorien: Wortlaut, Fassung,
+fehlende Vorschrift, Anlage/Fundstelle, Suche/Verlinkung, Darstellung/Bedienung, Sonstiges. Kein Name,
+keine Datei, keine Registrierung. Pflicht-/Fehlerhinweise sind beschriftet und programmatisch zugeordnet.
+Sicherheitsprüfung erfordert JavaScript; die übrige Übermittlung und Fehlerrückgabe funktioniert als
+gewöhnliches HTML-Formular. Bei fehlendem Turnstile bleibt Absenden erfolglos und wird nicht als Erfolg gezeigt.
+
+Normköpfe, Einzelvorschriften und deren Footer verwenden die tatsächlich angezeigte **Fassungsadresse**.
+Land, Norm, konkrete Fassung und Paragraph/Artikel werden erneut serverseitig gegen die vorhandene Registry
+geprüft. Auch bei historischen Fassungen bleibt genau diese Fassung erhalten. Akzeptiert werden bekannte
+interne Norm-, Unterseiten-, Einzelvorschriften-, Verkündungs-, Länder- und ausgewählte Portaladressen.
+Suchseiten liefern nur `/suche/`; Query, Fragment, `mark`, `textmark` und Suchbegriffe werden nie automatisch
+übernommen. Keine Übernahme der ausgewählten Textpassage. Eine fehlende Vorschrift kann ohne Seitenbezug
+mit Land und Bezeichnung in der Beschreibung gemeldet werden. Fremde, unbekannte oder manipulierte Pfade
+werden abgelehnt. Eingaben sind Hinweise, keine Rechtsbelege.
+
+Erfolg gibt nur eine zufällige UUID-Vorgangsnummer und eine neutrale Bestätigung zurück. Kein öffentlicher
+Statusabruf, keine Meldungslisten und keine Rückgabe fremder Meldungsdaten. Fehler erhalten einen tatsächlichen
+4xx-/503-Status und ausdrücklich keine Erfolgsbestätigung. Eingaben bleiben bei korrigierbaren Fehlern erhalten;
+Ausgabe durch Astro escaped, nicht als HTML. Ein Reload einer erfolgreichen POST-Antwort ist idempotent.
+
+### Datenmodell und Grenzen
+
+Eigene Migration: `data/feedback/0001_feedback.sql`. Datenbanknamen und Bindings stehen zentral in
+`packages/runtime/src/bindings.ts`. Der Marker `feedback_meta.application = landesrecht-feedback/1` und das
+Fehlen von Normtabellen werden geprüft; versehentlich an eine Rechtsdatenbank gebundene Speicher werden
+nicht beschrieben. Es wird keine Feedback-Tabelle in West/NSH/BayWü/Ost angelegt.
+
+| Daten | Speicherung |
+| --- | --- |
+| Vorgang | zufällige `id`, Erstellungs- und Bearbeitungszeit als UTC-ISO-Datum |
+| Meldung | Kategorie, Beschreibung, freiwillige Kontakt-E-Mail |
+| Bezug | bereinigter Pfad, Land, Normslug, Fassungskennung, ggf. Vorschriftenanker; sonst NULL |
+| Redaktion | Status, Priorität P0–P3 (anfangs P2), interne Notiz, Revisionsnummer für konkurrierende Bearbeitung |
+| Wiederholschutz | zufällige `submission_id` aus signiertem Ticket, HMAC des normalisierten Inhalts; UNIQUE verhindert doppelte Speicherung |
+
+Keine IP-Adresse, User-Agent, Textmarker, Turnstile-Token oder CSRF-Sitzungskennung im Meldungsdatensatz.
+Beschreibung und interne Notiz sind Klartext im geschützten Speicher; freiwillig darin eingetragene
+personenbezogene Daten sind möglich. Der interne Vermerk liegt in einer eigenen Spalte derselben ausschließlich
+intern lesbaren Tabelle; es existiert keine öffentliche Datenleseroute. Alle variablen SQL-Werte sind gebunden.
+Migration und Schema-/FTS-Gates der Rechtsdatenbanken bleiben getrennt.
+
+### Schutz und vollständige Konfiguration
+
+Ohne **jede** der folgenden Voraussetzungen bleibt die öffentliche Übermittlung fail-closed:
+
+- `FEEDBACK_ENABLED="true"` und `FEEDBACK_PRIVACY_APPROVED="true"` erst nach dokumentierter Betreiberfreigabe.
+  Beide stehen in Produktion und Staging zunächst auf `"false"`; ein Boolean oder fehlender Wert aktiviert nichts.
+- `FEEDBACK_ORIGIN` als exakte HTTPS-Origin ohne abschließenden Slash, passend zur tatsächlich freigegebenen
+  Adresse. Alternative workers.dev-/Vorschaudomains dürfen nicht unbemerkt über diese Freigabe senden.
+- Getrenntes D1-Binding `LANDESRECHT_FEEDBACK`, korrekt migriert, keine Rechtsdatenbank.
+- `TURNSTILE_SITE_KEY` (öffentlich), gültiger Server-Secret `TURNSTILE_SECRET_KEY`; Widget auf exakte erlaubte
+  Hostnames beschränken, Action `feedback`, **Pre-clearance deaktivieren**. Öffentliche Testschlüssel werden
+  außerhalb `APP_ENV=development` abgelehnt.
+- Zwei unabhängig erzeugte zufällige Secrets mit mindestens 32 Zeichen: `FEEDBACK_CSRF_SECRET` und
+  `FEEDBACK_RATE_SECRET`. Keine Werte im Repository oder in dokumentierten Befehlen. Worker-Secrets über
+  den freigegebenen Secret-Verwaltungsprozess setzen; Produktion und Staging getrennt.
+- Cloudflare-Rate-Limit-Binding `FEEDBACK_RATE_LIMITER` mit eigener, im Konto abgestimmter `namespace_id`.
+  Kein In-Memory-Ersatz und keine bloße Variable „Schutz aktiviert“.
+
+Vorlage **für eine spätere ausdrücklich freigegebene Konfiguration**, nicht in Lauf 2 ausgeführt:
+
+```jsonc
+// Je Environment separat ergänzen, Rechtsbindungen unverändert lassen:
+// d1_databases zusätzlich:
+{ "binding": "LANDESRECHT_FEEDBACK", "database_name": "landesrecht-feedback",
+  "database_id": "<eigene-feedback-d1-id>", "migrations_dir": "../../data/feedback" }
+// ratelimits zusätzlich:
+{ "name": "FEEDBACK_RATE_LIMITER", "namespace_id": "<abgestimmte-eigene-nummer>",
+  "simple": { "limit": 20, "period": 60 } }
+```
+
+20 Versuche je Minute sind ein abzustimmender Startvorschlag, keine gemessene Freigabegrenze. Die Plattform-
+Drossel ist annähernd und je Cloudflare-Standort wirksam, **kein weltweites hartes Limit**. Ein täglich
+wechselnder HMAC der von Cloudflare gelieferten Verbindungsadresse bildet den Schlüssel; keine Klar-IP in
+Feedback oder Logs. Geteilte Anschlüsse können gemeinsam betroffen sein. Zusätzlich WAF-Regel für GET/POST
+auf dieser Route, globale Last-/Kostenwarnung und 429/503-Monitoring abstimmen. Datenfristen und Rolle des
+Drosseldienstes müssen datenschutzrechtlich freigegeben sein; keine bestimmte Plattform-Aufbewahrung behauptet.
+
+Vor jedem POST: exakte Origin und Anfrage-Origin, gegebenenfalls `Sec-Fetch-Site: same-origin`, ausschließlich
+`application/x-www-form-urlencoded`, maximal 65.536 tatsächlich gelesene Bytes, feste Feldnamen ohne Duplikate,
+begrenzte Lesezeit, Feldschema, Honeypot, signiertes CSRF-Ticket. Die Herkunftsprüfung allein ersetzt das Ticket
+nicht. Ein notwendiger `__Host-landesrecht-feedback`-Cookie (Secure, HttpOnly, SameSite=Strict, Path=/,
+30 Minuten) bindet das Ticket an die Sitzung; Ticket ebenfalls höchstens 30 Minuten gültig. Token und
+Sitzungskennung werden nicht protokolliert. Formulare anderer Sitzungen, abgelaufene oder manipulierte Tickets
+werden zurückgewiesen.
+
+Vor dem Speichern muss Turnstile **serverseitig** über Siteverify erfolgreich sein, einschließlich Hostname
+und Action. Kein optionales Überspringen, keine nachgestellte Erfolgsmeldung bei Ausfall. Acht Sekunden
+Zeitlimit; keine IP-Weitergabe im Siteverify-Aufruf. Die Plattformdrossel hat drei Sekunden Zeitlimit.
+Sämtliche Antworten sind `Cache-Control: no-store`; 429 enthält `Retry-After: 60`. Keine Infrastrukturdiagnose
+oder eingegebenen Inhalte im Fehlerlog. Der generische Plattformzugriffslog bleibt ein eigener Freigabepunkt.
+
+Die CSP erhält ausschließlich auf dem aktiven Formular `https://challenges.cloudflare.com` in `script-src`
+und `frame-src`. Kein `unsafe-inline` für Skripte, keine Wildcards und keine Lockerung anderer Seiten.
+Das Widget verwendet die kompakte Breite (150 Pixel); die flexible Variante hätte mindestens 300 Pixel
+und würde auf schmalen Formularen überlaufen. [Widget-Größen](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/widget-configurations/).
+Deaktiviert werden weder Widget noch externes Skript noch Schutz-Cookie geladen/gesetzt.
+Belege zur Konfiguration: [Siteverify](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/),
+[Turnstile-CSP](https://developers.cloudflare.com/turnstile/reference/content-security-policy/),
+[Cloudflare Rate Limiting und Standortgrenzen](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/).
+
+### Redaktion ohne öffentlichen Adminbereich
+
+`scripts/feedback.ts` beziehungsweise `npm run feedback -- …` unterstützt eine separate lokale `.sqlite` und
+fest gebundene, autorisierte D1-Ziele `--target staging|production`. Ohne Ziel ist nur lokal mit `--db`
+zulässig. Remoteziele kommen ausschließlich aus der jeweiligen Wrangler-Konfiguration; Binding und Name
+müssen den zentralen Feedback-Namen entsprechen, echte eigene ID haben und von allen Rechtsdatenbanken
+sowie dem anderen Environment getrennt sein. Keine freie Datenbankwahl und keine Annahme eigener SQL-Befehle.
+Schema-Marker und Ausschluss von Normtabellen werden vor jeder Befehlsausführung geprüft. Remoteinitialisierung
+oder Migration über die Redaktions-CLI ist verboten.
+
+Remote verwendet die bestehende autorisierte Wrangler-Anmeldung des ausführenden Redakteurs. `list`, `show`
+und `export` sind schreibgeschützt. Remote-`update`/`delete` verlangen zusätzlich zu `--write` den exakten
+Namen über `--confirm-database landesrecht-feedback` beziehungsweise `landesrecht-feedback-staging`.
+Erlaubt sind nur feste Feedback-SELECTs und die zwei revisionsgebundenen Update-/Delete-Anweisungen.
+Parameter werden über den vorhandenen SQL-Renderer sicher serialisiert. Der echte Wrangler-Query-Pfad
+verwendet `--command`, **nicht `--file`**: Letzteres wäre bei der installierten CLI eine Datenbankimportoperation
+und gäbe keine einzelnen Ergebniszeilen zurück. Ein kleiner Node-Preloader liest SQL aus einer temporären
+0600-Datei erst im Wrangler-CLI-Prozess ein; die OS-Prozessargumente enthalten nur einen Platzhalter.
+Wrangler-Diagnoselogs werden ebenfalls in das geschützte temporäre Verzeichnis umgeleitet und danach gelöscht.
+Diese Integration ist anhand der installierten Wrangler-Implementierung und eines lokalen CLI-Stubs geprüft;
+nach Wrangler-Upgrades vor Remoteeinsatz erneut prüfen. Kein freies SQL, keine Batches,
+keine INSERTs, keine DDL. Transportfehler liefern keine Rohdiagnose mit Kontaktdaten zurück.
+
+Nur benannte, am Betriebssystem beziehungsweise im Cloudflare-Konto berechtigte Redakteure erhalten
+Zugriff. Kontorechte auf die eigene Feedback-D1 begrenzen und getrennte Stagingrechte verwenden.
+Lokale Initialisierung verweigert eine bereits gefüllte Datenbank. Lokale Kopien synchronisieren
+**keine** Entscheidung automatisch nach D1; im laufenden Betrieb gezielt die freigegebene Remote-CLI nutzen.
+
+```sh
+# Nur lokal; Verzeichnis und Datei vor fremdem Zugriff schützen:
+mkdir -m 700 .cache/feedback
+npm run feedback -- init --db .cache/feedback/redaktion.sqlite --write
+npm run feedback -- list --db .cache/feedback/redaktion.sqlite --status new
+npm run feedback -- show --db .cache/feedback/redaktion.sqlite --id <uuid>
+npm run feedback -- update --db .cache/feedback/redaktion.sqlite --id <uuid> --revision 0 --status triaged --priority P1 --note-file <notiz.txt> --write
+npm run feedback -- export --db .cache/feedback/redaktion.sqlite
+npm run feedback -- delete --db .cache/feedback/redaktion.sqlite --id <uuid> --revision 1 --write
+# Später nur nach Freigabe und mit autorisiertem Konto, in Lauf 2 nicht remote ausgeführt:
+npm run feedback -- list --target staging --status new
+npm run feedback -- update --target staging --confirm-database landesrecht-feedback-staging --id <uuid> --revision 0 --status triaged --write
+# Produktionsziel verlangt entsprechend --target production und --confirm-database landesrecht-feedback.
+```
+
+Die CLI gibt JSON/JSONL aus, keine HTML-/CSV-/Terminalauswertung von Meldungstext. Export und Ansicht lassen
+E-Mail und interne Notiz standardmäßig weg; `--include-contact` / `--include-notes` nur bei berechtigtem Bedarf.
+Exporte nicht in Git, Chat, öffentliches Issue oder ungeschützte Tabellen kopieren. Vor Export in Dateien
+restriktive Rechte/`umask 077` wählen. Die Datenbank wird bei lokaler Initialisierung mit Dateimodus 0600 angelegt.
+
+Ablauf: Neu → In Prüfung → In Bearbeitung → Erledigt/Zurückgewiesen. Offensichtlicher Spam kann direkt
+zurückgewiesen werden; erledigte/zurückgewiesene Vorgänge können gezielt wieder in Prüfung genommen werden.
+Änderungen benötigen die zuletzt gelesene `revision`, um paralleles Überschreiben zu verhindern. Priorität P0
+für konkrete Geltungs-/Identitäts-/wesentliche Wortlautprobleme, sonst fachlich abstufen. Grund/Beleg und
+Verweis auf den ursprünglichen redaktionellen Fall in der Notiz festhalten. Meldungen ändern niemals Normtexte,
+Geltung, Ledger oder Freeze-Freigaben. Die bestehenden Fach-/Quellen-/Freeze-Verfahren bleiben Pflicht.
+
+**Vor produktiver Aktivierung ist der durchgängige Bearbeitungsweg mit realen Berechtigungen noch in Staging
+zu testen und freizugeben.** Die CLI einschließlich sicherer Remote-SQL-Serialisierung, Zielabgrenzung,
+Revisionskontrolle und Fehlerbehandlung ist lokal gegen einen SQLite-Testtransport getestet.
+Es gab keinen Cloudflare-Schreibtest und keine produktive Rückpflege. Ohne bestandenen autorisierten
+Stagingdurchlauf bleibt das Formular NO-GO.
+
+### Datenschutz, Löschung und Aktivierungsverfahren
+
+Die Datenschutzseite beschreibt jetzt die implementierten Datenfelder, Sitzungsbindung, Drosselung,
+Turnstile und interne Bearbeitung. Verantwortlicher, Rechtsgrundlagen, Empfänger/Verträge,
+Drittlandgarantien, erreichbarer Kontakt, berechtigte Redaktion und konkrete Löschfristen bleiben offen.
+Es wird keine Rechtsgrundlage und keine Aufbewahrungsfrist erfunden. `FEEDBACK_PRIVACY_APPROVED` darf erst
+nach Vervollständigung dieser Angaben und dokumentierter Freigabe gesetzt werden.
+
+Die CLI kann einen bestimmten Vorgang einschließlich Kontakt, interner Notiz und Wiederholschutzdaten
+anhand von UUID und Revision löschen. Keine ungenehmigte automatische Frist oder Massenlöschung. Vor
+Aktivierung Löschfristen für Spam, abgeschlossene Fälle, Kontakt, Exporte und Backups festlegen und
+Löschung im freigegebenen Produktionsbearbeitungsweg testen. Meldungsdaten und Exporte gehören weder ins
+unveränderliche Quellen-R2 noch ins Git-Archiv. Wiederherstellung aus Backups darf erledigte Löschungen
+nicht dauerhaft rückgängig machen. Zuständigkeit und regelmäßige Prüfung real benennen.
+
+Aktivierung erst nach gesonderter Freigabe in dieser Reihenfolge:
+
+1. Reale Betreiber-/Datenschutz-/Kontaktangaben und redaktionelle Zuständigkeit abschließen, Fristen und
+   Bearbeitungsweg entscheiden; bestehende NO-GO-Fälle des Portals beachten.
+2. Isoliertes Staging mit eigener Feedback-D1 anlegen lassen, ausschließlich `data/feedback/` migrieren,
+   Datenbank-ID gegen alle Rechtsdatenbanken prüfen; getrennte Secrets/Turnstile-Hostname/Drossel einrichten.
+   Kein produktives Binding testweise auf West/NSH/BayWü oder OstRecht richten.
+3. Dort Formulardurchlauf mit echten Turnstile-Testmitteln, CSRF/Cookie, CSP, 429/503, Datenbankausfall,
+   Wiederholung und Mobilgeräten prüfen. Server-Hostname/Action und Sekretrotation kontrollieren. Testschlüssel
+   nur für Entwicklung/Staging-Testbetrieb, nie mit Produktionsfreigabe einsetzen.
+4. Gesicherte interne Sichtung und Statusrückpflege/Löschung bis zur tatsächlichen D1 erproben; Monitoring
+   auf 429/503 und neue Meldungen an benannte Empfänger freigeben. In Lauf 2 wurde kein Benachrichtigungsdienst aktiviert.
+5. Erst danach reale Produktionskonfiguration/Secrets und Migration ausdrücklich freigeben, beide Feature-
+   Freigaben zuletzt setzen und separat freigegeben ausliefern. Ein getesteter Staging-Stand ersetzt kein
+   Deploymentmandat. Danach kontrollierten End-to-End-Test und Sichtung bestätigen.
+6. Rücknahme: `FEEDBACK_ENABLED=false` mit freigegebenem Konfigurationsrelease; damit keine neuen Tickets,
+   externen Widgets oder Übermittlungen. Vorhandene Daten bleiben nur intern bis zur geregelten Löschung.
+
+Ohne aktiviertes Feedback bleibt die vollständige Formularansicht sichtbar, Eingaben/Absenden sind gesperrt,
+POST liefert 503 mit verständlichem Hinweis, ohne Erfolgsbestätigung. Die übrigen Portalfunktionen hängen
+nicht von Feedback-Bindings oder Secrets ab.
+
+### Prüfung Lauf 2
+
+Gezielte lokale Tests verwenden ausschließlich separate In-Memory-/temporäre SQLite und gemocktes Siteverify/
+Rate-Limit-Binding. Sie prüfen normbezogene und historische Meldungen, fehlende Vorschrift, fremde/ungültige
+URLs, entfernte Textmarker/Suchbegriffe, Grenzen, XSS-/SQL-Eingaben, CSRF/Sitzung/Ablauf, Turnstile-
+Hostname/Action/Ausfall, Rate-Limits, DB-Ausfall, Parallel-/Doppelübermittlung und sichere Redaktion mit
+Revisionskontrolle, Export und Löschung; der Remote-Admintransport wird mit lokalen SQL-Dateien und SQLite geprüft, ohne Cloudflare-Aufruf. UI-Smoke prüft Beschriftung, Pflichtfelder, historischen Kontext,
+fehlende Anhänge und deaktivierten POST; echte Browserprüfung bei 320 und 390 CSS-Pixeln ohne horizontalen
+Überlauf. Kein Live-Turnstile-/Cloudflare-Ratenlimit-Nachweis: dieser bleibt der freigegebenen Staging-Prüfung
+vor Aktivierung vorbehalten. Abschlussprüfung Lauf 2: `npm run check` mit 0 Fehlern/0 Warnungen (3 vorhandene Hinweise),
+`npm run test` mit **143 Dateien / 2.185 bestandenen Tests**, davon **58 gezielte Feedbackprüfungen**,
+`content:check` einschließlich Tabellen/Sim-Gates, `d1:schema:check` einschließlich separatem Feedbackschema,
+`build`, erweiterter `smoke:ui` und `release:check -- --offline` bestanden. Nach Prüfung des installierten
+Wrangler-Query-/Importverhaltens wurde zusätzlich der Preloader lokal getestet und die vollständige
+Testsuite erneut erfolgreich ausgeführt. Technischer Offline-Status: `READY WITH KNOWN LIMITATIONS`;
+keine neue Betriebsfreigabe. Alle drei Freeze-Gates **0 Abweichungen**: West 1.482, NSH 2.672,
+BayWü 1.618 Ausgangsfassungen unverändert; keine neue Baseline und keine Freeze-Ausnahme.
+Normbestand, Stichtage, Ledger und Quelleninventare blieben unverändert.
 
 ## Prüfnachweis Lauf 1
 

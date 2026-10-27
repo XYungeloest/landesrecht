@@ -7,7 +7,7 @@
  */
 import { EDITORIAL_REFERENCE_DATE } from '@landesrecht/legal-core/config/editorial.ts';
 import { formatDate, simulationChangeDateText, simulationChangeLabel, VOCABULARY } from '@landesrecht/legal-core/lib/display.ts';
-import { getJurisdictionUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
+import { getFeedbackUrl, getJurisdictionUrl, PORTAL_PATHS } from '@landesrecht/legal-core/lib/routes.ts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import type { NormView } from '../lib/norm-view.ts';
 import CopyButton from './CopyButton.astro';
@@ -29,7 +29,7 @@ const historyUrl = view.subpages.find((subpage) => subpage.key === 'historie')?.
 const citation = `${view.identity.abbr ?? view.identity.shortTitle} (${view.jurisdiction.shortName}), ${view.version.citation}`;
 const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? Astro.url.origin;
 ---
-<BaseLayout title={pageTitle} description={view.summary ?? view.identity.title} canonical={view.canonicalUrl} robots={view.isCurrent ? undefined : 'noindex, follow'}>
+<BaseLayout feedbackPath={view.versionUrl} title={pageTitle} description={view.summary ?? view.identity.title} canonical={view.canonicalUrl} robots={view.isCurrent ? undefined : 'noindex, follow'}>
   <nav class="breadcrumbs" aria-label="Brotkrumen">
     <ol>
       <li><a href={PORTAL_PATHS.home}>{VOCABULARY.portalName}</a></li>
@@ -75,7 +75,7 @@ const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? Astro.url.origin;
     </details>
     <p class="norm-head__actions">
       {section === 'text' && <a class="action-link" href="#normtext">Zum Normtext ↓</a>}
-      <a class="action-link" href={PORTAL_PATHS.feedback}>Fehler melden</a>
+      <a class="action-link" href={getFeedbackUrl(view.versionUrl)}>Fehler melden</a>
       <CopyButton value={citation} label="Fundstelle kopieren" />
       <CopyButton value={`${siteUrl}${view.isCurrent ? view.url : view.versionUrl}`} label="Link kopieren" />
     </p>

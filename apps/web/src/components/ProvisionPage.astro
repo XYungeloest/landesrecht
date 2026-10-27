@@ -11,7 +11,7 @@ import { getMarkingTargets, formatMarkedCitation } from '@landesrecht/legal-core
 import CopyButton from './CopyButton.astro';
 import type { NormView } from '../lib/norm-view.ts';
 import type { ProvisionEntry } from '@landesrecht/legal-core/lib/body.ts';
-import { getJurisdictionUrl, getProvisionUrl, getNormSubpageUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/routes.ts';
+import { getFeedbackUrl, getJurisdictionUrl, getProvisionUrl, getNormSubpageUrl, getNormVersionUrl } from '@landesrecht/legal-core/lib/routes.ts';
 interface Props { view: NormView; entry: ProvisionEntry; explicitVersion: boolean }
 const { view, entry, explicitVersion } = Astro.props;
 const versionId = explicitVersion ? view.version.versionId : undefined;
@@ -29,7 +29,7 @@ const versionNote = !view.isCurrent ? `Portal-Fassung: ${view.validityText}` : u
 const citationValue = formatMarkedCitation(targets,[entry.anchor],normName,versionNote);
 const citation = citationValue || `${entry.block.label ?? ''} ${normName}${versionNote ? ` (${versionNote})` : ''}`.trim();
 ---
-<BaseLayout title={`${entry.block.label ?? ''} ${normName} – ${entry.block.title ?? view.identity.shortTitle}`} canonical={url} robots={view.isCurrent ? undefined : 'noindex, follow'}>
+<BaseLayout feedbackPath={getProvisionUrl(view.jurisdiction.id, view.record.meta.slug, entry.anchor, view.version.versionId)} title={`${entry.block.label ?? ''} ${normName} – ${entry.block.title ?? view.identity.shortTitle}`} canonical={url} robots={view.isCurrent ? undefined : 'noindex, follow'}>
   <div class="provision-page" data-marking-document>
     <header class="provision-head">
       <p class="provision-law"><a href={getJurisdictionUrl(view.jurisdiction.id)}>{view.jurisdiction.shortName}</a><span aria-hidden="true"> · </span><a href={fullUrl}>{view.identity.shortTitle}{view.identity.abbr && view.identity.abbr !== view.identity.shortTitle && <> ({view.identity.abbr})</>}</a></p>
@@ -41,6 +41,7 @@ const citation = citationValue || `${entry.block.label ?? ''} ${normName}${versi
         {view.change.kind === 'simulation-new' && <> · {wholeLabel} in der Simulation neu geschaffen</>}
       </p>
       <div class="provision-actions">
+        <a href={getFeedbackUrl(getProvisionUrl(view.jurisdiction.id, view.record.meta.slug, entry.anchor, view.version.versionId))}>Fehler melden</a>
         <a href={`${fullUrl}#${entry.anchor}`}>{isLaw ? 'Ganzes Gesetz' : 'Ganzes Regelwerk'}</a>
         {citationValue && <CopyButton value={citationValue} label="Zitat kopieren" />}
         {view.versions.length > 1 && <a href={getNormSubpageUrl(view.jurisdiction.id,view.record.meta.slug,'historie')}>Fassungen</a>}
